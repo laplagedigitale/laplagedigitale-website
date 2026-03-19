@@ -10,6 +10,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "sovrium": "^0.2.11"
+    "sovrium": "^0.2.11",
+    "yaml": "^2.8.2"
   }
 }

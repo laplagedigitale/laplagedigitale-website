@@ -6,6 +6,7 @@
       "name": "sovrium",
       "dependencies": {
         "sovrium": "^0.2.11",
+        "yaml": "^2.8.2",
       },
       "devDependencies": {
         "@types/bun": "latest",

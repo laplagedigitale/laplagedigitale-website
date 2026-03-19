@@ -9,27 +9,27 @@ description: La Plage Digitale — Tiers-lieu de l'innovation à Strasbourg
 # =============================================================================
 theme:
   colors:
-    primary: '#0ea5e9'
-    secondary: '#f59e0b'
+    primary: '#eb6f18'
+    secondary: '#992b8c'
     success: '#10b981'
-    background: '#fafaf9'
+    background: '#faf9f7'
     surface: '#ffffff'
-    text: '#1c1917'
-    textMuted: '#78716c'
+    text: '#1a2767'
+    textMuted: '#4b5563'
 
   fonts:
     heading:
-      family: 'Plus Jakarta Sans'
+      family: 'Libre Franklin'
       fallback: 'system-ui, sans-serif'
       weights: [600, 700, 800]
-      url: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap'
+      url: '/fonts/fonts.css'
     body:
-      family: 'Inter'
+      family: 'Questrial'
       fallback: 'system-ui, sans-serif'
-      weights: [400, 500, 600]
+      weights: [400]
       size: 16px
       lineHeight: '1.6'
-      url: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'
+      url: '/fonts/fonts.css'
 
   spacing:
     container: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
@@ -345,7 +345,7 @@ components:
     children:
       - type: header
         props:
-          className: 'fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100'
+          className: 'fixed top-0 w-full z-50 bg-[#1a2767] border-b border-[#2a3777]'
         children:
           - type: nav
             props:
@@ -354,7 +354,7 @@ components:
               - type: link
                 props:
                   href: /
-                  className: 'flex items-center gap-2 font-bold text-xl text-sky-500'
+                  className: 'flex items-center gap-2 font-bold text-xl text-white'
                 children:
                   - type: span
                     content: "La Plage Digitale"
@@ -367,28 +367,28 @@ components:
                     content: $t:nav.spaces
                     props:
                       href: '/#spaces'
-                      className: 'text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors'
+                      className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
                   - type: link
                     content: $t:nav.pricing
                     props:
                       href: '/#pricing'
-                      className: 'text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors'
+                      className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
                   - type: link
                     content: $t:nav.about
                     props:
                       href: /about
-                      className: 'text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors'
+                      className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
                   - type: link
                     content: $t:nav.contact
                     props:
                       href: /contact
-                      className: 'text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors'
+                      className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
 
               - type: link
                 content: $t:nav.cta
                 props:
                   href: /contact
-                  className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-white bg-sky-500 hover:bg-sky-600 transition-colors'
+                  className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-white bg-[#992b8c] hover:bg-[#7e2374] transition-colors'
 
   # ---------------------------------------------------------------------------
   # Footer
@@ -398,7 +398,7 @@ components:
     children:
       - type: footer
         props:
-          className: 'bg-gray-900 text-gray-300'
+          className: 'bg-[#111d4a] text-gray-300'
         children:
           - type: section
             props:
@@ -540,11 +540,11 @@ components:
         children:
           - type: div
             props:
-              className: 'aspect-[4/3] overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200'
+              className: 'aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#fef3e2] to-[#fde5c8]'
             children:
               - type: div
                 props:
-                  className: 'w-full h-full flex items-center justify-center text-sky-400 text-6xl'
+                  className: 'w-full h-full flex items-center justify-center text-[#eb6f18] text-6xl'
                 children:
                   - type: span
                     content: '$icon'
@@ -563,7 +563,7 @@ components:
               - type: badge
                 content: '$capacity'
                 props:
-                  className: 'inline-block px-3 py-1 rounded-full text-sm font-medium bg-sky-50 text-sky-600'
+                  className: 'inline-block px-3 py-1 rounded-full text-sm font-medium bg-[#fef3e2] text-[#eb6f18]'
 
   # ---------------------------------------------------------------------------
   # Pricing card
@@ -582,7 +582,7 @@ components:
           - type: span
             content: '✓'
             props:
-              className: 'flex-shrink-0 w-6 h-6 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center text-sm font-bold'
+              className: 'flex-shrink-0 w-6 h-6 rounded-full bg-[#fef3e2] text-[#eb6f18] flex items-center justify-center text-sm font-bold'
           - type: span
             content: '$label'
             props:
@@ -618,7 +618,7 @@ pages:
       # -----------------------------------------------------------------------
       - type: section
         props:
-          className: 'relative min-h-screen flex items-center pt-16 bg-gradient-to-br from-gray-900 via-sky-950 to-gray-900'
+          className: 'relative min-h-screen flex items-center pt-16 bg-gradient-to-br from-[#1a2767] via-[#2a1a4a] to-[#1a2767]'
         children:
           - type: div
             props:
@@ -651,7 +651,7 @@ pages:
                     content: $t:hero.cta
                     props:
                       href: '#spaces'
-                      className: 'px-8 py-4 rounded-full bg-sky-500 text-white font-semibold text-lg hover:bg-sky-600 transition-colors'
+                      className: 'px-8 py-4 rounded-full bg-[#eb6f18] text-white font-semibold text-lg hover:bg-[#d4610f] transition-colors'
                   - type: link
                     content: $t:hero.cta2
                     props:
@@ -872,7 +872,7 @@ pages:
                   # Fixe (highlighted)
                   - type: card
                     props:
-                      className: 'rounded-xl bg-white shadow-md p-8 flex flex-col ring-2 ring-sky-500'
+                      className: 'rounded-xl bg-white shadow-md p-8 flex flex-col ring-2 ring-[#eb6f18]'
                     children:
                       - type: h3
                         content: $t:pricing.fixed.name
@@ -912,7 +912,7 @@ pages:
                         content: $t:nav.cta
                         props:
                           href: /contact
-                          className: 'block text-center px-6 py-3 rounded-full font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors'
+                          className: 'block text-center px-6 py-3 rounded-full font-semibold bg-[#eb6f18] text-white hover:bg-[#d4610f] transition-colors'
 
               # Meeting rooms
               - type: div
@@ -948,7 +948,7 @@ pages:
                           - type: span
                             content: $t:meeting.crevette.price
                             props:
-                              className: 'text-lg font-bold text-sky-600 mt-2 sm:mt-0'
+                              className: 'text-lg font-bold text-[#eb6f18] mt-2 sm:mt-0'
                       - type: div
                         props:
                           className: 'flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-xl shadow-sm'
@@ -966,7 +966,7 @@ pages:
                           - type: span
                             content: $t:meeting.requin.price
                             props:
-                              className: 'text-lg font-bold text-sky-600 mt-2 sm:mt-0'
+                              className: 'text-lg font-bold text-[#eb6f18] mt-2 sm:mt-0'
                       - type: div
                         props:
                           className: 'flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-xl shadow-sm'
@@ -984,7 +984,7 @@ pages:
                           - type: span
                             content: $t:meeting.baleine.price
                             props:
-                              className: 'text-lg font-bold text-sky-600 mt-2 sm:mt-0'
+                              className: 'text-lg font-bold text-[#eb6f18] mt-2 sm:mt-0'
                       - type: div
                         props:
                           className: 'flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-xl shadow-sm'
@@ -1002,14 +1002,14 @@ pages:
                           - type: span
                             content: $t:meeting.narval.price
                             props:
-                              className: 'text-lg font-bold text-sky-600 mt-2 sm:mt-0'
+                              className: 'text-lg font-bold text-[#eb6f18] mt-2 sm:mt-0'
 
       # -----------------------------------------------------------------------
       # CTA Banner
       # -----------------------------------------------------------------------
       - type: section
         props:
-          className: 'py-24 bg-sky-500'
+          className: 'py-24 bg-[#1a2767]'
         children:
           - type: div
             props:
@@ -1027,7 +1027,7 @@ pages:
                 content: $t:hero.cta2
                 props:
                   href: /contact
-                  className: 'inline-block px-8 py-4 rounded-full bg-white text-sky-600 font-semibold text-lg hover:bg-gray-100 transition-colors'
+                  className: 'inline-block px-8 py-4 rounded-full bg-[#f3ae13] text-white font-semibold text-lg hover:bg-[#e09e0a] transition-colors'
 
       - component: site-footer
 
@@ -1188,7 +1188,7 @@ pages:
                             content: $t:contact.email
                             props:
                               href: 'mailto:contact@laplagedigitale.fr'
-                              className: 'text-lg text-sky-500 hover:underline'
+                              className: 'text-lg text-[#eb6f18] hover:underline'
                       - type: div
                         children:
                           - type: h3
@@ -1228,7 +1228,7 @@ pages:
                               type: text
                               name: name
                               required: true
-                              className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent'
+                              className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#eb6f18] focus:border-transparent'
                       - type: div
                         children:
                           - type: span
@@ -1240,7 +1240,7 @@ pages:
                               type: email
                               name: email
                               required: true
-                              className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent'
+                              className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#eb6f18] focus:border-transparent'
                       - type: div
                         children:
                           - type: span
@@ -1252,12 +1252,12 @@ pages:
                               type: text
                               name: message
                               required: true
-                              className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent h-32'
+                              className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#eb6f18] focus:border-transparent h-32'
                       - type: button
                         content: $t:contact.form.submit
                         props:
                           type: submit
-                          className: 'w-full px-6 py-3 rounded-full bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors'
+                          className: 'w-full px-6 py-3 rounded-full bg-[#eb6f18] text-white font-semibold hover:bg-[#d4610f] transition-colors'
 
       - component: site-footer
 
