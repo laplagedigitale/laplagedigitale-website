@@ -1,111 +1,47 @@
----
-description: Use Bun instead of Node.js, npm, pnpm, or vite.
-globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
-alwaysApply: false
----
+## Sovrium Documentation
 
-Default to using Bun instead of Node.js.
+This project uses [Sovrium](https://sovrium.com), a configuration-driven application platform. The app is defined in `app.yaml` and started via `index.ts`.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Use `bunx <package> <command>` instead of `npx <package> <command>`
-- Bun automatically loads .env, so don't use dotenv.
+### LLMs Documentation References
 
-## APIs
+For complete Sovrium documentation, fetch these files:
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
+- **Full reference**: `https://sovrium.com/llms-full.txt` — Complete docs (~2800 lines) covering schema, components, fields, actions, auth, themes, pages, and more.
+- **JSON Schema**: `https://sovrium.com/schema/app.json` — Machine-readable schema for validation and autocompletion.
 
-## Testing
+When working on `app.yaml` or any Sovrium configuration, **always fetch `https://sovrium.com/llms-full.txt`** to get the latest documentation before making changes.
 
-Use `bun test` to run tests.
+### Key Concepts
 
-```ts#index.test.ts
-import { test, expect } from "bun:test";
+- **Config-driven**: The entire app (data models, auth, pages, themes, analytics) is defined in a single YAML file (`app.yaml`).
+- **Schema version**: 0.2.11
+- **41 field types**, **64 component types**, built-in auth, RBAC permissions, i18n.
+- App is started with `sovrium start app.yaml` or programmatically via `import { start } from 'sovrium'`.
 
-test("hello world", () => {
-  expect(1).toBe(1);
-});
+### Project Setup
+
+- Runtime: Bun (not Node.js)
+- Entry point: `index.ts` — loads `app.yaml` and starts Sovrium
+- Static assets: `./public` directory
+- Use `bun run index.ts` to start the dev server
+- Use `bun install` for dependencies
+
+### CLI Commands
+
+```bash
+sovrium start app.yaml          # Start dev server
+sovrium start app.yaml --watch  # Start with hot reload
+sovrium build app.yaml          # Build static site
+sovrium validate app.yaml       # Validate config
+sovrium schema                  # Print JSON Schema
 ```
 
-## Frontend
+### Environment Variables
 
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
-
-Server:
-
-```ts#index.ts
-import index from "./index.html"
-
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
-```
-
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
-
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
-
-With the following `frontend.tsx`:
-
-```tsx#frontend.tsx
-import React from "react";
-import { createRoot } from "react-dom/client";
-
-// import .css files directly and it works
-import './index.css';
-
-const root = createRoot(document.body);
-
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
-
-root.render(<Frontend />);
-```
-
-Then, run index.ts
-
-```sh
-bun --hot ./index.ts
-```
-
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.mdx`.
+- `DATABASE_URL` — PostgreSQL connection string (required for tables/auth)
+- `PORT` — Server port (default: 3000)
+- `APP_SCHEMA` — Alternative to file path for config
+- `SOVRIUM_BASE_URL` — Base URL for static builds
+- `SOVRIUM_DEPLOYMENT` — Deployment target (e.g., `github-pages`)
+- `SOVRIUM_GENERATE_SITEMAP` — Generate sitemap.xml
+- `SOVRIUM_GENERATE_ROBOTS` — Generate robots.txt
