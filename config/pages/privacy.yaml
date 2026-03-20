@@ -1,0 +1,44 @@
+name: privacy
+path: /privacy
+meta:
+  title: "Politique de confidentialité — La Plage Digitale"
+  noindex: true
+sections:
+  - component: site-header
+  - type: section
+    props:
+      className: 'pt-32 pb-24'
+    children:
+      - type: div
+        props:
+          className: 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-gray'
+        children:
+          - type: h1
+            content: Politique de confidentialité
+            props:
+              className: 'text-3xl font-bold text-gray-900 mb-8'
+          - type: h2
+            content: Collecte des données
+            props:
+              className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
+          - type: paragraph
+            content: "Ce site collecte uniquement les données transmises volontairement via le formulaire de contact : nom, adresse email et message. Ces données sont utilisées exclusivement pour répondre à votre demande."
+          - type: h2
+            content: Analytiques
+            props:
+              className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
+          - type: paragraph
+            content: "Ce site utilise un système d'analytiques respectueux de la vie privée, sans cookies et sans collecte de données personnelles identifiantes, conforme au RGPD."
+          - type: h2
+            content: Vos droits
+            props:
+              className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
+          - type: paragraph
+            content: "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à contact@laplagedigitale.fr."
+          - type: h2
+            content: Responsable du traitement
+            props:
+              className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
+          - type: paragraph
+            content: "La Plage Digitale — 13 rue Jacques Peirotes, 67000 Strasbourg"
+  - component: site-footer

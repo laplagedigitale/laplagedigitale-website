@@ -1,0 +1,38 @@
+name: legal
+path: /legal
+meta:
+  title: "Mentions légales — La Plage Digitale"
+  noindex: true
+sections:
+  - component: site-header
+  - type: section
+    props:
+      className: 'pt-32 pb-24'
+    children:
+      - type: div
+        props:
+          className: 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-gray'
+        children:
+          - type: h1
+            content: Mentions légales
+            props:
+              className: 'text-3xl font-bold text-gray-900 mb-8'
+          - type: h2
+            content: Éditeur du site
+            props:
+              className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
+          - type: paragraph
+            content: "La Plage Digitale — Association loi 1908 — 13 rue Jacques Peirotes, 67000 Strasbourg — Email : contact@laplagedigitale.fr"
+          - type: h2
+            content: Directeur de la publication
+            props:
+              className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
+          - type: paragraph
+            content: "Simon Thierry, Président"
+          - type: h2
+            content: Hébergement
+            props:
+              className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
+          - type: paragraph
+            content: "GitHub Pages — GitHub, Inc. — 88 Colin P Kelly Jr St, San Francisco, CA 94107, United States"
+  - component: site-footer

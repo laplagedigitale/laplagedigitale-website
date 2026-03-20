@@ -1,7 +1,7 @@
 import { start } from "sovrium";
-import { parse } from "yaml";
+import { loadConfig } from "./load-config";
 
-const config = parse(await Bun.file("app.yaml").text());
+const config = await loadConfig();
 
 await start(config, {
   publicDir: "./public",

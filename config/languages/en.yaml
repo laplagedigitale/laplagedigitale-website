@@ -1,0 +1,130 @@
+nav.home: Home
+nav.spaces: Spaces
+nav.pricing: Pricing
+nav.about: About us
+nav.contact: Contact
+nav.cta: Join us
+nav.href.home: /en
+nav.href.spaces: '/en/#spaces'
+nav.href.pricing: '/en/#pricing'
+nav.href.about: /en/about
+nav.href.contact: /en/contact
+nav.href.legal: /en/legal
+nav.href.privacy: /en/privacy
+
+hero.title: The innovation hub in Strasbourg
+hero.subtitle: "Over 600m² dedicated to coworking, collaboration and innovation in the heart of Strasbourg"
+hero.cta: Discover our spaces
+hero.cta2: Book a tour
+
+spaces.title: Our Spaces
+spaces.subtitle: "Spaces for every need, from freelancers to teams, in a historic building in central Strasbourg"
+
+space.flex.name: Flex Space
+space.flex.description: "30 open-plan desks for flexible working, Monday to Friday, 9am to 5:30pm"
+space.flex.capacity: 30 desks
+
+space.fixed.name: Fixed Desk
+space.fixed.description: "Your own personal desk with 24/7 access, locker and storage included"
+space.fixed.capacity: 50+ desks
+
+space.meeting.name: Meeting Rooms
+space.meeting.description: "4 equipped rooms for 6 to 16 people: Crevette, Requin, Baleine and Narval"
+space.meeting.capacity: 6 to 16 people
+
+space.event.name: Narval Event Space
+space.event.description: "82m² of flexible space for events, meetups, conferences and workshops"
+space.event.capacity: Up to 60 people
+
+pricing.title: Pricing
+pricing.subtitle: Flexible plans for every profile, with discounts for new businesses
+
+pricing.flex.name: Flex
+pricing.flex.price: "€14 excl. tax"
+pricing.flex.period: " / day"
+pricing.flex.feature1: "Shared desk (9am–5:30pm, Mon–Fri)"
+pricing.flex.feature2: "High-speed internet & Wi-Fi"
+pricing.flex.feature3: "Printer & scanner"
+pricing.flex.feature4: "Coffee & lounge area"
+
+pricing.nomad.name: Nomad
+pricing.nomad.price: "€175 excl. tax"
+pricing.nomad.period: " / month"
+pricing.nomad.feature1: "24/7 access"
+pricing.nomad.feature2: Shared Flex workspace
+pricing.nomad.feature3: "High-speed internet & Wi-Fi"
+pricing.nomad.feature4: "Printer & scanner"
+pricing.nomad.feature5: "Coffee & lounge area"
+
+pricing.fixed.name: Fixed
+pricing.fixed.price: "€275 excl. tax"
+pricing.fixed.period: " / month"
+pricing.fixed.feature1: Dedicated personal desk
+pricing.fixed.feature2: "24/7 access"
+pricing.fixed.feature3: "Locker & storage"
+pricing.fixed.feature4: Meeting rooms (fair use)
+pricing.fixed.feature5: Mail handling & business registration
+pricing.fixed.feature6: "Printer & scanner"
+pricing.fixed.feature7: "Coffee & lounge area"
+
+meeting.title: Meeting Rooms
+meeting.subtitle: "Half-day rental (4h), equipment included"
+
+meeting.crevette.name: "Crevette"
+meeting.crevette.capacity: "6 people — 12m²"
+meeting.crevette.price: "€87 excl. tax / 4h"
+
+meeting.requin.name: "Requin"
+meeting.requin.capacity: "8 people — 16m²"
+meeting.requin.price: "€98 excl. tax / 4h"
+
+meeting.baleine.name: "Baleine"
+meeting.baleine.capacity: "16 people — 36m²"
+meeting.baleine.price: "€120 excl. tax / 4h"
+
+meeting.narval.name: "Narval"
+meeting.narval.capacity: "60 people — 82m²"
+meeting.narval.price: "€253 excl. tax / 4h"
+
+amenities.title: Amenities
+amenities.wifi: "High-speed internet & Wi-Fi"
+amenities.coffee: "Unlimited coffee & tea"
+amenities.print: "Printer & scanner"
+amenities.locker: Secure lockers
+amenities.mail: Business registration
+amenities.parking: Bike parking
+amenities.kitchen: "Lounge & kitchen area"
+amenities.events: "Community events & meetups"
+amenities.access: "24/7 access (Nomad & Fixed plans)"
+
+about.title: About us
+about.description: "La Plage Digitale is a non-profit association (loi 1908) founded in 2019, born from the Alsace Digitale association. Located in a former cooperative building on rue Jacques Peirotes in central Strasbourg, it offers over 600m² dedicated to collaborative work and innovation."
+about.mission.title: Our mission
+about.mission.text: "Accelerate the development of innovative projects by fostering resource sharing and serendipity. We believe in a quality, caring and warm community where members share services and values."
+about.values.title: Our values
+about.value1: "Sharing & mutual support"
+about.value2: "Innovation & serendipity"
+about.value3: "Kindness & diversity"
+
+contact.title: Contact us
+contact.subtitle: "Want to visit the space? Have a question about our plans? Get in touch!"
+contact.address.label: Address
+contact.address: "13 rue Jacques Peirotes, 67000 Strasbourg"
+contact.email.label: Email
+contact.email: "contact@laplagedigitale.fr"
+contact.phone.label: Phone
+contact.phone: "{{CONTACT_PHONE}}"
+contact.hours.label: Reception hours
+contact.hours: "Mon — Fri: 9:00am – 5:30pm"
+contact.form.name: Your name
+contact.form.email: Your email
+contact.form.message: Your message
+contact.form.submit: Send
+
+cta.title: "Ready to join the community?"
+cta.subtitle: "Come discover our spaces and meet our coworkers. First trial day at €14."
+
+footer.tagline: "Strasbourg's innovation hub — coworking, meeting rooms and event space"
+footer.legal: Legal notice
+footer.privacy: Privacy policy
+footer.copyright: "© 2026 La Plage Digitale. All rights reserved."
