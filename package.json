@@ -1,21 +1,11 @@
 {
   "name": "lpd-website",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run index.ts",
-    "build": "bun run build.ts",
-    "typecheck": "bun x tsc --noEmit"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
+    "dev": "bunx sovrium start app.yaml --watch",
+    "build": "SOVRIUM_OUTPUT_DIR=./dist SOVRIUM_DEPLOYMENT=github-pages SOVRIUM_PUBLIC_DIR=./public bunx sovrium build app.yaml"
   },
   "dependencies": {
-    "sovrium": "^0.2.11",
-    "yaml": "^2.8.2"
+    "sovrium": "^0.2.11"
   }
 }

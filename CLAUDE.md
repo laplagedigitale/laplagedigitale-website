@@ -1,6 +1,6 @@
 ## Sovrium Documentation
 
-This project uses [Sovrium](https://sovrium.com), a configuration-driven application platform. The app is defined in `app.yaml` and started via `index.ts`.
+This project uses [Sovrium](https://sovrium.com), a configuration-driven application platform. The entire app is defined in `app.yaml` and uses the Sovrium CLI directly — no TypeScript files.
 
 ### LLMs Documentation References
 
@@ -16,15 +16,16 @@ When working on `app.yaml` or any Sovrium configuration, **always fetch `https:/
 - **Config-driven**: The entire app (data models, auth, pages, themes, analytics) is defined in a single YAML file (`app.yaml`).
 - **Schema version**: 0.2.11
 - **41 field types**, **64 component types**, built-in auth, RBAC permissions, i18n.
-- App is started with `sovrium start app.yaml` or programmatically via `import { start } from 'sovrium'`.
+- App is started with `sovrium start app.yaml` (CLI only, no TypeScript needed).
 
 ### Project Setup
 
 - Runtime: Bun (not Node.js)
-- Entry point: `index.ts` — loads `app.yaml` and starts Sovrium
+- Config: `app.yaml` — single file, all config
 - Static assets: `./public` directory
-- Use `bun run index.ts` to start the dev server
-- Use `bun install` for dependencies
+- `bun run dev` — start dev server with hot reload
+- `bun run build` — build static site to `./dist`
+- `bun install` — install dependencies
 
 ### CLI Commands
 

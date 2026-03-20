@@ -1,3 +1,0 @@
-retentionDays: 365
-respectDoNotTrack: true
-excludedPaths: ['/legal', '/privacy']
