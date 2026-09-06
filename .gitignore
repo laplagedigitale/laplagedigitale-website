@@ -1,36 +1,14 @@
-# dependencies (bun install)
-node_modules
-
-# output
-out
-dist
-static
+# Sovrium runtime data dir — holds the local database and the encryption key
 .sovrium
-*.tgz
 
-# code coverage
-coverage
-*.lcov
+# local env
+.env
+.env.local
+.env.*.local
 
 # logs
 logs
-_.log
-report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+*.log
 
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
-# caches
-.eslintcache
-.cache
-*.tsbuildinfo
-
-# IntelliJ based IDEs
-.idea
-
-# Finder (MacOS) folder config
+# Finder (macOS) folder config
 .DS_Store

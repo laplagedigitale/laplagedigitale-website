@@ -1,70 +1,75 @@
-schema: https://sovrium.com/schema/app.json
+# yaml-language-server: $schema=https://sovrium.com/schema/app.json
 
 name: la-plage-digitale
 version: 1.0.0
 description: La Plage Digitale — Tiers-lieu de l'innovation à Strasbourg
 
 # =============================================================================
-# THEME
+# DESIGN SYSTEM (theme tokens + type scale)
 # =============================================================================
-theme:
-  colors:
-    primary: '#eb6f18'
-    secondary: '#992b8c'
-    success: '#10b981'
-    background: '#faf9f7'
-    surface: '#ffffff'
-    text: '#1a2767'
-    textMuted: '#4b5563'
+design:
+  theme:
+    colors:
+      primary: '#eb6f18'
+      secondary: '#992b8c'
+      success: '#10b981'
+      background: '#faf9f7'
+      surface: '#ffffff'
+      text: '#1a2767'
+      textMuted: '#4b5563'
 
-  fonts:
-    heading:
-      family: 'Libre Franklin'
-      fallback: 'system-ui, sans-serif'
-      weights: [600, 700, 800]
-      url: '/fonts/fonts.css'
+    fonts:
+      heading:
+        family: 'Libre Franklin'
+        fallback: 'system-ui, sans-serif'
+        url: '/fonts/fonts.css'
+      body:
+        family: 'Questrial'
+        fallback: 'system-ui, sans-serif'
+        url: '/fonts/fonts.css'
+
+    spacing:
+      container: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+      section: 'py-16 sm:py-24'
+
+    borderRadius:
+      sm: '0.375rem'
+      md: '0.75rem'
+      lg: '1rem'
+      full: '9999px'
+
+    shadows:
+      sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)'
+      md: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+      lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+
+    animations:
+      fadeInUp:
+        duration: '0.6s'
+        easing: ease-out
+        keyframes:
+          '0%': { opacity: '0', transform: 'translateY(20px)' }
+          '100%': { opacity: '1', transform: 'translateY(0)' }
+      fadeIn:
+        duration: '0.4s'
+        easing: ease-in-out
+        keyframes:
+          '0%': { opacity: '0' }
+          '100%': { opacity: '1' }
+
+    breakpoints:
+      sm: '640px'
+      md: '768px'
+      lg: '1024px'
+      xl: '1280px'
+
+  # Replaces the inert theme.fonts.*.size / lineHeight / weights fields:
+  # every step here emits --text-{step} custom properties and a text-{step} utility.
+  typeScale:
     body:
-      family: 'Questrial'
-      fallback: 'system-ui, sans-serif'
-      weights: [400]
-      size: 16px
-      lineHeight: '1.6'
-      url: '/fonts/fonts.css'
-
-  spacing:
-    container: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
-    section: 'py-16 sm:py-24'
-
-  borderRadius:
-    sm: '0.375rem'
-    md: '0.75rem'
-    lg: '1rem'
-    full: '9999px'
-
-  shadows:
-    sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)'
-    md: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
-
-  animations:
-    fadeInUp:
-      duration: '0.6s'
-      easing: ease-out
-      keyframes:
-        '0%': { opacity: '0', transform: 'translateY(20px)' }
-        '100%': { opacity: '1', transform: 'translateY(0)' }
-    fadeIn:
-      duration: '0.4s'
-      easing: ease-in-out
-      keyframes:
-        '0%': { opacity: '0' }
-        '100%': { opacity: '1' }
-
-  breakpoints:
-    sm: '640px'
-    md: '768px'
-    lg: '1024px'
-    xl: '1280px'
+      size: '1rem'
+      lineHeight: 1.6
+      font: body
 
 # =============================================================================
 # LANGUAGES
@@ -351,13 +356,15 @@ languages:
 # =============================================================================
 components:
   - name: site-header
-    type: header
+    type: container
     children:
-      - type: header
+      - type: container
+        element: header
         props:
           className: 'fixed top-0 w-full z-50 bg-[#1a2767] border-b border-[#2a3777]'
         children:
-          - type: nav
+          - type: container
+            element: nav
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16'
             children:
@@ -366,7 +373,8 @@ components:
                   href: $t:nav.href.home
                   className: 'flex items-center gap-2 font-bold text-xl text-white'
                 children:
-                  - type: span
+                  - type: text
+                    element: span
                     content: "La Plage Digitale"
     
               - type: flex
@@ -401,13 +409,15 @@ components:
                   className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-white bg-[#992b8c] hover:bg-[#7e2374] transition-colors'
 
   - name: site-footer
-    type: footer
+    type: container
     children:
-      - type: footer
+      - type: container
+        element: footer
         props:
           className: 'bg-[#111d4a] text-gray-300'
         children:
-          - type: section
+          - type: container
+            element: section
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16'
             children:
@@ -415,15 +425,17 @@ components:
                 props:
                   className: 'grid grid-cols-1 md:grid-cols-4 gap-12'
                 children:
-                  - type: div
+                  - type: container
                     props:
                       className: 'md:col-span-2'
                     children:
-                      - type: h3
+                      - type: text
+                        element: h3
                         content: La Plage Digitale
                         props:
                           className: 'text-white text-xl font-bold mb-3'
-                      - type: p
+                      - type: text
+                        element: p
                         content: $t:footer.tagline
                         props:
                           className: 'text-gray-400 mb-6 max-w-md'
@@ -452,9 +464,10 @@ components:
                               href: 'https://facebook.com/laplagedigitale'
                               className: 'text-gray-400 hover:text-white transition-colors'
     
-                  - type: div
+                  - type: container
                     children:
-                      - type: h4
+                      - type: text
+                        element: h4
                         content: Navigation
                         props:
                           className: 'text-white font-semibold mb-4'
@@ -491,9 +504,10 @@ components:
                                   href: $t:nav.href.contact
                                   className: 'text-gray-400 hover:text-white transition-colors'
     
-                  - type: div
+                  - type: container
                     children:
-                      - type: h4
+                      - type: text
+                        element: h4
                         content: Contact
                         props:
                           className: 'text-white font-semibold mb-4'
@@ -508,15 +522,16 @@ components:
                           - type: list-item
                             content: $t:contact.hours
     
-          - type: div
+          - type: container
             props:
               className: 'border-t border-gray-800'
             children:
-              - type: div
+              - type: container
                 props:
                   className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row justify-between items-center gap-4'
                 children:
-                  - type: p
+                  - type: text
+                    element: p
                     content: $t:footer.copyright
                     props:
                       className: 'text-gray-500 text-sm'
@@ -542,25 +557,28 @@ components:
         props:
           className: 'group overflow-hidden rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow'
         children:
-          - type: div
+          - type: container
             props:
               className: 'aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#fef3e2] to-[#fde5c8]'
             children:
-              - type: div
+              - type: container
                 props:
                   className: 'w-full h-full flex items-center justify-center text-[#eb6f18] text-6xl'
                 children:
-                  - type: span
+                  - type: text
+                    element: span
                     content: '$icon'
-          - type: card-body
+          - type: container
             props:
               className: 'p-6'
             children:
-              - type: h3
+              - type: text
+                element: h3
                 content: '$name'
                 props:
                   className: 'text-xl font-bold text-gray-900 mb-2'
-              - type: p
+              - type: text
+                element: p
                 content: '$description'
                 props:
                   className: 'text-gray-600 mb-4'
@@ -576,11 +594,13 @@ components:
         props:
           className: 'flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm'
         children:
-          - type: span
+          - type: text
+            element: span
             content: '✓'
             props:
               className: 'flex-shrink-0 w-6 h-6 rounded-full bg-[#fef3e2] text-[#eb6f18] flex items-center justify-center text-sm font-bold'
-          - type: span
+          - type: text
+            element: span
             content: '$label'
             props:
               className: 'text-gray-700'
@@ -604,19 +624,21 @@ pages:
         card: summary_large_image
         image: 'https://www.laplagedigitale.fr/wp-content/uploads/2024/03/Sans-titre-8-2plage1.jpg'
     
-    sections:
+    components:
       - component: site-header
     
       # Hero
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'relative min-h-screen flex items-center pt-16 bg-gradient-to-br from-[#1a2767] via-[#2a1a4a] to-[#1a2767]'
         children:
-          - type: div
+          - type: container
             props:
               className: 'relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center'
             children:
-              - type: h1
+              - type: text
+                element: h1
                 content: $t:hero.title
                 props:
                   className: 'text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight'
@@ -624,8 +646,8 @@ pages:
                   entrance:
                     animation: fadeInUp
                     duration: '600ms'
-                    threshold: 0.1
-              - type: p
+              - type: text
+                element: p
                 content: $t:hero.subtitle
                 props:
                   className: 'text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10'
@@ -634,7 +656,6 @@ pages:
                     animation: fadeInUp
                     duration: '600ms'
                     delay: '200ms'
-                    threshold: 0.1
               - type: flex
                 props:
                   className: 'flex flex-col sm:flex-row items-center justify-center gap-4'
@@ -651,24 +672,27 @@ pages:
                       className: 'px-8 py-4 rounded-full border-2 border-white text-white font-semibold text-lg hover:bg-white hover:text-gray-900 transition-colors'
     
       # Spaces
-      - type: section
+      - type: container
+        element: section
         props:
           id: spaces
           className: 'py-24 bg-gray-50'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
             children:
-              - type: div
+              - type: container
                 props:
                   className: 'text-center mb-16'
                 children:
-                  - type: h2
+                  - type: text
+                    element: h2
                     content: $t:spaces.title
                     props:
                       className: 'text-3xl sm:text-4xl font-bold text-gray-900 mb-4'
-                  - type: p
+                  - type: text
+                    element: p
                     content: $t:spaces.subtitle
                     props:
                       className: 'text-lg text-gray-600 max-w-2xl mx-auto'
@@ -703,15 +727,17 @@ pages:
                       capacity: $t:space.event.capacity
     
       # Amenities
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'py-24'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
             children:
-              - type: h2
+              - type: text
+                element: h2
                 content: $t:amenities.title
                 props:
                   className: 'text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-16'
@@ -748,24 +774,27 @@ pages:
                       label: $t:amenities.access
     
       # Pricing
-      - type: section
+      - type: container
+        element: section
         props:
           id: pricing
           className: 'py-24 bg-gray-50'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
             children:
-              - type: div
+              - type: container
                 props:
                   className: 'text-center mb-16'
                 children:
-                  - type: h2
+                  - type: text
+                    element: h2
                     content: $t:pricing.title
                     props:
                       className: 'text-3xl sm:text-4xl font-bold text-gray-900 mb-4'
-                  - type: p
+                  - type: text
+                    element: p
                     content: $t:pricing.subtitle
                     props:
                       className: 'text-lg text-gray-600 max-w-2xl mx-auto'
@@ -780,7 +809,8 @@ pages:
                     props:
                       className: 'rounded-xl bg-white shadow-md p-8 flex flex-col'
                     children:
-                      - type: h3
+                      - type: text
+                        element: h3
                         content: $t:pricing.flex.name
                         props:
                           className: 'text-lg font-semibold text-gray-900 mb-4'
@@ -788,11 +818,13 @@ pages:
                         props:
                           className: 'flex items-baseline gap-1 mb-6'
                         children:
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:pricing.flex.price
                             props:
                               className: 'text-4xl font-bold text-gray-900'
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:pricing.flex.period
                             props:
                               className: 'text-gray-500'
@@ -819,7 +851,8 @@ pages:
                     props:
                       className: 'rounded-xl bg-white shadow-md p-8 flex flex-col'
                     children:
-                      - type: h3
+                      - type: text
+                        element: h3
                         content: $t:pricing.nomad.name
                         props:
                           className: 'text-lg font-semibold text-gray-900 mb-4'
@@ -827,11 +860,13 @@ pages:
                         props:
                           className: 'flex items-baseline gap-1 mb-6'
                         children:
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:pricing.nomad.price
                             props:
                               className: 'text-4xl font-bold text-gray-900'
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:pricing.nomad.period
                             props:
                               className: 'text-gray-500'
@@ -860,7 +895,8 @@ pages:
                     props:
                       className: 'rounded-xl bg-white shadow-md p-8 flex flex-col ring-2 ring-[#eb6f18]'
                     children:
-                      - type: h3
+                      - type: text
+                        element: h3
                         content: $t:pricing.fixed.name
                         props:
                           className: 'text-lg font-semibold text-gray-900 mb-4'
@@ -868,11 +904,13 @@ pages:
                         props:
                           className: 'flex items-baseline gap-1 mb-6'
                         children:
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:pricing.fixed.price
                             props:
                               className: 'text-4xl font-bold text-gray-900'
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:pricing.fixed.period
                             props:
                               className: 'text-gray-500'
@@ -901,109 +939,126 @@ pages:
                           className: 'block text-center px-6 py-3 rounded-full font-semibold bg-[#eb6f18] text-white hover:bg-[#d4610f] transition-colors'
     
               # Meeting rooms
-              - type: div
+              - type: container
                 props:
                   className: 'mt-8'
                 children:
-                  - type: h3
+                  - type: text
+                    element: h3
                     content: $t:meeting.title
                     props:
                       className: 'text-2xl font-bold text-gray-900 mb-2 text-center'
-                  - type: p
+                  - type: text
+                    element: p
                     content: $t:meeting.subtitle
                     props:
                       className: 'text-gray-600 text-center mb-8'
-                  - type: div
+                  - type: container
                     props:
                       className: 'space-y-4'
                     children:
-                      - type: div
+                      - type: container
                         props:
                           className: 'flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-xl shadow-sm'
                         children:
-                          - type: div
+                          - type: container
                             children:
-                              - type: h4
+                              - type: text
+                                element: h4
                                 content: $t:meeting.crevette.name
                                 props:
                                   className: 'text-lg font-bold text-gray-900'
-                              - type: p
+                              - type: text
+                                element: p
                                 content: $t:meeting.crevette.capacity
                                 props:
                                   className: 'text-gray-500 text-sm'
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:meeting.crevette.price
                             props:
                               className: 'text-lg font-bold text-[#eb6f18] mt-2 sm:mt-0'
-                      - type: div
+                      - type: container
                         props:
                           className: 'flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-xl shadow-sm'
                         children:
-                          - type: div
+                          - type: container
                             children:
-                              - type: h4
+                              - type: text
+                                element: h4
                                 content: $t:meeting.requin.name
                                 props:
                                   className: 'text-lg font-bold text-gray-900'
-                              - type: p
+                              - type: text
+                                element: p
                                 content: $t:meeting.requin.capacity
                                 props:
                                   className: 'text-gray-500 text-sm'
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:meeting.requin.price
                             props:
                               className: 'text-lg font-bold text-[#eb6f18] mt-2 sm:mt-0'
-                      - type: div
+                      - type: container
                         props:
                           className: 'flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-xl shadow-sm'
                         children:
-                          - type: div
+                          - type: container
                             children:
-                              - type: h4
+                              - type: text
+                                element: h4
                                 content: $t:meeting.baleine.name
                                 props:
                                   className: 'text-lg font-bold text-gray-900'
-                              - type: p
+                              - type: text
+                                element: p
                                 content: $t:meeting.baleine.capacity
                                 props:
                                   className: 'text-gray-500 text-sm'
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:meeting.baleine.price
                             props:
                               className: 'text-lg font-bold text-[#eb6f18] mt-2 sm:mt-0'
-                      - type: div
+                      - type: container
                         props:
                           className: 'flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-xl shadow-sm'
                         children:
-                          - type: div
+                          - type: container
                             children:
-                              - type: h4
+                              - type: text
+                                element: h4
                                 content: $t:meeting.narval.name
                                 props:
                                   className: 'text-lg font-bold text-gray-900'
-                              - type: p
+                              - type: text
+                                element: p
                                 content: $t:meeting.narval.capacity
                                 props:
                                   className: 'text-gray-500 text-sm'
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:meeting.narval.price
                             props:
                               className: 'text-lg font-bold text-[#eb6f18] mt-2 sm:mt-0'
     
       # CTA Banner
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'py-24 bg-[#1a2767]'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center'
             children:
-              - type: h2
+              - type: text
+                element: h2
                 content: $t:cta.title
                 props:
                   className: 'text-3xl sm:text-4xl font-bold text-white mb-6'
-              - type: p
+              - type: text
+                element: p
                 content: $t:cta.subtitle
                 props:
                   className: 'text-lg text-white/80 mb-10'
@@ -1021,60 +1076,68 @@ pages:
       title: "Qui sommes-nous — La Plage Digitale"
       description: "Association loi 1908 fondée en 2019, La Plage Digitale est un tiers-lieu de l'innovation à Strasbourg dédié au coworking et à la collaboration."
       noindex: true
-    sections:
+    components:
       - component: site-header
     
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'pt-32 pb-24'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
             children:
-              - type: div
+              - type: container
                 props:
                   className: 'max-w-3xl'
                 children:
-                  - type: h1
+                  - type: text
+                    element: h1
                     content: $t:about.title
                     props:
                       className: 'text-4xl sm:text-5xl font-bold text-gray-900 mb-8'
-                  - type: p
+                  - type: text
+                    element: p
                     content: $t:about.description
                     props:
                       className: 'text-lg text-gray-600 leading-relaxed'
     
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'py-24 bg-gray-50'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
             children:
-              - type: div
+              - type: container
                 props:
                   className: 'max-w-3xl mx-auto'
                 children:
-                  - type: h2
+                  - type: text
+                    element: h2
                     content: $t:about.mission.title
                     props:
                       className: 'text-3xl font-bold text-gray-900 mb-6'
-                  - type: p
+                  - type: text
+                    element: p
                     content: $t:about.mission.text
                     props:
                       className: 'text-lg text-gray-600 leading-relaxed'
     
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'py-24'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'
             children:
-              - type: h2
+              - type: text
+                element: h2
                 content: $t:about.values.title
                 props:
                   className: 'text-3xl font-bold text-gray-900 mb-16'
@@ -1086,7 +1149,8 @@ pages:
                     props:
                       className: 'p-8 rounded-xl bg-gray-50'
                     children:
-                      - type: p
+                      - type: text
+                        element: p
                         content: $t:about.value1
                         props:
                           className: 'text-lg font-semibold text-gray-900'
@@ -1094,7 +1158,8 @@ pages:
                     props:
                       className: 'p-8 rounded-xl bg-gray-50'
                     children:
-                      - type: p
+                      - type: text
+                        element: p
                         content: $t:about.value2
                         props:
                           className: 'text-lg font-semibold text-gray-900'
@@ -1102,7 +1167,8 @@ pages:
                     props:
                       className: 'p-8 rounded-xl bg-gray-50'
                     children:
-                      - type: p
+                      - type: text
+                        element: p
                         content: $t:about.value3
                         props:
                           className: 'text-lg font-semibold text-gray-900'
@@ -1115,26 +1181,29 @@ pages:
       title: "Contact — La Plage Digitale"
       description: "Contactez La Plage Digitale, coworking à Strasbourg. 13 rue Jacques Peirotes, 67000 Strasbourg."
       noindex: true
-    sections:
+    components:
       - component: site-header
     
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'pt-32 pb-24'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
             children:
-              - type: div
+              - type: container
                 props:
                   className: 'text-center mb-16'
                 children:
-                  - type: h1
+                  - type: text
+                    element: h1
                     content: $t:contact.title
                     props:
                       className: 'text-4xl sm:text-5xl font-bold text-gray-900 mb-4'
-                  - type: p
+                  - type: text
+                    element: p
                     content: $t:contact.subtitle
                     props:
                       className: 'text-lg text-gray-600'
@@ -1144,23 +1213,26 @@ pages:
                   className: 'grid grid-cols-1 lg:grid-cols-2 gap-16'
                 children:
                   # Contact info + map
-                  - type: div
+                  - type: container
                     props:
                       className: 'space-y-8'
                     children:
-                      - type: div
+                      - type: container
                         children:
-                          - type: h3
+                          - type: text
+                            element: h3
                             content: $t:contact.address.label
                             props:
                               className: 'text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2'
-                          - type: p
+                          - type: text
+                            element: p
                             content: $t:contact.address
                             props:
                               className: 'text-lg text-gray-900'
-                      - type: div
+                      - type: container
                         children:
-                          - type: h3
+                          - type: text
+                            element: h3
                             content: $t:contact.email.label
                             props:
                               className: 'text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2'
@@ -1169,18 +1241,20 @@ pages:
                             props:
                               href: 'mailto:contact@laplagedigitale.fr'
                               className: 'text-lg text-[#eb6f18] hover:underline'
-                      - type: div
+                      - type: container
                         children:
-                          - type: h3
+                          - type: text
+                            element: h3
                             content: $t:contact.hours.label
                             props:
                               className: 'text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2'
-                          - type: p
+                          - type: text
+                            element: p
                             content: $t:contact.hours
                             props:
                               className: 'text-lg text-gray-900'
     
-                      - type: div
+                      - type: container
                         props:
                           className: 'rounded-xl overflow-hidden shadow-md'
                         children:
@@ -1197,9 +1271,10 @@ pages:
                       action: '{{CONTACT_FORM_ACTION}}'
                       method: POST
                     children:
-                      - type: div
+                      - type: container
                         children:
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:contact.form.name
                             props:
                               className: 'block text-sm font-medium text-gray-700 mb-1'
@@ -1209,9 +1284,10 @@ pages:
                               name: name
                               required: true
                               className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#eb6f18] focus:border-transparent'
-                      - type: div
+                      - type: container
                         children:
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:contact.form.email
                             props:
                               className: 'block text-sm font-medium text-gray-700 mb-1'
@@ -1221,9 +1297,10 @@ pages:
                               name: email
                               required: true
                               className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#eb6f18] focus:border-transparent'
-                      - type: div
+                      - type: container
                         children:
-                          - type: span
+                          - type: text
+                            element: span
                             content: $t:contact.form.message
                             props:
                               className: 'block text-sm font-medium text-gray-700 mb-1'
@@ -1246,37 +1323,45 @@ pages:
     meta:
       title: "Mentions légales — La Plage Digitale"
       noindex: true
-    sections:
+    components:
       - component: site-header
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'pt-32 pb-24'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-gray'
             children:
-              - type: h1
+              - type: text
+                element: h1
                 content: Mentions légales
                 props:
                   className: 'text-3xl font-bold text-gray-900 mb-8'
-              - type: h2
+              - type: text
+                element: h2
                 content: Éditeur du site
                 props:
                   className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
-              - type: paragraph
+              - type: text
+                element: p
                 content: "La Plage Digitale — Association loi 1908 — 13 rue Jacques Peirotes, 67000 Strasbourg — Email : contact@laplagedigitale.fr"
-              - type: h2
+              - type: text
+                element: h2
                 content: Directeur de la publication
                 props:
                   className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
-              - type: paragraph
+              - type: text
+                element: p
                 content: "Simon Thierry, Président"
-              - type: h2
+              - type: text
+                element: h2
                 content: Hébergement
                 props:
                   className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
-              - type: paragraph
+              - type: text
+                element: p
                 content: "GitHub Pages — GitHub, Inc. — 88 Colin P Kelly Jr St, San Francisco, CA 94107, United States"
       - component: site-footer
 
@@ -1285,43 +1370,53 @@ pages:
     meta:
       title: "Politique de confidentialité — La Plage Digitale"
       noindex: true
-    sections:
+    components:
       - component: site-header
-      - type: section
+      - type: container
+        element: section
         props:
           className: 'pt-32 pb-24'
         children:
-          - type: div
+          - type: container
             props:
               className: 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-gray'
             children:
-              - type: h1
+              - type: text
+                element: h1
                 content: Politique de confidentialité
                 props:
                   className: 'text-3xl font-bold text-gray-900 mb-8'
-              - type: h2
+              - type: text
+                element: h2
                 content: Collecte des données
                 props:
                   className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
-              - type: paragraph
+              - type: text
+                element: p
                 content: "Ce site collecte uniquement les données transmises volontairement via le formulaire de contact : nom, adresse email et message. Ces données sont utilisées exclusivement pour répondre à votre demande."
-              - type: h2
+              - type: text
+                element: h2
                 content: Analytiques
                 props:
                   className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
-              - type: paragraph
+              - type: text
+                element: p
                 content: "Ce site utilise un système d'analytiques respectueux de la vie privée, sans cookies et sans collecte de données personnelles identifiantes, conforme au RGPD."
-              - type: h2
+              - type: text
+                element: h2
                 content: Vos droits
                 props:
                   className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
-              - type: paragraph
+              - type: text
+                element: p
                 content: "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à contact@laplagedigitale.fr."
-              - type: h2
+              - type: text
+                element: h2
                 content: Responsable du traitement
                 props:
                   className: 'text-xl font-semibold text-gray-900 mt-8 mb-3'
-              - type: paragraph
+              - type: text
+                element: p
                 content: "La Plage Digitale — 13 rue Jacques Peirotes, 67000 Strasbourg"
       - component: site-footer
 
