@@ -47,21 +47,24 @@ sovrium update                  # Update the binary
 
 ### Deployment — Scalingo
 
-The app is deployed to Scalingo via the Sovrium buildpack. Three files drive the build; keep them in sync:
+The app is deployed to Scalingo via the Sovrium buildpack. Four files drive it; keep them in sync:
 
 - `.buildpacks` — selects `https://github.com/sovrium/scalingo-buildpack`
 - `.sovrium-version` — pins the release the buildpack downloads (checksum-verified). **Bumping this file is how the app is upgraded.**
 - `Procfile` — `web: bin/sovrium start app.yaml` (the `bin/` prefix matters — the buildpack installs into the app tree, not the system `PATH`)
+- `scalingo.json` — the app manifest: declares the environment, and the container formation for review apps
 
 Scalingo deploys from `master` while the default branch is `main`, so pushes are explicit: `git push scalingo HEAD:refs/heads/master`.
 
+**The manifest applies at app creation, not on every deploy.** Scalingo reads `scalingo.json` when it *creates* an app — a review app, or a one-click deploy — never on a `git push` to an app that already exists. Editing `scalingo.json` therefore does nothing to a running app: change that app's environment with `scalingo --app <name> env-set` as well, or the two drift apart. A manifest variable replaces whatever the parent app holds, so a review app generates its own encryption key and points `BASE_URL` at itself.
+
 ### Environment Variables
 
-Sovrium runs zero-config locally. These are set on Scalingo — see README.md for why each one:
+Declared in `scalingo.json` — see README.md for why each one:
 
-- `SOVRIUM_ENCRYPTION_KEY` — must be set explicitly on a managed host (the filesystem is rebuilt on every deploy). `AUTH_SECRET` derives from it and is never set alongside.
-- `BASE_URL` — public origin; a non-loopback value switches on secure cookies and CSRF enforcement
+- `SOVRIUM_ENCRYPTION_KEY` (`generator: secret`) — must be set explicitly on a managed host, whose filesystem is rebuilt on every deploy. `AUTH_SECRET` derives from it and is never set alongside.
+- `BASE_URL` (`generator: url`) — public origin; a non-loopback value switches on secure cookies and CSRF enforcement
 - `NODE_ENV=production` — enables immutable caching for content-hashed assets
 - `TRUSTED_PROXY_HOPS=1` — accounts for Scalingo's router so rate limits count per visitor
 - `PORT` — injected by Scalingo (default: 3000 locally)
-- `DATABASE_URL` — unused; the site is pages only, so the embedded SQLite default is fine. Injected automatically if a PostgreSQL add-on is ever attached.
+- `DATABASE_URL` — unused; the site is pages only, so the embedded SQLite default is fine. No add-on is declared, which also keeps review apps cheap.

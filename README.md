@@ -27,53 +27,66 @@ validator names anything that no longer exists.
 
 ## Deployment
 
-Scalingo builds with buildpacks, and three files drive it:
+Scalingo builds with buildpacks, and four files drive it:
 
 | File               | Role                                                             |
 | ------------------ | ---------------------------------------------------------------- |
 | `.buildpacks`      | Selects the Sovrium buildpack.                                   |
 | `.sovrium-version` | Pins the release to download. Bump this file to upgrade.         |
 | `Procfile`         | Boots the binary the buildpack installed into `bin/`.            |
+| `scalingo.json`    | Declares the environment every instance of this app needs.       |
 
 The buildpack verifies the release checksum before installing it, and a version
 that does not exist fails the build rather than deploying something unexpected.
 
-### First-time setup
+### The environment
 
-```bash
-scalingo --app laplagedigitale env-set \
-  SOVRIUM_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  BASE_URL=https://laplagedigitale.osc-fr1.scalingo.io \
-  NODE_ENV=production \
-  TRUSTED_PROXY_HOPS=1
-```
+`scalingo.json` declares four variables, each for a reason:
 
-Four variables, each for a reason:
-
-- **`SOVRIUM_ENCRYPTION_KEY`** — Sovrium generates its own key when none is
-  given, but Scalingo rebuilds the container filesystem on every deploy and
-  restart, so a generated key would be new each time. Set it once. The
+- **`SOVRIUM_ENCRYPTION_KEY`** (`generator: secret`) — Sovrium generates its own
+  key when none is given, but Scalingo rebuilds the container filesystem on
+  every deploy and restart, so a self-generated key would be new each time. The
   session-signing secret derives from it, so there is no `AUTH_SECRET` to set.
-- **`BASE_URL`** — the public origin. A non-loopback value is also what switches
-  on secure cookies and CSRF enforcement. Update it once a custom domain is
-  attached.
+- **`BASE_URL`** (`generator: url`) — the public origin, filled in with the
+  app's own address. A non-loopback value is also what switches on secure
+  cookies and CSRF enforcement.
 - **`NODE_ENV=production`** — turns on immutable caching for content-hashed
-  assets. Without it every asset is returned `no-store` and the browser refetches
-  the whole bundle on each page view.
+  assets. Without it every asset is returned `no-store` and the browser
+  refetches the whole bundle on each page view.
 - **`TRUSTED_PROXY_HOPS=1`** — accounts for Scalingo's router, so rate limits
   count per visitor instead of lumping every request onto the router's address.
   Raise it only if you put your own CDN in front of Scalingo.
 
 `PORT` is injected by Scalingo and read by Sovrium; no wiring needed.
 
-No database add-on is required: the site is pages only, so nothing needs to
-survive a restart. Add managed PostgreSQL and let Scalingo inject `DATABASE_URL`
-if the site ever grows tables, auth or forms that store submissions.
+No database add-on is declared: the site is pages only, so nothing needs to
+survive a restart and review apps stay cheap. Add a `postgresql` entry to
+`addons` if the site ever grows tables, auth, or forms that store submissions.
 
-:::note
-`scalingo env-set` echoes values to your terminal. Generate secrets inline as
-shown rather than pasting them.
-:::
+> [!IMPORTANT]
+> **The manifest applies at app *creation*, not on every deploy.** Scalingo
+> reads `scalingo.json` when it creates an app — a review app, or a one-click
+> deploy — and not on a `git push` to an app that already exists. An app created
+> before this file landed still needs its environment set once:
+>
+> ```bash
+> scalingo --app laplagedigitale env-set \
+>   SOVRIUM_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
+>   BASE_URL=https://laplagedigitale.osc-fr1.scalingo.io \
+>   NODE_ENV=production \
+>   TRUSTED_PROXY_HOPS=1
+> ```
+>
+> `scalingo env-set` echoes values to your terminal. Generate secrets inline as
+> shown rather than pasting them.
+
+### Review apps
+
+Enable review apps on the parent app and each pull request gets its own
+instance, configured from `scalingo.json`. A manifest variable **replaces** what
+the parent app holds, which is the behaviour you want here: a review app
+generates its own encryption key instead of inheriting production's, and its
+`BASE_URL` points at itself rather than at the live site.
 
 ### Deploy
 
