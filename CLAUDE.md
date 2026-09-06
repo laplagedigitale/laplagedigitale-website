@@ -13,7 +13,7 @@ When working on `app.yaml` or any Sovrium configuration, **always fetch `https:/
 
 ### Key Concepts
 
-- **Config-driven**: The entire app (design system, languages, pages, analytics) is defined in a single YAML file (`app.yaml`).
+- **Config-driven**: The entire app (design system, languages, components, pages, analytics) is declared in YAML — `app.yaml` plus the partials it `$ref`s from `config/`.
 - **Version**: pinned in `.sovrium-version` (currently 0.24.0) — the Scalingo buildpack downloads exactly that release.
 - **49 field types**, **90 component types**, built-in auth, RBAC permissions, i18n.
 - App is started with `sovrium start app.yaml` (CLI only, no TypeScript needed).
@@ -22,7 +22,7 @@ When working on `app.yaml` or any Sovrium configuration, **always fetch `https:/
 
 - **No runtime and no package manager.** Sovrium is a self-contained binary; the project has no dependencies, no `package.json` and no lockfile. Do not add one.
 - Install: `curl -fsSL https://sovrium.com/install | sh` (or `brew install sovrium/tap/sovrium`)
-- Config: `app.yaml` — single file, all config
+- Config: `app.yaml` is a table of contents; the content lives in `config/` (see below)
 - Static assets: `./public` directory, served automatically
 - The app is a **long-running server**, not a static build. There is no `sovrium build` step in this project.
 
@@ -36,6 +36,27 @@ sovrium schema                  # Print JSON Schema
 sovrium design-system           # Export the design system (md or DTCG JSON)
 sovrium update                  # Update the binary
 ```
+
+### Config layout
+
+The config follows the `config/` convention Sovrium scaffolds: **one file per singleton, one file per collection entity, scalars inline.** `app.yaml` holds `name`, `version`, `description` and the `$ref` map, so what the app contains is legible without opening anything else.
+
+```text
+app.yaml                       # scalars + the $ref map
+config/
+  design.yaml                  # singleton
+  languages.yaml               # singleton — locales and the $t: dictionary
+  analytics.yaml               # singleton
+  components/<name>.yaml       # one reusable component template per file
+  pages/<name>.yaml            # one page per file
+```
+
+Working rules:
+
+- **A partial is the entity, unwrapped.** `config/pages/home.yaml` starts at `name: home`, with no `pages:` key and no leading `-`. Same for a component template.
+- **Adding a page means two edits**: the new `config/pages/<name>.yaml`, and its `- $ref:` line in `app.yaml`. A file nothing `$ref`s is dead weight — it is never read.
+- **Order matters.** Pages and components are arrays, so the `$ref` order in `app.yaml` is their order in the app.
+- `$ref` paths resolve relative to the file containing them, and all `$ref`s resolve into one object *before* validation — so cross-section checks still see the whole app, and errors are attributed to the partial they came from (`at pages[3].meta (legal.yaml)`).
 
 ### Config conventions for this app
 

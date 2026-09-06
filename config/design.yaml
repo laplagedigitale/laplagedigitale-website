@@ -1,0 +1,63 @@
+# Design system — theme tokens and type scale.
+theme:
+  colors:
+    primary: '#eb6f18'
+    secondary: '#992b8c'
+    success: '#10b981'
+    background: '#faf9f7'
+    surface: '#ffffff'
+    text: '#1a2767'
+    textMuted: '#4b5563'
+
+  fonts:
+    heading:
+      family: 'Libre Franklin'
+      fallback: 'system-ui, sans-serif'
+      url: '/fonts/fonts.css'
+    body:
+      family: 'Questrial'
+      fallback: 'system-ui, sans-serif'
+      url: '/fonts/fonts.css'
+
+  spacing:
+    container: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+    section: 'py-16 sm:py-24'
+
+  borderRadius:
+    sm: '0.375rem'
+    md: '0.75rem'
+    lg: '1rem'
+    full: '9999px'
+
+  shadows:
+    sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)'
+    md: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+
+  animations:
+    fadeInUp:
+      duration: '0.6s'
+      easing: ease-out
+      keyframes:
+        '0%': { opacity: '0', transform: 'translateY(20px)' }
+        '100%': { opacity: '1', transform: 'translateY(0)' }
+    fadeIn:
+      duration: '0.4s'
+      easing: ease-in-out
+      keyframes:
+        '0%': { opacity: '0' }
+        '100%': { opacity: '1' }
+
+  breakpoints:
+    sm: '640px'
+    md: '768px'
+    lg: '1024px'
+    xl: '1280px'
+
+# Replaces the inert theme.fonts.*.size / lineHeight / weights fields:
+# every step here emits --text-{step} custom properties and a text-{step} utility.
+typeScale:
+  body:
+    size: '1rem'
+    lineHeight: 1.6
+    font: body

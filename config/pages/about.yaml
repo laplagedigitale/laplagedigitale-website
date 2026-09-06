@@ -1,0 +1,105 @@
+# Page: about.
+name: about
+path: /about
+meta:
+  title: "Qui sommes-nous — La Plage Digitale"
+  description: "Association loi 1908 fondée en 2019, La Plage Digitale est un tiers-lieu de l'innovation à Strasbourg dédié au coworking et à la collaboration."
+  noindex: true
+components:
+  - component: site-header
+
+  - type: container
+    element: section
+    props:
+      className: 'pt-32 pb-24'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+        children:
+          - type: container
+            props:
+              className: 'max-w-3xl'
+            children:
+              - type: text
+                element: h1
+                content: $t:about.title
+                props:
+                  className: 'text-4xl sm:text-5xl font-bold text-gray-900 mb-8'
+              - type: text
+                element: p
+                content: $t:about.description
+                props:
+                  className: 'text-lg text-gray-600 leading-relaxed'
+
+  - type: container
+    element: section
+    props:
+      className: 'py-24 bg-gray-50'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+        children:
+          - type: container
+            props:
+              className: 'max-w-3xl mx-auto'
+            children:
+              - type: text
+                element: h2
+                content: $t:about.mission.title
+                props:
+                  className: 'text-3xl font-bold text-gray-900 mb-6'
+              - type: text
+                element: p
+                content: $t:about.mission.text
+                props:
+                  className: 'text-lg text-gray-600 leading-relaxed'
+
+  - type: container
+    element: section
+    props:
+      className: 'py-24'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'
+        children:
+          - type: text
+            element: h2
+            content: $t:about.values.title
+            props:
+              className: 'text-3xl font-bold text-gray-900 mb-16'
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 md:grid-cols-3 gap-12'
+            children:
+              - type: card
+                props:
+                  className: 'p-8 rounded-xl bg-gray-50'
+                children:
+                  - type: text
+                    element: p
+                    content: $t:about.value1
+                    props:
+                      className: 'text-lg font-semibold text-gray-900'
+              - type: card
+                props:
+                  className: 'p-8 rounded-xl bg-gray-50'
+                children:
+                  - type: text
+                    element: p
+                    content: $t:about.value2
+                    props:
+                      className: 'text-lg font-semibold text-gray-900'
+              - type: card
+                props:
+                  className: 'p-8 rounded-xl bg-gray-50'
+                children:
+                  - type: text
+                    element: p
+                    content: $t:about.value3
+                    props:
+                      className: 'text-lg font-semibold text-gray-900'
+
+  - component: site-footer

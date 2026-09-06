@@ -2,8 +2,46 @@
 
 The site for La Plage Digitale, a tiers-lieu in Strasbourg. It is a
 [Sovrium](https://sovrium.com) app: the whole site — design system, languages,
-pages and analytics — is declared in `app.yaml`, served by a long-running
+components, pages and analytics — is declared in YAML, served by a long-running
 Sovrium process and deployed to [Scalingo](https://scalingo.com).
+
+## Layout
+
+`app.yaml` is a table of contents. It holds the app's scalars and a `$ref` map;
+everything else lives in `config/`, one file per singleton and one per entity.
+
+```text
+app.yaml                       # name, version, description + the $ref map
+config/
+  design.yaml                  # theme tokens and type scale
+  languages.yaml               # locales and the $t: translation dictionary
+  analytics.yaml
+  components/                  # reusable component templates, one per file
+    site-header.yaml
+    site-footer.yaml
+    space-card.yaml
+    amenity-item.yaml
+  pages/                       # one file per page
+    home.yaml
+    about.yaml
+    contact.yaml
+    legal.yaml
+    privacy.yaml
+```
+
+A partial is the entity unwrapped — `config/pages/about.yaml` starts at
+`name: about`, with no `pages:` key and no leading `-`. Adding a page means
+writing the file *and* adding its `- $ref:` line to `app.yaml`; nothing scans
+the directory, so an unreferenced file is never read. The `$ref` order in
+`app.yaml` is the order the pages and components are in.
+
+`$ref`s resolve into one object before validation, so errors still name the
+partial they came from:
+
+```text
+Unknown property 'noindexx'
+  at pages[3].meta  (legal.yaml)
+```
 
 ## Setup
 
