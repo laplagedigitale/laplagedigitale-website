@@ -1,0 +1,151 @@
+# Réponses au baromètre de satisfaction des membres.
+#
+# Une ligne = une réponse au formulaire public monté sur /feedback. Les
+# réponses sont anonymes par défaut : `email` n'est renseigné que si la
+# personne demande explicitement à être recontactée.
+#
+# Les quatre premiers champs sont de la segmentation, pas du décor. Ils
+# existent pour répondre à « pour qui ça ne va pas ? » : un problème de bruit
+# vécu par les bureaux fixes du matin et un problème de bruit vécu par les
+# visiteurs de passage n'appellent pas la même réponse.
+id: 1
+name: feedback
+fields:
+  # --- Pour qui ---
+  - id: 1
+    name: profil
+    type: single-select
+    required: true
+    options:
+      - Flex, à la journée
+      - Nomade
+      - Bureau fixe
+      - Équipe hébergée
+      - Utilisateur des salles de réunion
+      - Visiteur ou membre occasionnel
+
+  - id: 2
+    name: anciennete
+    type: single-select
+    options:
+      - Moins d'un mois
+      - De 1 à 6 mois
+      - De 6 mois à 2 ans
+      - Plus de 2 ans
+
+  - id: 3
+    name: frequence
+    type: single-select
+    required: true
+    options:
+      - Tous les jours ou presque
+      - 3 à 4 jours par semaine
+      - 1 à 2 jours par semaine
+      - Quelques jours par mois
+      - Plus rarement
+
+  - id: 4
+    name: moments
+    type: multi-select
+    options:
+      - Tôt le matin, avant 9h
+      - En journée, de 9h à 18h
+      - En soirée, après 18h
+      - Le week-end
+
+  # --- La température ---
+  - id: 5
+    name: ressenti
+    type: single-select
+    required: true
+    options:
+      - Très bien, je viens ici avec plaisir
+      - Bien, sans plus
+      - Ça dépend beaucoup des jours
+      - Plutôt mal à l'aise
+      - Mal, je pense à partir
+
+  - id: 6
+    name: satisfaction
+    type: rating
+    max: 5
+    required: true
+
+  - id: 7
+    name: recommandation
+    type: integer
+    min: 0
+    max: 10
+
+  # --- Ce qui va, ce qui ne va pas ---
+  # Même liste d'items des deux côtés, pour que les deux réponses se lisent
+  # l'une contre l'autre.
+  - id: 8
+    name: points_forts
+    type: multi-select
+    options:
+      - Le calme et le niveau sonore
+      - Le confort du poste de travail
+      - La propreté et l'entretien
+      - La température, la lumière, l'air
+      - La connexion internet et le wifi
+      - Les salles de réunion
+      - La cuisine, le café, l'espace détente
+      - L'ambiance et la convivialité
+      - Les rencontres et l'entraide entre membres
+      - Les événements et la vie de la communauté
+      - L'accueil et la réactivité de l'équipe
+      - Les horaires et l'accès au bâtiment
+      - Le rapport qualité-prix
+
+  - id: 9
+    name: points_faibles
+    type: multi-select
+    options:
+      - Le calme et le niveau sonore
+      - Le confort du poste de travail
+      - La propreté et l'entretien
+      - La température, la lumière, l'air
+      - La connexion internet et le wifi
+      - Les salles de réunion
+      - La cuisine, le café, l'espace détente
+      - L'ambiance et la convivialité
+      - Les rencontres et l'entraide entre membres
+      - Les événements et la vie de la communauté
+      - L'accueil et la réactivité de l'équipe
+      - Les horaires et l'accès au bâtiment
+      - Le rapport qualité-prix
+
+  - id: 10
+    name: une_chose_a_changer
+    type: long-text
+
+  # --- Le mot de la fin ---
+  - id: 11
+    name: bravo
+    type: long-text
+
+  - id: 12
+    name: commentaire
+    type: long-text
+
+  - id: 13
+    name: email
+    type: email
+
+  - id: 14
+    name: created_at
+    type: created-at
+
+# Le formulaire est public, la table ne l'est pas : les réponses ne sont
+# lisibles que par un compte connecté. L'écriture publique passe par la règle
+# d'accès du formulaire, pas par `create` ci-dessous.
+permissions:
+  read: authenticated
+  create:
+    - admin
+    - member
+  update:
+    - admin
+  delete:
+    - admin
