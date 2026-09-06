@@ -1,7 +1,7 @@
 {
   "name": "la-plage-digitale",
   "description": "The La Plage Digitale website — a Sovrium app declared entirely in app.yaml and served by a long-running Sovrium process.",
-  "repository": "https://github.com/laplagedigitale/laplagedigitale.github.io",
+  "repository": "https://github.com/laplagedigitale/laplagedigitale-website",
   "website": "https://www.laplagedigitale.fr",
   "env": {
     "SOVRIUM_ENCRYPTION_KEY": {
