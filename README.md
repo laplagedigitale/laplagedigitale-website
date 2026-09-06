@@ -101,6 +101,10 @@ No database add-on is declared: the site is pages only, so nothing needs to
 survive a restart and review apps stay cheap. Add a `postgresql` entry to
 `addons` if the site ever grows tables, auth, or forms that store submissions.
 
+The `formation` pins one **M** container. Do not size it back down — an `S`
+container crashes on deploy: Sovrium compiles the stylesheet at boot, and that
+does not fit in `S`.
+
 > [!IMPORTANT]
 > **The manifest applies at app *creation*, not on every deploy.** Scalingo
 > reads `scalingo.json` when it creates an app — a review app, or a one-click

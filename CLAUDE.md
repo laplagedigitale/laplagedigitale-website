@@ -73,7 +73,9 @@ The app is deployed to Scalingo via the Sovrium buildpack. Four files drive it; 
 - `.buildpacks` — selects `https://github.com/sovrium/scalingo-buildpack`
 - `.sovrium-version` — pins the release the buildpack downloads (checksum-verified). **Bumping this file is how the app is upgraded.**
 - `Procfile` — `web: bin/sovrium start app.yaml` (the `bin/` prefix matters — the buildpack installs into the app tree, not the system `PATH`)
-- `scalingo.json` — the app manifest: declares the environment, and the container formation for review apps
+- `scalingo.json` — the app manifest: declares the environment and the container formation
+
+**The container must be `M`.** `formation.web.size` is `M` because an `S` container crashes on deploy — Sovrium compiles the stylesheet at boot and that does not fit. Do not trim it back to `S` to save money.
 
 Scalingo deploys from `master` while the default branch is `main`, so pushes are explicit: `git push scalingo HEAD:refs/heads/master`.
 
