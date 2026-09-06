@@ -45,6 +45,7 @@ The config follows the `config/` convention Sovrium scaffolds: **one file per si
 app.yaml                       # scalars + the $ref map
 config/
   design.yaml                  # singleton
+  auth.yaml                    # singleton
   languages.yaml               # singleton — locales and the $t: dictionary
   analytics.yaml               # singleton
   components/<name>.yaml       # one reusable component template per file
@@ -65,6 +66,9 @@ Working rules:
 - Page content lives under `pages[].components` (not `sections`).
 - Design tokens live under `design.theme`. The top-level `theme` key is a deprecated alias and the two cannot both be present.
 - `design.typeScale` is the working replacement for `theme.fonts.*.size`, `.lineHeight` and `.weights`, which validate but reach nothing.
+- **Auth is on because the `auth` block exists** — there is no `enabled` flag; presence is the switch. It mounts `/api/auth/*`, RBAC and the admin endpoints. Every page stays public: auth is there for the admin surface, not to gate the site.
+- **`allowSignUp: false` is deliberate.** The default is `true`, which on a public marketing site would let anyone create an account. Users are created by admins; `defaultRole: viewer` keeps them least-privilege.
+- Auth needs a **persistent** database. Scalingo rebuilds the container filesystem on every deploy, so the SQLite default would discard users each time — this is why the PostgreSQL add-on is not optional here.
 
 ### Deployment — Scalingo
 

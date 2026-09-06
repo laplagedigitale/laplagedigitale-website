@@ -1,0 +1,15 @@
+# Authentication. Its presence is what mounts /api/auth/*, the RBAC layer and
+# the admin user-management endpoints — there is no `enabled` flag.
+#
+# The site is public: every page here is readable without a session. Auth exists
+# so the admin surface does, which is why self-registration is off.
+
+strategies:
+  - type: emailAndPassword
+
+# Nobody signs themselves up on a public marketing site — admins create users.
+allowSignUp: false
+
+# Least privilege for anyone an admin does create. The seeded administrator
+# comes from AUTH_ADMIN_EMAIL / AUTH_ADMIN_PASSWORD and is unaffected by this.
+defaultRole: viewer

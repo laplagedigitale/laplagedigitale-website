@@ -10,6 +10,9 @@ description: La Plage Digitale — Tiers-lieu de l'innovation à Strasbourg
 design:
   $ref: ./config/design.yaml
 
+auth:
+  $ref: ./config/auth.yaml
+
 languages:
   $ref: ./config/languages.yaml
 

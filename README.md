@@ -14,6 +14,7 @@ everything else lives in `config/`, one file per singleton and one per entity.
 app.yaml                       # name, version, description + the $ref map
 config/
   design.yaml                  # theme tokens and type scale
+  auth.yaml                    # strategies, sign-up policy, default role
   languages.yaml               # locales and the $t: translation dictionary
   analytics.yaml
   components/                  # reusable component templates, one per file
@@ -104,16 +105,25 @@ Two more variables seed the first administrator:
   review app never shares production's admin credentials. Read it back with
   `scalingo --app <name> env`.
 
+Seeding runs only against a *fresh* database and only when both variables are
+set; on later boots it no-ops rather than duplicating or modifying an existing
+user. The startup banner confirms it with an `Admin:` line.
+
 > [!NOTE]
-> **Seeding needs an `auth` block, which the config does not yet have.** The
-> admin plugin turns on the moment `auth` exists in the config and not before,
-> so these two variables sit inert until then. Seeding also only runs against a
-> *fresh* database and only when both variables are set; on later boots it
-> no-ops rather than duplicating or modifying an existing user.
+> **The site stays public.** `config/auth.yaml` exists so the admin surface
+> does — every page is still readable without a session. `allowSignUp` is
+> `false`, so nobody can create their own account; the default is `true`, which
+> would let anyone sign up on a public site.
 
 `addons` provisions PostgreSQL (`postgresql-starter-512`). Scalingo injects
 `DATABASE_URL` from the add-on, which is why that variable is not declared in
 `env` — Sovrium switches from its embedded SQLite to Postgres on seeing it.
+The add-on is **required now that auth is on**: Scalingo rebuilds the container
+filesystem on every deploy, so a SQLite database would throw away every user
+account on each release.
+
+Email is not configured, so password resets and verification mails cannot be
+sent — the startup banner says so. Set the `SMTP_*` variables when that matters.
 
 The `formation` pins one **M** container. Do not size it back down — an `S`
 container crashes on deploy: Sovrium compiles the stylesheet at boot, and that
