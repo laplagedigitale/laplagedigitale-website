@@ -1,0 +1,120 @@
+# Baromètre de satisfaction des membres — formulaire public monté sur
+# /feedback, sans connexion (`access: { require: all }`). Chaque envoi crée une
+# ligne dans la table `feedback`.
+#
+# Ordre des sections : la segmentation d'abord (quatre clics faciles, qui
+# mettent en route sans rien demander d'intime), le ressenti ensuite, les
+# verbatims en dernier — c'est là que les gens abandonnent, autant que ce soit
+# après avoir donné l'essentiel.
+#
+# Quatre champs obligatoires seulement. Chaque champ requis supplémentaire
+# coûte des réponses, et une réponse partielle vaut mieux qu'un abandon.
+id: 1
+name: feedback
+title: "Comment ça va, à La Plage ?"
+description: >-
+  Deux minutes, anonyme. On veut prendre la température : ce qui vous va bien
+  ici, ce qui vous gêne, et à qui ça arrive. Vos réponses servent à décider
+  quoi améliorer en premier.
+path: /feedback
+access:
+  require: all
+submitTo:
+  table: feedback
+antiSpam:
+  honeypot: true
+display:
+  submitLabel: Envoyer ma réponse
+onSuccess:
+  type: successPage
+  title: "Merci, c'est reçu."
+  message: >-
+    On dépouille tout et on partage la synthèse avec les membres. Si vous avez
+    laissé votre email, on revient vers vous.
+  buttonLabel: Retour au site
+  buttonHref: /
+fields:
+  - kind: section
+    heading: Vous
+    description: >-
+      Pour savoir non seulement ce qui coince, mais pour qui. Rien ici ne
+      permet de vous identifier.
+
+  - kind: table-field
+    column: profil
+    label: Vous venez à La Plage plutôt comme…
+    required: true
+
+  - kind: table-field
+    column: anciennete
+    label: Depuis combien de temps ?
+
+  - kind: table-field
+    column: frequence
+    label: À quelle fréquence venez-vous ?
+    required: true
+
+  - kind: table-field
+    column: moments
+    label: À quels moments êtes-vous là ?
+    helpText: Plusieurs réponses possibles.
+
+  - kind: section
+    heading: La température
+    description: Le cœur du sujet — comment vous vous sentez ici, en ce moment.
+
+  - kind: table-field
+    column: ressenti
+    label: Comment vous sentez-vous à La Plage ces temps-ci ?
+    required: true
+
+  - kind: table-field
+    column: satisfaction
+    label: Votre satisfaction globale
+    helpText: 1 = très insatisfait, 5 = très satisfait.
+    required: true
+
+  - kind: table-field
+    column: recommandation
+    label: Recommanderiez-vous La Plage à quelqu'un qui cherche un espace ?
+    helpText: De 0 (jamais) à 10 (les yeux fermés).
+
+  - kind: section
+    heading: Ce qui va, ce qui ne va pas
+    description: >-
+      Deux listes identiques, à remplir des deux côtés. Trois réponses par
+      liste suffisent — allez à l'essentiel.
+
+  - kind: table-field
+    column: points_forts
+    label: Qu'est-ce qui vous va bien ici ?
+    helpText: Plusieurs réponses possibles.
+
+  - kind: table-field
+    column: points_faibles
+    label: Qu'est-ce qui vous gêne ou vous manque ?
+    helpText: Plusieurs réponses possibles. Rien ne vous oblige à en cocher.
+
+  - kind: table-field
+    column: une_chose_a_changer
+    label: Si on ne pouvait changer qu'une seule chose, ce serait quoi ?
+    placeholder: Une seule, la vôtre.
+
+  - kind: section
+    heading: Le mot de la fin
+
+  - kind: table-field
+    column: bravo
+    label: Quelque chose ou quelqu'un à saluer ?
+    helpText: Un moment, un service, une personne de l'équipe ou de la communauté.
+
+  - kind: table-field
+    column: commentaire
+    label: Autre chose à nous dire ?
+
+  - kind: table-field
+    column: email
+    label: Votre email
+    helpText: >-
+      Facultatif, et uniquement si vous voulez qu'on revienne vers vous.
+      Laissez vide pour rester complètement anonyme.

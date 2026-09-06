@@ -16,6 +16,16 @@ auth:
 languages:
   $ref: ./config/languages.yaml
 
+# Première table du site : les réponses au baromètre de satisfaction. Elle a
+# besoin d'une base persistante — l'add-on PostgreSQL de scalingo.json n'est
+# donc plus seulement là pour les comptes admin.
+tables:
+  - $ref: ./config/tables/feedback.yaml
+
+# Formulaires autonomes, montés sur leur propre `path`.
+forms:
+  - $ref: ./config/forms/feedback.yaml
+
 components:
   - $ref: ./config/components/site-header.yaml
   - $ref: ./config/components/site-footer.yaml
