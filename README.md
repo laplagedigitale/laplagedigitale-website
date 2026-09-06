@@ -97,9 +97,23 @@ that does not exist fails the build rather than deploying something unexpected.
 
 `PORT` is injected by Scalingo and read by Sovrium; no wiring needed.
 
-No database add-on is declared: the site is pages only, so nothing needs to
-survive a restart and review apps stay cheap. Add a `postgresql` entry to
-`addons` if the site ever grows tables, auth, or forms that store submissions.
+Two more variables seed the first administrator:
+
+- **`AUTH_ADMIN_EMAIL`** — `contact@laplagedigitale.fr`.
+- **`AUTH_ADMIN_PASSWORD`** (`generator: secret`) — generated per app, so a
+  review app never shares production's admin credentials. Read it back with
+  `scalingo --app <name> env`.
+
+> [!NOTE]
+> **Seeding needs an `auth` block, which the config does not yet have.** The
+> admin plugin turns on the moment `auth` exists in the config and not before,
+> so these two variables sit inert until then. Seeding also only runs against a
+> *fresh* database and only when both variables are set; on later boots it
+> no-ops rather than duplicating or modifying an existing user.
+
+`addons` provisions PostgreSQL (`postgresql-starter-512`). Scalingo injects
+`DATABASE_URL` from the add-on, which is why that variable is not declared in
+`env` — Sovrium switches from its embedded SQLite to Postgres on seeing it.
 
 The `formation` pins one **M** container. Do not size it back down — an `S`
 container crashes on deploy: Sovrium compiles the stylesheet at boot, and that

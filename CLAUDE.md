@@ -90,4 +90,5 @@ Declared in `scalingo.json` — see README.md for why each one:
 - `NODE_ENV=production` — enables immutable caching for content-hashed assets
 - `TRUSTED_PROXY_HOPS=1` — accounts for Scalingo's router so rate limits count per visitor
 - `PORT` — injected by Scalingo (default: 3000 locally)
-- `DATABASE_URL` — unused; the site is pages only, so the embedded SQLite default is fine. No add-on is declared, which also keeps review apps cheap.
+- `DATABASE_URL` — **injected by the PostgreSQL add-on**, never declared in `scalingo.json`. Its presence is what switches Sovrium off its embedded SQLite default.
+- `AUTH_ADMIN_EMAIL` / `AUTH_ADMIN_PASSWORD` (`generator: secret`) — seed the first administrator. **Both are inert until the config declares an `auth` block** — the admin plugin turns on with `auth` and not before. Seeding runs only against a fresh database and only with both set; later boots no-op rather than duplicating or modifying a user.
