@@ -24,6 +24,6 @@ children:
             props:
               className: 'flex items-center gap-4 text-bodySmall'
             children:
-              - { type: link, content: Voir le blog, props: { href: /blog, target: _blank, className: 'text-navy-100 hover:text-white' } }
+              - { type: link, content: Voir le blog, props: { href: /blog, target: _blank, className: 'whitespace-nowrap text-navy-100 hover:text-white' } }
               - type: form
                 action: { type: auth, method: logout, submitLabel: Déconnexion, onSuccess: { type: navigate, navigate: /connexion } }

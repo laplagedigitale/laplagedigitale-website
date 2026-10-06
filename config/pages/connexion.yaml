@@ -22,7 +22,7 @@ components:
           - type: container
             children:
               - { type: text, element: p, content: 'Espace rédaction', props: { className: 'text-overline uppercase text-orange mb-4' } }
-              - { type: text, element: p, content: 'Partagez les actualités de la Plage : événements, newsletters, portraits.', props: { className: 'text-h2 text-white max-w-md' } }
+              - { type: text, element: p, content: 'Partagez les actualités de la Plage : événements, newsletters, portraits.', props: { className: 'text-h2 font-bold leading-tight text-white max-w-md' } }
           - { type: text, element: p, content: 'Connecter · Innover · Entreprendre', props: { className: 'text-caption uppercase tracking-widest text-navy-200' } }
       - type: container
         props:
@@ -36,6 +36,9 @@ components:
               - { type: text, element: p, content: "Réservé à l'équipe de rédaction. Pas de compte ? Demandez-le à un administrateur.", props: { className: 'text-bodySmall text-text-muted mb-8' } }
               - type: form
                 action: { type: auth, method: login, submitLabel: Se connecter, onSuccess: { type: navigate, navigate: /editor } }
+                fields:
+                  - { field: email, label: Adresse e-mail, placeholder: prenom@laplagedigitale.fr }
+                  - { field: password, label: Mot de passe }
               - type: link
                 content: "← Retour au site"
                 props: { href: /, className: 'inline-block mt-8 text-bodySmall text-text-muted hover:text-navy' }

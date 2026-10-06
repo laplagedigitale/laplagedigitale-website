@@ -44,7 +44,6 @@ components:
           - { field: published_at, label: Publication }
           - { field: categories, label: Catégories }
           - { field: author, label: Auteur }
-          - { field: updated_at, label: Modifié }
           - type: actions
             actions:
               - label: Supprimer

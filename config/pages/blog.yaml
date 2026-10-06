@@ -68,17 +68,17 @@ components:
                   element: p
                   content: '$record.published_at'
                   props:
-                    className: 'text-caption text-text-muted mb-2'
+                    className: 'text-caption uppercase tracking-widest text-magenta px-5 pt-5 mb-2'
                 - type: text
                   element: h2
                   content: '$record.title'
                   props:
-                    className: 'text-h4 text-navy mb-2'
+                    className: 'text-h4 text-navy px-5 mb-2'
                 - type: text
                   element: p
                   content: '$record.excerpt'
                   props:
-                    className: 'text-bodySmall text-text-muted line-clamp-3'
+                    className: 'text-bodySmall text-text-muted line-clamp-3 px-5 pb-6'
               onClick: { type: navigate, path: '/blog/$record.slug' }
 
   - component: site-footer
