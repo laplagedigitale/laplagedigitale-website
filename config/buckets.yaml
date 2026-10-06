@@ -1,0 +1,11 @@
+# Storage buckets. Where the bytes live is set by environment (STORAGE_PROVIDER):
+# unset on PostgreSQL, files are stored in the database and survive Scalingo
+# redeploys — never use the local-disk provider there.
+- name: blog-images
+  public: true
+  maxFileSize: 5242880
+  allowedMimeTypes: [image/jpeg, image/png, image/webp]
+  permissions:
+    upload: [admin, editor]
+    download: all
+    delete: [admin, editor]

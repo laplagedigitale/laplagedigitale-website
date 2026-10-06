@@ -4,8 +4,8 @@
 # $refs resolve before validation, so errors are still reported per file.
 
 name: la-plage-digitale
-version: 1.0.0
-description: La Plage Digitale — Tiers-lieu de l'innovation à Strasbourg
+version: 2.0.0
+description: La Plage Digitale — Tiers-lieu et coworking à Strasbourg
 
 design:
   $ref: ./config/design.yaml
@@ -16,18 +16,19 @@ auth:
 languages:
   $ref: ./config/languages.yaml
 
+tables:
+  - $ref: ./config/tables/posts.yaml
+  - $ref: ./config/tables/leads.yaml
+
+buckets:
+  $ref: ./config/buckets.yaml
+
 components:
   - $ref: ./config/components/site-header.yaml
   - $ref: ./config/components/site-footer.yaml
-  - $ref: ./config/components/space-card.yaml
-  - $ref: ./config/components/amenity-item.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
-  - $ref: ./config/pages/about.yaml
-  - $ref: ./config/pages/contact.yaml
-  - $ref: ./config/pages/legal.yaml
-  - $ref: ./config/pages/privacy.yaml
 
 analytics:
   $ref: ./config/analytics.yaml

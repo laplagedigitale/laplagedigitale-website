@@ -1,0 +1,49 @@
+# English dictionary. Same keys, same order as fr.yaml.
+
+# ── Hrefs ──
+href.home: /en
+href.about: /en/qui-sommes-nous
+href.activities: /en/nos-activites
+href.supporters: /en/nos-soutiens
+href.space: /en/espace-coworking
+href.pricing: /en/les-formules
+href.coworkers: /en/nos-coworkers
+href.companies: /en/les-entreprises
+href.blog: /en/blog
+href.contact: /en/contact
+href.legal: /en/mentions-legales
+href.privacy: /en/confidentialite
+
+# ── Navigation ──
+nav.aria: Main navigation
+nav.menu: Menu
+nav.home: Home
+nav.about: About us
+nav.about.desc: The project, the association and the team
+nav.activities: Our activities
+nav.activities.desc: What we offer and host
+nav.supporters: Our supporters
+nav.supporters.desc: Partners, labels and networks
+nav.coworking: Coworking space
+nav.space: The space
+nav.space.desc: Desks, flex seats, private boxes and rooms
+nav.pricing: Plans & pricing
+nav.pricing.desc: Fixed, Nomad, Flex and meeting rooms
+nav.coworkers: Our coworkers
+nav.coworkers.desc: The people who make La Plage
+nav.companies: Resident companies
+nav.companies.desc: The companies based at La Plage
+nav.blog: News
+nav.contact: Practical info
+nav.cta: Become a member
+nav.legal: Legal notice
+nav.privacy: Privacy
+nav.editor: Editors' area
+
+# ── Footer ──
+footer.tagline: "A community-run third place and coworking space in the heart of Strasbourg: over 600 m² to work, meet and start up."
+footer.visit: Find us
+footer.hours: "Monday to Friday, 9am–5pm · 24/7 access for fixed desks"
+footer.explore: Explore
+footer.follow: Follow us
+footer.copyright: "© La Plage Digitale — non-profit association (Alsace-Moselle law of 1908)"

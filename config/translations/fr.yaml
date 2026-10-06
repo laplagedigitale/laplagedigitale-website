@@ -1,0 +1,50 @@
+# French dictionary (default language). Keys are grouped by surface; a page's
+# keys share its prefix. Keep fr / en / de in the same order.
+
+# ── Hrefs ── French is unprefixed.
+href.home: /
+href.about: /qui-sommes-nous
+href.activities: /nos-activites
+href.supporters: /nos-soutiens
+href.space: /espace-coworking
+href.pricing: /les-formules
+href.coworkers: /nos-coworkers
+href.companies: /les-entreprises
+href.blog: /blog
+href.contact: /contact
+href.legal: /mentions-legales
+href.privacy: /confidentialite
+
+# ── Navigation ──
+nav.aria: Navigation principale
+nav.menu: Menu
+nav.home: Accueil
+nav.about: Qui sommes-nous ?
+nav.about.desc: Le projet, l'association et l'équipe
+nav.activities: Nos activités
+nav.activities.desc: Ce que nous proposons et accueillons
+nav.supporters: Nos soutiens
+nav.supporters.desc: Partenaires, labels et réseaux
+nav.coworking: Espace coworking
+nav.space: L'espace
+nav.space.desc: Bureaux, places flex, box et salles
+nav.pricing: Nos formules
+nav.pricing.desc: Fixe, Nomade, Flex et salles de réunion
+nav.coworkers: Nos coworkers
+nav.coworkers.desc: Celles et ceux qui font la Plage
+nav.companies: Les entreprises
+nav.companies.desc: Les entreprises présentes à la Plage
+nav.blog: Actualités
+nav.contact: Infos pratiques
+nav.cta: Adhérer
+nav.legal: Mentions légales
+nav.privacy: Confidentialité
+nav.editor: Espace rédaction
+
+# ── Footer ──
+footer.tagline: "Tiers-lieu et coworking associatif au cœur de Strasbourg : plus de 600 m² pour travailler, se rencontrer et entreprendre."
+footer.visit: Nous trouver
+footer.hours: "Du lundi au vendredi, 9h–17h · accès 24h/24 pour les bureaux fixes"
+footer.explore: Explorer
+footer.follow: Nous suivre
+footer.copyright: "© La Plage Digitale — association loi 1908"

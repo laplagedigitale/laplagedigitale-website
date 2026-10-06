@@ -1,0 +1,49 @@
+# German dictionary. Same keys, same order as fr.yaml.
+
+# ── Hrefs ──
+href.home: /de
+href.about: /de/qui-sommes-nous
+href.activities: /de/nos-activites
+href.supporters: /de/nos-soutiens
+href.space: /de/espace-coworking
+href.pricing: /de/les-formules
+href.coworkers: /de/nos-coworkers
+href.companies: /de/les-entreprises
+href.blog: /de/blog
+href.contact: /de/contact
+href.legal: /de/mentions-legales
+href.privacy: /de/confidentialite
+
+# ── Navigation ──
+nav.aria: Hauptnavigation
+nav.menu: Menü
+nav.home: Startseite
+nav.about: Über uns
+nav.about.desc: Das Projekt, der Verein und das Team
+nav.activities: Unsere Aktivitäten
+nav.activities.desc: Was wir anbieten und beherbergen
+nav.supporters: Unsere Unterstützer
+nav.supporters.desc: Partner, Labels und Netzwerke
+nav.coworking: Coworking-Space
+nav.space: Die Räume
+nav.space.desc: Schreibtische, Flex-Plätze, Boxen und Säle
+nav.pricing: Tarife
+nav.pricing.desc: Fix, Nomade, Flex und Besprechungsräume
+nav.coworkers: Unsere Coworker
+nav.coworkers.desc: Die Menschen hinter La Plage
+nav.companies: Die Unternehmen
+nav.companies.desc: Die Unternehmen vor Ort
+nav.blog: Neuigkeiten
+nav.contact: Praktische Infos
+nav.cta: Mitglied werden
+nav.legal: Impressum
+nav.privacy: Datenschutz
+nav.editor: Redaktionsbereich
+
+# ── Footer ──
+footer.tagline: "Ein gemeinnütziger Dritter Ort und Coworking-Space mitten in Straßburg: über 600 m² zum Arbeiten, Begegnen und Gründen."
+footer.visit: So finden Sie uns
+footer.hours: "Montag bis Freitag, 9–17 Uhr · 24/7-Zugang für Fixplätze"
+footer.explore: Entdecken
+footer.follow: Folgen Sie uns
+footer.copyright: "© La Plage Digitale — Verein nach elsässisch-lothringischem Recht von 1908"

@@ -13,3 +13,11 @@ allowSignUp: false
 # Least privilege for anyone an admin does create. The seeded administrator
 # comes from AUTH_ADMIN_EMAIL / AUTH_ADMIN_PASSWORD and is unaffected by this.
 defaultRole: viewer
+
+# Blog editors: sign in at /connexion, which sends them to the /editor front office.
+# They write the `posts` table and nothing else — the console at /_admin stays
+# admin-only. Admins create their accounts in /_admin/users and set this role.
+roles:
+  - name: editor
+    description: Rédaction du blog — crée, modifie et publie les articles
+    level: 30

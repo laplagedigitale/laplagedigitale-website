@@ -1,0 +1,18 @@
+# Table: leads — contact form submissions, read by admins in /_admin.
+id: 2
+name: leads
+fields:
+  - { id: 1, name: name, label: Nom, type: single-line-text, required: true }
+  - { id: 2, name: email, label: E-mail, type: email, required: true }
+  - { id: 3, name: phone, label: Téléphone, type: single-line-text }
+  - id: 4
+    name: subject
+    label: Objet
+    type: single-select
+    options: [visite, bureau-fixe, nomade, flex, salle-de-reunion, domiciliation, evenement, autre]
+  - { id: 5, name: message, label: Message, type: long-text, required: true }
+  - { id: 6, name: created_at, type: created-at }
+
+# Anyone may submit; nobody but admins reads.
+permissions:
+  create: all

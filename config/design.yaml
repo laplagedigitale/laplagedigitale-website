@@ -1,23 +1,61 @@
-# Design system — tokens and type scale.
+# Design system — the 2026 charte graphique ("2026-02 charte plage.pdf").
+#
+# Palette principale: navy leads, blue / orange / magenta follow, each with
+# the lighter tints the charte shows under its swatch. Magenta has no hex in
+# the PDF; #cf1769 is read from the logo itself, as is sage #92aa58 (the PDF
+# misprints it "#692aa58").
+#
+# Contrast: orange and amber are fills and accents only — navy text on them,
+# never orange text on white (fails WCAG AA at body size).
 colors:
-  primary: '#eb6f18'
-  secondary: '#992b8c'
-  success: '#10b981'
-  background: '#faf9f7'
+  # Palette principale
+  navy: '#273a61'
+  navy-700: '#1c2b4a'
+  navy-300: '#5d6a88'
+  navy-200: '#929caf'
+  navy-100: '#e4e6eb'
+  blue: '#6290bc'
+  blue-300: '#8fb2d6'
+  blue-200: '#b5cce4'
+  blue-100: '#e3ecf5'
+  orange: '#f08137'
+  orange-300: '#f6a66b'
+  orange-200: '#f9c296'
+  orange-100: '#fde3cc'
+  magenta: '#cf1769'
+  magenta-300: '#e0538f'
+  magenta-200: '#ec8bb3'
+  magenta-100: '#f9dbe8'
+  # Palette secondaire
+  forest: '#455b32'
+  sage: '#92aa58'
+  amber: '#f9af25'
+  coral-red: '#e83d3b'
+  # Semantic roles
+  primary: '#273a61'
+  secondary: '#6290bc'
+  accent: '#f08137'
+  highlight: '#cf1769'
+  success: '#92aa58'
+  danger: '#e83d3b'
+  background: '#fbf8f4'
+  sand: '#f4ede4'
   surface: '#ffffff'
-  text: '#1a2767'
-  text-muted: '#4b5563'
+  text: '#273a61'
+  text-muted: '#5d6a88'
+  border: '#e4e6eb'
 
 radius:
-  sm: '0.375rem'
-  md: '0.75rem'
-  lg: '1rem'
+  sm: '0.5rem'
+  md: '1rem'
+  lg: '1.5rem'
+  xl: '2rem'
   full: '9999px'
 
 elevation:
-  sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)'
-  md: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-  lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+  sm: '0 1px 2px 0 rgb(39 58 97 / 0.06)'
+  md: '0 8px 24px -8px rgb(39 58 97 / 0.18)'
+  lg: '0 24px 48px -16px rgb(39 58 97 / 0.28)'
 
 motion:
   animations:
@@ -40,21 +78,70 @@ breakpoints:
   lg: '1024px'
   xl: '1280px'
 
-# families names the faces; sizes and leading live under steps, where
-# every step emits --text-{step} custom properties and a text-{step} utility.
+# One face, SUSE, self-hosted as a variable font (300–800) from /fonts.
+# Sizes, leading and weight live on the steps; the signage look — tight,
+# heavy capitals — is the display / h1 rungs.
 typeScale:
   families:
-    heading:
-      family: 'Libre Franklin'
+    title:
+      family: 'SUSE'
       fallback: 'system-ui, sans-serif'
       url: '/fonts/fonts.css'
     body:
-      family: 'Questrial'
+      family: 'SUSE'
       fallback: 'system-ui, sans-serif'
       url: '/fonts/fonts.css'
 
   steps:
+    display:
+      size: '4.5rem'
+      lineHeight: 1
+      weight: 800
+      letterSpacing: '-0.03em'
+      font: title
+    h1:
+      size: '3.25rem'
+      lineHeight: 1.05
+      weight: 800
+      letterSpacing: '-0.025em'
+      font: title
+    h2:
+      size: '2.5rem'
+      lineHeight: 1.1
+      weight: 700
+      letterSpacing: '-0.02em'
+      font: title
+    h3:
+      size: '1.5rem'
+      lineHeight: 1.25
+      weight: 700
+      font: title
+    h4:
+      size: '1.125rem'
+      lineHeight: 1.35
+      weight: 600
+      font: title
+    lead:
+      size: '1.25rem'
+      lineHeight: 1.55
+      weight: 400
+      font: body
     body:
       size: '1rem'
-      lineHeight: 1.6
+      lineHeight: 1.65
+      weight: 400
       font: body
+    bodySmall:
+      size: '0.9375rem'
+      lineHeight: 1.55
+      font: body
+    caption:
+      size: '0.8125rem'
+      lineHeight: 1.4
+      font: body
+    overline:
+      size: '0.8125rem'
+      lineHeight: 1.2
+      weight: 700
+      letterSpacing: '0.16em'
+      font: title

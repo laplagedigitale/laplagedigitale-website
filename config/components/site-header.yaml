@@ -1,53 +1,84 @@
 # Reusable component template: site-header.
+# Sticky white bar: logo · main navigation (with the two sub-menus the live
+# site has) · language switcher · "Adhérer" CTA. Below md the navigation
+# folds into a dropdown.
 name: site-header
 type: container
 children:
   - type: container
     element: header
     props:
-      className: 'fixed top-0 w-full z-50 bg-[#1a2767] border-b border-[#2a3777]'
+      className: 'sticky top-0 z-50 w-full bg-white/95 backdrop-blur border-b border-navy-100'
     children:
       - type: container
         element: nav
         props:
-          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16'
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6 h-20'
+          'aria-label': $t:nav.aria
         children:
           - type: link
             props:
-              href: $t:nav.href.home
-              className: 'flex items-center gap-2 font-bold text-xl text-white'
+              href: $t:href.home
+              className: 'flex items-center shrink-0'
+              'aria-label': La Plage Digitale
             children:
-              - type: text
-                element: span
-                content: "La Plage Digitale"
+              - type: image
+                variant: default
+                props:
+                  src: /brand/logo-couleurs.svg
+                  alt: La Plage Digitale
+                  width: 168
+                  height: 56
+                  loading: eager
+                  className: 'h-12 w-auto'
+
+          - type: navigation-menu
+            props:
+              className: 'hidden lg:flex'
+            navItems:
+              - { label: $t:nav.home, href: $t:href.home }
+              - label: $t:nav.about
+                children:
+                  - { label: $t:nav.about, href: $t:href.about, description: $t:nav.about.desc }
+                  - { label: $t:nav.activities, href: $t:href.activities, description: $t:nav.activities.desc }
+                  - { label: $t:nav.supporters, href: $t:href.supporters, description: $t:nav.supporters.desc }
+              - label: $t:nav.coworking
+                children:
+                  - { label: $t:nav.space, href: $t:href.space, description: $t:nav.space.desc }
+                  - { label: $t:nav.pricing, href: $t:href.pricing, description: $t:nav.pricing.desc }
+                  - { label: $t:nav.coworkers, href: $t:href.coworkers, description: $t:nav.coworkers.desc }
+                  - { label: $t:nav.companies, href: $t:href.companies, description: $t:nav.companies.desc }
+              - { label: $t:nav.blog, href: $t:href.blog }
+              - { label: $t:nav.contact, href: $t:href.contact }
 
           - type: flex
             props:
-              className: 'hidden md:flex items-center gap-8'
+              className: 'flex items-center gap-3'
             children:
-              - type: link
-                content: $t:nav.spaces
+              - type: language-switcher
                 props:
-                  href: $t:nav.href.spaces
-                  className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
+                  className: 'text-sm'
               - type: link
-                content: $t:nav.pricing
+                content: $t:nav.cta
                 props:
-                  href: $t:nav.href.pricing
-                  className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
-              - type: link
-                content: $t:nav.about
+                  href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
+                  target: _blank
+                  rel: 'noopener noreferrer'
+                  className: 'hidden sm:inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+              - type: dropdown-menu
+                triggerLabel: $t:nav.menu
                 props:
-                  href: $t:nav.href.about
-                  className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
-              - type: link
-                content: $t:nav.contact
-                props:
-                  href: $t:nav.href.contact
-                  className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
-
-          - type: link
-            content: $t:nav.cta
-            props:
-              href: $t:nav.href.contact
-              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-white bg-[#992b8c] hover:bg-[#7e2374] transition-colors'
+                  className: 'lg:hidden'
+                menuItems:
+                  - { label: $t:nav.home, action: { type: navigate, path: $t:href.home } }
+                  - { label: $t:nav.about, action: { type: navigate, path: $t:href.about } }
+                  - { label: $t:nav.activities, action: { type: navigate, path: $t:href.activities } }
+                  - { label: $t:nav.supporters, action: { type: navigate, path: $t:href.supporters } }
+                  - { separator: true }
+                  - { label: $t:nav.space, action: { type: navigate, path: $t:href.space } }
+                  - { label: $t:nav.pricing, action: { type: navigate, path: $t:href.pricing } }
+                  - { label: $t:nav.coworkers, action: { type: navigate, path: $t:href.coworkers } }
+                  - { label: $t:nav.companies, action: { type: navigate, path: $t:href.companies } }
+                  - { separator: true }
+                  - { label: $t:nav.blog, action: { type: navigate, path: $t:href.blog } }
+                  - { label: $t:nav.contact, action: { type: navigate, path: $t:href.contact } }
