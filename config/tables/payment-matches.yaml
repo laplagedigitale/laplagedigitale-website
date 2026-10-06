@@ -6,6 +6,11 @@
 # Admin only: it names clients, amounts and bank labels.
 id: 7
 name: payment_matches
+# Read-only over MCP: Claude lists and reads, never writes. Row-level and
+# field rules still apply, as the owner of the API key.
+aiAccess:
+  description: "Log of the pennylane-auto-match automation: each invoice/bank-transfer pair it applied, failed or left for review."
+  operations: [read, list]
 fields:
   - { id: 1, name: match_key, type: single-line-text, required: true, unique: true }
   - id: 2

@@ -8,6 +8,11 @@
 # match_status: manual, which the matcher then leaves alone.
 id: 3
 name: members
+# Read-only over MCP: Claude lists and reads, never writes. Row-level and
+# field rules still apply, as the owner of the API key.
+aiAccess:
+  description: "Coworker accounts and their match to a Pennylane customer. Use this to find a coworker or check why their invoices are missing."
+  operations: [read, list]
 fields:
   - { id: 1, name: email, type: email, required: true, unique: true }
   - { id: 2, name: name, type: single-line-text }

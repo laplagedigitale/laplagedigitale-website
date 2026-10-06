@@ -1,6 +1,11 @@
 # Table: leads — contact form submissions, read by admins in /_admin.
 id: 2
 name: leads
+# Read-only over MCP: Claude lists and reads, never writes. Row-level and
+# field rules still apply, as the owner of the API key.
+aiAccess:
+  description: "Contact-form submissions (name, email, subject, message). Use this for questions about incoming enquiries."
+  operations: [read, list]
 fields:
   - { id: 1, name: name, label: Nom, type: single-line-text, required: true }
   - { id: 2, name: email, label: E-mail, type: email, required: true }

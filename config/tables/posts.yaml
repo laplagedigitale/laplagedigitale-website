@@ -6,6 +6,11 @@
 # may *write*, not who may see a draft.
 id: 1
 name: posts
+# Read-only over MCP: Claude lists and reads, never writes. Row-level and
+# field rules still apply, as the owner of the API key.
+aiAccess:
+  description: "Blog posts (Actualités) of La Plage Digitale, drafts included. Use this for questions about published or draft articles."
+  operations: [read, list]
 fields:
   - { id: 1, name: title, label: Titre, type: single-line-text, required: true, indexed: true }
   - id: 2

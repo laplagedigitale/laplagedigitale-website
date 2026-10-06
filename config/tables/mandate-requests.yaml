@@ -7,6 +7,11 @@
 # own member row, and never edit or delete one.
 id: 6
 name: mandate_requests
+# Read-only over MCP: Claude lists and reads, never writes. Row-level and
+# field rules still apply, as the owner of the API key.
+aiAccess:
+  description: "One row per direct-debit request a coworker sent from the portal. Use this to see who asked and when."
+  operations: [read, list]
 fields:
   - { id: 1, name: member, type: relationship, relatedTable: members, relationType: many-to-one, displayField: email, required: true }
   - { id: 3, name: member_email, type: email, required: true, indexed: true }

@@ -2,6 +2,11 @@
 # holds for each linked member, refreshed by the pennylane-sync automation.
 id: 5
 name: mandates
+# Read-only over MCP: Claude lists and reads, never writes. Row-level and
+# field rules still apply, as the owner of the API key.
+aiAccess:
+  description: "Read-only mirror of the GoCardless direct-debit mandates Pennylane holds per coworker."
+  operations: [read, list]
 fields:
   - { id: 1, name: pennylane_id, type: single-line-text, required: true, unique: true }
   - { id: 2, name: member, type: relationship, relatedTable: members, relationType: many-to-one, displayField: email }
