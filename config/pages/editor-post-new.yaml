@@ -1,0 +1,42 @@
+# Page: editor-post-new — write a new post. Starts as a draft.
+name: editor-post-new
+path: /editor/posts/new
+sitemap: false
+access: { require: [editor, admin], redirectTo: /connexion }
+meta:
+  title: Nouvel article — Espace rédaction
+  description: Rédiger un nouvel article.
+  noindex: true
+components:
+  - component: editor-bar
+
+  - type: container
+    element: main
+    props:
+      className: 'max-w-4xl mx-auto px-4 sm:px-6 py-10'
+    children:
+      - { type: link, content: '← Tous les articles', props: { href: /editor, className: 'text-bodySmall text-text-muted hover:text-navy' } }
+      - { type: text, element: h1, content: Nouvel article, props: { className: 'text-h2 text-navy mt-3 mb-8' } }
+      - type: form
+        dataSource: { table: posts }
+        action:
+          type: crud
+          operation: create
+          table: posts
+          onSuccess:
+            type: navigate
+            navigate: /editor
+            toast: { variant: success, message: Article enregistré. }
+        fieldGroups:
+          - { label: Article, fields: [title, slug, excerpt, body] }
+          - { label: Illustration, fields: [cover] }
+          - { label: Publication, fields: [status, published_at, categories] }
+        fields:
+          - { field: title, placeholder: "Titre de l'article" }
+          - { field: slug, placeholder: 'mon-article' }
+          - { field: excerpt, control: textarea }
+          - { field: body }
+          - { field: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
+          - { field: status, defaultValue: draft }
+          - { field: published_at, defaultValue: $now }
+          - { field: categories }

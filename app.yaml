@@ -26,9 +26,17 @@ buckets:
 components:
   - $ref: ./config/components/site-header.yaml
   - $ref: ./config/components/site-footer.yaml
+  - $ref: ./config/components/editor-bar.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
+  - $ref: ./config/pages/blog.yaml
+  - $ref: ./config/pages/blog-post.yaml
+  # Editors' front office — gated, never indexed.
+  - $ref: ./config/pages/connexion.yaml
+  - $ref: ./config/pages/editor.yaml
+  - $ref: ./config/pages/editor-post-new.yaml
+  - $ref: ./config/pages/editor-post-edit.yaml
 
 analytics:
   $ref: ./config/analytics.yaml

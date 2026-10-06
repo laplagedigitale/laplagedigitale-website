@@ -47,3 +47,16 @@ footer.hours: "Monday to Friday, 9am–5pm · 24/7 access for fixed desks"
 footer.explore: Explore
 footer.follow: Follow us
 footer.copyright: "© La Plage Digitale — non-profit association (Alsace-Moselle law of 1908)"
+
+# ── Blog ──
+blog.meta.title: News — La Plage Digitale
+blog.meta.description: "Events, newsletters and news from La Plage Digitale, Strasbourg's third place for innovation, since 2012."
+blog.eyebrow: News
+blog.title: Life at La Plage
+blog.lead: "Events, meetups, monthly newsletters and portraits: more than ten years of Strasbourg's digital scene."
+blog.languageNote: "Our articles are published in French."
+blog.empty: No articles yet.
+post.back: "← All news"
+post.more: More articles
+post.previous: Previous article
+post.next: Next article

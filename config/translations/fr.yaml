@@ -48,3 +48,16 @@ footer.hours: "Du lundi au vendredi, 9h–17h · accès 24h/24 pour les bureaux 
 footer.explore: Explorer
 footer.follow: Nous suivre
 footer.copyright: "© La Plage Digitale — association loi 1908"
+
+# ── Blog ──
+blog.meta.title: Actualités — La Plage Digitale
+blog.meta.description: "Événements, newsletters et nouvelles du tiers-lieu La Plage Digitale à Strasbourg, depuis 2012."
+blog.eyebrow: Actualités
+blog.title: La vie de la Plage
+blog.lead: "Événements, meetups, newsletters mensuelles et portraits : plus de dix ans d'histoire du numérique strasbourgeois."
+blog.languageNote: ""
+blog.empty: Aucun article pour le moment.
+post.back: "← Toutes les actualités"
+post.more: Autres articles
+post.previous: Article précédent
+post.next: Article suivant

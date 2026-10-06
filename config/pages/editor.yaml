@@ -1,0 +1,58 @@
+# Page: editor — the blog editors' dashboard (WordPress-style post list).
+# Gated to editors and admins; everyone else is sent to /connexion.
+name: editor
+path: /editor
+sitemap: false
+access: { require: [editor, admin], redirectTo: /connexion }
+meta:
+  title: Articles — Espace rédaction
+  description: Gestion des articles du blog.
+  noindex: true
+components:
+  - component: editor-bar
+
+  - type: container
+    element: main
+    props:
+      className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'
+    children:
+      - type: flex
+        props:
+          className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Articles, props: { className: 'text-h2 text-navy' } }
+              - { type: text, element: p, content: "Brouillons et articles publiés. Cliquez sur une ligne pour l'éditer.", props: { className: 'text-bodySmall text-text-muted mt-1' } }
+          - type: link
+            content: '+ Nouvel article'
+            props:
+              href: /editor/posts/new
+              className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+
+      - type: table
+        dataSource:
+          table: posts
+          sort:
+            - { field: updated_at, direction: desc }
+          pagination: { pageSize: 25, style: numbered }
+        search:
+          placeholder: Rechercher un article…
+        columns:
+          - { field: title, label: Titre }
+          - { field: status, label: Statut }
+          - { field: published_at, label: Publication }
+          - { field: categories, label: Catégories }
+          - { field: author, label: Auteur }
+          - { field: updated_at, label: Modifié }
+          - type: actions
+            actions:
+              - label: Supprimer
+                variant: destructive
+                action:
+                  type: crud
+                  operation: delete
+                  table: posts
+                  confirm: true
+                  confirmMessage: "Supprimer cet article ? Il pourra être restauré par un administrateur."
+        onRowClick: { type: navigate, path: '/editor/posts/$record.id' }

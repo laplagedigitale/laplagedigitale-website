@@ -1,0 +1,29 @@
+# Reusable component template: editor-bar — top bar of the /editor front office.
+name: editor-bar
+type: container
+children:
+  - type: container
+    element: header
+    props:
+      className: 'bg-navy text-white'
+    children:
+      - type: flex
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4'
+        children:
+          - type: flex
+            props:
+              className: 'flex items-center gap-4'
+            children:
+              - type: link
+                props: { href: /editor, 'aria-label': Espace rédaction }
+                children:
+                  - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, width: 120, height: 40, className: 'h-9 w-auto' } }
+              - { type: text, element: span, content: Espace rédaction, props: { className: 'hidden sm:inline text-overline uppercase text-orange' } }
+          - type: flex
+            props:
+              className: 'flex items-center gap-4 text-bodySmall'
+            children:
+              - { type: link, content: Voir le blog, props: { href: /blog, target: _blank, className: 'text-navy-100 hover:text-white' } }
+              - type: form
+                action: { type: auth, method: logout, submitLabel: Déconnexion, onSuccess: { type: navigate, navigate: /connexion } }

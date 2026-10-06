@@ -1,0 +1,87 @@
+# Page: blog-post — one route per published post, at /blog/<slug>.
+name: blog-post
+path: /blog/:slug
+collection:
+  table: posts
+  slugField: slug
+  filter:
+    - { field: status, operator: eq, value: published }
+rss: { limit: 20 }
+meta:
+  title: '$record.title'
+  description: '$record.excerpt'
+  openGraph:
+    type: article
+    image: '$record.legacy_cover'
+  twitter:
+    card: summary_large_image
+components:
+  - component: site-header
+
+  - type: container
+    element: article
+    props:
+      className: 'bg-background'
+    children:
+      - type: container
+        element: header
+        props:
+          className: 'bg-navy text-white'
+        children:
+          - type: container
+            props:
+              className: 'max-w-3xl mx-auto px-4 sm:px-6 pt-16 pb-12'
+            children:
+              - type: link
+                content: $t:post.back
+                props:
+                  href: $t:href.blog
+                  className: 'inline-block text-overline uppercase text-orange hover:text-orange-300 mb-6'
+              - type: text
+                element: h1
+                content: '$record.title'
+                props:
+                  className: 'text-h2 sm:text-h1 text-white'
+              - type: text
+                element: p
+                content: '$record.published_at'
+                props:
+                  className: 'text-bodySmall text-navy-200 mt-5'
+
+      - type: container
+        props:
+          className: 'max-w-3xl mx-auto px-4 sm:px-6 -mt-2 pt-10'
+        children:
+          - type: image
+            props:
+              src: '$record.legacy_cover'
+              alt: '$record.title'
+              loading: eager
+              className: 'w-full rounded-lg shadow-md mb-10'
+          - type: record-field
+            props:
+              field: body
+              className: 'prose prose-lg max-w-none prose-headings:text-navy prose-a:text-magenta prose-img:rounded-lg text-text'
+
+      - type: container
+        element: nav
+        props:
+          className: 'max-w-3xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 sm:grid-cols-2 gap-4'
+          'aria-label': $t:post.more
+        children:
+          - type: link
+            props:
+              href: '/blog/$collection.previous.slug'
+              className: 'block p-5 rounded-md bg-white border border-navy-100 hover:border-blue transition-colors'
+            children:
+              - { type: text, element: span, content: $t:post.previous, props: { className: 'block text-caption uppercase tracking-widest text-text-muted mb-1' } }
+              - { type: text, element: span, content: '$collection.previous.title', props: { className: 'block text-h4 text-navy' } }
+          - type: link
+            props:
+              href: '/blog/$collection.next.slug'
+              className: 'block p-5 rounded-md bg-white border border-navy-100 hover:border-blue transition-colors sm:text-right'
+            children:
+              - { type: text, element: span, content: $t:post.next, props: { className: 'block text-caption uppercase tracking-widest text-text-muted mb-1' } }
+              - { type: text, element: span, content: '$collection.next.title', props: { className: 'block text-h4 text-navy' } }
+
+  - component: site-footer

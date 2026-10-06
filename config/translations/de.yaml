@@ -47,3 +47,16 @@ footer.hours: "Montag bis Freitag, 9–17 Uhr · 24/7-Zugang für Fixplätze"
 footer.explore: Entdecken
 footer.follow: Folgen Sie uns
 footer.copyright: "© La Plage Digitale — Verein nach elsässisch-lothringischem Recht von 1908"
+
+# ── Blog ──
+blog.meta.title: Neuigkeiten — La Plage Digitale
+blog.meta.description: "Veranstaltungen, Newsletter und Neuigkeiten aus La Plage Digitale, dem Dritten Ort für Innovation in Straßburg, seit 2012."
+blog.eyebrow: Neuigkeiten
+blog.title: Das Leben an der Plage
+blog.lead: "Veranstaltungen, Meetups, monatliche Newsletter und Porträts: über zehn Jahre digitale Szene in Straßburg."
+blog.languageNote: "Unsere Artikel erscheinen auf Französisch."
+blog.empty: Noch keine Artikel.
+post.back: "← Alle Neuigkeiten"
+post.more: Weitere Artikel
+post.previous: Vorheriger Artikel
+post.next: Nächster Artikel

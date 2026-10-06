@@ -1,0 +1,41 @@
+# Page: connexion — sign-in for blog editors (and admins). Not indexed.
+name: connexion
+path: /connexion
+sitemap: false
+meta:
+  title: Connexion — Espace rédaction
+  description: Connexion à l'espace rédaction de La Plage Digitale.
+  noindex: true
+components:
+  - type: container
+    element: main
+    props:
+      className: 'min-h-screen grid lg:grid-cols-2 bg-background'
+    children:
+      - type: container
+        element: aside
+        props:
+          className: 'hidden lg:flex flex-col justify-between bg-navy text-white p-12'
+        children:
+          - type: image
+            props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, width: 200, height: 66, className: 'h-16 w-auto' }
+          - type: container
+            children:
+              - { type: text, element: p, content: 'Espace rédaction', props: { className: 'text-overline uppercase text-orange mb-4' } }
+              - { type: text, element: p, content: 'Partagez les actualités de la Plage : événements, newsletters, portraits.', props: { className: 'text-h2 text-white max-w-md' } }
+          - { type: text, element: p, content: 'Connecter · Innover · Entreprendre', props: { className: 'text-caption uppercase tracking-widest text-navy-200' } }
+      - type: container
+        props:
+          className: 'flex items-center justify-center p-6 sm:p-12'
+        children:
+          - type: container
+            props:
+              className: 'w-full max-w-sm'
+            children:
+              - { type: text, element: h1, content: Connexion, props: { className: 'text-h2 text-navy mb-2' } }
+              - { type: text, element: p, content: "Réservé à l'équipe de rédaction. Pas de compte ? Demandez-le à un administrateur.", props: { className: 'text-bodySmall text-text-muted mb-8' } }
+              - type: form
+                action: { type: auth, method: login, submitLabel: Se connecter, onSuccess: { type: navigate, navigate: /editor } }
+              - type: link
+                content: "← Retour au site"
+                props: { href: /, className: 'inline-block mt-8 text-bodySmall text-text-muted hover:text-navy' }

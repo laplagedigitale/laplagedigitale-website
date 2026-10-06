@@ -1,0 +1,84 @@
+# Page: blog — "Actualités", every published post, newest first.
+name: blog
+path: /blog
+meta:
+  title: $t:blog.meta.title
+  description: $t:blog.meta.description
+  openGraph:
+    type: website
+    image: /images/og-default.jpg
+components:
+  - component: site-header
+
+  - type: container
+    element: section
+    props:
+      className: 'relative overflow-hidden bg-navy text-white'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+        children:
+          - type: text
+            element: p
+            content: $t:blog.eyebrow
+            props:
+              className: 'text-overline uppercase text-orange mb-4'
+          - type: text
+            element: h1
+            content: $t:blog.title
+            props:
+              className: 'text-h1 sm:text-display text-white max-w-3xl'
+          - type: text
+            element: p
+            content: $t:blog.lead
+            props:
+              className: 'text-lead text-navy-100 max-w-2xl mt-6'
+          - type: text
+            element: p
+            content: $t:blog.languageNote
+            props:
+              className: 'text-bodySmall text-blue-200 mt-4'
+
+  - type: container
+    element: main
+    props:
+      className: 'bg-background'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20'
+        children:
+          - type: gallery
+            layout: grid
+            emptyMessage: $t:blog.empty
+            gridColumns: { mobile: 1, md: 2, lg: 3 }
+            dataSource:
+              table: posts
+              filter:
+                - { field: status, operator: eq, value: published }
+              sort:
+                - { field: published_at, direction: desc }
+              pagination: { pageSize: 12, style: numbered }
+            galleryCard:
+              coverImage: '$record.legacy_cover'
+              aspectRatio: '16:9'
+              children:
+                - type: text
+                  element: p
+                  content: '$record.published_at'
+                  props:
+                    className: 'text-caption text-text-muted mb-2'
+                - type: text
+                  element: h2
+                  content: '$record.title'
+                  props:
+                    className: 'text-h4 text-navy mb-2'
+                - type: text
+                  element: p
+                  content: '$record.excerpt'
+                  props:
+                    className: 'text-bodySmall text-text-muted line-clamp-3'
+              onClick: { type: navigate, path: '/blog/$record.slug' }
+
+  - component: site-footer
