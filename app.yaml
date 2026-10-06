@@ -11,7 +11,17 @@ description: La Plage Digitale — Tiers-lieu et coworking à Strasbourg
 # server, so set it on Scalingo (env-set) before deploying.
 env:
   - key: PENNYLANE_API_TOKEN
-    description: Pennylane company API token, read and write (mandate requests write)
+    description: Pennylane company API token, read and write (mandate requests and payment matching write)
+  - key: AUTOMATCH_APPLY
+    description: pennylane-auto-match writes its reliable matches to Pennylane; 'false' makes it a dry run
+    required: false
+    default: 'true'
+    secret: false
+  - key: TREASURER_EMAIL
+    description: Recipient of the pennylane-auto-match morning summary
+    required: false
+    default: tresorerie@laplagedigitale.fr
+    secret: false
 
 design:
   $ref: ./config/design.yaml
@@ -31,6 +41,8 @@ tables:
   - $ref: ./config/tables/invoices.yaml
   - $ref: ./config/tables/mandates.yaml
   - $ref: ./config/tables/mandate-requests.yaml
+  # Log of the payment matching: admin only.
+  - $ref: ./config/tables/payment-matches.yaml
 
 buckets:
   $ref: ./config/buckets.yaml
@@ -78,6 +90,7 @@ connections:
 
 automations:
   - $ref: ./config/automations/member-sign-up.yaml
+  - $ref: ./config/automations/pennylane-auto-match.yaml
   - $ref: ./config/automations/pennylane-match-pending.yaml
   - $ref: ./config/automations/pennylane-sync.yaml
   - $ref: ./config/automations/request-mandate.yaml

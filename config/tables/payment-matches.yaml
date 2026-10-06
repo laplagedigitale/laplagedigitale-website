@@ -1,0 +1,41 @@
+# Table: payment_matches — the log of the pennylane-auto-match automation.
+# One row per (invoice, bank transfer) pair it applied, failed to apply, or
+# left for the treasurer to check by hand. match_key is the upsert key, so a
+# pair left to review is one row however many mornings it is seen.
+#
+# Admin only: it names clients, amounts and bank labels.
+id: 7
+name: payment_matches
+fields:
+  - { id: 1, name: match_key, type: single-line-text, required: true, unique: true }
+  - id: 2
+    name: status
+    type: single-select
+    options:
+      - { value: applied, label: Rapproché, color: '#10b981' }
+      - { value: would_apply, label: À rapprocher (mode test), color: '#3b82f6' }
+      - { value: review, label: À vérifier, color: '#f59e0b' }
+      - { value: failed, label: Échec, color: '#ef4444' }
+  - id: 3
+    name: reason
+    type: single-select
+    options:
+      - { value: ref_exact, label: N° de facture dans le libellé, color: '#10b981' }
+      - { value: ref_sequence, label: N° de séquence dans le libellé, color: '#14b8a6' }
+      - { value: amount_name_date, label: Montant + client + date, color: '#94a3b8' }
+  - { id: 4, name: score, type: decimal }
+  - { id: 5, name: invoice_id, type: single-line-text, indexed: true }
+  - { id: 6, name: invoice_number, type: single-line-text }
+  - { id: 7, name: customer_name, type: single-line-text }
+  - { id: 8, name: invoice_remaining, type: currency, currency: EUR, precision: 2 }
+  - { id: 9, name: transaction_id, type: single-line-text, indexed: true }
+  - { id: 10, name: transaction_date, type: date }
+  - { id: 11, name: transaction_amount, type: currency, currency: EUR, precision: 2 }
+  - { id: 12, name: transaction_label, type: long-text }
+  - { id: 13, name: error, type: long-text }
+  - { id: 14, name: run_at, type: datetime, indexed: true }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

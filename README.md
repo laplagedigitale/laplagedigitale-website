@@ -35,8 +35,10 @@ config/
     invoices.yaml
     mandates.yaml
     mandate-requests.yaml
-  automations/                 # Pennylane sync and the mandate request
+    payment-matches.yaml       # log of the payment matching (admin only)
+  automations/                 # Pennylane sync, mandate request, payment matching
     member-sign-up.yaml
+    pennylane-auto-match.yaml
     pennylane-match-pending.yaml
     pennylane-sync.yaml
     request-mandate.yaml
@@ -102,6 +104,23 @@ an auth- nor a cron-triggered run may call another automation; a row rule
 through a relationship (`member.email`) fails on list reads; and an `or` filter
 on an automation `list` step matches nothing.
 
+## Payment matching
+
+`pennylane-auto-match` runs every morning at 06:30 (Europe/Paris), before
+Pennylane's dunning emails go out, so a client who has paid is not reminded.
+It reads the incoming transfers still to allocate (`outstanding_balance` not
+zero — a transfer already matched is never reused) and the open customer
+invoices, and matches a pair in Pennylane only when the amount is exact and
+either the bank label carries the invoice number (as written, or just its
+7-digit sequence, which survives a missing "F" or a wrong month) or the amount,
+client name and date clearly agree ahead of any other candidate. Doubtful pairs
+are never written: they land in `payment_matches` as `review`.
+
+Each run logs every pair in `payment_matches` and mails a summary to
+`TREASURER_EMAIL` when something was matched, failed, or is newly to review.
+Set `AUTOMATCH_APPLY=false` to make it a dry run (pairs logged as
+`would_apply`, nothing written to Pennylane).
+
 ## Setup
 
 Sovrium ships as a self-contained binary. There is no runtime and no package
@@ -158,7 +177,12 @@ that does not exist fails the build rather than deploying something unexpected.
 
 - **`PENNYLANE_API_TOKEN`** — a Pennylane *company* API token with **read and
   write** access (Settings › Connectivity › Developers). Write access is what
-  lets the portal send a mandate request. The app refuses to boot without it.
+  lets the portal send a mandate request and `pennylane-auto-match` match
+  payments to invoices. The app refuses to boot without it.
+- **`AUTOMATCH_APPLY`** — optional, default `true`. `false` turns the payment
+  matching into a dry run.
+- **`TREASURER_EMAIL`** — optional, default `tresorerie@laplagedigitale.fr`:
+  where the payment-matching summary goes (needs the `SMTP_*` variables).
 
 Two more variables seed the first administrator:
 

@@ -89,3 +89,38 @@ operations:
         in: body
         type: object
         required: true
+  - name: get-transactions
+    method: GET
+    path: /transactions
+    summary: List transactions
+    params:
+      cursor:
+        in: query
+        type: string
+      limit:
+        in: query
+        type: integer
+      filter:
+        in: query
+        type: string
+      sort:
+        in: query
+        type: string
+    pagination:
+      style: cursor
+      cursorParam: cursor
+      cursorPath: next_cursor
+      itemsPath: items
+  - name: post-customer-invoice-matched-transactions
+    method: POST
+    path: "/customer_invoices/{customer_invoice_id}/matched_transactions"
+    summary: Match a transaction to a customer invoice
+    params:
+      customer_invoice_id:
+        in: path
+        type: integer
+        required: true
+      transaction_id:
+        in: body
+        type: integer
+        required: true

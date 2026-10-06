@@ -1,0 +1,301 @@
+# Automation: pennylane-auto-match — matches incoming bank transfers to the
+# open customer invoices they pay, every morning before Pennylane's dunning
+# emails go out (~08:00), so a client who has paid is not reminded.
+#
+# Only transfers still to allocate are considered (outstanding_balance ≠ 0), so
+# a payment already matched is never matched twice. A pair is applied when the
+# amount is exact and either the label carries the invoice number — as written,
+# or just its 7-digit sequence, which survives a missing "F" or a wrong month —
+# or amount, client name and date agree clearly ahead of any other candidate.
+# Everything else that looks plausible is logged as `review` in payment_matches
+# and mailed to the treasurer; nothing doubtful is ever written to Pennylane.
+#
+# AUTOMATCH_APPLY=false turns it into a dry run (rows logged as would_apply)
+# without a redeploy: scalingo env-set, then restart.
+name: pennylane-auto-match
+trigger:
+  type: cron
+  expression: '30 6 * * *'
+  timezone: Europe/Paris
+actions:
+  - name: plan
+    type: code
+    operator: runTypescript
+    props:
+      code: |
+        async function execute(context) {
+          const ago = (days) => new Date(Date.now() - days * 86400000).toISOString().slice(0, 10)
+          return {
+            transactions: JSON.stringify([{ field: 'date', operator: 'gteq', value: ago(90) }]),
+            invoices: JSON.stringify([{ field: 'date', operator: 'gteq', value: ago(270) }]),
+          }
+        }
+  - name: transactions
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-transactions
+      params: { filter: '{{steps.plan.transactions}}', limit: 100 }
+      paginate: all
+  - name: invoices
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-customer-invoices
+      params: { filter: '{{steps.plan.invoices}}', limit: 100 }
+      paginate: all
+  - name: customers
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-customers
+      params: { limit: 100 }
+      paginate: all
+  # Pairs already left to review, so the morning email only announces new ones.
+  - name: known
+    type: record
+    operator: list
+    props:
+      table: payment_matches
+      filter:
+        conditions:
+          - { field: status, operator: equals, value: review }
+      limit: 1000
+  - name: decide
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 60000
+      inputData:
+        transactions: '{{steps.transactions.data}}'
+        invoices: '{{steps.invoices.data}}'
+        customers: '{{steps.customers.data}}'
+      code: |
+        async function execute(context) {
+          const W = { amount: 0.5, date: 0.2, name: 0.3 }
+          const CONFIRMED = 0.85
+          const REVIEW = 0.6
+          const MARGIN = 0.1
+          const WINDOW_DAYS = 60
+          const REF_WINDOW_DAYS = 300
+          const DAY = 86400000
+          const STOP = new Set(['via', 'ref', 'vir', 'inst', 'emis', 'vers', 'pour', 'des', 'les', 'une', 'votre', 'the', 'from', 'facture', 'factures', 'invoice', 'virement', 'sas', 'sarl', 'sasu', 'eurl', 'madame', 'monsieur'])
+
+          const normalize = (s: string) =>
+            String(s ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim()
+          const compact = (s: string) => String(s ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
+          const days = (a: string, b: string) => (Date.parse(b) - Date.parse(a)) / DAY
+          const round2 = (n: number) => Math.round(n * 100) / 100
+
+          const customers = new Map<string, string>()
+          for (const c of context.inputData.customers ?? []) {
+            const name = c.name || [c.first_name, c.last_name].filter(Boolean).join(' ')
+            if (name) customers.set(String(c.id), name)
+          }
+
+          const closed = new Set(['cancelled', 'partially_cancelled', 'credit_note', 'archived', 'paid'])
+          const invoices = (context.inputData.invoices ?? [])
+            .filter((i: any) => !i.draft && !i.paid && !closed.has(i.status) && Number(i.remaining_amount_with_tax) > 0.01 && i.invoice_number)
+            .map((i: any) => ({
+              id: Number(i.id),
+              number: String(i.invoice_number),
+              date: String(i.date),
+              remaining: round2(Number(i.remaining_amount_with_tax)),
+              customerId: i.customer?.id ? String(i.customer.id) : '',
+              customer: customers.get(String(i.customer?.id)) ?? '',
+            }))
+
+          // A transfer still to allocate carries outstanding_balance = −amount; a
+          // matched one carries 0. Only those are candidates, so a payment already
+          // matched to an invoice is never matched a second time.
+          const txs = (context.inputData.transactions ?? [])
+            .filter((t: any) => Number(t.amount) > 0 && Math.abs(Number(t.outstanding_balance)) > 0.01)
+            .map((t: any) => ({
+              id: Number(t.id),
+              date: String(t.date),
+              amount: round2(Number(t.amount)),
+              available: round2(Math.abs(Number(t.outstanding_balance))),
+              label: String(t.label ?? ''),
+              customerId: t.customer?.id ? String(t.customer.id) : '',
+            }))
+
+          const nameScore = (customer: string, label: string) => {
+            const toks = [...new Set(normalize(customer).split(' ').filter((t) => t.length >= 3 && !STOP.has(t)))]
+            const slug = normalize(customer).replace(/ /g, '')
+            if (slug.length >= 5) toks.push(slug)
+            if (toks.length === 0) return 0
+            const hay = normalize(label).replace(/ /g, '')
+            const hit = toks.filter((t) => hay.includes(t))
+            if (hit.length === 0) return 0
+            return hit.some((t) => t.length >= 5) ? 1 : hit.length / toks.length
+          }
+          // The invoice number written as is (F202608-0002763, F2026080002763, F202608 0002763).
+          const refExact = (number: string, label: string) => compact(number).length >= 6 && compact(label).includes(compact(number))
+          // Its 7-digit sequence alone, as a digit run of its own or the tail of a
+          // YYYYMM+sequence run: catches a missing "F" or a wrong month.
+          const refSequence = (number: string, label: string) => {
+            const seq = /(\d{7})$/.exec(number.replace(/[^0-9]/g, ''))?.[1]
+            if (!seq) return false
+            const runs = label.match(/\d+/g) ?? []
+            return runs.some((r) => r === seq || (r.length === 13 && r.endsWith(seq)))
+          }
+
+          type Pair = { inv: any; tx: any; score: number; reason: string; exact: boolean }
+          const pairs: Pair[] = []
+          for (const inv of invoices) {
+            for (const tx of txs) {
+              const gap = Math.abs(inv.remaining - tx.available)
+              const exact = gap < 0.01
+              const near = gap <= 1 || gap / inv.remaining <= 0.01
+              if (!exact && !near) continue
+              const d = days(inv.date, tx.date)
+              const byRef = refExact(inv.number, tx.label) ? 'ref_exact' : refSequence(inv.number, tx.label) ? 'ref_sequence' : ''
+              if (d < (byRef ? -31 : -7) || d > (byRef ? REF_WINDOW_DAYS : WINDOW_DAYS)) continue
+              const dateS = Math.max(0, 1 - Math.abs(d) / WINDOW_DAYS)
+              const nameS = tx.customerId && tx.customerId === inv.customerId ? 1 : nameScore(inv.customer, tx.label)
+              const base = W.amount * (exact ? 1 : 0.7) + W.date * dateS + W.name * nameS
+              const score = byRef === 'ref_exact' ? Math.max(base, 0.95) : byRef === 'ref_sequence' ? Math.max(base, 0.92) : base
+              // Without a reference, an amount alone proves nothing: the client must be recognised.
+              if (score < REVIEW || (!byRef && nameS === 0)) continue
+              pairs.push({ inv, tx, score: round2(score), reason: byRef || 'amount_name_date', exact })
+            }
+          }
+          // A transfer that names an invoice is about that invoice only.
+          const named = new Set(pairs.filter((p) => p.reason !== 'amount_name_date').map((p) => p.tx.id))
+          const kept = pairs.filter((p) => p.reason !== 'amount_name_date' || !named.has(p.tx.id))
+
+          // Per invoice: the best candidate is confirmed when it is exact, above the
+          // threshold and clear of the runner-up; otherwise the invoice is to review.
+          const byInvoice = new Map<number, Pair[]>()
+          for (const p of kept) byInvoice.set(p.inv.id, [...(byInvoice.get(p.inv.id) ?? []), p])
+          const confirmed: Pair[] = []
+          const review: Pair[] = []
+          for (const list of byInvoice.values()) {
+            const sorted = [...list].sort((a, b) => b.score - a.score)
+            const [top, second] = sorted
+            if (top.exact && top.score >= CONFIRMED && (!second || top.score - second.score >= MARGIN)) confirmed.push(top)
+            else review.push(top)
+          }
+          // One transfer claimed by several invoices: the one whose number is in the
+          // label wins; otherwise none is applied.
+          const byTx = new Map<number, Pair[]>()
+          for (const p of confirmed) byTx.set(p.tx.id, [...(byTx.get(p.tx.id) ?? []), p])
+          const toApply: Pair[] = []
+          for (const group of byTx.values()) {
+            if (group.length === 1) { toApply.push(group[0]); continue }
+            const withRef = group.filter((g) => g.reason !== 'amount_name_date')
+            if (withRef.length === 1) { toApply.push(withRef[0]); review.push(...group.filter((g) => g !== withRef[0])) }
+            else review.push(...group)
+          }
+
+          const row = (p: Pair) => ({
+            match_key: `${p.inv.id}:${p.tx.id}`,
+            reason: p.reason,
+            score: p.score,
+            invoice_id: String(p.inv.id),
+            invoice_number: p.inv.number,
+            customer_name: p.inv.customer,
+            invoice_remaining: p.inv.remaining,
+            transaction_id: String(p.tx.id),
+            transaction_date: p.tx.date,
+            transaction_amount: p.tx.amount,
+            transaction_label: p.tx.label,
+          })
+          context.log.info(`${invoices.length} open invoices, ${txs.length} transfers to allocate → ${toApply.length} to apply, ${review.length} to review`)
+          return { toApply: toApply.map(row), toReview: review.map(row) }
+        }
+  # One POST per pair, sequentially, inside the code so each outcome is caught
+  # on its own; a failure is logged and mailed, never retried blindly.
+  - name: apply
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 240000
+      inputData:
+        toApply: '{{steps.decide.toApply}}'
+        toReview: '{{steps.decide.toReview}}'
+        known: '{{steps.known.records}}'
+      code: |
+        async function execute(context) {
+          const apply = String(context.env.AUTOMATCH_APPLY ?? 'true').toLowerCase() !== 'false'
+          const runAt = new Date().toISOString()
+          const rows = []
+          for (const m of context.inputData.toApply ?? []) {
+            if (!apply) { rows.push({ ...m, status: 'would_apply', error: '', run_at: runAt }); continue }
+            try {
+              await context.actions.connection.call({
+                connection: 'pennylane',
+                operation: 'post-customer-invoice-matched-transactions',
+                params: { customer_invoice_id: Number(m.invoice_id), transaction_id: Number(m.transaction_id) },
+              })
+              rows.push({ ...m, status: 'applied', error: '', run_at: runAt })
+            } catch (e) {
+              const error = String(e instanceof Error ? e.message : e).slice(0, 1000)
+              context.log.warn(`${m.invoice_number} ← ${m.transaction_id}: ${error}`)
+              rows.push({ ...m, status: 'failed', error, run_at: runAt })
+            }
+          }
+          const knownKeys = new Set((context.inputData.known ?? []).map((r) => r.match_key))
+          const reviews = (context.inputData.toReview ?? []).map((m) => ({ ...m, status: 'review', error: '', run_at: runAt }))
+          const fresh = reviews.filter((r) => !knownKeys.has(r.match_key))
+
+          const eur = (n) => Number(n).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+          const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          const line = (r) => `<li><b>${esc(r.invoice_number)}</b> · ${esc(r.customer_name)} · ${eur(r.invoice_remaining)} ← virement du ${esc(r.transaction_date)} (${eur(r.transaction_amount)}) « ${esc(r.transaction_label.slice(0, 90))} »${r.error ? ` — <i>${esc(r.error.slice(0, 200))}</i>` : ''}</li>`
+          const section = (title, list) => (list.length ? `<h3>${title} (${list.length})</h3><ul>${list.map(line).join('')}</ul>` : '')
+          const done = rows.filter((r) => r.status === 'applied')
+          const planned = rows.filter((r) => r.status === 'would_apply')
+          const failed = rows.filter((r) => r.status === 'failed')
+          const body = [
+            '<p>Bonjour Thomas,</p>',
+            `<p>Rapprochement automatique des virements reçus avec les factures Pennylane${apply ? '' : ' — <b>mode test, rien n’a été écrit dans Pennylane</b>'}.</p>`,
+            section('Rapprochés', done),
+            section('À rapprocher (mode test)', planned),
+            section('Échecs — à rapprocher à la main', failed),
+            section('Nouveaux cas à vérifier', fresh),
+            reviews.length > fresh.length ? `<p>${reviews.length - fresh.length} autre(s) cas déjà signalé(s) restent à vérifier (table payment_matches).</p>` : '',
+            '<p>— L’automatisation pennylane-auto-match</p>',
+          ].join('')
+          context.log.info(`${done.length} applied, ${planned.length} would apply, ${failed.length} failed, ${reviews.length} to review (${fresh.length} new)`)
+          return {
+            rows: [...rows, ...reviews],
+            notify: done.length + planned.length + failed.length + fresh.length > 0 ? 'yes' : 'no',
+            subject: `Rapprochement auto — ${done.length + planned.length} rapproché(s), ${failed.length} échec(s), ${fresh.length} à vérifier`,
+            body,
+          }
+        }
+  - name: save
+    type: record
+    operator: batchUpsert
+    props:
+      table: payment_matches
+      items: '{{steps.apply.rows}}'
+      matchField: match_key
+      continueOnItemError: true
+  - name: route
+    type: path
+    operator: branch
+    props:
+      mode: first-match
+      paths:
+        - name: quiet
+          condition:
+            conditions:
+              - { field: '{{steps.apply.notify}}', operator: equals, value: 'no' }
+          actions:
+            - name: done
+              type: flow
+              operator: stop
+              props: { status: success, message: Nothing matched and nothing new to review }
+        - name: notify
+          actions:
+            - name: mail
+              type: email
+              operator: send
+              props:
+                to: $env.TREASURER_EMAIL
+                subject: '{{steps.apply.subject}}'
+                body: '{{steps.apply.body}}'
