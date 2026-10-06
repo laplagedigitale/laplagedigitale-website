@@ -44,11 +44,11 @@ components:
               'aria-label': $t:pricing.jump.aria
               className: 'flex flex-wrap gap-3 mt-10 [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold'
             children:
-              - { type: link, content: Fixe, props: { href: '#fixe', className: 'px-4 py-2 rounded-full border-2 border-white/30 hover:bg-white hover:text-navy transition-colors' } }
-              - { type: link, content: Nomade, props: { href: '#nomade', className: 'px-4 py-2 rounded-full border-2 border-white/30 hover:bg-white hover:text-navy transition-colors' } }
-              - { type: link, content: Flex, props: { href: '#flex', className: 'px-4 py-2 rounded-full border-2 border-white/30 hover:bg-white hover:text-navy transition-colors' } }
-              - { type: link, content: $t:pricing.jump.rooms, props: { href: '#reunion', className: 'px-4 py-2 rounded-full border-2 border-white/30 hover:bg-white hover:text-navy transition-colors' } }
-              - { type: link, content: $t:pricing.jump.domiciliation, props: { href: '#domiciliation', className: 'px-4 py-2 rounded-full border-2 border-white/30 hover:bg-white hover:text-navy transition-colors' } }
+              - { type: link, content: Fixe, props: { href: '#fixe', className: 'px-4 py-2 rounded-full border-2 border-white/30 text-white hover:bg-white hover:text-navy transition-colors' } }
+              - { type: link, content: Nomade, props: { href: '#nomade', className: 'px-4 py-2 rounded-full border-2 border-white/30 text-white hover:bg-white hover:text-navy transition-colors' } }
+              - { type: link, content: Flex, props: { href: '#flex', className: 'px-4 py-2 rounded-full border-2 border-white/30 text-white hover:bg-white hover:text-navy transition-colors' } }
+              - { type: link, content: $t:pricing.jump.rooms, props: { href: '#reunion', className: 'px-4 py-2 rounded-full border-2 border-white/30 text-white hover:bg-white hover:text-navy transition-colors' } }
+              - { type: link, content: $t:pricing.jump.domiciliation, props: { href: '#domiciliation', className: 'px-4 py-2 rounded-full border-2 border-white/30 text-white hover:bg-white hover:text-navy transition-colors' } }
 
   # ── Plans ──
   - type: container
