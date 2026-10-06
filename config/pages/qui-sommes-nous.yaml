@@ -145,6 +145,47 @@ components:
                           href: 'tel:+33977425929'
                           className: 'inline-flex items-center px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors'
 
+      # ── The team ──────────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'bg-sand'
+          'aria-labelledby': about-team-title
+        children:
+          - type: container
+            props:
+              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+            children:
+              - type: text
+                element: p
+                content: $t:about.team.eyebrow
+                props:
+                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
+              - type: text
+                element: h2
+                content: $t:about.team.title
+                props:
+                  id: about-team-title
+                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy'
+              - type: text
+                element: p
+                content: $t:about.team.lead
+                props:
+                  className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4'
+              - type: grid
+                props:
+                  className: 'grid grid-cols-1 max-w-sm gap-8 mt-12'
+                children:
+                  - type: container
+                    element: article
+                    props: { className: 'bg-white rounded-lg shadow-md border-t-4 border-orange p-6 text-center' }
+                    interactions: { scroll: { animation: fadeInUp, once: true } }
+                    children:
+                      - { type: text, element: span, content: MM, props: { 'aria-hidden': 'true', className: 'w-32 h-32 mx-auto rounded-full grid place-items-center bg-orange text-white ring-4 ring-orange-100 [font-size:var(--text-h2)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)]' } }
+                      - { type: text, element: h3, content: Mathieu MAPPS, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
+                      - { type: text, element: p, content: $t:about.role.team, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1' } }
+                      - { type: link, props: { href: 'https://www.linkedin.com/in/mathieu-mapps-ba297946/', target: _blank, rel: 'noopener noreferrer', 'aria-label': 'LinkedIn — Mathieu Mapps', className: 'inline-grid place-items-center w-9 h-9 mt-4 rounded-full bg-navy-100 text-navy hover:bg-navy hover:text-white transition-colors' }, children: [{ type: icon, props: { name: linkedin, size: 16 } }] }
+
       # ── The board ─────────────────────────────────────────────────────
       - type: container
         element: section
@@ -192,63 +233,6 @@ components:
                   - { type: image, props: { src: /images/pages/qui-sommes-nous/bastien-remy.webp, alt: Bastien Remy, loading: lazy, className: 'w-32 h-32 mx-auto rounded-full object-cover ring-4 ring-orange-100' } }
                   - { type: text, element: h3, content: Bastien REMY, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
                   - { type: text, element: p, content: $t:about.role.secretary, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1' } }
-
-      # ── The team ──────────────────────────────────────────────────────
-      - type: container
-        element: section
-        props:
-          className: 'bg-sand'
-          'aria-labelledby': about-team-title
-        children:
-          - type: container
-            props:
-              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
-            children:
-              - type: text
-                element: p
-                content: $t:about.team.eyebrow
-                props:
-                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
-              - type: text
-                element: h2
-                content: $t:about.team.title
-                props:
-                  id: about-team-title
-                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy'
-              - type: text
-                element: p
-                content: $t:about.team.lead
-                props:
-                  className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4'
-              - type: grid
-                props:
-                  className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12'
-                children:
-                  - type: container
-                    element: article
-                    props: { className: 'bg-white rounded-lg shadow-md border-t-4 border-magenta p-6 text-center' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
-                    children:
-                      - { type: image, props: { src: /images/pages/qui-sommes-nous/celine-verbeck.webp, alt: Céline Verbeck, loading: lazy, className: 'w-32 h-32 mx-auto rounded-full object-cover ring-4 ring-magenta-100' } }
-                      - { type: text, element: h3, content: Céline VERBECK, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
-                      - { type: text, element: p, content: $t:about.role.manager, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1' } }
-                  - type: container
-                    element: article
-                    props: { className: 'bg-white rounded-lg shadow-md border-t-4 border-blue p-6 text-center' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
-                    children:
-                      - { type: image, props: { src: /images/pages/qui-sommes-nous/lucie-dubief.webp, alt: Lucie Dubief, loading: lazy, className: 'w-32 h-32 mx-auto rounded-full object-cover ring-4 ring-blue-100' } }
-                      - { type: text, element: h3, content: Lucie DUBIEF, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
-                      - { type: text, element: p, content: $t:about.role.communication, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1' } }
-                  - type: container
-                    element: article
-                    props: { className: 'bg-white rounded-lg shadow-md border-t-4 border-orange p-6 text-center' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
-                    children:
-                      - { type: text, element: span, content: MM, props: { 'aria-hidden': 'true', className: 'w-32 h-32 mx-auto rounded-full grid place-items-center bg-orange text-white ring-4 ring-orange-100 [font-size:var(--text-h2)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)]' } }
-                      - { type: text, element: h3, content: Mathieu MAPPS, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
-                      - { type: text, element: p, content: $t:about.role.team, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1' } }
-                      - { type: link, props: { href: 'https://www.linkedin.com/in/mathieu-mapps-ba297946/', target: _blank, rel: 'noopener noreferrer', 'aria-label': 'LinkedIn — Mathieu Mapps', className: 'inline-grid place-items-center w-9 h-9 mt-4 rounded-full bg-navy-100 text-navy hover:bg-navy hover:text-white transition-colors' }, children: [{ type: icon, props: { name: linkedin, size: 16 } }] }
 
       # ── CTA ───────────────────────────────────────────────────────────
       - type: container
