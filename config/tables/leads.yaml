@@ -9,7 +9,15 @@ fields:
     name: subject
     label: Objet
     type: single-select
-    options: [visite, bureau-fixe, nomade, flex, salle-de-reunion, domiciliation, evenement, autre]
+    options:
+      - { value: visite, label: $t:contact.form.subject.visite }
+      - { value: bureau-fixe, label: $t:contact.form.subject.bureauFixe }
+      - { value: nomade, label: $t:contact.form.subject.nomade }
+      - { value: flex, label: $t:contact.form.subject.flex }
+      - { value: salle-de-reunion, label: $t:contact.form.subject.salle }
+      - { value: domiciliation, label: $t:contact.form.subject.domiciliation }
+      - { value: evenement, label: $t:contact.form.subject.evenement }
+      - { value: autre, label: $t:contact.form.subject.autre }
   - { id: 5, name: message, label: Message, type: long-text, required: true }
   - { id: 6, name: created_at, type: created-at }
 

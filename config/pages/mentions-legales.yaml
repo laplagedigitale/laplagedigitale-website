@@ -1,0 +1,81 @@
+# Page: mentions-legales — legal notice (LCEN art. 6): publisher, host, IP, liability.
+# Generated layout: navy hero, then one h2 per section in a max-w-3xl prose column.
+name: mentions-legales
+path: /mentions-legales
+meta:
+  title: $t:legal.meta.title
+  description: $t:legal.meta.description
+  openGraph:
+    type: website
+    image: /images/pages/site/bg-hero.webp
+components:
+  - component: site-header
+
+  - type: container
+    element: section
+    props:
+      className: 'relative overflow-hidden bg-navy text-white'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+        children:
+          - { type: text, element: p, content: $t:legal.eyebrow, props: { className: 'text-overline uppercase text-orange mb-4' } }
+          - { type: text, element: h1, content: $t:legal.title, props: { className: 'text-h1 sm:text-display text-white max-w-3xl' } }
+          - { type: text, element: p, content: $t:legal.lead, props: { className: 'text-lead text-navy-100 max-w-2xl mt-6' } }
+
+  - type: container
+    element: main
+    props:
+      className: 'bg-background'
+    children:
+      - type: container
+        element: article
+        props:
+          className: 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20'
+        children:
+          - { type: text, element: p, content: $t:legal.updated, props: { className: 'text-caption text-text-muted mb-10' } }
+
+          # editor
+          - { type: text, element: h2, content: $t:legal.editor.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.editor.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.editor.p2, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.editor.p3, props: { className: 'text-body text-text mb-4' } }
+
+          # director
+          - { type: text, element: h2, content: $t:legal.director.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.director.p1, props: { className: 'text-body text-text mb-4' } }
+
+          # host
+          - { type: text, element: h2, content: $t:legal.host.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.host.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.host.p2, props: { className: 'text-body text-text mb-4' } }
+
+          # build
+          - { type: text, element: h2, content: $t:legal.build.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.build.p1, props: { className: 'text-body text-text mb-4' } }
+
+          # ip
+          - { type: text, element: h2, content: $t:legal.ip.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.ip.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.ip.p2, props: { className: 'text-body text-text mb-4' } }
+
+          # liability
+          - { type: text, element: h2, content: $t:legal.liability.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.liability.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.liability.p2, props: { className: 'text-body text-text mb-4' } }
+
+          # links
+          - { type: text, element: h2, content: $t:legal.links.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.links.p1, props: { className: 'text-body text-text mb-4' } }
+
+          # data
+          - { type: text, element: h2, content: $t:legal.data.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.data.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: link, content: $t:legal.data.link, props: { href: '$t:href.privacy', className: 'inline-flex items-center font-bold text-navy underline underline-offset-4 hover:text-magenta' } }
+
+          # law
+          - { type: text, element: h2, content: $t:legal.law.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.law.p1, props: { className: 'text-body text-text mb-4' } }
+
+  - component: site-footer

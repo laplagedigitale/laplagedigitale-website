@@ -60,3 +60,225 @@ post.back: "← Alle Neuigkeiten"
 post.more: Weitere Artikel
 post.previous: Vorheriger Artikel
 post.next: Nächster Artikel
+
+# ═══ Page dictionaries (generated from fragments — edit the fragments) ═══
+
+# ── contact ──
+contact.meta.title: "Kontakt und Anfahrt — La Plage Digitale"
+contact.meta.description: "Telefon, E-Mail, Öffnungszeiten und Anfahrt zu La Plage Digitale, Dritter Ort und Coworking-Space in der 13 rue Jacques Peirotes in Straßburg."
+contact.eyebrow: "Praktische Informationen"
+contact.title: "Kontaktieren Sie uns!"
+contact.lead: "Sie möchten uns besuchen, suchen einen Arbeitsplatz oder einen Besprechungsraum oder planen eine Veranstaltung? Unser Team ist montags bis freitags für Sie da – unsere Tür steht Ihnen offen."
+contact.reach.eyebrow: "So erreichen Sie uns"
+contact.reach.title: "Sprechen wir über Ihr Vorhaben"
+contact.phone.label: "Telefon"
+contact.email.label: "E-Mail"
+contact.address.label: "Adresse"
+contact.address.directions: "Route berechnen"
+contact.hours.label: "Öffnungszeiten"
+contact.hours.weekdays: "Montag bis Freitag · 9:00 – 17:00 Uhr"
+contact.hours.fixed: "Mieter eines festen Arbeitsplatzes haben rund um die Uhr, 7 Tage die Woche Zugang."
+contact.map.eyebrow: "So finden Sie uns"
+contact.map.title: "Mitten im Herzen von Straßburg"
+contact.map.lead: "La Plage Digitale befindet sich in den ehemaligen Räumen der Coop, 13 rue Jacques Peirotes, in Straßburg."
+contact.map.iframeTitle: "Karte: La Plage Digitale, 13 rue Jacques Peirotes, 67000 Straßburg"
+contact.form.eyebrow: "Schreiben Sie uns"
+contact.form.title: "Nachricht senden"
+contact.form.lead: "Schreiben Sie uns ein paar Zeilen – wir melden uns schnell bei Ihnen, in der Regel innerhalb von zwei Werktagen."
+contact.form.submit: "Nachricht senden"
+contact.form.success.title: "Vielen Dank, Ihre Nachricht ist angekommen!"
+contact.form.success.message: "Das Team von La Plage Digitale antwortet Ihnen in Kürze. In dringenden Fällen erreichen Sie uns unter +33 9 77 42 59 29."
+contact.form.error: "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an contact@laplagedigitale.fr."
+contact.form.name.label: "Vor- und Nachname"
+contact.form.name.placeholder: "Alex Müller"
+contact.form.email.label: "E-Mail"
+contact.form.email.placeholder: "alex@beispiel.de"
+contact.form.phone.label: "Telefon (optional)"
+contact.form.phone.placeholder: "+49 170 1234567"
+contact.form.subject.label: "Worum geht es?"
+contact.form.subject.visite: "Besichtigung"
+contact.form.subject.bureauFixe: "Fester Arbeitsplatz"
+contact.form.subject.nomade: "Flexibler Arbeitsplatz"
+contact.form.subject.flex: "Flex-Bereich"
+contact.form.subject.salle: "Besprechungsraum"
+contact.form.subject.domiciliation: "Geschäftsadresse"
+contact.form.subject.evenement: "Veranstaltung ausrichten"
+contact.form.subject.autre: "Sonstiges"
+contact.form.message.label: "Ihre Nachricht"
+contact.form.message.placeholder: "Beschreiben Sie uns in wenigen Zeilen, wonach Sie suchen …"
+contact.form.privacy: "Ihre Angaben verwenden wir ausschließlich zur Beantwortung Ihrer Anfrage; sie werden niemals verkauft. Mehr dazu und zu Ihren Rechten finden Sie in unserer Datenschutzerklärung."
+contact.cta.motif: "Coworking · Dritter Ort · Veranstaltungen"
+contact.cta.title: "Bereit, Ihren Laptop an der Plage aufzuklappen?"
+contact.cta.lead: "Vergleichen Sie unsere Coworking-Angebote oder werden Sie Mitglied des Vereins und gestalten Sie den Dritten Ort mit."
+contact.cta.pricing: "Angebote ansehen"
+contact.cta.membership: "Mitglied werden auf HelloAsso"
+
+# ── home ──
+home.meta.title: La Plage Digitale — Coworking und Dritter Ort in Straßburg
+home.meta.description: "Der Dritte Ort für Innovation in Straßburg: 600 m² Coworking im Stadtzentrum, mit Festplätzen, Flex-Plätzen und Besprechungsräumen zur Miete."
+home.href.fixe: /de/les-formules#fixe
+home.href.nomade: /de/les-formules#nomade
+home.href.flex: /de/les-formules#flex
+home.href.reunion: /de/les-formules#reunion
+home.hero.eyebrow: Coworking · Dritter Ort · Straßburg
+home.hero.title: Der Dritte Ort für Innovation in Straßburg
+home.hero.lead: "Über 600 m² für Gründerinnen, Innovatoren und Kreative – in den ehemaligen Räumen der Coop, mitten in Straßburg. Ein Schreibtisch pro Monat, ein Platz für einen Tag oder ein Raum für Ihre Besprechung: Arbeiten Sie bei uns an der Plage."
+home.hero.cta.space: In unserem Space arbeiten
+home.hero.cta.fixe: Schreibtisch pro Monat
+home.hero.cta.flex: Schreibtisch pro Tag
+home.hero.cta.reunion: Besprechungsräume
+home.hero.imageAlt: "Fotocollage von La Plage Digitale: Coworker bei der Arbeit, Bibliothek, Gemeinschaftsküche, Kicker und ein Meetup"
+home.numbers.title: La Plage in Zahlen
+home.numbers.area: gemeinsame Arbeitsfläche
+home.numbers.fixed: Festplätze
+home.numbers.flex: Flex-Plätze ohne Reservierung
+home.numbers.rooms: Besprechungsräume für 2 bis 60 Personen
+home.numbers.companies: ansässige Unternehmen
+home.offers.eyebrow: Unsere Angebote
+home.offers.title: Ein Angebot für jede Arbeitsweise
+home.offers.lead: Pro Monat, pro Tag oder für eine Besprechung – wählen Sie, was zu Ihnen passt.
+home.offers.fixe.title: Fix
+home.offers.fixe.price: 275 € zzgl. MwSt. / Monat
+home.offers.fixe.text: Ihr eigener Schreibtisch im Open Space, ein Schließfach, Zugang rund um die Uhr und zu den Besprechungsräumen.
+home.offers.nomade.title: Nomade
+home.offers.nomade.price: 175 € zzgl. MwSt. / Monat
+home.offers.nomade.text: Zugang zum Flex-Bereich rund um die Uhr, mit eigenem Schlüssel.
+home.offers.flex.title: Flex
+home.offers.flex.price: 14 € zzgl. MwSt. / Tag
+home.offers.flex.text: Ein geteilter Arbeitsplatz für einen Tag, Montag bis Freitag von 9 bis 17 Uhr, ohne Bindung.
+home.offers.reunion.title: Besprechungsräume
+home.offers.reunion.price: ab 87 € zzgl. MwSt. / 4 Std.
+home.offers.reunion.text: Vier Räume mit Bildschirm für 6 bis 60 Personen, nur wenige Schritte vom Münster entfernt.
+home.offers.more: Details ansehen →
+home.offers.cta: Alle Angebote
+home.community.eyebrow: Dritter Ort
+home.community.title: Mehr als ein Coworking
+home.community.lead: "La Plage Digitale ist ein Ort der Begegnung und des Austauschs für die Straßburger Gründerszene. Teilen und Serendipität: Jeden Monat trifft sich die Community, lernt voneinander und gestaltet gemeinsam."
+home.community.item1: "Der Plage-Rat – einmal im Monat tauschen sich die Coworker aus und begrüßen die Neuankömmlinge."
+home.community.item2: "Meetups – Go SXB Go!, Strasbourg JS und weitere Entwickler-Communities treffen sich hier regelmäßig."
+home.community.item3: "Hack SXB – am letzten Freitag im Monat ein Abend rund ums Programmieren an freien Projekten."
+home.community.item4: "Gemeinsame Bibliothek, Bidouillothèque, Beratungssprechstunden – Ressourcen, die die Mitglieder teilen."
+home.community.cta: Unsere Aktivitäten entdecken
+home.community.imageAlt: Ein Entwickler-Meetup im Flex-Bereich von La Plage Digitale
+home.news.eyebrow: Neuigkeiten
+home.news.title: Das Neueste von der Plage
+home.news.cta: Alle Neuigkeiten →
+home.news.empty: Noch keine Neuigkeiten.
+home.supporters.title: Mit Unterstützung von
+home.supporters.cta: Unsere Förderer und Netzwerke →
+home.cta.title: Lust, Teil der Plage zu werden?
+home.cta.lead: Besuchen Sie uns montags bis freitags von 9 bis 17 Uhr – oder werden Sie Mitglied des Vereins und Teil der Community.
+home.cta.visit: Besuch vereinbaren
+home.cta.join: Mitglied werden
+
+# ── legal ──
+legal.meta.title: "Impressum — La Plage Digitale"
+legal.meta.description: "Impressum der Website von La Plage Digitale: Herausgeber, Verantwortlicher für den Inhalt, Hosting-Anbieter, Urheberrecht und Haftung."
+legal.eyebrow: "Rechtliche Hinweise"
+legal.title: "Impressum"
+legal.lead: "Gemäß Artikel 6 des französischen Gesetzes Nr. 2004-575 vom 21. Juni 2004 über das Vertrauen in die digitale Wirtschaft (LCEN) finden Sie hier die Angaben zu den Verantwortlichen der Website laplagedigitale.fr."
+legal.updated: "Zuletzt aktualisiert: Oktober 2026"
+legal.editor.title: "Herausgeber"
+legal.editor.p1: "Die Website laplagedigitale.fr wird herausgegeben von La Plage Digitale, einem gemeinnützigen Verein nach elsass-lothringischem Ortsrecht (Vereinsrecht von 1908), der den gleichnamigen Dritten Ort und Coworking-Space betreibt."
+legal.editor.p2: "Sitz: 13 rue Jacques Peirotes, 67000 Straßburg, Frankreich"
+legal.editor.p3: "Telefon: +33 9 77 42 59 29 · +33 6 24 41 32 03 · E-Mail: contact@laplagedigitale.fr"
+legal.director.title: "Verantwortlich für den Inhalt"
+legal.director.p1: "Simon THIERRY, Präsident des Vereins La Plage Digitale."
+legal.host.title: "Hosting-Anbieter"
+legal.host.p1: "Scalingo SAS, vereinfachte Aktiengesellschaft (SAS) mit einem Kapital von 35.291,90 €, SIRET 808 665 483 00034 · 13 rue Jacques Peirotes, 67000 Straßburg, Frankreich · https://scalingo.com"
+legal.host.p2: "Die Website und ihre Daten werden innerhalb der Europäischen Union gehostet."
+legal.build.title: "Konzeption und Umsetzung"
+legal.build.p1: "Die Website wurde mit Sovrium (https://sovrium.com) erstellt, einer konfigurationsgesteuerten Anwendungsplattform. Texte und Fotos: La Plage Digitale, sofern nicht anders angegeben."
+legal.ip.title: "Urheberrecht"
+legal.ip.p1: "Sämtliche Inhalte dieser Website – Texte, Fotos, Illustrationen, Logos und visuelle Identität – sind Eigentum von La Plage Digitale oder werden mit Genehmigung der Rechteinhaber verwendet. Sie sind durch das französische Gesetzbuch über geistiges Eigentum geschützt."
+legal.ip.p2: "Jede Vervielfältigung, Wiedergabe, Änderung oder Bearbeitung dieser Inhalte, ganz oder teilweise und gleich in welcher Form, ist ohne vorherige schriftliche Zustimmung von La Plage Digitale untersagt und stellt eine Verletzung im Sinne der Artikel L.335-2 ff. des französischen Gesetzbuchs über geistiges Eigentum dar. Namen, Logos und Marken der genannten Unternehmen und Partner gehören ihren jeweiligen Inhabern."
+legal.liability.title: "Haftung"
+legal.liability.p1: "La Plage Digitale ist bemüht, zutreffende und aktuelle Informationen zu veröffentlichen (Angebote, Preise, Öffnungszeiten, Leistungen). Diese Angaben sind unverbindlich und können sich ändern; der Verein übernimmt keine Haftung für Auslassungen, Ungenauigkeiten oder verspätete Aktualisierungen. Bitte kontaktieren Sie uns, wenn Sie eine Bestätigung wünschen."
+legal.liability.p2: "Die Website ist grundsätzlich jederzeit erreichbar, kann jedoch – insbesondere wegen Wartungsarbeiten – vorübergehend nicht verfügbar sein. La Plage Digitale haftet nicht für Schäden, die aus der Nutzung der Website oder ihrer Nichterreichbarkeit entstehen."
+legal.links.title: "Links"
+legal.links.p1: "Diese Website enthält Links zu Websites Dritter (HelloAsso, soziale Netzwerke, Websites unserer Coworker und Partner). La Plage Digitale hat keinen Einfluss auf deren Inhalte und übernimmt dafür keine Verantwortung. Links auf diese Website sind willkommen, sofern sie dem Ansehen des Vereins nicht schaden."
+legal.data.title: "Personenbezogene Daten und Cookies"
+legal.data.p1: "Diese Website setzt keine Werbe- oder Analyse-Cookies. Die über das Kontaktformular übermittelten Angaben werden ausschließlich zur Beantwortung Ihrer Anfrage verwendet. Einzelheiten zur Verarbeitung, zu Speicherfristen und zu Ihren Rechten finden Sie in unserer Datenschutzerklärung."
+legal.data.link: "Zur Datenschutzerklärung →"
+legal.law.title: "Anwendbares Recht"
+legal.law.p1: "Dieses Impressum unterliegt französischem Recht. Bei Fragen schreiben Sie uns gerne an contact@laplagedigitale.fr."
+
+# ── privacy ──
+privacy.meta.title: "Datenschutzerklärung — La Plage Digitale"
+privacy.meta.description: "Wie La Plage Digitale Ihre Daten verarbeitet: Kontaktformular, cookiefreie Reichweitenmessung, Speicherfristen und Ihre Rechte nach der DSGVO."
+privacy.eyebrow: "Ihre Daten"
+privacy.title: "Datenschutzerklärung"
+privacy.lead: "Wir erheben nur das Nötigste, verkaufen nichts und setzen keine Werbe-Tracker ein. Hier erfahren Sie in klaren Worten, was laplagedigitale.fr mit Ihren Daten macht."
+privacy.updated: "Zuletzt aktualisiert: Oktober 2026"
+privacy.controller.title: "Verantwortlicher"
+privacy.controller.p1: "Verantwortlich für die Datenverarbeitung ist der Verein La Plage Digitale, 13 rue Jacques Peirotes, 67000 Straßburg, Frankreich, vertreten durch seinen Präsidenten Simon THIERRY."
+privacy.controller.p2: "Bei Fragen zu Ihren Daten: contact@laplagedigitale.fr."
+privacy.contact.title: "Kontaktformular"
+privacy.contact.p1: "Wenn Sie uns über das Formular auf der Kontaktseite schreiben, speichern wir Ihren Namen, Ihre E-Mail-Adresse, Ihre Telefonnummer (optional), Betreff und Inhalt Ihrer Nachricht sowie das Sendedatum in der Datenbank der Website."
+privacy.contact.p2: "Diese Daten dienen ausschließlich der Beantwortung Ihrer Anfrage (Besichtigung, Arbeitsplatz, Raum, Veranstaltung, Mitgliedschaft …) und gegebenenfalls der Zusendung eines Angebots. Rechtsgrundlage: vorvertragliche Maßnahmen auf Ihre Anfrage sowie unser berechtigtes Interesse, Anfragen zu beantworten (Art. 6 Abs. 1 lit. b und f DSGVO)."
+privacy.contact.p3: "Zum Schutz vor automatisierten Einsendungen wird jede Übermittlung zusätzlich mit der Kennung Ihres Browsers (User-Agent) und einem nicht umkehrbaren Fingerabdruck (gesalzener Hash) Ihrer IP-Adresse protokolliert; die IP-Adresse selbst wird nie gespeichert."
+privacy.analytics.title: "Cookiefreie Reichweitenmessung"
+privacy.analytics.p1: "Um zu erfahren, welche Seiten gelesen werden, nutzen wir das in unsere Plattform integrierte Statistik-Tool, das auf unserem eigenen Server läuft. Es setzt keine Cookies, verwendet kein Fingerprinting und übermittelt keine Daten an Dritte: kein Google Analytics, keine Werbepixel."
+privacy.analytics.p2: "Erfasst werden aufgerufene Seiten, die verweisende Seite, Kampagnenparameter (UTM) und der Gerätetyp. Besuche werden über eine pseudonyme Kennung zusammengefasst, die serverseitig aus Datum, IP-Adresse und Browser berechnet wird und sich täglich ändert; die IP-Adresse wird nicht gespeichert."
+privacy.analytics.p3: "Sendet Ihr Browser das Signal „Do Not Track“, wird Ihr Besuch nicht erfasst. Die Statistiken werden nach 365 Tagen automatisch gelöscht, und die Seiten Impressum und Datenschutz werden nicht gemessen. Da sie auf zusammengefasste Statistiken beschränkt ist, erfordert diese Reichweitenmessung keine Einwilligung."
+privacy.accounts.title: "Konten des Redaktionsteams"
+privacy.accounts.p1: "Nur Mitglieder des Teams von La Plage Digitale verfügen über ein Konto, das ein Administrator anlegt, um Blog-Neuigkeiten zu veröffentlichen; eine öffentliche Registrierung gibt es nicht. Für diese Konten speichern wir Name, E-Mail-Adresse, ein nicht umkehrbar gehashtes Passwort sowie die für die Anmeldung nötigen Sitzungsdaten."
+privacy.cookies.title: "Cookies"
+privacy.cookies.p1: "Diese Website setzt keine Werbe-, Profiling- oder Analyse-Cookies. Es können ausschließlich technisch notwendige Cookies gesetzt werden: das Sitzungs-Cookie für Teammitglieder, die im Redaktionsbereich angemeldet sind, und – wenn Sie die Sprache wechseln – ein Cookie, das Ihre Wahl speichert."
+privacy.cookies.p2: "Diese technischen Cookies sind nach französischem Datenschutzrecht (Art. 82 des Loi Informatique et Libertés) einwilligungsfrei; deshalb zeigt die Website kein Cookie-Banner an."
+privacy.thirdparty.title: "Inhalte Dritter"
+privacy.thirdparty.p1: "Die Kontaktseite bindet eine Google-Maps-Karte ein. Beim Laden erhält Google Ihre IP-Adresse und kann eigene Cookies setzen; es gilt die Datenschutzerklärung von Google (policies.google.com/privacy). Da unsere vollständige Adresse auf der Seite ausgeschrieben ist, können Sie auf die Karte verzichten."
+privacy.thirdparty.p2: "Links zu HelloAsso (Mitgliedschaft) und zu unseren sozialen Netzwerken führen zu Diensten Dritter mit eigenen Datenschutzbestimmungen. Wir geben keine Daten an sie weiter."
+privacy.recipients.title: "Empfänger und Hosting"
+privacy.recipients.p1: "Ihre Daten sind nur befugten Mitgliedern des Teams von La Plage Digitale zugänglich. Sie werden weder verkauft noch vermietet noch zu kommerziellen Zwecken weitergegeben."
+privacy.recipients.p2: "Die Website und ihre Datenbank werden von unserem technischen Auftragsverarbeiter Scalingo SAS (Straßburg) innerhalb der Europäischen Union gehostet. Es findet keine Übermittlung von Daten außerhalb der Europäischen Union statt."
+privacy.retention.title: "Speicherdauer"
+privacy.retention.p1: "Nachrichten aus dem Kontaktformular: 3 Jahre ab unserem letzten Austausch, danach Löschung. · Besuchsstatistiken: 365 Tage, danach automatische Löschung. · Konten des Teams: solange die Person an der Website mitwirkt, danach Löschung."
+privacy.security.title: "Sicherheit"
+privacy.security.p1: "Die Verbindung zur Website ist verschlüsselt (HTTPS), Passwörter werden gehasht und der Zugriff auf Daten ist auf befugte Personen beschränkt. Da keine Übertragungs- oder Speichermethode völlig sicher ist, verpflichten wir uns, Sie gemäß DSGVO unverzüglich zu informieren, sollte ein Vorfall Ihre Daten betreffen."
+privacy.rights.title: "Ihre Rechte"
+privacy.rights.p1: "Nach der DSGVO und dem französischen Datenschutzgesetz haben Sie das Recht auf Auskunft, Berichtigung und Löschung Ihrer Daten, auf Einschränkung der Verarbeitung und Widerspruch gegen sie, auf Datenübertragbarkeit sowie das Recht, Verfügungen über den Umgang mit Ihren Daten nach Ihrem Tod zu treffen."
+privacy.rights.p2: "Um diese Rechte auszuüben, schreiben Sie uns an contact@laplagedigitale.fr oder per Post an La Plage Digitale, 13 rue Jacques Peirotes, 67000 Straßburg, Frankreich. Wir antworten Ihnen innerhalb eines Monats. Bei begründeten Zweifeln an Ihrer Identität können wir einen Nachweis anfordern."
+privacy.rights.p3: "Sind Sie nach Ihrer Kontaktaufnahme der Ansicht, dass Ihre Rechte nicht gewahrt werden, können Sie Beschwerde bei der CNIL, der französischen Datenschutzbehörde, einlegen: www.cnil.fr/fr/plaintes."
+privacy.changes.title: "Änderungen dieser Erklärung"
+privacy.changes.p1: "Wir können diese Datenschutzerklärung anpassen, um Änderungen der Website oder der Rechtslage zu berücksichtigen. Das Datum der letzten Aktualisierung finden Sie oben auf dieser Seite."
+
+# ── space ──
+space.meta.title: Coworking-Space und Büros in Straßburg
+space.meta.description: "3 Boxen, 52 feste Arbeitsplätze, 30 Flex-Plätze und 4 Besprechungsräume für 2 bis 60 Personen in der 13 rue Jacques Peirotes, Straßburg. Mit virtuellem Rundgang."
+space.eyebrow: Der Raum
+space.title: Coworking-Space und verfügbare Büros
+space.lead: "Über 600 m² im Herzen von Straßburg: abgeschlossene Büros, feste Arbeitsplätze, flexible Plätze und Räume für Besprechungen."
+space.hero.alt: "Ansichten des Open Space von La Plage Digitale: Schreibtische, sichtbare Balken und Glasdach"
+space.offers.eyebrow: Was Sie erwartet
+space.offers.title: Ein Platz für jede Arbeitsweise
+space.box.title: Boxen für Start-ups
+space.box.text: Abgeschlossene Büros für Ihr kleines Team.
+space.fixed.title: Feste Arbeitsplätze
+space.fixed.text: Ihr eigener Schreibtisch im Open Space, mitten in der Stadt.
+space.flex.title: Flex-Plätze
+space.flex.text: Für den gelegentlichen Bedarf – ohne Reservierung, abgerechnet pro halbem Tag.
+space.rooms.title: Besprechungsräume
+space.rooms.text: Für 2 bis 60 Personen – für Meetings, Konferenzen und Seminare.
+space.more: Mehr erfahren →
+space.tour.eyebrow: Virtueller Rundgang
+space.tour.title: Entdecken Sie die Plage vom Bildschirm aus
+space.tour.lead: Erkunden Sie den Open Space, die Boxen und die Besprechungsräume, bevor Sie vorbeikommen.
+space.tour.frameTitle: Virtueller 360°-Rundgang durch La Plage Digitale (Giraffe360)
+space.how.eyebrow: So funktioniert's
+space.how.title: Wie kann ich bei La Plage Digitale arbeiten?
+space.how.fixed.title: Ein fester Arbeitsplatz
+space.how.fixed.text: "Sie interessieren sich für einen festen Arbeitsplatz? Kontaktieren Sie uns einfach telefonisch oder per E-Mail, um die verfügbaren Plätze zu erfahren."
+space.how.flex.title: Ein Flex-Platz
+space.how.flex.text: "Wenn Sie nur gelegentlich bei uns arbeiten möchten, wählen Sie das Flex-Angebot. Plätze können nicht im Voraus reserviert werden: Kommen Sie einfach während der Öffnungszeiten vorbei."
+space.how.flex.hours: Montag bis Freitag, 9 bis 17 Uhr
+space.how.flex.note: "Ausnahmsweise finden im Flex-Bereich Veranstaltungen statt, sodass er dann nicht verfügbar ist. Rufen Sie uns gerne an oder schauen Sie in unsere Neuigkeiten."
+space.how.flex.cta: Zu den Neuigkeiten →
+space.how.rooms.title: Ein Besprechungsraum
+space.how.rooms.text: "Sie interessieren sich für einen unserer Besprechungsräume? Kontaktieren Sie uns oder kommen Sie vorbei, um die Verfügbarkeit zu erfragen."
+space.how.rooms.cta: Kontakt aufnehmen
+space.how.rooms.alt: "Die Besprechungsräume von La Plage Digitale: großer Tisch, Bildschirm und bunte Stühle"
+space.cta.title: Bereit, Ihren Laptop aufzuklappen?
+space.cta.text: Entdecken Sie unsere Angebote oder besuchen Sie uns – wir zeigen Ihnen gerne alles.
+space.cta.pricing: Unsere Angebote
+space.cta.contact: Besichtigung vereinbaren

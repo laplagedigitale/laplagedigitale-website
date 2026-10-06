@@ -28,10 +28,16 @@ components:
   - $ref: ./config/components/site-footer.yaml
   - $ref: ./config/components/editor-bar.yaml
 
+forms:
+  - $ref: ./config/forms/contact.yaml
+
 pages:
   - $ref: ./config/pages/home.yaml
   - $ref: ./config/pages/blog.yaml
   - $ref: ./config/pages/blog-post.yaml
+  - $ref: ./config/pages/contact.yaml
+  - $ref: ./config/pages/mentions-legales.yaml
+  - $ref: ./config/pages/confidentialite.yaml
   # Editors' front office — gated, never indexed.
   - $ref: ./config/pages/connexion.yaml
   - $ref: ./config/pages/editor.yaml

@@ -1,143 +1,287 @@
-# Page: contact.
+# Page: contact — "Informations pratiques": how to reach us, when we are open,
+# where we are, and a contact form that writes into the `leads` table.
 name: contact
 path: /contact
 meta:
-  title: "Contact — La Plage Digitale"
-  description: "Contactez La Plage Digitale, coworking à Strasbourg. 13 rue Jacques Peirotes, 67000 Strasbourg."
-  noindex: true
+  title: $t:contact.meta.title
+  description: $t:contact.meta.description
+  openGraph:
+    type: website
+    image: /images/pages/site/bg-hero.webp
 components:
   - component: site-header
 
+  # ── Hero ────────────────────────────────────────────────────────────
   - type: container
     element: section
     props:
-      className: 'pt-32 pb-24'
+      className: 'relative overflow-hidden bg-navy text-white'
     children:
       - type: container
         props:
-          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+        children:
+          - type: text
+            element: p
+            content: $t:contact.eyebrow
+            props:
+              className: 'text-overline uppercase text-orange mb-4'
+          - type: text
+            element: h1
+            content: $t:contact.title
+            props:
+              className: 'text-h1 sm:text-display text-white max-w-3xl'
+          - type: text
+            element: p
+            content: $t:contact.lead
+            props:
+              className: 'text-lead text-navy-100 max-w-2xl mt-6'
+
+  - type: container
+    element: main
+    props:
+      className: 'bg-background'
+    children:
+      # ── Contact cards ─────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+          'aria-labelledby': contact-reach-title
+        children:
+          - type: text
+            element: p
+            content: $t:contact.reach.eyebrow
+            props:
+              className: 'text-overline uppercase text-magenta mb-3'
+          - type: text
+            element: h2
+            content: $t:contact.reach.title
+            props:
+              id: contact-reach-title
+              className: 'text-h2 text-navy mb-10'
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'
+            children:
+              # Phone
+              - type: container
+                props:
+                  className: 'bg-white rounded-lg shadow-md border-t-4 border-navy p-6'
+                interactions: { scroll: { animation: fadeInUp, once: true } }
+                children:
+                  - type: container
+                    props:
+                      className: 'grid place-items-center w-12 h-12 rounded-full bg-navy-100 text-navy mb-4'
+                    children:
+                      - { type: icon, props: { name: phone, size: 22 } }
+                  - type: text
+                    element: h3
+                    content: $t:contact.phone.label
+                    props:
+                      className: 'text-h4 text-navy mb-3'
+                  - type: link
+                    content: '09 77 42 59 29'
+                    props:
+                      href: 'tel:+33977425929'
+                      className: 'block text-body font-bold text-navy hover:text-magenta transition-colors'
+                  - type: link
+                    content: '06 24 41 32 03'
+                    props:
+                      href: 'tel:+33624413203'
+                      className: 'block text-body font-bold text-navy hover:text-magenta transition-colors mt-1'
+
+              # Email
+              - type: container
+                props:
+                  className: 'bg-white rounded-lg shadow-md border-t-4 border-blue p-6'
+                interactions: { scroll: { animation: fadeInUp, once: true } }
+                children:
+                  - type: container
+                    props:
+                      className: 'grid place-items-center w-12 h-12 rounded-full bg-blue-100 text-navy mb-4'
+                    children:
+                      - { type: icon, props: { name: mail, size: 22 } }
+                  - type: text
+                    element: h3
+                    content: $t:contact.email.label
+                    props:
+                      className: 'text-h4 text-navy mb-3'
+                  - type: link
+                    content: 'contact@laplagedigitale.fr'
+                    props:
+                      href: 'mailto:contact@laplagedigitale.fr'
+                      className: 'block text-body font-bold text-navy hover:text-magenta transition-colors break-all'
+
+              # Address
+              - type: container
+                props:
+                  className: 'bg-white rounded-lg shadow-md border-t-4 border-orange p-6'
+                interactions: { scroll: { animation: fadeInUp, once: true } }
+                children:
+                  - type: container
+                    props:
+                      className: 'grid place-items-center w-12 h-12 rounded-full bg-orange-100 text-navy mb-4'
+                    children:
+                      - { type: icon, props: { name: map-pin, size: 22 } }
+                  - type: text
+                    element: h3
+                    content: $t:contact.address.label
+                    props:
+                      className: 'text-h4 text-navy mb-3'
+                  - type: text
+                    element: p
+                    content: '13 rue Jacques Peirotes<br>67000 Strasbourg'
+                    props:
+                      className: 'text-body text-text'
+                  - type: link
+                    content: $t:contact.address.directions
+                    props:
+                      href: 'https://www.google.com/maps/dir/?api=1&destination=13+rue+Jacques+Peirotes+67000+Strasbourg'
+                      target: _blank
+                      rel: 'noopener noreferrer'
+                      className: 'inline-block text-bodySmall font-bold text-navy underline underline-offset-4 hover:text-magenta mt-3'
+
+              # Opening hours
+              - type: container
+                props:
+                  className: 'bg-white rounded-lg shadow-md border-t-4 border-magenta p-6'
+                interactions: { scroll: { animation: fadeInUp, once: true } }
+                children:
+                  - type: container
+                    props:
+                      className: 'grid place-items-center w-12 h-12 rounded-full bg-magenta-100 text-navy mb-4'
+                    children:
+                      - { type: icon, props: { name: clock, size: 22 } }
+                  - type: text
+                    element: h3
+                    content: $t:contact.hours.label
+                    props:
+                      className: 'text-h4 text-navy mb-3'
+                  - type: text
+                    element: p
+                    content: $t:contact.hours.weekdays
+                    props:
+                      className: 'text-body text-text'
+                  - type: text
+                    element: p
+                    content: $t:contact.hours.fixed
+                    props:
+                      className: 'text-bodySmall text-text-muted mt-2'
+
+      # ── Map + form ────────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'bg-white'
         children:
           - type: container
             props:
-              className: 'text-center mb-16'
+              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
             children:
-              - type: text
-                element: h1
-                content: $t:contact.title
+              - type: grid
                 props:
-                  className: 'text-4xl sm:text-5xl font-bold text-gray-900 mb-4'
+                  className: 'grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16'
+                children:
+                  # Find us
+                  - type: container
+                    children:
+                      - type: text
+                        element: p
+                        content: $t:contact.map.eyebrow
+                        props:
+                          className: 'text-overline uppercase text-magenta mb-3'
+                      - type: text
+                        element: h2
+                        content: $t:contact.map.title
+                        props:
+                          className: 'text-h2 text-navy mb-4'
+                      - type: text
+                        element: p
+                        content: $t:contact.map.lead
+                        props:
+                          className: 'text-body text-text-muted mb-8'
+                      - type: container
+                        props:
+                          className: 'rounded-lg overflow-hidden shadow-md border border-border'
+                        children:
+                          - type: iframe
+                            props:
+                              src: 'https://www.google.com/maps?q=13+rue+Jacques+Peirotes+67000+Strasbourg&output=embed'
+                              title: $t:contact.map.iframeTitle
+                              loading: lazy
+                              referrerpolicy: no-referrer-when-downgrade
+                              className: 'block w-full h-80 lg:h-[28rem] border-0'
+
+                  # Contact form
+                  - type: container
+                    props:
+                      className: 'bg-sand rounded-lg p-6 sm:p-8 border-t-4 border-orange'
+                    children:
+                      - type: text
+                        element: p
+                        content: $t:contact.form.eyebrow
+                        props:
+                          className: 'text-overline uppercase text-magenta mb-3'
+                      - type: text
+                        element: h2
+                        content: $t:contact.form.title
+                        props:
+                          className: 'text-h2 text-navy mb-4'
+                      - type: text
+                        element: p
+                        content: $t:contact.form.lead
+                        props:
+                          className: 'text-body text-text-muted mb-8'
+                      - type: form
+                        formRef: contact
+                        props: { headingLevel: h3 }
+                      - type: text
+                        element: p
+                        content: $t:contact.form.privacy
+                        props:
+                          className: 'text-caption text-text-muted mt-6'
+
+      # ── CTA band ──────────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'bg-navy text-white'
+        children:
+          - type: container
+            props:
+              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 text-center'
+            children:
               - type: text
                 element: p
-                content: $t:contact.subtitle
+                content: $t:contact.cta.motif
                 props:
-                  className: 'text-lg text-gray-600'
-
-          - type: grid
-            props:
-              className: 'grid grid-cols-1 lg:grid-cols-2 gap-16'
-            children:
-              # Contact info + map
-              - type: container
+                  className: 'text-overline uppercase text-orange mb-4'
+              - type: text
+                element: h2
+                content: $t:contact.cta.title
                 props:
-                  className: 'space-y-8'
+                  className: 'text-h2 text-white max-w-2xl mx-auto'
+              - type: text
+                element: p
+                content: $t:contact.cta.lead
+                props:
+                  className: 'text-lead text-navy-100 max-w-2xl mx-auto mt-4'
+              - type: flex
+                props:
+                  className: 'flex flex-col sm:flex-row items-center justify-center gap-4 mt-10'
                 children:
-                  - type: container
-                    children:
-                      - type: text
-                        element: h3
-                        content: $t:contact.address.label
-                        props:
-                          className: 'text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2'
-                      - type: text
-                        element: p
-                        content: $t:contact.address
-                        props:
-                          className: 'text-lg text-gray-900'
-                  - type: container
-                    children:
-                      - type: text
-                        element: h3
-                        content: $t:contact.email.label
-                        props:
-                          className: 'text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2'
-                      - type: link
-                        content: $t:contact.email
-                        props:
-                          href: 'mailto:contact@laplagedigitale.fr'
-                          className: 'text-lg text-[#eb6f18] hover:underline'
-                  - type: container
-                    children:
-                      - type: text
-                        element: h3
-                        content: $t:contact.hours.label
-                        props:
-                          className: 'text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2'
-                      - type: text
-                        element: p
-                        content: $t:contact.hours
-                        props:
-                          className: 'text-lg text-gray-900'
-
-                  - type: container
+                  - type: link
+                    content: $t:contact.cta.pricing
                     props:
-                      className: 'rounded-xl overflow-hidden shadow-md'
-                    children:
-                      - type: iframe
-                        props:
-                          src: 'https://www.openstreetmap.org/export/embed.html?bbox=7.7510%2C48.5770%2C7.7560%2C48.5800&layer=mapnik&marker=48.5785%2C7.7535'
-                          className: 'w-full h-64 border-0'
-                          loading: lazy
-
-              # Contact form
-              - type: form
-                props:
-                  className: 'space-y-6 bg-gray-50 p-8 rounded-xl'
-                  action: '{{CONTACT_FORM_ACTION}}'
-                  method: POST
-                children:
-                  - type: container
-                    children:
-                      - type: text
-                        element: span
-                        content: $t:contact.form.name
-                        props:
-                          className: 'block text-sm font-medium text-gray-700 mb-1'
-                      - type: input
-                        props:
-                          type: text
-                          name: name
-                          required: true
-                          className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#eb6f18] focus:border-transparent'
-                  - type: container
-                    children:
-                      - type: text
-                        element: span
-                        content: $t:contact.form.email
-                        props:
-                          className: 'block text-sm font-medium text-gray-700 mb-1'
-                      - type: input
-                        props:
-                          type: email
-                          name: email
-                          required: true
-                          className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#eb6f18] focus:border-transparent'
-                  - type: container
-                    children:
-                      - type: text
-                        element: span
-                        content: $t:contact.form.message
-                        props:
-                          className: 'block text-sm font-medium text-gray-700 mb-1'
-                      - type: input
-                        props:
-                          type: text
-                          name: message
-                          required: true
-                          className: 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#eb6f18] focus:border-transparent h-32'
-                  - type: button
-                    content: $t:contact.form.submit
+                      href: $t:href.pricing
+                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                  - type: link
+                    content: $t:contact.cta.membership
                     props:
-                      type: submit
-                      className: 'w-full px-6 py-3 rounded-full bg-[#eb6f18] text-white font-semibold hover:bg-[#d4610f] transition-colors'
+                      href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
+                      target: _blank
+                      rel: 'noopener noreferrer'
+                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors'
 
   - component: site-footer

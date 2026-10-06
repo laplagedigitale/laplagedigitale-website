@@ -1,0 +1,93 @@
+# Page: confidentialite — privacy policy (GDPR): what the site collects, why, for how long, and your rights.
+# Generated layout: navy hero, then one h2 per section in a max-w-3xl prose column.
+name: confidentialite
+path: /confidentialite
+meta:
+  title: $t:privacy.meta.title
+  description: $t:privacy.meta.description
+  openGraph:
+    type: website
+    image: /images/pages/site/bg-hero.webp
+components:
+  - component: site-header
+
+  - type: container
+    element: section
+    props:
+      className: 'relative overflow-hidden bg-navy text-white'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+        children:
+          - { type: text, element: p, content: $t:privacy.eyebrow, props: { className: 'text-overline uppercase text-orange mb-4' } }
+          - { type: text, element: h1, content: $t:privacy.title, props: { className: 'text-h1 sm:text-display text-white max-w-3xl' } }
+          - { type: text, element: p, content: $t:privacy.lead, props: { className: 'text-lead text-navy-100 max-w-2xl mt-6' } }
+
+  - type: container
+    element: main
+    props:
+      className: 'bg-background'
+    children:
+      - type: container
+        element: article
+        props:
+          className: 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20'
+        children:
+          - { type: text, element: p, content: $t:privacy.updated, props: { className: 'text-caption text-text-muted mb-10' } }
+
+          # controller
+          - { type: text, element: h2, content: $t:privacy.controller.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.controller.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.controller.p2, props: { className: 'text-body text-text mb-4' } }
+
+          # contact
+          - { type: text, element: h2, content: $t:privacy.contact.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.contact.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.contact.p2, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.contact.p3, props: { className: 'text-body text-text mb-4' } }
+
+          # analytics
+          - { type: text, element: h2, content: $t:privacy.analytics.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.analytics.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.analytics.p2, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.analytics.p3, props: { className: 'text-body text-text mb-4' } }
+
+          # accounts
+          - { type: text, element: h2, content: $t:privacy.accounts.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.accounts.p1, props: { className: 'text-body text-text mb-4' } }
+
+          # cookies
+          - { type: text, element: h2, content: $t:privacy.cookies.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.cookies.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.cookies.p2, props: { className: 'text-body text-text mb-4' } }
+
+          # thirdparty
+          - { type: text, element: h2, content: $t:privacy.thirdparty.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.thirdparty.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.thirdparty.p2, props: { className: 'text-body text-text mb-4' } }
+
+          # recipients
+          - { type: text, element: h2, content: $t:privacy.recipients.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.recipients.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.recipients.p2, props: { className: 'text-body text-text mb-4' } }
+
+          # retention
+          - { type: text, element: h2, content: $t:privacy.retention.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.retention.p1, props: { className: 'text-body text-text mb-4' } }
+
+          # security
+          - { type: text, element: h2, content: $t:privacy.security.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.security.p1, props: { className: 'text-body text-text mb-4' } }
+
+          # rights
+          - { type: text, element: h2, content: $t:privacy.rights.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.rights.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.rights.p2, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: p, content: $t:privacy.rights.p3, props: { className: 'text-body text-text mb-4' } }
+
+          # changes
+          - { type: text, element: h2, content: $t:privacy.changes.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:privacy.changes.p1, props: { className: 'text-body text-text mb-4' } }
+
+  - component: site-footer
