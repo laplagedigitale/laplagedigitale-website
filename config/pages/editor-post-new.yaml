@@ -15,8 +15,8 @@ components:
     props:
       className: 'max-w-4xl mx-auto px-4 sm:px-6 py-10'
     children:
-      - { type: link, content: '← Tous les articles', props: { href: /editor, className: 'text-bodySmall text-text-muted hover:text-navy' } }
-      - { type: text, element: h1, content: Nouvel article, props: { className: 'text-h2 text-navy mt-3 mb-8' } }
+      - { type: link, content: '← Tous les articles', props: { href: /editor, className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted hover:text-navy' } }
+      - { type: text, element: h1, content: Nouvel article, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mt-3 mb-8' } }
       - type: form
         dataSource: { table: posts }
         action:

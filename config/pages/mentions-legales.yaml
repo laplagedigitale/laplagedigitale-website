@@ -20,9 +20,9 @@ components:
         props:
           className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
         children:
-          - { type: text, element: p, content: $t:legal.eyebrow, props: { className: 'text-overline uppercase text-orange mb-4' } }
-          - { type: text, element: h1, content: $t:legal.title, props: { className: 'text-h1 sm:text-display text-white max-w-3xl' } }
-          - { type: text, element: p, content: $t:legal.lead, props: { className: 'text-lead text-navy-100 max-w-2xl mt-6' } }
+          - { type: text, element: p, content: $t:legal.eyebrow, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4' } }
+          - { type: text, element: h1, content: $t:legal.title, props: { className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-3xl' } }
+          - { type: text, element: p, content: $t:legal.lead, props: { className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6' } }
 
   - type: container
     element: main
@@ -34,48 +34,48 @@ components:
         props:
           className: 'max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20'
         children:
-          - { type: text, element: p, content: $t:legal.updated, props: { className: 'text-caption text-text-muted mb-10' } }
+          - { type: text, element: p, content: $t:legal.updated, props: { className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mb-10' } }
 
           # editor
-          - { type: text, element: h2, content: $t:legal.editor.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.editor.p1, props: { className: 'text-body text-text mb-4' } }
-          - { type: text, element: p, content: $t:legal.editor.p2, props: { className: 'text-body text-text mb-4' } }
-          - { type: text, element: p, content: $t:legal.editor.p3, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.editor.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.editor.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.editor.p2, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.editor.p3, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
 
           # director
-          - { type: text, element: h2, content: $t:legal.director.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.director.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.director.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.director.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
 
           # host
-          - { type: text, element: h2, content: $t:legal.host.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.host.p1, props: { className: 'text-body text-text mb-4' } }
-          - { type: text, element: p, content: $t:legal.host.p2, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.host.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.host.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.host.p2, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
 
           # build
-          - { type: text, element: h2, content: $t:legal.build.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.build.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.build.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.build.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
 
           # ip
-          - { type: text, element: h2, content: $t:legal.ip.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.ip.p1, props: { className: 'text-body text-text mb-4' } }
-          - { type: text, element: p, content: $t:legal.ip.p2, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.ip.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.ip.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.ip.p2, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
 
           # liability
-          - { type: text, element: h2, content: $t:legal.liability.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.liability.p1, props: { className: 'text-body text-text mb-4' } }
-          - { type: text, element: p, content: $t:legal.liability.p2, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.liability.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.liability.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
+          - { type: text, element: p, content: $t:legal.liability.p2, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
 
           # links
-          - { type: text, element: h2, content: $t:legal.links.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.links.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.links.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.links.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
 
           # data
-          - { type: text, element: h2, content: $t:legal.data.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.data.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.data.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.data.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
           - { type: link, content: $t:legal.data.link, props: { href: '$t:href.privacy', className: 'inline-flex items-center font-bold text-navy underline underline-offset-4 hover:text-magenta' } }
 
           # law
-          - { type: text, element: h2, content: $t:legal.law.title, props: { className: 'text-h3 text-navy mt-12 mb-4 pt-6 border-t border-border' } }
-          - { type: text, element: p, content: $t:legal.law.p1, props: { className: 'text-body text-text mb-4' } }
+          - { type: text, element: h2, content: $t:legal.law.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-12 mb-4 pt-6 border-t border-border' } }
+          - { type: text, element: p, content: $t:legal.law.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mb-4' } }
 
   - component: site-footer

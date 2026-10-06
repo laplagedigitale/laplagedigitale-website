@@ -19,10 +19,10 @@ children:
                 props: { href: /editor, 'aria-label': Espace rédaction }
                 children:
                   - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, width: 120, height: 40, className: 'h-9 w-auto' } }
-              - { type: text, element: span, content: Espace rédaction, props: { className: 'hidden sm:inline text-overline uppercase text-orange' } }
+              - { type: text, element: span, content: Espace rédaction, props: { className: 'hidden sm:inline [font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange' } }
           - type: flex
             props:
-              className: 'flex items-center gap-4 text-bodySmall'
+              className: 'flex items-center gap-4 [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)]'
             children:
               - { type: link, content: Voir le blog, props: { href: /blog, target: _blank, className: 'whitespace-nowrap text-navy-100 hover:text-white' } }
               - type: form

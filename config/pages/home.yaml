@@ -1,10 +1,434 @@
-# Page: home (stub — replaced when the pages are authored).
+# Page: home — the showcase of the 2026 charte.
+# Hero (signage tagline + the live site's four CTAs), key numbers, the four
+# offers, "plus qu'un coworking", latest news, supporters, final CTA band.
 name: home
 path: /
 meta:
-  title: La Plage Digitale
-  description: Tiers-lieu et coworking à Strasbourg.
+  title: $t:home.meta.title
+  description: $t:home.meta.description
+  openGraph:
+    type: website
+    image: /images/pages/accueil/hero.webp
 components:
   - component: site-header
-  - { type: text, element: h1, content: La Plage Digitale, props: { className: 'text-display text-navy p-16' } }
+
+  # ── Hero ────────────────────────────────────────────────────────────
+  - type: container
+    element: section
+    props:
+      className: 'relative overflow-hidden bg-navy text-white'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16'
+        children:
+          - type: text
+            element: p
+            content: $t:home.hero.eyebrow
+            props:
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-5'
+          - type: text
+            element: h1
+            content: $t:home.hero.title
+            props:
+              className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-4xl'
+          - type: text
+            element: p
+            content: $t:home.hero.lead
+            props:
+              className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
+          - type: flex
+            props:
+              className: 'flex flex-wrap gap-3 mt-10'
+            children:
+              - type: link
+                content: $t:home.hero.cta.space
+                props:
+                  href: $t:href.pricing
+                  className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+              - type: link
+                content: $t:home.hero.cta.fixe
+                props:
+                  href: $t:home.href.fixe
+                  className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors'
+              - type: link
+                content: $t:home.hero.cta.flex
+                props:
+                  href: $t:home.href.flex
+                  className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors'
+              - type: link
+                content: $t:home.hero.cta.reunion
+                props:
+                  href: $t:home.href.reunion
+                  className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors'
+          - type: text
+            element: p
+            content: '13 rue Jacques Peirotes · 67000 Strasbourg'
+            props:
+              className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-blue-200 mt-8'
+      # Hero photo — rounded frame on a coloured offset block.
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24'
+        children:
+          - type: container
+            props:
+              className: 'relative'
+            children:
+              - type: container
+                props:
+                  className: 'absolute inset-0 translate-x-3 translate-y-3 sm:translate-x-5 sm:translate-y-5 rounded-lg bg-orange'
+                  'aria-hidden': 'true'
+              - type: container
+                props:
+                  className: 'relative rounded-lg bg-white p-3 sm:p-5 shadow-md'
+                children:
+                  - type: image
+                    props:
+                      src: /images/pages/accueil/hero.webp
+                      alt: $t:home.hero.imageAlt
+                      width: 1392
+                      height: 478
+                      className: 'w-full h-auto rounded-md'
+
+  - type: container
+    element: main
+    props:
+      className: 'bg-background'
+    children:
+      # ── Key numbers ───────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'bg-white'
+          'aria-labelledby': home-numbers-title
+        children:
+          - type: container
+            props:
+              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20'
+            children:
+              - type: text
+                element: h2
+                content: $t:home.numbers.title
+                props:
+                  id: home-numbers-title
+                  className: 'sr-only'
+              - type: grid
+                props:
+                  className: 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'
+                children:
+                  - type: container
+                    props: { className: 'border-l-4 border-navy pl-4' }
+                    children:
+                      - { type: text, element: p, content: '600 m²+', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
+                      - { type: text, element: p, content: $t:home.numbers.area, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
+                  - type: container
+                    props: { className: 'border-l-4 border-blue pl-4' }
+                    children:
+                      - { type: text, element: p, content: '52', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
+                      - { type: text, element: p, content: $t:home.numbers.fixed, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
+                  - type: container
+                    props: { className: 'border-l-4 border-orange pl-4' }
+                    children:
+                      - { type: text, element: p, content: '30', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
+                      - { type: text, element: p, content: $t:home.numbers.flex, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
+                  - type: container
+                    props: { className: 'border-l-4 border-magenta pl-4' }
+                    children:
+                      - { type: text, element: p, content: '4', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
+                      - { type: text, element: p, content: $t:home.numbers.rooms, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
+                  - type: container
+                    props: { className: 'border-l-4 border-sage pl-4' }
+                    children:
+                      - { type: text, element: p, content: '23', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
+                      - { type: text, element: p, content: $t:home.numbers.companies, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
+
+      # ── Offers ────────────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+          'aria-labelledby': home-offers-title
+        children:
+          - type: text
+            element: p
+            content: $t:home.offers.eyebrow
+            props:
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
+          - type: text
+            element: h2
+            content: $t:home.offers.title
+            props:
+              id: home-offers-title
+              className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl'
+          - type: text
+            element: p
+            content: $t:home.offers.lead
+            props:
+              className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4'
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12'
+            children:
+              - type: link
+                props:
+                  href: $t:home.href.fixe
+                  className: 'group flex flex-col h-full bg-white rounded-lg shadow-md border-t-4 border-navy p-6 hover:-translate-y-1 hover:shadow-lg transition'
+                interactions: { scroll: { animation: fadeInUp, once: true } }
+                children:
+                  - { type: text, element: h3, content: $t:home.offers.fixe.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
+                  - { type: text, element: p, content: $t:home.offers.fixe.price, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] font-bold text-navy mt-3' } }
+                  - { type: text, element: p, content: $t:home.offers.fixe.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3 flex-1' } }
+                  - { type: text, element: span, content: $t:home.offers.more, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline' } }
+              - type: link
+                props:
+                  href: $t:home.href.nomade
+                  className: 'group flex flex-col h-full bg-white rounded-lg shadow-md border-t-4 border-blue p-6 hover:-translate-y-1 hover:shadow-lg transition'
+                interactions: { scroll: { animation: fadeInUp, once: true } }
+                children:
+                  - { type: text, element: h3, content: $t:home.offers.nomade.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
+                  - { type: text, element: p, content: $t:home.offers.nomade.price, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] font-bold text-navy mt-3' } }
+                  - { type: text, element: p, content: $t:home.offers.nomade.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3 flex-1' } }
+                  - { type: text, element: span, content: $t:home.offers.more, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline' } }
+              - type: link
+                props:
+                  href: $t:home.href.flex
+                  className: 'group flex flex-col h-full bg-white rounded-lg shadow-md border-t-4 border-orange p-6 hover:-translate-y-1 hover:shadow-lg transition'
+                interactions: { scroll: { animation: fadeInUp, once: true } }
+                children:
+                  - { type: text, element: h3, content: $t:home.offers.flex.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
+                  - { type: text, element: p, content: $t:home.offers.flex.price, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] font-bold text-navy mt-3' } }
+                  - { type: text, element: p, content: $t:home.offers.flex.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3 flex-1' } }
+                  - { type: text, element: span, content: $t:home.offers.more, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline' } }
+              - type: link
+                props:
+                  href: $t:home.href.reunion
+                  className: 'group flex flex-col h-full bg-white rounded-lg shadow-md border-t-4 border-magenta p-6 hover:-translate-y-1 hover:shadow-lg transition'
+                interactions: { scroll: { animation: fadeInUp, once: true } }
+                children:
+                  - { type: text, element: h3, content: $t:home.offers.reunion.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
+                  - { type: text, element: p, content: $t:home.offers.reunion.price, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] font-bold text-navy mt-3' } }
+                  - { type: text, element: p, content: $t:home.offers.reunion.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3 flex-1' } }
+                  - { type: text, element: span, content: $t:home.offers.more, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline' } }
+          - type: link
+            content: $t:home.offers.cta
+            props:
+              href: $t:href.pricing
+              className: 'inline-flex items-center px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-10'
+
+      # ── More than a coworking ─────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'bg-sand'
+          'aria-labelledby': home-community-title
+        children:
+          - type: grid
+            props:
+              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'
+            children:
+              - type: container
+                children:
+                  - type: text
+                    element: p
+                    content: $t:home.community.eyebrow
+                    props:
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
+                  - type: text
+                    element: h2
+                    content: $t:home.community.title
+                    props:
+                      id: home-community-title
+                      className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy'
+                  - type: text
+                    element: p
+                    content: $t:home.community.lead
+                    props:
+                      className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted mt-4'
+                  - type: container
+                    props:
+                      className: 'mt-8 space-y-4'
+                    children:
+                      - type: flex
+                        props: { className: 'flex gap-4 items-start' }
+                        children:
+                          - { type: container, props: { className: 'mt-2 w-2.5 h-2.5 shrink-0 bg-navy', 'aria-hidden': 'true' } }
+                          - { type: text, element: p, content: $t:home.community.item1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text' } }
+                      - type: flex
+                        props: { className: 'flex gap-4 items-start' }
+                        children:
+                          - { type: container, props: { className: 'mt-2 w-2.5 h-2.5 shrink-0 bg-blue', 'aria-hidden': 'true' } }
+                          - { type: text, element: p, content: $t:home.community.item2, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text' } }
+                      - type: flex
+                        props: { className: 'flex gap-4 items-start' }
+                        children:
+                          - { type: container, props: { className: 'mt-2 w-2.5 h-2.5 shrink-0 bg-orange', 'aria-hidden': 'true' } }
+                          - { type: text, element: p, content: $t:home.community.item3, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text' } }
+                      - type: flex
+                        props: { className: 'flex gap-4 items-start' }
+                        children:
+                          - { type: container, props: { className: 'mt-2 w-2.5 h-2.5 shrink-0 bg-magenta', 'aria-hidden': 'true' } }
+                          - { type: text, element: p, content: $t:home.community.item4, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text' } }
+                  - type: link
+                    content: $t:home.community.cta
+                    props:
+                      href: $t:href.activities
+                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-10'
+              - type: container
+                props:
+                  className: 'relative'
+                children:
+                  - type: container
+                    props:
+                      className: 'absolute inset-0 -translate-x-3 translate-y-3 sm:-translate-x-5 sm:translate-y-5 rounded-lg bg-magenta'
+                      'aria-hidden': 'true'
+                  - type: image
+                    props:
+                      src: /images/pages/nos-activites/meetups.webp
+                      alt: $t:home.community.imageAlt
+                      width: 1024
+                      height: 1024
+                      loading: lazy
+                      className: 'relative w-full h-auto aspect-[4/3] object-cover rounded-lg shadow-md'
+
+      # ── Latest news ───────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+          'aria-labelledby': home-news-title
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10'
+            children:
+              - type: container
+                children:
+                  - type: text
+                    element: p
+                    content: $t:home.news.eyebrow
+                    props:
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
+                  - type: text
+                    element: h2
+                    content: $t:home.news.title
+                    props:
+                      id: home-news-title
+                      className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy'
+              - type: link
+                content: $t:home.news.cta
+                props:
+                  href: $t:href.blog
+                  className: 'inline-flex items-center font-bold text-navy hover:underline'
+          - type: gallery
+            layout: grid
+            emptyMessage: $t:home.news.empty
+            gridColumns: { mobile: 1, md: 2, lg: 3 }
+            dataSource:
+              table: posts
+              filter:
+                - { field: status, operator: eq, value: published }
+              sort:
+                - { field: published_at, direction: desc }
+              limit: 3
+            galleryCard:
+              coverImage: '$record.legacy_cover'
+              aspectRatio: '16:9'
+              children:
+                - type: text
+                  element: p
+                  content: '$record.published_at'
+                  props:
+                    className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mb-2'
+                - type: text
+                  element: h3
+                  content: '$record.title'
+                  props:
+                    className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-2'
+                - type: text
+                  element: p
+                  content: '$record.excerpt'
+                  props:
+                    className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted line-clamp-3'
+              onClick: { type: navigate, path: '/blog/$record.slug' }
+
+      # ── Supporters ────────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'bg-white'
+          'aria-labelledby': home-supporters-title
+        children:
+          - type: container
+            props:
+              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20'
+            children:
+              - type: text
+                element: h2
+                content: $t:home.supporters.title
+                props:
+                  id: home-supporters-title
+                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-text-muted text-center mb-10'
+              - type: grid
+                props:
+                  className: 'grid grid-cols-2 lg:grid-cols-4 gap-8 items-center'
+                children:
+                  - { type: image, props: { src: /images/pages/nos-soutiens/region-grand-est.webp, alt: Région Grand Est, loading: lazy, className: 'h-16 w-full object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' } }
+                  - { type: image, props: { src: /images/pages/nos-soutiens/eurometropole-strasbourg.webp, alt: Eurométropole de Strasbourg, loading: lazy, className: 'h-12 w-full object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' } }
+                  - { type: image, props: { src: /images/pages/nos-soutiens/tiers-lieux-grand-est.webp, alt: Tiers-Lieux Grand Est, loading: lazy, className: 'h-16 w-full object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' } }
+                  - { type: image, props: { src: /images/pages/nos-soutiens/centre-collaboratif-connecte.webp, alt: Centre Collaboratif Connecté, loading: lazy, className: 'h-16 w-full object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' } }
+              - type: container
+                props:
+                  className: 'text-center mt-10'
+                children:
+                  - type: link
+                    content: $t:home.supporters.cta
+                    props:
+                      href: $t:href.supporters
+                      className: 'inline-flex items-center font-bold text-navy hover:underline'
+
+      # ── Final CTA ─────────────────────────────────────────────────────
+      - type: container
+        element: section
+        props:
+          className: 'bg-magenta text-white'
+          'aria-labelledby': home-cta-title
+        children:
+          - type: container
+            props:
+              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 text-center'
+            children:
+              - type: text
+                element: p
+                content: 'Coworking · Tiers-lieu · Événements'
+                props:
+                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-white mb-4'
+              - type: text
+                element: h2
+                content: $t:home.cta.title
+                props:
+                  id: home-cta-title
+                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-white max-w-3xl mx-auto'
+              - type: text
+                element: p
+                content: $t:home.cta.lead
+                props:
+                  className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-white max-w-2xl mx-auto mt-4'
+              - type: flex
+                props:
+                  className: 'flex flex-wrap justify-center gap-3 mt-10'
+                children:
+                  - type: link
+                    content: $t:home.cta.visit
+                    props:
+                      href: $t:href.contact
+                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                  - type: link
+                    content: $t:home.cta.join
+                    props:
+                      href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
+                      target: _blank
+                      rel: 'noopener noreferrer'
+                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-magenta transition-colors'
+
   - component: site-footer

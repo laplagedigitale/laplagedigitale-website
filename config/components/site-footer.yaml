@@ -35,12 +35,12 @@ children:
                     element: p
                     content: $t:footer.tagline
                     props:
-                      className: 'text-bodySmall text-navy-200 max-w-xs'
+                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy-200 max-w-xs'
                   - type: text
                     element: p
                     content: 'Connecter · Innover · Entreprendre'
                     props:
-                      className: 'text-overline uppercase text-orange mt-5'
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mt-5'
 
               # Visit
               - type: container
@@ -49,32 +49,32 @@ children:
                     element: h2
                     content: $t:footer.visit
                     props:
-                      className: 'text-overline uppercase text-white mb-4'
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-white mb-4'
                   - type: text
                     element: p
                     content: '13 rue Jacques Peirotes<br>67000 Strasbourg'
                     props:
-                      className: 'text-bodySmall mb-3'
+                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] mb-3'
                   - type: text
                     element: p
                     content: $t:footer.hours
                     props:
-                      className: 'text-bodySmall mb-3'
+                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] mb-3'
                   - type: link
                     content: '09 77 42 59 29'
                     props:
                       href: 'tel:+33977425929'
-                      className: 'block text-bodySmall hover:text-white'
+                      className: 'block [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] hover:text-white'
                   - type: link
                     content: '06 24 41 32 03'
                     props:
                       href: 'tel:+33624413203'
-                      className: 'block text-bodySmall hover:text-white'
+                      className: 'block [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] hover:text-white'
                   - type: link
                     content: 'contact@laplagedigitale.fr'
                     props:
                       href: 'mailto:contact@laplagedigitale.fr'
-                      className: 'block text-bodySmall hover:text-white mt-1'
+                      className: 'block [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] hover:text-white mt-1'
 
               # Explore
               - type: container
@@ -83,10 +83,10 @@ children:
                     element: h2
                     content: $t:footer.explore
                     props:
-                      className: 'text-overline uppercase text-white mb-4'
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-white mb-4'
                   - type: flex
                     props:
-                      className: 'flex flex-col gap-2 text-bodySmall'
+                      className: 'flex flex-col gap-2 [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)]'
                     children:
                       - { type: link, content: $t:nav.about, props: { href: $t:href.about, className: 'hover:text-white' } }
                       - { type: link, content: $t:nav.space, props: { href: $t:href.space, className: 'hover:text-white' } }
@@ -102,7 +102,7 @@ children:
                     element: h2
                     content: $t:footer.follow
                     props:
-                      className: 'text-overline uppercase text-white mb-4'
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-white mb-4'
                   - type: flex
                     props:
                       className: 'flex gap-3 mb-8'
@@ -122,7 +122,7 @@ children:
 
           - type: flex
             props:
-              className: 'mt-14 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 justify-between text-caption text-navy-200'
+              className: 'mt-14 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 justify-between [font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-navy-200'
             children:
               - type: text
                 element: p

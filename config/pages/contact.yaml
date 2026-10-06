@@ -25,17 +25,17 @@ components:
             element: p
             content: $t:contact.eyebrow
             props:
-              className: 'text-overline uppercase text-orange mb-4'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
           - type: text
             element: h1
             content: $t:contact.title
             props:
-              className: 'text-h1 sm:text-display text-white max-w-3xl'
+              className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-3xl'
           - type: text
             element: p
             content: $t:contact.lead
             props:
-              className: 'text-lead text-navy-100 max-w-2xl mt-6'
+              className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
 
   - type: container
     element: main
@@ -53,13 +53,13 @@ components:
             element: p
             content: $t:contact.reach.eyebrow
             props:
-              className: 'text-overline uppercase text-magenta mb-3'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
           - type: text
             element: h2
             content: $t:contact.reach.title
             props:
               id: contact-reach-title
-              className: 'text-h2 text-navy mb-10'
+              className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mb-10'
           - type: grid
             props:
               className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'
@@ -79,17 +79,17 @@ components:
                     element: h3
                     content: $t:contact.phone.label
                     props:
-                      className: 'text-h4 text-navy mb-3'
+                      className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3'
                   - type: link
                     content: '09 77 42 59 29'
                     props:
                       href: 'tel:+33977425929'
-                      className: 'block text-body font-bold text-navy hover:text-magenta transition-colors'
+                      className: 'block [font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] font-bold text-navy hover:text-magenta transition-colors'
                   - type: link
                     content: '06 24 41 32 03'
                     props:
                       href: 'tel:+33624413203'
-                      className: 'block text-body font-bold text-navy hover:text-magenta transition-colors mt-1'
+                      className: 'block [font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] font-bold text-navy hover:text-magenta transition-colors mt-1'
 
               # Email
               - type: container
@@ -106,12 +106,12 @@ components:
                     element: h3
                     content: $t:contact.email.label
                     props:
-                      className: 'text-h4 text-navy mb-3'
+                      className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3'
                   - type: link
                     content: 'contact@laplagedigitale.fr'
                     props:
                       href: 'mailto:contact@laplagedigitale.fr'
-                      className: 'block text-body font-bold text-navy hover:text-magenta transition-colors break-all'
+                      className: 'block [font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] font-bold text-navy hover:text-magenta transition-colors break-all'
 
               # Address
               - type: container
@@ -128,19 +128,19 @@ components:
                     element: h3
                     content: $t:contact.address.label
                     props:
-                      className: 'text-h4 text-navy mb-3'
+                      className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3'
                   - type: text
                     element: p
                     content: '13 rue Jacques Peirotes<br>67000 Strasbourg'
                     props:
-                      className: 'text-body text-text'
+                      className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text'
                   - type: link
                     content: $t:contact.address.directions
                     props:
                       href: 'https://www.google.com/maps/dir/?api=1&destination=13+rue+Jacques+Peirotes+67000+Strasbourg'
                       target: _blank
                       rel: 'noopener noreferrer'
-                      className: 'inline-block text-bodySmall font-bold text-navy underline underline-offset-4 hover:text-magenta mt-3'
+                      className: 'inline-block [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy underline underline-offset-4 hover:text-magenta mt-3'
 
               # Opening hours
               - type: container
@@ -157,17 +157,17 @@ components:
                     element: h3
                     content: $t:contact.hours.label
                     props:
-                      className: 'text-h4 text-navy mb-3'
+                      className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3'
                   - type: text
                     element: p
                     content: $t:contact.hours.weekdays
                     props:
-                      className: 'text-body text-text'
+                      className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text'
                   - type: text
                     element: p
                     content: $t:contact.hours.fixed
                     props:
-                      className: 'text-bodySmall text-text-muted mt-2'
+                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-2'
 
       # ── Map + form ────────────────────────────────────────────────────
       - type: container
@@ -190,17 +190,17 @@ components:
                         element: p
                         content: $t:contact.map.eyebrow
                         props:
-                          className: 'text-overline uppercase text-magenta mb-3'
+                          className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
                       - type: text
                         element: h2
                         content: $t:contact.map.title
                         props:
-                          className: 'text-h2 text-navy mb-4'
+                          className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mb-4'
                       - type: text
                         element: p
                         content: $t:contact.map.lead
                         props:
-                          className: 'text-body text-text-muted mb-8'
+                          className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted mb-8'
                       - type: container
                         props:
                           className: 'rounded-lg overflow-hidden shadow-md border border-border'
@@ -222,17 +222,17 @@ components:
                         element: p
                         content: $t:contact.form.eyebrow
                         props:
-                          className: 'text-overline uppercase text-magenta mb-3'
+                          className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
                       - type: text
                         element: h2
                         content: $t:contact.form.title
                         props:
-                          className: 'text-h2 text-navy mb-4'
+                          className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mb-4'
                       - type: text
                         element: p
                         content: $t:contact.form.lead
                         props:
-                          className: 'text-body text-text-muted mb-8'
+                          className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted mb-8'
                       - type: form
                         formRef: contact
                         props: { headingLevel: h3 }
@@ -240,7 +240,7 @@ components:
                         element: p
                         content: $t:contact.form.privacy
                         props:
-                          className: 'text-caption text-text-muted mt-6'
+                          className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-6'
 
       # ── CTA band ──────────────────────────────────────────────────────
       - type: container
@@ -256,17 +256,17 @@ components:
                 element: p
                 content: $t:contact.cta.motif
                 props:
-                  className: 'text-overline uppercase text-orange mb-4'
+                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
               - type: text
                 element: h2
                 content: $t:contact.cta.title
                 props:
-                  className: 'text-h2 text-white max-w-2xl mx-auto'
+                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-white max-w-2xl mx-auto'
               - type: text
                 element: p
                 content: $t:contact.cta.lead
                 props:
-                  className: 'text-lead text-navy-100 max-w-2xl mx-auto mt-4'
+                  className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mx-auto mt-4'
               - type: flex
                 props:
                   className: 'flex flex-col sm:flex-row items-center justify-center gap-4 mt-10'

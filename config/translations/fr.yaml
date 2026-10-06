@@ -64,6 +64,96 @@ post.next: Article suivant
 
 # ═══ Page dictionaries (generated from fragments — edit the fragments) ═══
 
+# ── about ──
+about.meta.title: Qui sommes-nous ? — La Plage Digitale
+about.meta.description: "La Plage Digitale, association loi 1908 née d'Alsace Digitale, gère un tiers-lieu de plus de 600 m² au cœur de Strasbourg. Le projet, le bureau, l'équipe."
+about.eyebrow: Qui sommes-nous ?
+about.title: Un tiers-lieu au cœur de Strasbourg
+about.lead: La Plage Digitale vous accueille dans son espace de coworking, au cœur de son tiers-lieu.
+about.place.eyebrow: Le lieu
+about.place.title: Plus de 600 m² dans les anciens locaux de la Coop
+about.place.p1: "Implantée dans les anciens locaux de la Coop, rue Jacques Peirotes, en plein cœur de Strasbourg, la Plage Digitale, c'est plus de 600 m² dédiés aux entrepreneurs, innovateurs et créatifs de la région. Lieu de rencontres et d'échanges de l'écosystème entrepreneurial strasbourgeois, l'espace est propice aux initiatives créatives, individuelles comme collectives."
+about.place.p2: "C'est aussi l'un des plus grands espaces de coworking de Strasbourg : 52 bureaux fixes pour les coworkers et 30 places accessibles sans réservation, du lundi au vendredi de 9 h à 17 h. Des salles de réunion entièrement équipées accueillent vos séminaires et réunions d'équipe."
+about.place.p3: "Dernier atout, et pas des moindres : notre espace Flex peut recevoir jusqu'à 60 personnes lors des meetups et soirées organisés avec nos partenaires associatifs, institutionnels ou privés — et vous pouvez le louer pour vos événements professionnels."
+about.place.imageAlt: "L'openspace de La Plage Digitale : bureaux, suspensions et verrières sous une charpente en béton"
+about.project.title: Le projet
+about.project.p1: "La Plage Digitale a vocation à accélérer le développement de projets innovants. Elle encourage les échanges entre coworkers tout en réservant un accueil personnalisé à chaque visiteur."
+about.project.p2: "Notre espace de coworking est ouvert à tous. C'est la richesse de cette diversité qui favorise un « vivre ensemble » bienveillant et chaleureux : travailler ensemble en partageant des services et des valeurs, dans le respect de chacun."
+about.project.motto: Mutualisation et sérendipité sont les maîtres mots qui guident nos choix et nos actions.
+about.association.title: L'association
+about.association.p1: "La Plage Digitale est une association de droit local (loi 1908), née en 2019 de l'externalisation d'une partie de l'activité de l'association Alsace Digitale."
+about.association.p2: "Elle assure la gestion du tiers-lieu et de son espace de coworking. La Plage Digitale, c'est donc à la fois le nom de l'association et celui de ce lieu à double vocation."
+about.board.eyebrow: Gouvernance
+about.board.title: Le bureau de la Plage Digitale
+about.role.president: Président de la Plage Digitale
+about.role.treasurer: Trésorier de la Plage Digitale
+about.role.secretary: Secrétaire de la Plage Digitale
+about.team.eyebrow: Au quotidien
+about.team.title: L'équipe
+about.team.lead: Elles vous accueillent, répondent à vos questions et font vivre la Plage au quotidien.
+about.role.manager: Gestionnaire
+about.role.communication: Chargée de communication
+about.cta.title: Rejoignez-nous !
+about.cta.lead: Adhérez à l'association ou appelez-nous pour organiser votre visite.
+about.cta.join: Adhérer à l'association
+about.cta.call: Appelez-nous
+about.cta.callNumber: Appelez-nous · 09 77 42 59 29
+
+# ── activities ──
+activities.meta.title: Nos activités — La Plage Digitale
+activities.meta.description: "Conseil de la Plage, bibliothèque partagée, meetups, Hack SXB, permanences conseil, Bidouillothèque : la vie du tiers-lieu La Plage Digitale à Strasbourg."
+activities.eyebrow: Tiers-lieu · Communauté · Événements
+activities.title: Nos activités
+activities.lead: "La Plage, ce n'est pas qu'un bureau : c'est une communauté qui se retrouve, partage ses ressources et ouvre ses portes aux associations et aux communautés tech de Strasbourg."
+activities.offer.eyebrow: Pour nos coworkers
+activities.offer.title: Nous proposons…
+activities.offer.lead: Des rendez-vous et des services pensés pour faire vivre la communauté des plagistes.
+activities.council.title: Le Conseil de la Plage
+activities.council.text: "Une fois par mois, le Conseil de la Plage réunit les coworkers : actualités de l'espace, attentes de chacun et présentation des nouveaux arrivants."
+activities.council.imageAlt: Quatre personnes échangent autour d'une table couverte de documents
+activities.library.title: Bibliothèque partagée
+activities.library.text: Des livres couvrant des thématiques variées sont à la disposition des plagistes.
+activities.library.imageAlt: Les étagères de la bibliothèque partagée
+activities.startupce.title: Startup CE
+activities.startupce.text: "Grâce à notre partenariat avec la plateforme Startup CE, profitez d'un large panel d'avantages et de réductions pour vos sorties culturelles et sociales."
+activities.startupce.imageAlt: Illustration d'une fusée qui décolle au-dessus d'une ville
+activities.ecology.title: Démarche écologique
+activities.ecology.text: "Tri sélectif, sensibilisation aux bons gestes et solutions anti-gaspillage : nous agissons au quotidien pour réduire notre impact."
+activities.ecology.imageAlt: Illustration de la démarche écologique de La Plage Digitale
+activities.host.eyebrow: Ouverts sur la ville
+activities.host.title: Nous accueillons…
+activities.host.lead: Des communautés, des experts et des passionnés qui font de la Plage un lieu d'apprentissage ouvert.
+activities.meetups.title: Meetups
+activities.meetups.text: "Des communautés de développeurs (Go SXB Go!, Strasbourg JS…) organisent régulièrement des meetups pour échanger autour des langages de programmation et de leurs évolutions."
+activities.meetups.imageAlt: Un meetup de développeurs dans l'espace Flex
+activities.advice.title: Permanences conseil
+activities.advice.text: "Les 1er et 3e vendredis du mois, bénéficiez de conseils et trouvez réponse à vos questions sur la propriété industrielle et la fiscalité."
+activities.advice.imageAlt: Deux personnes en rendez-vous conseil près d'une fenêtre
+activities.hack.title: Hack SXB
+activities.hack.text: "Le dernier vendredi de chaque mois, le Hack SXB propose une soirée de programmation sur des sujets libres : chacun vient avec son projet ou rejoint un projet commun."
+activities.hack.imageAlt: Une soirée Hack SXB à La Plage Digitale
+activities.hack.link: hacksxb.com →
+activities.bidouillo.title: Bidouillothèque
+activities.bidouillo.text: "Un centre de ressources partagées pour apprendre en pratiquant et réaliser des projets numériques et créatifs : casques VR, ordinateurs, tablettes, robots… à louer pour des projets éducatifs."
+activities.bidouillo.imageAlt: Des mains assemblent un petit robot électronique
+activities.cta.title: Envie de participer ?
+activities.cta.lead: Adhérez à l'association pour prendre part à la vie de la Plage, ou contactez-nous pour proposer votre événement.
+activities.cta.join: Adhérer à l'association
+activities.cta.contact: Nous contacter
+
+# ── companies ──
+companies.meta.title: Les entreprises présentes à La Plage Digitale
+companies.meta.description: "Startups, indépendants, associations et PME : découvrez les entreprises qui ont posé leurs bureaux à La Plage Digitale, au cœur de Strasbourg."
+companies.eyebrow: Les entreprises
+companies.title: Les entreprises présentes à La Plage Digitale
+companies.lead: "Startups, indépendants, associations et PME du numérique, de l'environnement ou du conseil : ils travaillent côte à côte, au 13 rue Jacques Peirotes."
+companies.wall.title: Elles travaillent à la Plage
+companies.wall.text: Cliquez sur un logo pour découvrir le site de l'entreprise.
+companies.cta.title: Rejoignez-les
+companies.cta.text: "Un bureau fixe, une Box pour votre équipe ou une place flex : il y a une place pour vous sur la Plage."
+companies.cta.pricing: Voir les formules
+companies.cta.contact: Nous contacter
+
 # ── contact ──
 contact.meta.title: "Contact et accès — La Plage Digitale"
 contact.meta.description: "Téléphone, e-mail, horaires et plan d’accès de La Plage Digitale, tiers-lieu et coworking au 13 rue Jacques Peirotes à Strasbourg. Écrivez-nous !"
@@ -113,6 +203,37 @@ contact.cta.title: "Prêt à poser votre ordinateur à la Plage ?"
 contact.cta.lead: "Comparez nos formules de coworking, ou rejoignez l’association pour faire vivre le tiers-lieu à nos côtés."
 contact.cta.pricing: "Voir les formules"
 contact.cta.membership: "Adhérer sur HelloAsso"
+
+# ── coworkers ──
+coworkers.meta.title: Nos coworkers — La Plage Digitale
+coworkers.meta.description: "Designers, développeurs, entrepreneurs : rencontrez celles et ceux qui travaillent au quotidien à La Plage Digitale, coworking associatif à Strasbourg."
+coworkers.eyebrow: Nos coworkers
+coworkers.title: Celles et ceux qui font la Plage
+coworkers.lead: "Salariés à distance, indépendants, fondatrices et fondateurs : ils ont choisi La Plage Digitale pour travailler, et ils vous disent pourquoi."
+coworkers.list.title: Portraits de coworkers
+coworkers.caroline.alt: Portrait de Caroline Bosc
+coworkers.caroline.p1: "Après un master en commerce international, Caroline a voulu compléter ses connaissances par un master dans le domaine du web à Strasbourg."
+coworkers.caroline.p2: "Aujourd'hui UX designer chez Impact Positif, elle est coworkeuse à La Plage Digitale depuis mars 2022."
+coworkers.frederic.alt: Portrait de Frédéric Fuchs
+coworkers.frederic.p1: "Frédéric est responsable des opérations de vente chez OpenClassrooms, une entreprise dont l'objectif est de rendre l'éducation accessible à tous."
+coworkers.frederic.p2: "Après trois ans de travail à domicile, il nous a rejoints pour séparer vie privée et vie professionnelle, et pour rencontrer de nouvelles personnes."
+coworkers.roland.alt: Portrait de Roland Margelidon
+coworkers.roland.p1: "Ingénieur en informatique, Roland a créé sa société, Rolrom. Il développe un logiciel de gestion d'entreprise pour les cabinets d'architectes."
+coworkers.roland.p2: "Il a choisi La Plage Digitale parce que c'est un espace de coworking associatif."
+coworkers.bastien.company: Freelance
+coworkers.bastien.alt: Portrait de Bastien Remy
+coworkers.bastien.p1: "Développeur web à son compte, Bastien conçoit des applications sur mesure pour les entreprises qui ont besoin d'outils web."
+coworkers.bastien.p2: "Il travaille à La Plage Digitale depuis cinq ans et s'y sent très bien. Pour lui, la Plage, c'est la tranquillité, la liberté et la flexibilité !"
+coworkers.sylvaine.alt: Portrait de Sylvaine Gross
+coworkers.sylvaine.p1: "Un vrai couteau suisse alsacien : après plus de 20 ans comme secrétaire polyvalente, assistante commerciale et assistante de direction, Sylvaine s'est lancée dans l'aventure entrepreneuriale avec Mu.se, son activité d'assistanat administratif. Elle a été trésorière de La Plage Digitale, dont Mu.se est membre depuis 2019."
+coworkers.sylvaine.p2: "C'est aussi la fournisseuse officieuse d'agrafes, de trombones, de Tipp-Ex et de papier brouillon des coworkers."
+coworkers.eleonore.alt: Portrait d'Eléonore Greif
+coworkers.eleonore.p1: "Documentariste dans une autre vie, Eléonore a récemment rejoint, comme assistante administrative, la joyeuse équipe de Mu.se — et celle, plus joyeuse encore, de La Plage Digitale !"
+coworkers.eleonore.p2: "L'occasion de travailler hors de chez soi, au contact de personnes impliquées dans la vie associative."
+coworkers.cta.title: Et si votre portrait était le prochain ?
+coworkers.cta.text: Rejoignez la communauté de La Plage Digitale, pour une journée ou pour longtemps.
+coworkers.cta.pricing: Voir les formules
+coworkers.cta.companies: Les entreprises présentes
 
 # ── home ──
 home.meta.title: La Plage Digitale — Coworking et tiers-lieu à Strasbourg
@@ -204,6 +325,105 @@ legal.data.link: "Lire la politique de confidentialité →"
 legal.law.title: "Droit applicable"
 legal.law.p1: "Les présentes mentions légales sont régies par le droit français. Pour toute question, écrivez-nous à contact@laplagedigitale.fr."
 
+# ── pricing ──
+href.pricing.fixe: /les-formules#fixe
+href.pricing.nomade: /les-formules#nomade
+href.pricing.flex: /les-formules#flex
+href.pricing.reunion: /les-formules#reunion
+href.pricing.domiciliation: /les-formules#domiciliation
+pricing.meta.title: Nos formules de coworking à Strasbourg
+pricing.meta.description: "Fixe 275 € HT/mois, Nomade 175 € HT/mois, Flex 14 € HT/jour, salles de réunion dès 87 € HT les 4 h et domiciliation au cœur de Strasbourg."
+pricing.eyebrow: Nos formules
+pricing.title: Des formules simples, pour travailler à votre rythme
+pricing.lead: "Un bureau à vous, un accès libre à l'espace flex ou une place à la journée : choisissez la formule qui vous ressemble, et réservez une salle quand il le faut."
+pricing.jump.aria: Aller à une formule
+pricing.jump.rooms: Salles de réunion
+pricing.jump.domiciliation: Domiciliation
+pricing.plans.eyebrow: Coworking
+pricing.plans.title: Trois formules pour poser vos valises
+pricing.plans.vat: "Prix hors taxes ; TVA à 20 %. Le fair use désigne un usage raisonnable, partagé équitablement entre les membres."
+pricing.plan.cta: Nous contacter
+pricing.fixe.name: Fixe
+pricing.fixe.amount: 275 €
+pricing.fixe.unit: HT / mois
+pricing.fixe.ttc: soit 330 € TTC par mois
+pricing.fixe.desc: "Votre bureau personnel en open space, loué au mois : idéal pour travailler sur le long terme, avec accès aux salles de réunion."
+pricing.fixe.f1: Accès 24h/24 et 7j/7, avec les clés de La Plage
+pricing.fixe.f2: Votre propre bureau
+pricing.fixe.f3: Un casier personnel fermé à clé
+pricing.fixe.f4: Des espaces de rangement
+pricing.fixe.f5: Internet haut débit (fibre) et Wi-Fi
+pricing.fixe.f6: Accès aux imprimantes et scanners
+pricing.fixe.f7: Accès aux salles de réunion, en fair use
+pricing.fixe.f8: Réception et envoi de courrier, en fair use
+pricing.fixe.f9: Domiciliation possible (au cas par cas, selon l'activité et la durée d'occupation)
+pricing.fixe.f10: Café à volonté
+pricing.fixe.f11: Accès gratuit à l'espace détente et à la cafétéria
+pricing.fixe.offer.title: Offre jeune entreprise
+pricing.fixe.offer.who: "Pour les personnes morales (entreprise ou association nouvellement créée) avec un Kbis de moins d'un an souscrivant un contrat fixe :"
+pricing.fixe.offer.s1: 3 premiers mois
+pricing.fixe.offer.s2: 3 mois suivants
+pricing.fixe.offer.s3: 6 mois suivants
+pricing.fixe.offer.note: "Offre applicable sous validation du conseil d'administration de La Plage Digitale. Quelques exceptions peuvent être faites."
+pricing.nomade.name: Nomade
+pricing.nomade.amount: 175 €
+pricing.nomade.unit: HT / mois
+pricing.nomade.ttc: soit 210 € TTC par mois
+pricing.nomade.desc: "L'espace flex en accès libre, à toute heure : pour celles et ceux qui viennent souvent, sans avoir besoin d'un bureau attitré."
+pricing.nomade.f1: Accès 24h/24 et 7j/7 à l'espace flex, avec les clés
+pricing.nomade.f2: Accès aux imprimantes et scanners, en fair use
+pricing.nomade.f3: Internet haut débit (fibre) et Wi-Fi
+pricing.nomade.f4: Accès gratuit à l'espace détente et à la cafétéria
+pricing.nomade.f5: Café à volonté, offert
+pricing.nomade.info: "Bon à savoir : dans cette formule, la location des salles de réunion est facturée en supplément."
+pricing.flex.name: Flex
+pricing.flex.amount: 14 €
+pricing.flex.unit: HT / jour
+pricing.flex.ttc: soit 16,80 € TTC par jour
+pricing.flex.desc: "Un poste de travail à la journée, pour vos besoins à court terme."
+pricing.flex.f1: Un bureau partagé pour la journée (4 places par grande table de 110 × 195 cm)
+pricing.flex.f2: Internet haut débit (fibre) et Wi-Fi
+pricing.flex.f3: Accès aux imprimantes et scanners
+pricing.flex.f4: Café à volonté
+pricing.flex.f5: Accès gratuit à l'espace détente et à la cafétéria
+pricing.flex.info: "De 9h à 17h, du lundi au vendredi (hors jours fériés), sans réservation."
+pricing.rooms.eyebrow: Salles de réunion
+pricing.rooms.title: Quatre salles, de 6 à 60 personnes
+pricing.rooms.lead: "Membre de La Plage ou non, louez une salle à la journée ou à la demi-journée : idéal pour recevoir clients et prestataires en plein centre de Strasbourg, ou animer une formation à deux pas de la cathédrale. Chaque salle est équipée d'un écran."
+pricing.room.screen: Écran
+pricing.room.unit: HT / 4 h
+pricing.room.crevette.name: Salle Crevette 🦐
+pricing.room.crevette.cap: Jusqu'à 6 pers.
+pricing.room.crevette.size: 12 m²
+pricing.room.crevette.price: 87 €
+pricing.room.crevette.alt: La salle Crevette, petite salle de réunion avec table et écran
+pricing.room.requin.name: Salle Requin 🦈
+pricing.room.requin.cap: Jusqu'à 8 pers.
+pricing.room.requin.size: 16 m²
+pricing.room.requin.price: 98 €
+pricing.room.requin.alt: La salle Requin, salle de réunion pour 8 personnes
+pricing.room.baleine.name: Salle Baleine 🐳
+pricing.room.baleine.cap: Jusqu'à 16 pers.
+pricing.room.baleine.size: 36 m²
+pricing.room.baleine.price: 120 €
+pricing.room.baleine.alt: La salle Baleine, grande salle de réunion pour 16 personnes
+pricing.room.narval.name: Salle Narval 🐋
+pricing.room.narval.cap: Jusqu'à 60 pers.
+pricing.room.narval.size: 82 m²
+pricing.room.narval.price: 253 €
+pricing.room.narval.alt: La salle Narval, espace de conférence pouvant accueillir 60 personnes
+pricing.dom.eyebrow: Domiciliation
+pricing.dom.title: Domiciliez votre entreprise à Strasbourg
+pricing.dom.text: "Installez le siège de votre entreprise au 13 rue Jacques Peirotes, sans même louer de bureau dans notre espace de coworking."
+pricing.dom.price: "40 € / mois"
+pricing.dom.priceNote: "Tarif affiché par La Plage Digitale ; contactez-nous pour les détails."
+pricing.dom.offer: "Pour toute nouvelle entreprise domiciliée, 30 % de réduction sur les 3 premiers mois."
+pricing.dom.cta: Demander un devis
+pricing.cta.title: Une question, une envie de visiter ?
+pricing.cta.text: "Appelez-nous, écrivez-nous ou passez du lundi au vendredi entre 9h et 17h : nous vous ferons découvrir l'espace."
+pricing.cta.contact: Nous contacter
+pricing.cta.visit: Découvrir l'espace
+
 # ── privacy ──
 privacy.meta.title: "Politique de confidentialité — La Plage Digitale"
 privacy.meta.description: "Comment La Plage Digitale traite vos données : formulaire de contact, mesure d’audience sans cookie, durées de conservation et droits RGPD."
@@ -283,3 +503,25 @@ space.cta.title: Prêt(e) à poser votre ordinateur ?
 space.cta.text: Découvrez nos formules ou venez visiter l'espace, nous vous ferons faire le tour.
 space.cta.pricing: Voir les formules
 space.cta.contact: Organiser une visite
+
+# ── supporters ──
+supporters.meta.title: Nos soutiens — La Plage Digitale
+supporters.meta.description: "La Plage Digitale est soutenue par la Région Grand Est et l'Eurométropole de Strasbourg, et membre du réseau Tiers-Lieux Grand Est."
+supporters.eyebrow: Partenaires · Labels · Réseaux
+supporters.title: Nos soutiens
+supporters.lead: Le tiers-lieu La Plage Digitale grandit grâce aux collectivités qui le soutiennent et aux réseaux qui le relient aux autres lieux de la région.
+supporters.public.eyebrow: Collectivités
+supporters.public.title: Ils nous soutiennent
+supporters.public.lead: Les collectivités qui accompagnent le développement du tiers-lieu.
+supporters.region.text: La Région Grand Est soutient La Plage Digitale.
+supporters.ems.text: "L'Eurométropole de Strasbourg soutient La Plage Digitale."
+supporters.networks.eyebrow: Labels et réseaux
+supporters.networks.title: Nos labels et réseaux
+supporters.networks.lead: Les réseaux de tiers-lieux et les labels auxquels La Plage Digitale appartient.
+supporters.tlge.text: "Membre du réseau des tiers-lieux de la région Grand Est."
+supporters.c3.text: "Labellisé Centre Collaboratif Connecté."
+supporters.visit: Visiter le site →
+supporters.cta.title: Soutenez la Plage, vous aussi
+supporters.cta.lead: "L'adhésion à l'association fait vivre le tiers-lieu et sa communauté."
+supporters.cta.join: Adhérer à l'association
+supporters.cta.about: Qui sommes-nous ?

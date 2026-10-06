@@ -23,22 +23,22 @@ components:
             element: p
             content: $t:blog.eyebrow
             props:
-              className: 'text-overline uppercase text-orange mb-4'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
           - type: text
             element: h1
             content: $t:blog.title
             props:
-              className: 'text-h1 sm:text-display text-white max-w-3xl'
+              className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-3xl'
           - type: text
             element: p
             content: $t:blog.lead
             props:
-              className: 'text-lead text-navy-100 max-w-2xl mt-6'
+              className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
           - type: text
             element: p
             content: $t:blog.languageNote
             props:
-              className: 'text-bodySmall text-blue-200 mt-4'
+              className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-blue-200 mt-4'
 
   - type: container
     element: main
@@ -68,17 +68,17 @@ components:
                   element: p
                   content: '$record.published_at'
                   props:
-                    className: 'text-caption uppercase tracking-widest text-magenta px-5 pt-5 mb-2'
+                    className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] uppercase tracking-widest text-magenta px-5 pt-5 mb-2'
                 - type: text
                   element: h2
                   content: '$record.title'
                   props:
-                    className: 'text-h4 text-navy px-5 mb-2'
+                    className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy px-5 mb-2'
                 - type: text
                   element: p
                   content: '$record.excerpt'
                   props:
-                    className: 'text-bodySmall text-text-muted line-clamp-3 px-5 pb-6'
+                    className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted line-clamp-3 px-5 pb-6'
               onClick: { type: navigate, path: '/blog/$record.slug' }
 
   - component: site-footer

@@ -36,17 +36,17 @@ components:
                 content: $t:post.back
                 props:
                   href: $t:href.blog
-                  className: 'inline-block text-overline uppercase text-orange hover:text-orange-300 mb-6'
+                  className: 'inline-block [font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange hover:text-orange-300 mb-6'
               - type: text
                 element: h1
                 content: '$record.title'
                 props:
-                  className: 'text-h2 sm:text-h1 text-white'
+                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] sm:[font-size:var(--text-h1)] sm:[line-height:var(--text-h1--line-height)] sm:[font-weight:var(--text-h1--font-weight)] sm:[letter-spacing:var(--text-h1--letter-spacing)] text-white'
               - type: text
                 element: p
                 content: '$record.published_at'
                 props:
-                  className: 'text-bodySmall text-navy-200 mt-5'
+                  className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy-200 mt-5'
 
       - type: container
         props:
@@ -74,14 +74,14 @@ components:
               href: '/blog/$collection.previous.slug'
               className: 'block p-5 rounded-md bg-white border border-navy-100 hover:border-blue transition-colors'
             children:
-              - { type: text, element: span, content: $t:post.previous, props: { className: 'block text-caption uppercase tracking-widest text-text-muted mb-1' } }
-              - { type: text, element: span, content: '$collection.previous.title', props: { className: 'block text-h4 text-navy' } }
+              - { type: text, element: span, content: $t:post.previous, props: { className: 'block [font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] uppercase tracking-widest text-text-muted mb-1' } }
+              - { type: text, element: span, content: '$collection.previous.title', props: { className: 'block [font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
           - type: link
             props:
               href: '/blog/$collection.next.slug'
               className: 'block p-5 rounded-md bg-white border border-navy-100 hover:border-blue transition-colors sm:text-right'
             children:
-              - { type: text, element: span, content: $t:post.next, props: { className: 'block text-caption uppercase tracking-widest text-text-muted mb-1' } }
-              - { type: text, element: span, content: '$collection.next.title', props: { className: 'block text-h4 text-navy' } }
+              - { type: text, element: span, content: $t:post.next, props: { className: 'block [font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] uppercase tracking-widest text-text-muted mb-1' } }
+              - { type: text, element: span, content: '$collection.next.title', props: { className: 'block [font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
 
   - component: site-footer

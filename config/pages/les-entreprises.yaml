@@ -1,0 +1,88 @@
+# Page: les-entreprises — logo wall of the companies based at La Plage.
+# Source: WP page `les-entreprises` (the Rollee logo was listed twice; kept once).
+name: les-entreprises
+path: /les-entreprises
+meta:
+  title: $t:companies.meta.title
+  description: $t:companies.meta.description
+  openGraph:
+    type: website
+    image: /images/pages/espace-cowork/espace-coworking.webp
+components:
+  - component: site-header
+
+  # ── Hero ──
+  - type: container
+    element: section
+    props:
+      className: 'relative overflow-hidden bg-navy text-white'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+        children:
+          - { type: text, element: p, content: $t:companies.eyebrow, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4' } }
+          - { type: text, element: h1, content: $t:companies.title, props: { className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-4xl' } }
+          - { type: text, element: p, content: $t:companies.lead, props: { className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6' } }
+
+  # ── Logo wall ──
+  - type: container
+    element: main
+    props:
+      className: 'bg-sand'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+        children:
+          - { type: text, element: h2, content: $t:companies.wall.title, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl' } }
+          - { type: text, element: p, content: $t:companies.wall.text, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted max-w-2xl mt-4' } }
+          - type: grid
+            props:
+              className: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6 mt-12'
+            children:
+              - { type: link, props: { href: 'https://bloomind.io', target: _blank, rel: 'noopener noreferrer', title: 'Bloomind', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/bloomind.webp, alt: 'Bloomind', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://muse67.fr', target: _blank, rel: 'noopener noreferrer', title: 'Mu.se', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/mu-se.webp, alt: 'Mu.se', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'http://www.adoc-metis.com', target: _blank, rel: 'noopener noreferrer', title: 'Adoc Métis', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/adoc-metis.webp, alt: 'Adoc Métis', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://openclassrooms.com/fr/', target: _blank, rel: 'noopener noreferrer', title: 'OpenClassrooms', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/open-classrooms.webp, alt: 'OpenClassrooms', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.ecov.fr/fr', target: _blank, rel: 'noopener noreferrer', title: 'Ecov', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/ecov.webp, alt: 'Ecov', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.atadisp.com', target: _blank, rel: 'noopener noreferrer', title: 'Atadisp', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/atadisp.webp, alt: 'Atadisp', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.stras.immo', target: _blank, rel: 'noopener noreferrer', title: 'StrasImmo', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/strasimmo.webp, alt: 'StrasImmo', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.daubasses.com', target: _blank, rel: 'noopener noreferrer', title: 'Les Daubasses', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/les-daubasses.webp, alt: 'Les Daubasses', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'http://www.biloko.fr', target: _blank, rel: 'noopener noreferrer', title: 'Biloko', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/biloko.webp, alt: 'Biloko', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://info-jeunes-grandest.fr/', target: _blank, rel: 'noopener noreferrer', title: 'Info Jeunes Grand Est', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/info-jeunes.webp, alt: 'Info Jeunes Grand Est', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://ora-environnement.com', target: _blank, rel: 'noopener noreferrer', title: 'ORA Environnement', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/ora.webp, alt: 'ORA Environnement', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.inddigo.com', target: _blank, rel: 'noopener noreferrer', title: 'Inddigo', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/inddigo.webp, alt: 'Inddigo', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'http://natevia.com', target: _blank, rel: 'noopener noreferrer', title: 'Natevia', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/natevia.webp, alt: 'Natevia', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.c2ris.com', target: _blank, rel: 'noopener noreferrer', title: 'C2RIS', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/c2ris.webp, alt: 'C2RIS', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://element.io', target: _blank, rel: 'noopener noreferrer', title: 'Element', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/element.webp, alt: 'Element', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://pixelforest.io', target: _blank, rel: 'noopener noreferrer', title: 'Pixel Forest', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/pixel-forest.webp, alt: 'Pixel Forest', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: container, props: { className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5' }, children: [{ type: image, props: { src: /images/pages/les-entreprises/crafterie.webp, alt: 'Crafterie', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.impact-positif.fr', target: _blank, rel: 'noopener noreferrer', title: 'Impact Positif', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/impact-positif.webp, alt: 'Impact Positif', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://fr.getrollee.com', target: _blank, rel: 'noopener noreferrer', title: 'Rollee', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/rollee.webp, alt: 'Rollee', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.lejournaldesentreprises.com', target: _blank, rel: 'noopener noreferrer', title: 'Le Journal des Entreprises', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/journal-des-ent.webp, alt: 'Le Journal des Entreprises', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.digital-artness.fr', target: _blank, rel: 'noopener noreferrer', title: 'Digital Artness', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/digital-artness.webp, alt: 'Digital Artness', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.effective-world.com/fr/', target: _blank, rel: 'noopener noreferrer', title: 'Effective World', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/effective-world.webp, alt: 'Effective World', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://www.pro-jet.fr', target: _blank, rel: 'noopener noreferrer', title: 'Pro-Jet', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/projet.webp, alt: 'Pro-Jet', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+              - { type: link, props: { href: 'https://qwenty.fr', target: _blank, rel: 'noopener noreferrer', title: 'Qwenty', className: 'group grid place-items-center aspect-square bg-white rounded-lg shadow-md p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition'}, children: [{ type: image, props: { src: /images/pages/les-entreprises/qwenty.webp, alt: 'Qwenty', width: 235, height: 294, className: 'max-h-full w-auto object-contain' } }] }
+
+  # ── CTA ──
+  - type: container
+    element: section
+    props:
+      className: 'bg-navy text-white'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 text-center'
+        children:
+          - { type: text, element: h2, content: $t:companies.cta.title, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-white max-w-3xl mx-auto' } }
+          - { type: text, element: p, content: $t:companies.cta.text, props: { className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mx-auto mt-4' } }
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row gap-4 justify-center mt-10'
+            children:
+              - { type: link, content: $t:companies.cta.pricing, props: { href: $t:href.pricing, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:companies.cta.contact, props: { href: $t:href.contact, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors' } }
+
+  - component: site-footer

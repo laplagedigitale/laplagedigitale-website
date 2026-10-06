@@ -22,8 +22,8 @@ components:
         children:
           - type: container
             children:
-              - { type: text, element: h1, content: Articles, props: { className: 'text-h2 text-navy' } }
-              - { type: text, element: p, content: "Brouillons et articles publiés. Cliquez sur une ligne pour l'éditer.", props: { className: 'text-bodySmall text-text-muted mt-1' } }
+              - { type: text, element: h1, content: Articles, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy' } }
+              - { type: text, element: p, content: "Brouillons et articles publiés. Cliquez sur une ligne pour l'éditer.", props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1' } }
           - type: link
             content: '+ Nouvel article'
             props:

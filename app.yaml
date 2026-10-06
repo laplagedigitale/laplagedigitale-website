@@ -33,6 +33,13 @@ forms:
 
 pages:
   - $ref: ./config/pages/home.yaml
+  - $ref: ./config/pages/qui-sommes-nous.yaml
+  - $ref: ./config/pages/nos-activites.yaml
+  - $ref: ./config/pages/nos-soutiens.yaml
+  - $ref: ./config/pages/espace-coworking.yaml
+  - $ref: ./config/pages/les-formules.yaml
+  - $ref: ./config/pages/nos-coworkers.yaml
+  - $ref: ./config/pages/les-entreprises.yaml
   - $ref: ./config/pages/blog.yaml
   - $ref: ./config/pages/blog-post.yaml
   - $ref: ./config/pages/contact.yaml
