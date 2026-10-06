@@ -14,7 +14,7 @@ When working on `app.yaml` or any Sovrium configuration, **always fetch `https:/
 ### Key Concepts
 
 - **Config-driven**: The entire app (design system, languages, components, pages, analytics) is declared in YAML — `app.yaml` plus the partials it `$ref`s from `config/`.
-- **Version**: pinned in `.sovrium-version` (currently 0.24.0) — the Scalingo buildpack downloads exactly that release.
+- **Version**: pinned in `.sovrium-version` (currently 0.30.0) — the Scalingo buildpack downloads exactly that release.
 - **49 field types**, **90 component types**, built-in auth, RBAC permissions, i18n.
 - App is started with `sovrium start app.yaml` (CLI only, no TypeScript needed).
 
@@ -64,8 +64,10 @@ Working rules:
 - **Components are typed from a closed vocabulary.** Raw HTML tag names (`div`, `p`, `section`, `h2`, …) are not component types. Use `container` with `element: div|section|main|aside|nav|header|footer|article`, and `text` with `element: h1..h6|p|span|label|blockquote|code`.
 - `text` renders a `<span>` unless you set `element:` — write `element: p` for real paragraphs.
 - Page content lives under `pages[].components` (not `sections`).
-- Design tokens live under `design.theme`. The top-level `theme` key is a deprecated alias and the two cannot both be present.
-- `design.typeScale` is the working replacement for `theme.fonts.*.size`, `.lineHeight` and `.weights`, which validate but reach nothing.
+- Design tokens are direct keys of `design` — `colors`, `radius`, `elevation`, `motion`, `breakpoints`, `typeScale`. Both `design.theme` and the top-level `theme` were removed in v0.30 and are refused.
+- Colour token names are kebab-case (`text-muted`, not `textMuted`).
+- Faces live in `design.typeScale.families`; sizes, leading and weight live in `design.typeScale.steps`. A face's `size`, `lineHeight` and `weights` validate but reach nothing.
+- `design.spacing` takes lengths only (`px`/`rem`), each step becoming a utility suffix (`py-section`). A reusable class list belongs on `props.className`, not in a token.
 - **Auth is on because the `auth` block exists** — there is no `enabled` flag; presence is the switch. It mounts `/api/auth/*`, RBAC and the admin endpoints. Every page stays public: auth is there for the admin surface, not to gate the site.
 - **`allowSignUp: false` is deliberate.** The default is `true`, which on a public marketing site would let anyone create an account. Users are created by admins; `defaultRole: viewer` keeps them least-privilege.
 - Auth needs a **persistent** database. Scalingo rebuilds the container filesystem on every deploy, so the SQLite default would discard users each time — this is why the PostgreSQL add-on is not optional here.
