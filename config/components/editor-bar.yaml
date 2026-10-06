@@ -18,7 +18,7 @@ children:
               - type: link
                 props: { href: /editor, 'aria-label': Espace rédaction }
                 children:
-                  - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, width: 120, height: 40, className: 'h-9 w-auto' } }
+                  - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-9 w-auto' } }
               - { type: text, element: span, content: Espace rédaction, props: { className: 'hidden sm:inline [font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange' } }
           - type: flex
             props:

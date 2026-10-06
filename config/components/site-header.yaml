@@ -27,8 +27,6 @@ children:
                 props:
                   src: /brand/logo-couleurs.svg
                   alt: La Plage Digitale
-                  width: 168
-                  height: 56
                   loading: eager
                   className: 'h-12 w-auto'
 

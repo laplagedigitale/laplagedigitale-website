@@ -77,7 +77,7 @@ components:
                     props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-navy' }
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
-                      - { type: image, props: { src: /images/pages/nos-activites/conseils-de-la-plage-digitale.webp, alt: $t:activities.council.imageAlt, width: 1024, height: 1024, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
+                      - { type: image, props: { src: /images/pages/nos-activites/conseils-de-la-plage-digitale.webp, alt: $t:activities.council.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
                         props: { className: 'flex flex-col flex-1 p-6' }
                         children:
@@ -88,7 +88,7 @@ components:
                     props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue' }
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
-                      - { type: image, props: { src: /images/pages/nos-activites/bibliotheque-partagee.webp, alt: $t:activities.library.imageAlt, width: 1024, height: 1024, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
+                      - { type: image, props: { src: /images/pages/nos-activites/bibliotheque-partagee.webp, alt: $t:activities.library.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
                         props: { className: 'flex flex-col flex-1 p-6' }
                         children:
@@ -99,7 +99,7 @@ components:
                     props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-orange' }
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
-                      - { type: image, props: { src: /images/pages/nos-activites/startup-ce.webp, alt: $t:activities.startupce.imageAlt, width: 1024, height: 1024, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
+                      - { type: image, props: { src: /images/pages/nos-activites/startup-ce.webp, alt: $t:activities.startupce.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
                         props: { className: 'flex flex-col flex-1 p-6' }
                         children:
@@ -110,7 +110,7 @@ components:
                     props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-sage' }
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
-                      - { type: image, props: { src: /images/pages/nos-activites/demarche-ecologique.webp, alt: $t:activities.ecology.imageAlt, width: 1024, height: 1024, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
+                      - { type: image, props: { src: /images/pages/nos-activites/demarche-ecologique.webp, alt: $t:activities.ecology.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
                         props: { className: 'flex flex-col flex-1 p-6' }
                         children:
@@ -151,7 +151,7 @@ components:
                     props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-magenta' }
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
-                      - { type: image, props: { src: /images/pages/nos-activites/meetups.webp, alt: $t:activities.meetups.imageAlt, width: 1024, height: 1024, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
+                      - { type: image, props: { src: /images/pages/nos-activites/meetups.webp, alt: $t:activities.meetups.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
                         props: { className: 'flex flex-col flex-1 p-6' }
                         children:
@@ -162,7 +162,7 @@ components:
                     props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-navy' }
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
-                      - { type: image, props: { src: /images/pages/nos-activites/permanences-conseil.webp, alt: $t:activities.advice.imageAlt, width: 1024, height: 1024, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
+                      - { type: image, props: { src: /images/pages/nos-activites/permanences-conseil.webp, alt: $t:activities.advice.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
                         props: { className: 'flex flex-col flex-1 p-6' }
                         children:
@@ -173,7 +173,7 @@ components:
                     props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue' }
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
-                      - { type: image, props: { src: /images/pages/nos-activites/hack-sxb.webp, alt: $t:activities.hack.imageAlt, width: 1024, height: 1024, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
+                      - { type: image, props: { src: /images/pages/nos-activites/hack-sxb.webp, alt: $t:activities.hack.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
                         props: { className: 'flex flex-col flex-1 p-6' }
                         children:
@@ -191,7 +191,7 @@ components:
                     props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-orange' }
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
-                      - { type: image, props: { src: /images/pages/nos-activites/bidouillotheque.webp, alt: $t:activities.bidouillo.imageAlt, width: 1024, height: 1024, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
+                      - { type: image, props: { src: /images/pages/nos-activites/bidouillotheque.webp, alt: $t:activities.bidouillo.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
                         props: { className: 'flex flex-col flex-1 p-6' }
                         children:

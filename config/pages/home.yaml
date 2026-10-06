@@ -88,8 +88,6 @@ components:
                     props:
                       src: /images/pages/accueil/hero.webp
                       alt: $t:home.hero.imageAlt
-                      width: 1392
-                      height: 478
                       className: 'w-full h-auto rounded-md'
 
   - type: container
@@ -287,8 +285,6 @@ components:
                     props:
                       src: /images/pages/nos-activites/meetups.webp
                       alt: $t:home.community.imageAlt
-                      width: 1024
-                      height: 1024
                       loading: lazy
                       className: 'relative w-full h-auto aspect-[4/3] object-cover rounded-lg shadow-md'
 
@@ -324,6 +320,9 @@ components:
           - type: gallery
             layout: grid
             emptyMessage: $t:home.news.empty
+            # A teaser of the 3 newest posts: hide the pager that pageSize brings
+            # (dataSource.limit is ignored by the gallery); /blog keeps its pages.
+            props: { className: '[&_nav[aria-label=pagination]]:hidden' }
             gridColumns: { mobile: 1, md: 2, lg: 3 }
             dataSource:
               table: posts
@@ -331,7 +330,7 @@ components:
                 - { field: status, operator: eq, value: published }
               sort:
                 - { field: published_at, direction: desc }
-              limit: 3
+              pagination: { pageSize: 3 }
             galleryCard:
               coverImage: '$record.legacy_cover'
               aspectRatio: '16:9'

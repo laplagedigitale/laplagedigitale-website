@@ -221,7 +221,7 @@ components:
                   className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
-                  - { type: image, props: { src: /images/pages/les-formules/salle-crevette.webp, alt: $t:pricing.room.crevette.alt, width: 1080, height: 1080, className: 'w-full aspect-[4/3] object-cover' } }
+                  - { type: image, props: { src: /images/pages/les-formules/salle-crevette.webp, alt: $t:pricing.room.crevette.alt, className: 'w-full aspect-[4/3] object-cover' } }
                   - type: container
                     props:
                       className: 'flex flex-col flex-1 p-6'
@@ -247,7 +247,7 @@ components:
                   className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-orange'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
-                  - { type: image, props: { src: /images/pages/les-formules/salle-requin.webp, alt: $t:pricing.room.requin.alt, width: 1080, height: 1080, className: 'w-full aspect-[4/3] object-cover' } }
+                  - { type: image, props: { src: /images/pages/les-formules/salle-requin.webp, alt: $t:pricing.room.requin.alt, className: 'w-full aspect-[4/3] object-cover' } }
                   - type: container
                     props:
                       className: 'flex flex-col flex-1 p-6'
@@ -273,7 +273,7 @@ components:
                   className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-magenta'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
-                  - { type: image, props: { src: /images/pages/les-formules/salle-baleine.webp, alt: $t:pricing.room.baleine.alt, width: 1080, height: 1080, className: 'w-full aspect-[4/3] object-cover' } }
+                  - { type: image, props: { src: /images/pages/les-formules/salle-baleine.webp, alt: $t:pricing.room.baleine.alt, className: 'w-full aspect-[4/3] object-cover' } }
                   - type: container
                     props:
                       className: 'flex flex-col flex-1 p-6'
@@ -299,7 +299,7 @@ components:
                   className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-navy'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
-                  - { type: image, props: { src: /images/pages/les-formules/salle-narval.webp, alt: $t:pricing.room.narval.alt, width: 1080, height: 1080, className: 'w-full aspect-[4/3] object-cover' } }
+                  - { type: image, props: { src: /images/pages/les-formules/salle-narval.webp, alt: $t:pricing.room.narval.alt, className: 'w-full aspect-[4/3] object-cover' } }
                   - type: container
                     props:
                       className: 'flex flex-col flex-1 p-6'

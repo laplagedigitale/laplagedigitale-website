@@ -1,6 +1,6 @@
 # Page: espace-coworking — the space itself: what is available (Box, fixed
-# desks, flex places, meeting rooms), the Giraffe360 virtual tour, and how to
-# come and work here. Source: WP page `espace-cowork`.
+# desks, flex places, meeting rooms) and how to come and work here. The
+# Giraffe360 virtual tour is gone: the tour itself was deleted at the source. Source: WP page `espace-cowork`.
 name: espace-coworking
 path: /espace-coworking
 meta:
@@ -52,8 +52,6 @@ components:
             props:
               src: /images/pages/espace-cowork/espace-coworking.webp
               alt: $t:space.hero.alt
-              width: 1276
-              height: 263
               className: 'w-full h-48 sm:h-auto object-cover rounded-lg shadow-md'
 
   # ── What is available ──
@@ -125,43 +123,6 @@ components:
                   - { type: text, element: p, content: $t:space.rooms.text, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted mt-3 flex-1' } }
                   - { type: link, content: $t:space.more, props: { href: $t:href.pricing.reunion, className: 'inline-flex items-center gap-1 mt-6 font-bold text-navy hover:text-magenta' } }
 
-  # ── Virtual tour (Giraffe360) ──
-  - type: container
-    element: section
-    props:
-      className: 'bg-white'
-    children:
-      - type: container
-        props:
-          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
-        children:
-          - type: text
-            element: p
-            content: $t:space.tour.eyebrow
-            props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
-          - type: text
-            element: h2
-            content: $t:space.tour.title
-            props:
-              className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl'
-          - type: text
-            element: p
-            content: $t:space.tour.lead
-            props:
-              className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4'
-          - type: container
-            props:
-              className: 'mt-10 w-full aspect-[4/5] sm:aspect-video overflow-hidden rounded-lg shadow-md border-t-4 border-blue bg-sand'
-            children:
-              - type: iframe
-                props:
-                  src: 'https://tour.giraffe360.com/53d07101349a4ac1908cfa5d365d62d6/'
-                  title: $t:space.tour.frameTitle
-                  allow: 'fullscreen; accelerometer; gyroscope; xr-spatial-tracking'
-                  loading: lazy
-                  className: 'w-full h-full border-0'
-
   # ── How to come and work here ──
   - type: container
     element: section
@@ -193,7 +154,7 @@ components:
                   className: 'flex flex-col bg-white rounded-lg shadow-md p-6 sm:p-8'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
-                  - { type: image, props: { src: /images/pages/espace-cowork/bouee-violette-1.webp, alt: '', width: 25, height: 25, className: 'w-8 h-8 mb-4' } }
+                  - { type: image, props: { src: /images/pages/espace-cowork/bouee-violette-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
                   - { type: text, element: h3, content: $t:space.how.fixed.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
                   - { type: text, element: p, content: $t:space.how.fixed.text, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted mt-3 flex-1' } }
                   - type: flex
@@ -210,7 +171,7 @@ components:
                   className: 'flex flex-col bg-white rounded-lg shadow-md p-6 sm:p-8'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
-                  - { type: image, props: { src: /images/pages/espace-cowork/bouee-bleu-1.webp, alt: '', width: 25, height: 25, className: 'w-8 h-8 mb-4' } }
+                  - { type: image, props: { src: /images/pages/espace-cowork/bouee-bleu-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
                   - { type: text, element: h3, content: $t:space.how.flex.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
                   - { type: text, element: p, content: $t:space.how.flex.text, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted mt-3' } }
                   - { type: text, element: p, content: $t:space.how.flex.hours, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-4' } }
@@ -223,7 +184,7 @@ components:
                   className: 'flex flex-col bg-white rounded-lg shadow-md p-6 sm:p-8'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
-                  - { type: image, props: { src: /images/pages/espace-cowork/bouee-orange-1.webp, alt: '', width: 25, height: 25, className: 'w-8 h-8 mb-4' } }
+                  - { type: image, props: { src: /images/pages/espace-cowork/bouee-orange-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
                   - { type: text, element: h3, content: $t:space.how.rooms.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
                   - { type: text, element: p, content: $t:space.how.rooms.text, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted mt-3 flex-1' } }
                   - { type: link, content: $t:space.how.rooms.cta, props: { href: $t:href.contact, className: 'self-start inline-flex items-center mt-6 px-6 py-3 rounded-full font-bold text-white bg-navy hover:bg-navy-700 transition-colors' } }
@@ -231,8 +192,6 @@ components:
             props:
               src: /images/pages/espace-cowork/acces.webp
               alt: $t:space.how.rooms.alt
-              width: 1276
-              height: 265
               className: 'w-full h-48 sm:h-auto object-cover rounded-lg shadow-md mt-12'
 
   # ── CTA ──

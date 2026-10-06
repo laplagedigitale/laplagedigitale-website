@@ -18,7 +18,7 @@ components:
           className: 'hidden lg:flex flex-col justify-between bg-navy text-white p-12'
         children:
           - type: image
-            props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, width: 200, height: 66, className: 'h-16 w-auto' }
+            props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-16 w-auto' }
           - type: container
             children:
               - { type: text, element: p, content: 'Espace rédaction', props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4' } }

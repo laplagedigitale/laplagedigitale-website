@@ -217,7 +217,7 @@ components:
                   # Contact form
                   - type: container
                     props:
-                      className: 'bg-sand rounded-lg p-6 sm:p-8 border-t-4 border-orange'
+                      className: 'bg-sand rounded-lg p-6 sm:p-8 border-t-4 border-orange [&_.embedded-form]:!block [&_.embedded-form]:!w-full'
                     children:
                       - type: text
                         element: p
