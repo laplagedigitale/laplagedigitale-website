@@ -39,6 +39,8 @@ components:
                     props: { id: mandate-list }
                     dataSource:
                       table: mandates
+                      filter:
+                        - { field: member_email, operator: eq, value: $currentUser.email }
                       sort:
                         - { field: signed_at, direction: desc }
                     emptyMessage: $t:portal.mandate.none

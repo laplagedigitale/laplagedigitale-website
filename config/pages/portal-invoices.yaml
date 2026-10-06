@@ -33,6 +33,8 @@ components:
               - type: table
                 dataSource:
                   table: invoices
+                  filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
                   sort:
                     - { field: invoice_date, direction: desc }
                   pagination: { pageSize: 25, style: numbered }
