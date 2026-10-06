@@ -10,35 +10,44 @@ meta:
   description: Rédiger un nouvel article.
   noindex: true
 components:
-  - component: editor-bar
-
-  - type: container
-    element: main
+  - type: flex
     props:
-      className: 'max-w-4xl mx-auto px-4 sm:px-6 py-10'
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - { type: link, content: '← Tous les articles', props: { href: /editor, className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted hover:text-navy' } }
-      - { type: text, element: h1, content: Nouvel article, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mt-3 mb-8' } }
-      - type: form
-        dataSource: { table: posts }
-        action:
-          type: crud
-          operation: create
-          table: posts
-          onSuccess:
-            type: navigate
-            navigate: /editor
-            toast: { variant: success, message: Article enregistré. }
-        fieldGroups:
-          - { label: Article, fields: [title, slug, excerpt, body] }
-          - { label: Illustration, fields: [cover] }
-          - { label: Publication, fields: [status, published_at, categories] }
-        fields:
-          - { field: title, placeholder: "Titre de l'article" }
-          - { field: slug, placeholder: 'mon-article' }
-          - { field: excerpt, control: textarea }
-          - { field: body }
-          - { field: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
-          - { field: status, defaultValue: draft }
-          - { field: published_at, defaultValue: $now }
-          - { field: categories }
+      - component: editor-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - { type: link, content: '← Tous les articles', props: { href: /editor/articles, className: 'text-sm text-text-muted hover:text-navy' } }
+          - { type: text, element: h1, content: Nouvel article, props: { className: 'text-3xl font-bold text-navy' } }
+          # One form, since a new post is created in one request: the
+          # two-column layout is the edit page's.
+          - type: card
+            props:
+              className: 'p-6 max-w-3xl'
+            children:
+              - type: form
+                dataSource: { table: posts }
+                action:
+                  type: crud
+                  operation: create
+                  table: posts
+                  onSuccess:
+                    type: navigate
+                    navigate: /editor/articles
+                    toast: { variant: success, message: Article enregistré. }
+                fieldGroups:
+                  - { label: Article, fields: [title, slug, excerpt, body] }
+                  - { label: Publication, fields: [status, published_at, categories, cover] }
+                fields:
+                  - { field: title, placeholder: "Titre de l'article" }
+                  - { field: slug, placeholder: 'mon-article' }
+                  - { field: excerpt, control: textarea }
+                  - { field: body }
+                  - { field: status, defaultValue: draft }
+                  - { field: published_at, defaultValue: $now }
+                  - { field: categories }
+                  - { field: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }

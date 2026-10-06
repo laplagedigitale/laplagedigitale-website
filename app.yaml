@@ -66,7 +66,11 @@ buckets:
 components:
   - $ref: ./config/components/site-header.yaml
   - $ref: ./config/components/site-footer.yaml
-  - $ref: ./config/components/editor-bar.yaml
+  # The two signed-in spaces: their left columns, and the account page body
+  # they share.
+  - $ref: ./config/components/chaloupe-nav.yaml
+  - $ref: ./config/components/editor-nav.yaml
+  - $ref: ./config/components/account-forms.yaml
 
 forms:
   - $ref: ./config/forms/contact.yaml
@@ -85,14 +89,22 @@ pages:
   - $ref: ./config/pages/contact.yaml
   - $ref: ./config/pages/mentions-legales.yaml
   - $ref: ./config/pages/confidentialite.yaml
-  # Editors' front office — gated, never indexed.
+  # The one sign-in page; it lands each role in its own space.
   - $ref: ./config/pages/connexion.yaml
+  - $ref: ./config/pages/app-landing.yaml
+  # Editors' space — gated, never indexed.
   - $ref: ./config/pages/editor.yaml
+  - $ref: ./config/pages/editor-posts.yaml
+  - $ref: ./config/pages/editor-posts-drafts.yaml
+  - $ref: ./config/pages/editor-posts-published.yaml
   - $ref: ./config/pages/editor-post-new.yaml
   - $ref: ./config/pages/editor-post-edit.yaml
-  # Coworker portal — gated, never indexed.
-  - $ref: ./config/pages/login.yaml
+  - $ref: ./config/pages/editor-account.yaml
+  # La Chaloupe, the coworker space — gated, never indexed.
   - $ref: ./config/pages/portal.yaml
+  - $ref: ./config/pages/portal-invoices.yaml
+  - $ref: ./config/pages/portal-mandate.yaml
+  - $ref: ./config/pages/portal-account.yaml
 
 # Old WordPress URLs (posts lived at the root, pages had other slugs) — 301s.
 redirects:

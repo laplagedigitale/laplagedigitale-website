@@ -1,0 +1,36 @@
+# Reusable component template: chaloupe-nav — the left column of La Chaloupe,
+# the coworker space (/chaloupe/*). Logo on top, then the navigation.
+#
+# Below lg the column becomes a top bar and the navigation folds into a drawer
+# behind its menu button. A template cannot take children, so each page places
+# this column itself, beside its own <main>.
+#
+# The entries' hrefs are literal paths, not $t:href.* keys: in Sovrium 0.30
+# the current-entry match (aria-current) runs on the unresolved href, so a
+# translated one is never marked. The language still follows the reader — a
+# language picked in the switcher is a cookie the server composes /chaloupe in.
+name: chaloupe-nav
+type: container
+element: aside
+props:
+  className: 'flex flex-row items-center justify-between gap-4 border-b border-border bg-sand px-4 py-3 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:flex-none lg:flex-col lg:items-stretch lg:justify-start lg:border-b-0 lg:border-r lg:px-3 lg:py-6'
+children:
+  - type: link
+    props: { href: $t:href.portal, className: 'flex items-center gap-3 lg:px-3 lg:mb-6' }
+    children:
+      - { type: image, props: { src: /brand/logo-couleurs.svg, alt: La Plage Digitale, className: 'h-9 w-auto' } }
+      - { type: text, element: span, content: La Chaloupe, props: { className: 'font-bold text-navy' } }
+  - type: sidebar
+    drawer: { below: lg, label: $t:portal.nav.menu }
+    props:
+      className: 'lg:flex-1 [&_a[aria-current=page]]:bg-surface [&_a[aria-current=page]]:font-semibold [&_a[aria-current=page]]:text-navy [&_a[aria-current=page]]:shadow-sm'
+    groups:
+      - label: $t:portal.nav.space
+        items:
+          - { label: La Chaloupe, href: /chaloupe, icon: sailboat }
+          - { label: $t:portal.nav.invoices, href: /chaloupe/factures, icon: receipt, activeMatch: prefix }
+          - { label: $t:portal.nav.mandate, href: /chaloupe/prelevement, icon: landmark, activeMatch: prefix }
+      - label: $t:portal.nav.account
+        items:
+          - { label: $t:portal.nav.profile, href: /chaloupe/compte, icon: user-round, activeMatch: prefix }
+          - { label: $t:portal.nav.site, href: $t:href.home, icon: arrow-left }

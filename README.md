@@ -28,9 +28,11 @@ config/
     contact.yaml
     legal.yaml
     privacy.yaml
-    login.yaml                 # coworker sign-in
-    portal.yaml                # coworker portal (invoices, direct debit)
-  tables/                      # data the portal reads, one per file
+    connexion.yaml             # the one sign-in page (coworkers and editors)
+    app-landing.yaml           # /app — "Mes espaces", routes each role
+    portal*.yaml               # La Chaloupe, the coworker space (/chaloupe/*)
+    editor*.yaml               # the editors' space (/editor/*)
+  tables/                      # data La Chaloupe reads, one per file
     members.yaml
     invoices.yaml
     mandates.yaml
@@ -60,10 +62,19 @@ Unknown property 'noindexx'
   at pages[3].meta  (legal.yaml)
 ```
 
-## Coworker portal
+## La Chaloupe — the coworker space
 
-`/portal` is where a coworker finds their own Pennylane invoices, with payment
-status and PDF, and asks for a GoCardless direct-debit mandate. A page cannot
+`/chaloupe` (« La Chaloupe ») is where a coworker finds their own Pennylane
+invoices, with payment status and PDF, and asks for a GoCardless direct-debit
+mandate. It is an app shell: a sidebar (`chaloupe-nav`) beside a dashboard
+(`/chaloupe`), the invoices (`/chaloupe/factures`), the mandate
+(`/chaloupe/prelevement`) and the account (`/chaloupe/compte`: display name,
+password, sign-out). The old `/portal` and `/login` addresses redirect.
+
+The blog editors have the same shape at `/editor`: a dashboard, the post lists
+(all, drafts, published), the post forms and an account page. Both spaces share
+one sign-in, `/connexion`, which sends everyone to `/app`; that page offers the
+spaces the caller's role opens and forwards straight on when there is one. A page cannot
 call an external API while it renders, so Pennylane is **mirrored into tables**
 and the pages read those tables:
 
@@ -72,7 +83,7 @@ and the pages read those tables:
 | `member-sign-up`          | account created      | files a `members` row for a `coworker` account                       |
 | `pennylane-match-pending` | every 30 min         | links each unlinked member to the Pennylane customer with that email |
 | `pennylane-sync`          | every 15 min         | mirrors the linked members' invoices and GoCardless mandates         |
-| `request-mandate`         | the portal's button  | asks Pennylane to email the coworker their GoCardless signing link   |
+| `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
 
 **Isolation is the tables' job, not the page's.** Every portal table has a
 row-level rule matching the row's email to the signed-in user's email, so the
@@ -196,8 +207,9 @@ set; on later boots it no-ops rather than duplicating or modifying an existing
 user. The startup banner confirms it with an `Admin:` line.
 
 > [!NOTE]
-> **The site stays public.** Every page except `/portal` is readable without a
-> session; `/portal` admits the `coworker` and `admin` roles. `allowSignUp` is
+> **The site stays public.** Every page except `/chaloupe/*` and `/editor/*` is
+> readable without a session; `/chaloupe` admits the `coworker` and `admin`
+> roles, `/editor` the `editor` and `admin` roles. `allowSignUp` is
 > `false`, so nobody can create their own account; the default is `true`, which
 > would let anyone sign up on a public site. Coworkers are invited.
 

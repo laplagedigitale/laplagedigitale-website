@@ -1,0 +1,39 @@
+# Reusable component template: editor-nav — the left column of the editors'
+# space (/editor/*). Logo on top, a "new post" call to action, then the
+# navigation. French only, like the rest of the editors' space.
+#
+# Below lg the column becomes a top bar and the navigation folds into a drawer
+# behind its menu button. A template cannot take children, so each page places
+# this column itself, beside its own <main>.
+name: editor-nav
+type: container
+element: aside
+props:
+  className: 'flex flex-row items-center justify-between gap-4 bg-navy px-4 py-3 text-white lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:flex-none lg:flex-col lg:items-stretch lg:justify-start lg:px-3 lg:py-6'
+children:
+  - type: link
+    props: { href: /editor, className: 'flex flex-col gap-1 lg:px-3 lg:mb-4', 'aria-label': Espace rédaction }
+    children:
+      - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-9 w-auto self-start' } }
+      - { type: text, element: span, content: Espace rédaction, props: { className: 'hidden lg:inline text-xs font-bold uppercase tracking-widest text-orange' } }
+  - type: link
+    content: '+ Nouvel article'
+    props:
+      href: /editor/posts/new
+      className: 'hidden lg:flex justify-center lg:mx-3 lg:mb-6 px-4 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+  - type: sidebar
+    drawer: { below: lg, label: Menu }
+    props:
+      className: 'lg:flex-1 text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
+    groups:
+      - label: Rédaction
+        items:
+          - { label: Tableau de bord, href: /editor, icon: layout-dashboard }
+          - { label: Tous les articles, href: /editor/articles, icon: newspaper }
+          - { label: Brouillons, href: /editor/articles/brouillons, icon: pencil-line }
+          - { label: Publiés, href: /editor/articles/publies, icon: globe }
+          - { label: Nouvel article, href: /editor/posts/new, icon: square-pen }
+      - label: Compte
+        items:
+          - { label: Mon compte, href: /editor/compte, icon: user-round }
+          - { label: Voir le blog, href: /blog, icon: external-link }

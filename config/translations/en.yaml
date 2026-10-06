@@ -12,12 +12,15 @@ href.companies: /en/les-entreprises
 href.blog: /en/blog
 href.contact: /en/contact
 href.legal: /en/mentions-legales
-href.portal: /en/portal
+href.portal: /en/chaloupe
+href.portal.invoices: /en/chaloupe/factures
+href.portal.mandate: /en/chaloupe/prelevement
+href.portal.account: /en/chaloupe/compte
 href.privacy: /en/confidentialite
 
 # ── Navigation ──
 nav.aria: Main navigation
-nav.portal: Member area
+nav.portal: La Chaloupe
 nav.menu: Menu
 nav.home: Home
 nav.about: About us
@@ -522,13 +525,29 @@ supporters.cta.lead: Membership of the association keeps the third place and its
 supporters.cta.join: Become a member
 supporters.cta.about: About us
 
-# ── Coworker portal ── /login and /portal, and the portal tables' option labels.
-login.title: Member area
-login.subtitle: "Sign in to find your invoices and manage your direct debit."
-portal.title: My member area
-portal.subtitle: "Your La Plage Digitale invoices and direct-debit mandate, refreshed every 15 minutes."
-portal.logout: Sign out
-portal.account.linked: Your account is linked to Pennylane.
+# ── La Chaloupe ── the coworker space (/chaloupe/*), and the portal tables' option labels.
+portal.nav.menu: Menu
+portal.nav.space: My space
+portal.nav.invoices: Invoices
+portal.nav.mandate: Direct debit
+portal.nav.account: Account
+portal.nav.profile: My account
+portal.nav.site: Back to the site
+portal.dashboard.hello: "Hello[, $session.name]"
+portal.dashboard.subtitle: "Your coworker space: what is left to pay, your direct debit and your latest invoices, refreshed every 15 minutes."
+portal.dashboard.due: Left to pay
+portal.dashboard.late: Overdue invoices
+portal.dashboard.paid: Paid invoices
+portal.dashboard.latest: Latest invoices
+portal.dashboard.all: All invoices →
+portal.dashboard.manage: Manage →
+portal.invoices.intro: "All your La Plage Digitale invoices, from Pennylane. A PDF link stays valid for 30 minutes: reload the page if it has expired."
+portal.invoices.search: Search invoices…
+portal.mandate.current: My mandate
+portal.mandate.how: How does it work?
+portal.mandate.how.1: "1. Click “Set up direct debit”."
+portal.mandate.how.2: "2. Pennylane emails you the GoCardless signing link."
+portal.mandate.how.3: "3. Once the mandate is signed, your invoices are debited when due."
 portal.account.unlinked: "Your account is not linked to Pennylane yet — we are on it."
 portal.match.pending: Looking you up
 portal.match.matched: Linked
@@ -565,3 +584,38 @@ portal.status.cancelled: Cancelled
 portal.status.partially_cancelled: Partially cancelled
 portal.status.credit_note: Credit note
 portal.status.archived: Archived
+
+# ── Account ── /chaloupe/compte and /editor/compte (the account-forms template).
+account.title: My account
+account.signedInAs: "[Signed in as $session.email]"
+account.profile: Profile
+account.name: Display name
+account.save: Save
+account.profile.saved: Name saved.
+account.error: "Saving failed. Please try again."
+account.password: Password
+account.password.current: Current password
+account.password.new: New password
+account.password.rule: At least 8 characters.
+account.password.revoke: Sign out my other devices
+account.password.submit: Change password
+account.password.saved: Password changed.
+account.password.error: "The password could not be changed. Check your current password."
+account.session: Session
+account.session.intro: Leave your space on this device.
+account.logout: Sign out
+
+# ── Sign-in ── /connexion, shared by coworkers and editors.
+auth.kicker: Members' area
+auth.pitch: "La Chaloupe for coworkers, the editors' space for the blog: one account, one door."
+auth.title: Sign in
+auth.subtitle: "Your account is opened by the La Plage Digitale team. No account yet? Write to us."
+auth.submit: Sign in
+auth.back: ← Back to the site
+
+# ── Spaces ── /app, where /connexion sends every session.
+spaces.title: My spaces
+spaces.chaloupe: Your invoices, direct debit and coworker account.
+spaces.editor: Editors' space
+spaces.editor.desc: Write and publish the blog posts.
+spaces.none: "Your account does not open any space yet. Please contact the La Plage Digitale team."

@@ -1,0 +1,30 @@
+# Page: editor-account — the editor's own account: display name, password,
+# sign-out (the shared account-forms template).
+name: editor-account
+path: /editor/compte
+sitemap: false
+access: { require: [editor, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: Mon compte — Espace rédaction
+  description: Votre compte.
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: editor-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:account.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:account.signedInAs, props: { className: 'text-text-muted mt-2' } }
+
+          - component: account-forms
