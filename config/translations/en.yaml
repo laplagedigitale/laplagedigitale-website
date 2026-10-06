@@ -12,15 +12,15 @@ href.companies: /en/les-entreprises
 href.blog: /en/blog
 href.contact: /en/contact
 href.legal: /en/mentions-legales
-href.portal: /en/chaloupe
-href.portal.invoices: /en/chaloupe/factures
-href.portal.mandate: /en/chaloupe/prelevement
-href.portal.account: /en/chaloupe/compte
+href.portal: /en/espace-membre
+href.portal.invoices: /en/espace-membre/factures
+href.portal.mandate: /en/espace-membre/prelevement
+href.portal.account: /en/espace-membre/compte
 href.privacy: /en/confidentialite
 
 # ── Navigation ──
 nav.aria: Main navigation
-nav.portal: La Chaloupe
+nav.portal: Member Area
 nav.menu: Menu
 nav.home: Home
 nav.about: About us
@@ -525,7 +525,7 @@ supporters.cta.lead: Membership of the association keeps the third place and its
 supporters.cta.join: Become a member
 supporters.cta.about: About us
 
-# ── La Chaloupe ── the coworker space (/chaloupe/*), and the portal tables' option labels.
+# ── Espace Membre ── the coworker space (/espace-membre/*), and the portal tables' option labels.
 portal.nav.menu: Menu
 portal.nav.space: My space
 portal.nav.invoices: Invoices
@@ -585,7 +585,7 @@ portal.status.partially_cancelled: Partially cancelled
 portal.status.credit_note: Credit note
 portal.status.archived: Archived
 
-# ── Account ── /chaloupe/compte and /editor/compte (the account-forms template).
+# ── Account ── /espace-membre/compte and /editor/compte (the account-forms template).
 account.title: My account
 account.signedInAs: "[Signed in as $session.email]"
 account.profile: Profile
@@ -607,7 +607,7 @@ account.logout: Sign out
 
 # ── Sign-in ── /connexion, shared by coworkers and editors.
 auth.kicker: Members' area
-auth.pitch: "La Chaloupe for coworkers, the editors' space for the blog: one account, one door."
+auth.pitch: "The member area for coworkers, the editors' space for the blog: one account, one door."
 auth.title: Sign in
 auth.subtitle: "Your account is opened by the La Plage Digitale team. No account yet? Write to us."
 auth.submit: Sign in
@@ -615,7 +615,7 @@ auth.back: ← Back to the site
 
 # ── Spaces ── /app, where /connexion sends every session.
 spaces.title: My spaces
-spaces.chaloupe: Your invoices, direct debit and coworker account.
+spaces.member: Your invoices, direct debit and coworker account.
 spaces.editor: Editors' space
 spaces.editor.desc: Write and publish the blog posts.
 spaces.none: "Your account does not open any space yet. Please contact the La Plage Digitale team."

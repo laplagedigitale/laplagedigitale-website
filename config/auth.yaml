@@ -22,7 +22,7 @@ defaultRole: viewer
 # Blog editors land on /editor, the editors' space. They write the `posts`
 # table and nothing else — the console at /_admin stays admin-only.
 #
-# Coworkers land on /chaloupe — « La Chaloupe », their own Pennylane invoices,
+# Coworkers land on /espace-membre — « Espace Membre », their own Pennylane invoices,
 # direct-debit mandate and account. Inviting one with this role is what files
 # their `members` row; there is still no self-registration.
 #

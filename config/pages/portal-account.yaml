@@ -2,12 +2,12 @@
 # sign-out. Both forms post to the auth routes as the signed-in caller, so
 # there is no user id anywhere on the page.
 name: portal-account
-path: /chaloupe/compte
+path: /espace-membre/compte
 access: { require: [coworker, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "Mon compte — La Chaloupe"
+  title: "Mon compte — Espace Membre"
   description: "Votre compte."
   noindex: true
 components:
@@ -15,7 +15,7 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: chaloupe-nav
+      - component: espace-membre-nav
 
       - type: container
         element: main

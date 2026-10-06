@@ -1,5 +1,5 @@
-# Reusable component template: chaloupe-nav — the left column of La Chaloupe,
-# the coworker space (/chaloupe/*). Logo on top, then the navigation.
+# Reusable component template: espace-membre-nav — the left column of the Espace Membre,
+# the coworker space (/espace-membre/*). Logo on top, then the navigation.
 #
 # Below lg the column becomes a top bar and the navigation folds into a drawer
 # behind its menu button. A template cannot take children, so each page places
@@ -8,8 +8,8 @@
 # The entries' hrefs are literal paths, not $t:href.* keys: in Sovrium 0.30
 # the current-entry match (aria-current) runs on the unresolved href, so a
 # translated one is never marked. The language still follows the reader — a
-# language picked in the switcher is a cookie the server composes /chaloupe in.
-name: chaloupe-nav
+# language picked in the switcher is a cookie the server composes /espace-membre in.
+name: espace-membre-nav
 type: container
 element: aside
 props:
@@ -19,7 +19,7 @@ children:
     props: { href: $t:href.portal, className: 'flex items-center gap-3 lg:px-3 lg:mb-6' }
     children:
       - { type: image, props: { src: /brand/logo-couleurs.svg, alt: La Plage Digitale, className: 'h-9 w-auto' } }
-      - { type: text, element: span, content: La Chaloupe, props: { className: 'font-bold text-navy' } }
+      - { type: text, element: span, content: $t:nav.portal, props: { className: 'font-bold text-navy' } }
   - type: sidebar
     drawer: { below: lg, label: $t:portal.nav.menu }
     props:
@@ -27,10 +27,10 @@ children:
     groups:
       - label: $t:portal.nav.space
         items:
-          - { label: La Chaloupe, href: /chaloupe, icon: sailboat }
-          - { label: $t:portal.nav.invoices, href: /chaloupe/factures, icon: receipt, activeMatch: prefix }
-          - { label: $t:portal.nav.mandate, href: /chaloupe/prelevement, icon: landmark, activeMatch: prefix }
+          - { label: $t:nav.portal, href: /espace-membre, icon: layout-dashboard }
+          - { label: $t:portal.nav.invoices, href: /espace-membre/factures, icon: receipt, activeMatch: prefix }
+          - { label: $t:portal.nav.mandate, href: /espace-membre/prelevement, icon: landmark, activeMatch: prefix }
       - label: $t:portal.nav.account
         items:
-          - { label: $t:portal.nav.profile, href: /chaloupe/compte, icon: user-round, activeMatch: prefix }
+          - { label: $t:portal.nav.profile, href: /espace-membre/compte, icon: user-round, activeMatch: prefix }
           - { label: $t:portal.nav.site, href: $t:href.home, icon: arrow-left }

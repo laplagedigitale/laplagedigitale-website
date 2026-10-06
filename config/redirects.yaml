@@ -20,11 +20,16 @@
 - { from: "/deutsch", to: "/" }
 - { from: "/deutsch/", to: "/" }
 
-# Signed-in spaces that moved: the coworker portal became La Chaloupe, and
-# its own sign-in page merged into /connexion. Locale-agnostic, so /en/portal
-# lands on /en/chaloupe.
-- { from: "/portal", to: "/chaloupe" }
-- { from: "/portal/", to: "/chaloupe" }
+# Signed-in spaces that moved: the coworker portal became La Chaloupe,
+# then the Espace Membre, and its own sign-in page merged into /connexion.
+# Locale-agnostic, so /en/portal lands on /en/espace-membre.
+- { from: "/portal", to: "/espace-membre" }
+- { from: "/portal/", to: "/espace-membre" }
+- { from: "/chaloupe", to: "/espace-membre" }
+- { from: "/chaloupe/", to: "/espace-membre" }
+- { from: "/chaloupe/factures", to: "/espace-membre/factures" }
+- { from: "/chaloupe/prelevement", to: "/espace-membre/prelevement" }
+- { from: "/chaloupe/compte", to: "/espace-membre/compte" }
 - { from: "/login", to: "/connexion" }
 - { from: "/login/", to: "/connexion" }
 - { from: "/category/blog", to: "/blog" }
