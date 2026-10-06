@@ -38,5 +38,9 @@ pages:
   - $ref: ./config/pages/editor-post-new.yaml
   - $ref: ./config/pages/editor-post-edit.yaml
 
+# Old WordPress URLs (posts lived at the root, pages had other slugs) — 301s.
+redirects:
+  $ref: ./config/redirects.yaml
+
 analytics:
   $ref: ./config/analytics.yaml
