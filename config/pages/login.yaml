@@ -3,6 +3,8 @@
 name: login
 path: /login
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   title: "Connexion — La Plage Digitale"
   description: "Espace membre des coworkers de La Plage Digitale."
   noindex: true

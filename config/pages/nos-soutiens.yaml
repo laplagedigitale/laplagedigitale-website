@@ -4,6 +4,8 @@
 name: nos-soutiens
 path: /nos-soutiens
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   noindex: true  # pre-launch: keep out of search engines
   title: $t:supporters.meta.title
   description: $t:supporters.meta.description

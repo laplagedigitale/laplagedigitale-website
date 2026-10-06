@@ -4,6 +4,8 @@
 name: qui-sommes-nous
 path: /qui-sommes-nous
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   noindex: true  # pre-launch: keep out of search engines
   title: $t:about.meta.title
   description: $t:about.meta.description

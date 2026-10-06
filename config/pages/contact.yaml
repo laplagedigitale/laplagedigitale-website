@@ -3,6 +3,8 @@
 name: contact
 path: /contact
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   noindex: true  # pre-launch: keep out of search engines
   title: $t:contact.meta.title
   description: $t:contact.meta.description

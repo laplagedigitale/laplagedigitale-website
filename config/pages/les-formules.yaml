@@ -5,6 +5,8 @@
 name: les-formules
 path: /les-formules
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   noindex: true  # pre-launch: keep out of search engines
   title: $t:pricing.meta.title
   description: $t:pricing.meta.description

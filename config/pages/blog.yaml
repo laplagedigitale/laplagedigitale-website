@@ -2,6 +2,8 @@
 name: blog
 path: /blog
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   noindex: true  # pre-launch: keep out of search engines
   title: $t:blog.meta.title
   description: $t:blog.meta.description

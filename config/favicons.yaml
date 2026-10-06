@@ -1,0 +1,10 @@
+# Site icons — the coral rosette from the logo, without the wordmark.
+# Favicons are per-page meta in Sovrium, so every page $refs this one file.
+# The PNGs and favicon.ico are rendered from public/favicon.svg; regenerate
+# them together if the mark changes. favicon.ico also answers browsers that
+# request /favicon.ico without reading the page.
+icon: ./favicon.svg
+appleTouchIcon: ./apple-touch-icon.png
+sizes:
+  - { size: '32x32', href: ./favicon-32.png }
+  - { size: '16x16', href: ./favicon-16.png }

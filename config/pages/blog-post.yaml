@@ -8,6 +8,8 @@ collection:
     - { field: status, operator: eq, value: published }
 rss: { limit: 20 }
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   noindex: true  # pre-launch: keep out of search engines
   title: '$record.title'
   description: '$record.excerpt'

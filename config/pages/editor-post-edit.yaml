@@ -4,6 +4,8 @@ path: /editor/posts/:id
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   title: Modifier l'article — Espace rédaction
   description: Modifier un article.
   noindex: true

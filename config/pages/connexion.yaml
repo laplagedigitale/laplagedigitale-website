@@ -3,6 +3,8 @@ name: connexion
 path: /connexion
 sitemap: false
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   title: Connexion — Espace rédaction
   description: Connexion à l'espace rédaction de La Plage Digitale.
   noindex: true

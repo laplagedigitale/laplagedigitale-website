@@ -3,6 +3,8 @@
 name: mentions-legales
 path: /mentions-legales
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   noindex: true  # pre-launch: keep out of search engines
   title: $t:legal.meta.title
   description: $t:legal.meta.description

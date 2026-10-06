@@ -5,6 +5,8 @@ path: /editor
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   title: Articles — Espace rédaction
   description: Gestion des articles du blog.
   noindex: true

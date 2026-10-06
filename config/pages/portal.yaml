@@ -8,6 +8,8 @@ name: portal
 path: /portal
 access: { require: [coworker, admin], redirectTo: /login }
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   title: "Espace membre — La Plage Digitale"
   description: "Vos factures et votre prélèvement automatique."
   noindex: true

@@ -4,6 +4,8 @@ path: /editor/posts/new
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
+  favicons:
+    $ref: ../favicons.yaml
   title: Nouvel article — Espace rédaction
   description: Rédiger un nouvel article.
   noindex: true
