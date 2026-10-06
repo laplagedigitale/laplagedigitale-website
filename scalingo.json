@@ -33,6 +33,31 @@
       "description": "Password for the seeded administrator, minimum 8 characters. Generated per app so a review app never shares production's admin credentials. Read it back with `scalingo --app <name> env`.",
       "generator": "secret",
       "required": true
+    },
+    "NOTION_TOKEN": {
+      "description": "Notion internal integration token read by the weekly digest automation (notion-hebdo). Set it with scalingo env-set before deploying: a missing required variable refuses to boot.",
+      "required": true
+    },
+    "SLACK_BOT_TOKEN": {
+      "description": "Bot token (xoxb-…) of the Slack app that posts the weekly Notion digest in #notion-hebdo.",
+      "required": true
+    },
+    "SLACK_CHANNEL_ID": {
+      "description": "Channel id (C…) of #notion-hebdo.",
+      "required": true
+    },
+    "NOTION_TASKS_DATA_SOURCE_ID": {
+      "description": "Data source id of « Suivi des sujets, projets & tâches » in the V2 Notion.",
+      "required": true
+    },
+    "NOTION_METRICS_DATA_SOURCE_ID": {
+      "description": "Data source id of « Indicateurs d'usage Notion ». Leave empty to skip the weekly metrics row.",
+      "required": false
+    },
+    "SOVRIUM_TIMEZONE": {
+      "description": "Timezone of cron automations and formatted dates.",
+      "value": "Europe/Paris",
+      "required": true
     }
   },
   "addons": [

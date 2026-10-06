@@ -1,0 +1,258 @@
+# Weekly Notion → Slack digest (solutions S10 + S15 of the Notion V2 plan).
+#
+# Every Monday 08:30 (Europe/Paris) the `build` step reads the task database
+# through the `notion` connection (bearer token injected by Sovrium, cursor
+# pagination in the body, adaptive page size under the 64 KiB response cap),
+# composes a French mrkdwn message and, unless dry-run, upserts the week's
+# row in « Indicateurs d'usage Notion ». `post` sends it through the `slack`
+# connection; `assertPosted` fails the run when Slack answers 200 + ok:false.
+#
+# On demand (admin): POST /api/automations/notion-hebdo/trigger
+#   {"dryRun": true, "channel": "C0123456789"}   → test in another channel, no metrics row
+name: notion-hebdo
+label: Hebdo Notion → Slack
+description: >-
+  Chaque lundi 08:30, publie dans #notion-hebdo ce qui a bougé dans le suivi des
+  sujets, les cartes bloquées, les échéances proches et deux indicateurs d'adoption.
+trigger:
+  type: cron
+  expression: "30 8 * * 1"
+  timezone: Europe/Paris
+timeout: 300000
+concurrency:
+  limit: 1
+tags: [notion, slack, digest]
+actions:
+  - name: build
+    label: Lire Notion et composer le message
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 240000
+      inputData:
+        # Absent on scheduled fires (renders empty); set by an on-demand POST body.
+        dryRun: "{{trigger.data.body.dryRun}}"
+        channelOverride: "{{trigger.data.body.channel}}"
+        channel: $env.SLACK_CHANNEL_ID
+        tasksDataSourceId: $env.NOTION_TASKS_DATA_SOURCE_ID
+        metricsDataSourceId: $env.NOTION_METRICS_DATA_SOURCE_ID
+      code: |
+        async function execute(context) {
+          const inp = context.inputData
+          const TZ = 'Europe/Paris'
+          const NOTION = 'https://api.notion.com/v1'
+          const HEADERS = { 'Notion-Version': '2026-03-11' }
+          const CLOSED = new Set(['Terminé', 'Annulé', 'Archivé'])
+          const MAX_LINES = 15
+          const DAY = 86400000
+
+          const dryRun = String(inp.dryRun ?? '').toLowerCase() === 'true'
+          const channel = String(inp.channelOverride ?? '').trim() || String(inp.channel ?? '').trim()
+          const tasksDs = String(inp.tasksDataSourceId ?? '').trim()
+          const metricsDs = String(inp.metricsDataSourceId ?? '').trim()
+          if (!tasksDs) throw new Error('NOTION_TASKS_DATA_SOURCE_ID est vide')
+          if (!channel) throw new Error('Aucun canal Slack (SLACK_CHANNEL_ID ou body.channel)')
+
+          // --- Notion over the connection (token injected, 429 retried by the engine)
+          const notion = async (method: string, path: string, opts: { body?: unknown; query?: Record<string, unknown> } = {}): Promise<any> => {
+            let res: any
+            try {
+              res = await context.actions.http[method]({
+                url: NOTION + path,
+                connection: 'notion',
+                headers: HEADERS,
+                timeout: 20000,
+                ...(opts.body !== undefined ? { body: opts.body } : {}),
+                ...(opts.query !== undefined ? { query: opts.query } : {}),
+              })
+            } catch (e) {
+              throw new Error(`Notion ${method.toUpperCase()} ${path} a échoué : ${e?.message ?? String(e)}`)
+            }
+            if (res?.truncated) throw new Error(`TRUNCATED:${path}`)
+            const body = typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+            if (!body || typeof body !== 'object') throw new Error(`Notion ${path} : réponse illisible`)
+            if (body.object === 'error') throw new Error(`Notion ${path} : ${body.code} ${body.message}`)
+            return body
+          }
+
+          // --- dates in Europe/Paris
+          const now = new Date()
+          const sinceIso = new Date(now.getTime() - 7 * DAY).toISOString()
+          const ymd = (d) => new Intl.DateTimeFormat('fr-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d)
+          const todayYmd = ymd(now)
+          const horizonYmd = ymd(new Date(now.getTime() + 14 * DAY))
+          const mondayOf = (d) => { const x = new Date(d + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() - ((x.getUTCDay() + 6) % 7)); return x.toISOString().slice(0, 10) }
+          const monday = mondayOf(todayYmd)
+          const longDate = new Intl.DateTimeFormat('fr-FR', { timeZone: TZ, day: 'numeric', month: 'long', year: 'numeric' }).format(now)
+          const ddmm = (iso) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`
+
+          // --- schema: works on V1 (Status/status) and V2 (Statut/status with 4 options)
+          const schema = await notion('get', `/data_sources/${tasksDs}`)
+          const props = schema.properties ?? {}
+          const pick = (...names) => names.find((n) => props[n] !== undefined)
+          const P = {
+            title: Object.keys(props).find((k) => props[k]?.type === 'title') ?? 'Task name',
+            status: pick('Statut', 'Status'),
+            owner: pick('Responsable'),
+            priority: pick('Priorité'),
+            due: pick('Date de clôture estimée'),
+            ca: pick('Décision CA'),
+          }
+          const statusType = P.status ? props[P.status].type : undefined
+          const caIsCheckbox = !!P.ca && props[P.ca].type === 'checkbox'
+          const caIsStatusOption = !caIsCheckbox && !!statusType && (props[P.status][statusType]?.options ?? []).some((o) => o.name === 'Décision CA')
+          context.log.info('Propriétés détectées', JSON.stringify({ ...P, statusType }))
+
+          // --- query: edited in the last 7 days OR still open; cursor in the body
+          const filter = statusType === 'select' || statusType === 'status'
+            ? { or: [
+                { timestamp: 'last_edited_time', last_edited_time: { on_or_after: sinceIso } },
+                { property: P.status, [statusType]: { does_not_equal: 'Terminé' } },
+              ] }
+            : undefined
+          const pages: any[] = []
+          let cursor: string | undefined
+          let pageSize = 20
+          for (let guard = 0; guard < 200; guard++) {
+            let page: any
+            try {
+              page = await notion('post', `/data_sources/${tasksDs}/query`, { body: { page_size: pageSize, ...(filter ? { filter } : {}), ...(cursor ? { start_cursor: cursor } : {}) } })
+            } catch (e) {
+              if (String(e?.message).startsWith('TRUNCATED:') && pageSize > 5) { pageSize = Math.max(5, Math.floor(pageSize / 2)); context.log.warn('Réponse > 64 KiB, page_size →', pageSize); continue }
+              throw e
+            }
+            pages.push(...(page.results ?? []))
+            if (!page.has_more || !page.next_cursor) break
+            cursor = page.next_cursor
+          }
+
+          // --- readers
+          const plain = (rt) => (rt ?? []).map((t) => t.plain_text ?? '').join('').trim()
+          const choice = (p) => p?.select?.name ?? p?.status?.name ?? ''
+          const cards = pages.filter((pg) => !pg.archived && !pg.in_trash).map((pg) => {
+            const pr = pg.properties ?? {}
+            return {
+              url: pg.url,
+              title: plain(pr[P.title]?.title) || 'Sans titre',
+              status: P.status ? choice(pr[P.status]) : '',
+              owners: P.owner ? (pr[P.owner]?.people ?? []).map((u) => u.name ?? '').filter(Boolean) : [],
+              priority: P.priority ? choice(pr[P.priority]) : '',
+              due: P.due ? String(pr[P.due]?.date?.start ?? '').slice(0, 10) : '',
+              ca: caIsCheckbox ? pr[P.ca]?.checkbox === true : false,
+              edited: String(pg.last_edited_time ?? ''),
+              editorId: pg.last_edited_by?.id,
+            }
+          })
+
+          // --- sections
+          const moved = cards.filter((c) => c.edited >= sinceIso)
+          const blocked = cards.filter((c) => c.status === 'Bloquée')
+          const awaitingCa = caIsCheckbox ? cards.filter((c) => c.ca && !CLOSED.has(c.status))
+            : caIsStatusOption ? cards.filter((c) => c.status === 'Décision CA') : null
+          const due = cards.filter((c) => c.due && !CLOSED.has(c.status) && c.due <= horizonYmd).sort((a, b) => a.due.localeCompare(b.due))
+          const overdue = due.filter((c) => c.due < todayYmd)
+
+          // --- editors (distinct humans among last_edited_by)
+          const users: Record<string, { name: string; bot: boolean }> = {}
+          let ucursor: string | undefined
+          for (let guard = 0; guard < 20; guard++) {
+            const u = await notion('get', '/users', { query: { page_size: 100, ...(ucursor ? { start_cursor: ucursor } : {}) } })
+            for (const x of u.results ?? []) users[x.id] = { name: x.name ?? '', bot: x.type === 'bot' }
+            if (!u.has_more || !u.next_cursor) break
+            ucursor = u.next_cursor
+          }
+          const editorIds = [...new Set(moved.map((c) => c.editorId).filter((id) => !!id && !users[id]?.bot))]
+          const editorNames = editorIds.map((id) => users[id]?.name).filter(Boolean)
+
+          // --- metrics history (optional; upsert on the Monday key so a replay is idempotent)
+          let previous: { edited: number; editors: number } | null = null
+          if (metricsDs) {
+            const hist = await notion('post', `/data_sources/${metricsDs}/query`, { body: { page_size: 5, sorts: [{ property: 'Date', direction: 'descending' }] } })
+            const rows = (hist.results ?? []).map((r) => ({ id: r.id, date: String(r.properties?.Date?.date?.start ?? '').slice(0, 10), edited: r.properties?.['Cartes modifiées']?.number ?? 0, editors: r.properties?.['Éditeurs']?.number ?? 0 }))
+            const prev = rows.find((r) => r.date < monday)
+            if (prev) previous = { edited: prev.edited, editors: prev.editors }
+            if (!dryRun) {
+              const properties = {
+                Semaine: { title: [{ text: { content: `Semaine du ${ddmm(monday)}/${monday.slice(0, 4)}` } }] },
+                Date: { date: { start: monday } },
+                'Cartes modifiées': { number: moved.length },
+                'Éditeurs': { number: editorIds.length },
+                'Bloquées': { number: blocked.length },
+                'En retard': { number: overdue.length },
+              }
+              const existing = rows.find((r) => r.date === monday)
+              if (existing) await notion('patch', `/pages/${existing.id}`, { body: { properties } })
+              else await notion('post', '/pages', { body: { parent: { type: 'data_source_id', data_source_id: metricsDs }, properties } })
+            }
+          }
+
+          // --- Slack mrkdwn
+          const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          const who = (c) => (c.owners.length ? c.owners.map(esc).join(', ') : 'sans responsable')
+          const line = (c, prefix = '') => `• ${prefix}${esc(c.title)} — ${who(c)} (<${c.url}|ouvrir>)`
+          const list = (items, render) => {
+            const shown = items.slice(0, MAX_LINES).map(render)
+            if (items.length > MAX_LINES) shown.push(`_… et ${items.length - MAX_LINES} autres_`)
+            return shown.join('\n')
+          }
+          const plural = (n, s, p) => (n > 1 ? p : s)
+          const STATUS_ORDER = ['En cours', 'Bloquée', 'Décision CA', 'En attente', 'Idée', 'Terminé', 'Annulé', 'Archivé']
+          const byStatus = new Map<string, any[]>()
+          for (const c of moved) { const k = c.status || 'Sans statut'; byStatus.set(k, [...(byStatus.get(k) ?? []), c]) }
+          const statuses = [...byStatus.keys()].sort((a, b) => (STATUS_ORDER.indexOf(a) + 1 || 99) - (STATUS_ORDER.indexOf(b) + 1 || 99))
+
+          const sections: string[] = []
+          sections.push(`*Hebdo Notion — ${longDate}*\n_Suivi des sujets, projets & tâches_${dryRun ? '  (test, sans écriture)' : ''}`)
+          sections.push(`*Ce qui a bougé (7 derniers jours)* — ${moved.length} ${plural(moved.length, 'carte', 'cartes')}` +
+            (moved.length ? '\n' + statuses.map((s) => `_${esc(s)}_\n${list(byStatus.get(s), (c) => line(c))}`).join('\n') : '\nRien n’a bougé cette semaine.'))
+          sections.push(`*Bloqué* — ${blocked.length}` + (blocked.length ? '\n' + list(blocked, (c) => line(c)) : '\nAucune carte bloquée.'))
+          if (awaitingCa) sections.push(`*En attente du CA* — ${awaitingCa.length}` + (awaitingCa.length ? '\n' + list(awaitingCa, (c) => line(c)) : '\nRien en attente.'))
+          sections.push(`*Échéances (en retard ou sous 14 jours)* — ${due.length}` +
+            (due.length ? '\n' + list(due, (c) => line(c, `${ddmm(c.due)}${c.due < todayYmd ? ' (en retard)' : ''} · `)) : '\nAucune échéance proche.'))
+          const cmp = previous ? ` (semaine précédente : ${previous.edited} ${plural(previous.edited, 'carte', 'cartes')}, ${previous.editors} ${plural(previous.editors, 'personne', 'personnes')})` : ''
+          sections.push(`*Adoption*\n${moved.length} ${plural(moved.length, 'carte modifiée', 'cartes modifiées')} par ${editorIds.length} ${plural(editorIds.length, 'personne', 'personnes')}${editorNames.length ? ` (${editorNames.map(esc).join(', ')})` : ''}${cmp}`)
+          sections.push(`_Rituel du lundi : 15 minutes pour balayer le tableau ensemble._`)
+
+          const text = sections.join('\n\n')
+          const summary = { cards: cards.length, moved: moved.length, editors: editorIds.length, blocked: blocked.length, awaitingCa: awaitingCa ? awaitingCa.length : null, due: due.length, overdue: overdue.length, previous, dryRun, metricsWritten: !!metricsDs && !dryRun }
+          context.log.info('Résumé', JSON.stringify(summary))
+          return { text, channel, summary }
+        }
+
+  - name: post
+    label: Publier dans Slack
+    type: connection
+    operator: call
+    retry:
+      maxAttempts: 3
+      delayMs: 5000
+      strategy: exponential
+    props:
+      connection: slack
+      operation: post-message
+      timeout: 20000
+      params:
+        channel: "{{steps.build.channel}}"
+        text: "{{steps.build.text}}"
+        unfurl_links: false
+        unfurl_media: false
+
+  - name: assertPosted
+    label: Échouer si Slack répond ok:false
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        ok: "{{steps.post.data.ok}}"
+        error: "{{steps.post.data.error}}"
+        ts: "{{steps.post.data.ts}}"
+        summary: "{{steps.build.summary}}"
+      code: |
+        async function execute(context) {
+          const { ok, error, ts, summary } = context.inputData
+          if (ok !== true && String(ok) !== 'true') {
+            throw new Error(`Slack a refusé le message : ${error || 'réponse sans ok:true'}`)
+          }
+          context.log.info('Message publié', ts)
+          return { ts, ...(summary && typeof summary === 'object' ? summary : {}) }
+        }
