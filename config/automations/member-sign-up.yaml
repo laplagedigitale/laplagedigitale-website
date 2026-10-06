@@ -1,0 +1,42 @@
+# Automation: member-sign-up — files a members row when a coworker account is
+# created (an admin invitation or create-user with role coworker). The
+# pennylane-match-pending cron then links it to its Pennylane customer; an
+# auth-triggered run cannot call another automation, so it does not match here.
+#
+# It listens to signUp, not signIn: in Sovrium 0.30 an email-and-password
+# sign-in does not fire the signIn event. An account switched to `coworker`
+# later fires nothing — add its members row by hand (just the email) and the
+# pennylane-match-pending cron links it.
+name: member-sign-up
+trigger:
+  type: auth
+  events: [signUp]
+actions:
+  - name: gate
+    type: path
+    operator: branch
+    props:
+      mode: first-match
+      paths:
+        - name: coworker
+          condition:
+            conditions:
+              - { field: '{{trigger.data.user.role}}', operator: equals, value: coworker }
+          actions:
+            - name: fileMember
+              type: record
+              operator: upsert
+              props:
+                table: members
+                filter:
+                  conditions:
+                    - { field: email, operator: equals, value: '{{trigger.data.user.email}}' }
+                data:
+                  email: '{{trigger.data.user.email}}'
+                  name: '{{trigger.data.user.name}}'
+        - name: other
+          actions:
+            - name: skip
+              type: flow
+              operator: stop
+              props: { status: success, message: Not a coworker — nothing to file }

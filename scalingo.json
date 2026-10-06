@@ -33,6 +33,10 @@
       "description": "Password for the seeded administrator, minimum 8 characters. Generated per app so a review app never shares production's admin credentials. Read it back with `scalingo --app <name> env`.",
       "generator": "secret",
       "required": true
+    },
+    "PENNYLANE_API_TOKEN": {
+      "description": "Pennylane company API token with read and write access — the coworker portal mirrors invoices and GoCardless mandates with it, and sends mandate requests. Never give a review app production's token: its crons and mandate button would act on the real company.",
+      "required": true
     }
   },
   "addons": [

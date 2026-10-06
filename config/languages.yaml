@@ -25,6 +25,52 @@ translations:
     nav.href.contact: /fr/contact
     nav.href.legal: /fr/legal
     nav.href.privacy: /fr/privacy
+    nav.portal: Espace membre
+    nav.href.portal: /fr/portal
+
+    login.title: Espace membre
+    login.subtitle: "Connectez-vous pour retrouver vos factures et gérer votre prélèvement automatique."
+
+    portal.title: Mon espace membre
+    portal.subtitle: "Vos factures La Plage Digitale et votre mandat de prélèvement, à jour toutes les 15 minutes."
+    portal.logout: Se déconnecter
+    portal.account.linked: Votre compte est relié à Pennylane.
+    portal.account.unlinked: "Votre compte n'est pas encore relié à Pennylane — nous nous en occupons."
+    portal.match.pending: Recherche en cours
+    portal.match.matched: Relié
+    portal.match.not_found: "Non trouvé — contactez-nous"
+    portal.match.manual: Relié
+    portal.mandate.title: Prélèvement automatique
+    portal.mandate.intro: "Mettez en place un mandat SEPA via GoCardless : vos factures seront réglées automatiquement à leur échéance. Le lien de signature vous est envoyé par e-mail."
+    portal.mandate.none: Aucun mandat de prélèvement pour le moment.
+    portal.mandate.account: Compte bancaire
+    portal.mandate.since: Depuis le
+    portal.mandate.cta: Mettre en place le prélèvement
+    portal.mandate.done: Demande traitée
+    portal.mandate.error: "La demande n'a pas pu être envoyée. Réessayez dans quelques minutes ou contactez-nous."
+    portal.mandate.active: Actif
+    portal.mandate.pending: En cours de validation
+    portal.mandate.failed: En échec
+    portal.mandate.ended: Terminé
+    portal.invoices.title: Mes factures
+    portal.invoices.none: Aucune facture pour le moment.
+    portal.invoices.number: N°
+    portal.invoices.label: Libellé
+    portal.invoices.date: Date
+    portal.invoices.deadline: Échéance
+    portal.invoices.amount: Montant TTC
+    portal.invoices.remaining: Reste à payer
+    portal.invoices.status: Statut
+    portal.invoices.pdf: PDF
+    portal.status.paid: Payée
+    portal.status.partially_paid: Partiellement payée
+    portal.status.upcoming: À payer
+    portal.status.late: En retard
+    portal.status.incomplete: Incomplète
+    portal.status.cancelled: Annulée
+    portal.status.partially_cancelled: Partiellement annulée
+    portal.status.credit_note: Avoir
+    portal.status.archived: Archivée
 
     hero.title: Le tiers-lieu de l'innovation à Strasbourg
     hero.subtitle: "Plus de 600m² dédiés au coworking, à la collaboration et à l'innovation au cœur de Strasbourg"
@@ -157,6 +203,52 @@ translations:
     nav.href.contact: /en/contact
     nav.href.legal: /en/legal
     nav.href.privacy: /en/privacy
+    nav.portal: Member area
+    nav.href.portal: /en/portal
+
+    login.title: Member area
+    login.subtitle: "Sign in to find your invoices and manage your direct debit."
+
+    portal.title: My member area
+    portal.subtitle: "Your La Plage Digitale invoices and direct-debit mandate, refreshed every 15 minutes."
+    portal.logout: Sign out
+    portal.account.linked: Your account is linked to Pennylane.
+    portal.account.unlinked: "Your account is not linked to Pennylane yet — we are on it."
+    portal.match.pending: Looking you up
+    portal.match.matched: Linked
+    portal.match.not_found: "Not found — please contact us"
+    portal.match.manual: Linked
+    portal.mandate.title: Direct debit
+    portal.mandate.intro: "Set up a SEPA mandate through GoCardless and your invoices will be paid automatically when due. The signing link is sent to you by email."
+    portal.mandate.none: No direct-debit mandate yet.
+    portal.mandate.account: Bank account
+    portal.mandate.since: Since
+    portal.mandate.cta: Set up direct debit
+    portal.mandate.done: Request processed
+    portal.mandate.error: "The request could not be sent. Please try again in a few minutes or contact us."
+    portal.mandate.active: Active
+    portal.mandate.pending: Pending approval
+    portal.mandate.failed: Failed
+    portal.mandate.ended: Ended
+    portal.invoices.title: My invoices
+    portal.invoices.none: No invoices yet.
+    portal.invoices.number: No.
+    portal.invoices.label: Description
+    portal.invoices.date: Date
+    portal.invoices.deadline: Due date
+    portal.invoices.amount: Amount incl. VAT
+    portal.invoices.remaining: Left to pay
+    portal.invoices.status: Status
+    portal.invoices.pdf: PDF
+    portal.status.paid: Paid
+    portal.status.partially_paid: Partially paid
+    portal.status.upcoming: Due
+    portal.status.late: Overdue
+    portal.status.incomplete: Incomplete
+    portal.status.cancelled: Cancelled
+    portal.status.partially_cancelled: Partially cancelled
+    portal.status.credit_note: Credit note
+    portal.status.archived: Archived
 
     hero.title: The innovation hub in Strasbourg
     hero.subtitle: "Over 600m² dedicated to coworking, collaboration and innovation in the heart of Strasbourg"

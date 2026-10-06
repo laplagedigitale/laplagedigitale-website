@@ -1,0 +1,60 @@
+# Table: invoices — a read-only mirror of the Pennylane customer invoices of
+# every linked member, refreshed by the pennylane-sync automation.
+#
+# pdf_url is Pennylane's public_file_url, which expires 30 minutes after it is
+# issued; the sync rewrites it every 15 minutes, so the link on screen is
+# always one that still opens.
+id: 2
+name: invoices
+fields:
+  - { id: 1, name: pennylane_id, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: member, type: relationship, relatedTable: members, relationType: many-to-one, displayField: email }
+  - { id: 12, name: member_email, type: email, required: true, indexed: true }
+  - { id: 3, name: invoice_number, type: single-line-text }
+  - { id: 4, name: label, type: single-line-text }
+  - { id: 5, name: invoice_date, type: date, indexed: true }
+  - { id: 6, name: deadline, type: date }
+  - { id: 7, name: amount, type: currency, currency: EUR, precision: 2 }
+  - { id: 8, name: remaining_amount, type: currency, currency: EUR, precision: 2 }
+  - id: 9
+    name: status
+    type: single-select
+    options:
+      - { value: paid, label: $t:portal.status.paid, color: '#10b981' }
+      - { value: partially_paid, label: $t:portal.status.partially_paid, color: '#f59e0b' }
+      - { value: upcoming, label: $t:portal.status.upcoming, color: '#f59e0b' }
+      - { value: late, label: $t:portal.status.late, color: '#ef4444' }
+      - { value: incomplete, label: $t:portal.status.incomplete, color: '#f59e0b' }
+      - { value: cancelled, label: $t:portal.status.cancelled, color: '#94a3b8' }
+      - { value: partially_cancelled, label: $t:portal.status.partially_cancelled, color: '#94a3b8' }
+      - { value: credit_note, label: $t:portal.status.credit_note, color: '#94a3b8' }
+      - { value: archived, label: $t:portal.status.archived, color: '#94a3b8' }
+  - { id: 10, name: paid, type: checkbox }
+  - { id: 11, name: pdf_url, type: url }
+permissions:
+  read: [coworker, admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]
+  fields:
+    - { field: pennylane_id, read: [coworker, admin], write: [admin] }
+    - { field: member, read: [coworker, admin], write: [admin] }
+    - { field: member_email, read: [coworker, admin], write: [admin] }
+    - { field: invoice_number, read: [coworker, admin], write: [admin] }
+    - { field: label, read: [coworker, admin], write: [admin] }
+    - { field: invoice_date, read: [coworker, admin], write: [admin] }
+    - { field: deadline, read: [coworker, admin], write: [admin] }
+    - { field: amount, read: [coworker, admin], write: [admin] }
+    - { field: remaining_amount, read: [coworker, admin], write: [admin] }
+    - { field: status, read: [coworker, admin], write: [admin] }
+    - { field: paid, read: [coworker, admin], write: [admin] }
+    - { field: pdf_url, read: [coworker, admin], write: [admin] }
+# Rows are scoped by member_email, the member's login email copied onto each
+# row when it is written. A rule through the relationship (member.email) fails on
+# list reads in Sovrium 0.30, so the email is stored where the rule can see it.
+rowLevelPermissions:
+  read:
+    when:
+      field: member_email
+      operator: eq
+      value: { kind: currentUser, path: { kind: scalar, name: email } }

@@ -1,0 +1,73 @@
+# Automation: pennylane-match-pending — links every member not yet linked to
+# the Pennylane customer whose emails include the member's login email.
+# Exactly one match links it; none or several marks the row not_found for an
+# admin to settle by hand (set pennylane_customer_id and match_status: manual).
+#
+# Runs every 30 minutes, so a customer created in Pennylane after the account
+# is picked up on its own. The matching is inline: in 0.30 neither a cron nor
+# an auth-triggered run may call another automation.
+name: pennylane-match-pending
+trigger:
+  type: cron
+  expression: '*/30 * * * *'
+  timezone: Europe/Paris
+actions:
+  - name: pending
+    type: record
+    operator: list
+    props:
+      table: members
+      # Two `notEquals` rather than an `or` of `equals`: an `or` filter on a
+      # list step matched no row in 0.30.
+      filter:
+        conditions:
+          - { field: match_status, operator: notEquals, value: matched }
+          - { field: match_status, operator: notEquals, value: manual }
+      limit: 500
+  - name: each
+    type: loop
+    operator: each
+    props:
+      items: '{{steps.pending.records}}'
+      continueOnItemError: true
+      actions:
+        - name: plan
+          type: code
+          operator: runTypescript
+          props:
+            inputData: { email: '{{loop.item.email}}' }
+            code: |
+              async function execute(context) {
+                const email = String(context.inputData.email)
+                return { filter: JSON.stringify([{ field: 'emails', operator: 'in', value: [email] }]) }
+              }
+        - name: customers
+          type: connection
+          operator: call
+          props:
+            connection: pennylane
+            operation: get-customers
+            params: { filter: '{{steps.plan.filter}}', limit: 10 }
+        - name: classify
+          type: code
+          operator: runTypescript
+          props:
+            inputData: { body: '{{steps.customers.data}}' }
+            code: |
+              async function execute(context) {
+                const items = context.inputData.body?.items ?? []
+                if (items.length === 1) return { id: String(items[0].id), status: 'matched' }
+                context.log.warn(`${items.length} Pennylane customers carry this email`)
+                return { id: '', status: 'not_found' }
+              }
+        - name: save
+          type: record
+          operator: update
+          props:
+            table: members
+            filter:
+              conditions:
+                - { field: email, operator: equals, value: '{{loop.item.email}}' }
+            data:
+              pennylane_customer_id: '{{steps.classify.id}}'
+              match_status: '{{steps.classify.status}}'

@@ -1,0 +1,36 @@
+# Table: mandate_requests — one row per "set up direct debit" request a
+# coworker sends from the portal. The request-mandate automation reads the
+# caller's latest row to refuse a second request within 24 hours, so Pennylane
+# is not asked to mail the same person over and over.
+#
+# A coworker may create rows (the automation runs as them) but only for their
+# own member row, and never edit or delete one.
+id: 4
+name: mandate_requests
+fields:
+  - { id: 1, name: member, type: relationship, relatedTable: members, relationType: many-to-one, displayField: email, required: true }
+  - { id: 3, name: member_email, type: email, required: true, indexed: true }
+  - { id: 2, name: requested_at, type: created-at, indexed: true }
+permissions:
+  read: [coworker, admin]
+  create: [coworker, admin]
+  update: [admin]
+  delete: [admin]
+  fields:
+    - { field: member, read: [coworker, admin], write: [coworker, admin] }
+    - { field: member_email, read: [coworker, admin], write: [coworker, admin] }
+    - { field: requested_at, read: [coworker, admin] }
+# Rows are scoped by member_email, the member's login email copied onto each
+# row when it is written. A rule through the relationship (member.email) fails on
+# list reads in Sovrium 0.30, so the email is stored where the rule can see it.
+rowLevelPermissions:
+  read:
+    when:
+      field: member_email
+      operator: eq
+      value: { kind: currentUser, path: { kind: scalar, name: email } }
+  create:
+    when:
+      field: member_email
+      operator: eq
+      value: { kind: currentUser, path: { kind: scalar, name: email } }

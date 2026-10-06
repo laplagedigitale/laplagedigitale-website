@@ -13,3 +13,15 @@ allowSignUp: false
 # Least privilege for anyone an admin does create. The seeded administrator
 # comes from AUTH_ADMIN_EMAIL / AUTH_ADMIN_PASSWORD and is unaffected by this.
 defaultRole: viewer
+
+# Coworkers get their own role so the portal and its tables can name them
+# without opening anything to `member`. Admins invite each coworker from
+# /_admin/users with this role; there is still no self-registration.
+roles:
+  - name: coworker
+    level: 20
+    description: Coworker with access to their own invoices and direct-debit mandate
+
+# An invitation link stays valid for a week — coworkers do not all read their
+# mail the day an account is opened.
+invitationTokenExpiry: 7d

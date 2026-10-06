@@ -14,7 +14,7 @@ everything else lives in `config/`, one file per singleton and one per entity.
 app.yaml                       # name, version, description + the $ref map
 config/
   design.yaml                  # theme tokens and type scale
-  auth.yaml                    # strategies, sign-up policy, default role
+  auth.yaml                    # strategies, sign-up policy, roles
   languages.yaml               # locales and the $t: translation dictionary
   analytics.yaml
   components/                  # reusable component templates, one per file
@@ -28,6 +28,20 @@ config/
     contact.yaml
     legal.yaml
     privacy.yaml
+    login.yaml                 # coworker sign-in
+    portal.yaml                # coworker portal (invoices, direct debit)
+  tables/                      # data the portal reads, one per file
+    members.yaml
+    invoices.yaml
+    mandates.yaml
+    mandate-requests.yaml
+  automations/                 # Pennylane sync and the mandate request
+    member-sign-up.yaml
+    pennylane-match-pending.yaml
+    pennylane-sync.yaml
+    request-mandate.yaml
+library/
+  connection/pennylane.yaml    # installed by `sovrium library`; see below
 ```
 
 A partial is the entity unwrapped — `config/pages/about.yaml` starts at
@@ -43,6 +57,50 @@ partial they came from:
 Unknown property 'noindexx'
   at pages[3].meta  (legal.yaml)
 ```
+
+## Coworker portal
+
+`/portal` is where a coworker finds their own Pennylane invoices, with payment
+status and PDF, and asks for a GoCardless direct-debit mandate. A page cannot
+call an external API while it renders, so Pennylane is **mirrored into tables**
+and the pages read those tables:
+
+| Automation                | When                 | Does                                                                 |
+| ------------------------- | -------------------- | -------------------------------------------------------------------- |
+| `member-sign-up`          | account created      | files a `members` row for a `coworker` account                       |
+| `pennylane-match-pending` | every 30 min         | links each unlinked member to the Pennylane customer with that email |
+| `pennylane-sync`          | every 15 min         | mirrors the linked members' invoices and GoCardless mandates         |
+| `request-mandate`         | the portal's button  | asks Pennylane to email the coworker their GoCardless signing link   |
+
+**Isolation is the tables' job, not the page's.** Every portal table has a
+row-level rule matching the row's email to the signed-in user's email, so the
+records API, the page and an automation the coworker starts all serve only
+their own rows; another coworker's record answers `404`. Only admins and the
+automations write.
+
+**Onboarding a coworker:**
+
+1. Invite them from `/_admin/users` with the role **`coworker`**. That fires
+   `member-sign-up`, which files their `members` row.
+2. Within 30 minutes they are linked to the Pennylane customer whose emails
+   include their login email. If none or several match, the row reads
+   `not_found`: set `pennylane_customer_id` yourself and `match_status` to
+   `manual` in `/_admin` — the matcher then leaves it alone.
+3. An account switched to `coworker` *after* it was created fires nothing — add
+   its `members` row by hand (the email is enough).
+
+Pennylane's invoice PDF link (`public_file_url`) expires 30 minutes after it is
+issued; the 15-minute sync rewrites it, so the link on screen still opens.
+
+The Pennylane connection lives in `library/connection/pennylane.yaml`, where
+`sovrium library add` wrote it. Leave it there unedited so later
+`sovrium library add pennylane/<operation>` calls can keep extending it.
+
+Sovrium 0.30 behaviours the config works around, each noted where it applies:
+the `signIn` auth event does not fire on an email-and-password sign-in; neither
+an auth- nor a cron-triggered run may call another automation; a row rule
+through a relationship (`member.email`) fails on list reads; and an `or` filter
+on an automation `list` step matches nothing.
 
 ## Setup
 
@@ -98,6 +156,10 @@ that does not exist fails the build rather than deploying something unexpected.
 
 `PORT` is injected by Scalingo and read by Sovrium; no wiring needed.
 
+- **`PENNYLANE_API_TOKEN`** — a Pennylane *company* API token with **read and
+  write** access (Settings › Connectivity › Developers). Write access is what
+  lets the portal send a mandate request. The app refuses to boot without it.
+
 Two more variables seed the first administrator:
 
 - **`AUTH_ADMIN_EMAIL`** — `contact@laplagedigitale.fr`.
@@ -110,10 +172,10 @@ set; on later boots it no-ops rather than duplicating or modifying an existing
 user. The startup banner confirms it with an `Admin:` line.
 
 > [!NOTE]
-> **The site stays public.** `config/auth.yaml` exists so the admin surface
-> does — every page is still readable without a session. `allowSignUp` is
+> **The site stays public.** Every page except `/portal` is readable without a
+> session; `/portal` admits the `coworker` and `admin` roles. `allowSignUp` is
 > `false`, so nobody can create their own account; the default is `true`, which
-> would let anyone sign up on a public site.
+> would let anyone sign up on a public site. Coworkers are invited.
 
 `addons` provisions PostgreSQL (`postgresql-starter-512`). Scalingo injects
 `DATABASE_URL` from the add-on, which is why that variable is not declared in
@@ -122,8 +184,11 @@ The add-on is **required now that auth is on**: Scalingo rebuilds the container
 filesystem on every deploy, so a SQLite database would throw away every user
 account on each release.
 
-Email is not configured, so password resets and verification mails cannot be
-sent — the startup banner says so. Set the `SMTP_*` variables when that matters.
+**Email is required by the portal.** Coworker invitations and password resets
+are mailed, so set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`,
+`SMTP_FROM` (and optionally `SMTP_FROM_NAME`, `SMTP_SECURE`) with
+`scalingo env-set`. Until then the startup banner says mail is not sent. (The
+mandate email itself is sent by Pennylane, not by this app.)
 
 The `formation` pins one **M** container. Do not size it back down — an `S`
 container crashes on deploy: Sovrium compiles the stylesheet at boot, and that
@@ -153,6 +218,11 @@ instance, configured from `scalingo.json`. A manifest variable **replaces** what
 the parent app holds, which is the behaviour you want here: a review app
 generates its own encryption key instead of inheriting production's, and its
 `BASE_URL` points at itself rather than at the live site.
+
+> [!WARNING]
+> `PENNYLANE_API_TOKEN` has no value in the manifest, so a review app asks for
+> one. Do not give it production's token: its crons would read the real
+> company's invoices, and its mandate button would email real customers.
 
 ### Deploy
 

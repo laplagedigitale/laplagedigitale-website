@@ -1,0 +1,41 @@
+# Table: members — one row per coworker account, linking it to a Pennylane
+# customer. The row is created (by email) when the coworker account is created;
+# the Pennylane customer is then found by that email.
+#
+# Only automations and admins write here. A coworker reads exactly their own
+# row — matched on the login email, so no user id has to be copied by hand.
+# An admin fixes a wrong or missing match by setting pennylane_customer_id and
+# match_status: manual, which the matcher then leaves alone.
+id: 1
+name: members
+fields:
+  - { id: 1, name: email, type: email, required: true, unique: true }
+  - { id: 2, name: name, type: single-line-text }
+  - { id: 3, name: pennylane_customer_id, type: single-line-text, indexed: true }
+  - id: 4
+    name: match_status
+    type: single-select
+    default: pending
+    options:
+      - { value: pending, label: $t:portal.match.pending, color: '#94a3b8' }
+      - { value: matched, label: $t:portal.match.matched, color: '#10b981' }
+      - { value: not_found, label: $t:portal.match.not_found, color: '#f59e0b' }
+      - { value: manual, label: $t:portal.match.manual, color: '#10b981' }
+permissions:
+  read: [coworker, admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]
+  # Replaces the built-in field defaults, which would hide `email` from a
+  # low-level role. Writes stay admin-only through create/update above.
+  fields:
+    - { field: email, read: [coworker, admin], write: [admin] }
+    - { field: name, read: [coworker, admin], write: [admin] }
+    - { field: pennylane_customer_id, read: [coworker, admin], write: [admin] }
+    - { field: match_status, read: [coworker, admin], write: [admin] }
+rowLevelPermissions:
+  read:
+    when:
+      field: email
+      operator: eq
+      value: { kind: currentUser, path: { kind: scalar, name: email } }

@@ -1,0 +1,156 @@
+# Page: portal — a coworker's own billing: their Pennylane invoices with
+# payment status, and their GoCardless direct-debit mandate.
+#
+# Every block reads a table under row-level rules (matched on the login
+# email), so a coworker is only ever served their own rows — the filters here
+# are not what keeps data apart, the tables are.
+name: portal
+path: /portal
+access: { require: [coworker, admin], redirectTo: /login }
+meta:
+  title: "Espace membre — La Plage Digitale"
+  description: "Vos factures et votre prélèvement automatique."
+  noindex: true
+components:
+  - component: site-header
+
+  - type: container
+    element: section
+    props:
+      className: 'pt-32 pb-24'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12'
+        children:
+          - type: container
+            children:
+              - type: text
+                element: h1
+                content: $t:portal.title
+                props:
+                  className: 'text-4xl font-bold text-gray-900 mb-2'
+              - type: text
+                element: p
+                content: $t:portal.subtitle
+                props:
+                  className: 'text-lg text-gray-600'
+
+          # Account link — shown only while the coworker's Pennylane customer
+          # is not linked yet, so an empty invoice list is explained.
+          - type: list
+            dataSource:
+              table: members
+              filter:
+                - { field: match_status, operator: in, value: [pending, not_found] }
+              limit: 1
+            listDisplay:
+              emptyMessage: $t:portal.account.linked
+              itemTemplate:
+                title: $t:portal.account.unlinked
+                subtitle: $record.email
+
+          # Direct debit
+          - type: card
+            props:
+              className: 'p-6 space-y-4'
+            children:
+              - type: text
+                element: h2
+                content: $t:portal.mandate.title
+                props:
+                  className: 'text-2xl font-semibold text-gray-900'
+              - type: text
+                element: p
+                content: $t:portal.mandate.intro
+                props:
+                  className: 'text-gray-600'
+              - type: table
+                props: { id: mandate-list }
+                dataSource:
+                  table: mandates
+                  sort:
+                    - { field: signed_at, direction: desc }
+                emptyMessage: $t:portal.mandate.none
+                columns:
+                  - field: status
+                    label: $t:portal.invoices.status
+                    valueLabels:
+                      active: $t:portal.mandate.active
+                      pending_customer_approval: $t:portal.mandate.pending
+                      pending_submission: $t:portal.mandate.pending
+                      submitted: $t:portal.mandate.pending
+                      failed: $t:portal.mandate.failed
+                      blocked: $t:portal.mandate.failed
+                      bank_disconnected: $t:portal.mandate.failed
+                      cancelled: $t:portal.mandate.ended
+                      expired: $t:portal.mandate.ended
+                      consumed: $t:portal.mandate.ended
+                      replaced: $t:portal.mandate.ended
+                  - { field: bank_account, label: $t:portal.mandate.account }
+                  - { field: signed_at, label: $t:portal.mandate.since, format: short-date }
+              - type: text
+                element: p
+                props:
+                  id: mandate-status
+                  className: 'text-sm text-gray-700'
+              - type: button
+                content: $t:portal.mandate.cta
+                props:
+                  className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-[#992b8c] hover:bg-[#7e2374] transition-colors'
+                # Calls the manual trigger directly so the run's own message —
+                # sent, or why it was refused — is shown in #mandate-status.
+                action:
+                  type: fetch
+                  method: POST
+                  url: /api/automations/request-mandate/trigger
+                  body: {}
+                  onSuccess:
+                    type: toast
+                    message: $t:portal.mandate.done
+                    status: { target: mandate-status, message: $response.output.message }
+                    refetch: mandate-list
+                  onError:
+                    type: toast
+                    message: $t:portal.mandate.error
+
+          # Invoices
+          - type: container
+            children:
+              - type: text
+                element: h2
+                content: $t:portal.invoices.title
+                props:
+                  className: 'text-2xl font-semibold text-gray-900 mb-4'
+              - type: table
+                dataSource:
+                  table: invoices
+                  sort:
+                    - { field: invoice_date, direction: desc }
+                  pagination: { pageSize: 25 }
+                emptyMessage: $t:portal.invoices.none
+                columns:
+                  - { field: invoice_number, label: $t:portal.invoices.number }
+                  - { field: label, label: $t:portal.invoices.label }
+                  - { field: invoice_date, label: $t:portal.invoices.date, format: short-date }
+                  - { field: deadline, label: $t:portal.invoices.deadline, format: short-date }
+                  - { field: amount, label: $t:portal.invoices.amount, format: currency, align: right }
+                  - { field: remaining_amount, label: $t:portal.invoices.remaining, format: currency, align: right }
+                  - field: status
+                    label: $t:portal.invoices.status
+                    valueLabels:
+                      paid: $t:portal.status.paid
+                      partially_paid: $t:portal.status.partially_paid
+                      upcoming: $t:portal.status.upcoming
+                      late: $t:portal.status.late
+                      incomplete: $t:portal.status.incomplete
+                      cancelled: $t:portal.status.cancelled
+                      partially_cancelled: $t:portal.status.partially_cancelled
+                      credit_note: $t:portal.status.credit_note
+                      archived: $t:portal.status.archived
+                  - { field: pdf_url, label: $t:portal.invoices.pdf }
+
+          - type: form
+            action: { type: auth, method: logout, submitLabel: $t:portal.logout }
+
+  - component: site-footer

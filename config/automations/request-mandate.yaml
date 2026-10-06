@@ -1,0 +1,104 @@
+# Automation: request-mandate — the portal's "set up direct debit" button.
+# Pennylane mails the coworker their GoCardless signing link.
+#
+# A run started by hand reads and writes as the person who started it, so the
+# member read below is the caller's own row (row-level rule on email): the
+# Pennylane customer id never comes from the browser. Refused when the account
+# is not linked yet, when a mandate is already active or pending, or when a
+# request was sent in the last 24 hours. Every outcome returns `message`, which
+# the portal button shows inline.
+name: request-mandate
+trigger:
+  type: manual
+  label: Request a direct-debit mandate
+  requiredRole: coworker
+actions:
+  - name: me
+    type: record
+    operator: list
+    props: { table: members, limit: 1 }
+  - name: mandates
+    type: record
+    operator: list
+    props: { table: mandates, limit: 50 }
+  - name: lastRequest
+    type: record
+    operator: list
+    props:
+      table: mandate_requests
+      sort: [{ field: requested_at, direction: desc }]
+      limit: 1
+  - name: check
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        me: '{{steps.me.records}}'
+        mandates: '{{steps.mandates.records}}'
+        lastRequest: '{{steps.lastRequest.records}}'
+      code: |
+        async function execute(context) {
+          const refuse = (message) => ({ ok: 'no', message, memberId: '', customerId: 0, email: '' })
+          const me = (context.inputData.me ?? [])[0]
+          if (!me || !me.pennylane_customer_id) {
+            return refuse('Votre compte n’est pas encore relié à Pennylane. Contactez l’équipe de La Plage Digitale.')
+          }
+          const live = new Set(['active', 'pending_customer_approval', 'pending_submission', 'submitted'])
+          if ((context.inputData.mandates ?? []).some((m) => live.has(m.status))) {
+            return refuse('Un mandat de prélèvement est déjà en place ou en cours de validation.')
+          }
+          const last = (context.inputData.lastRequest ?? [])[0]
+          const at = last ? Date.parse(last.requested_at ?? last.createdAt) : NaN
+          if (Number.isFinite(at) && Date.now() - at < 24 * 60 * 60 * 1000) {
+            return refuse('Une demande a déjà été envoyée il y a moins de 24 heures. Vérifiez votre boîte mail.')
+          }
+          // The default message is the failure one: a run whose Pennylane call fails
+          // still answers 200, and `confirm` below replaces it only on success.
+          return { ok: 'yes', message: 'La demande n’a pas pu être envoyée à Pennylane. Réessayez plus tard ou contactez-nous.', memberId: String(me.id), customerId: Number(me.pennylane_customer_id), email: me.email }
+        }
+  # A refusal is an expected outcome, not a failure: it stops the run as a
+  # success so it raises no operator alert. The button reads `message` from
+  # the run's output, which carries the check step's verdict either way.
+  - name: route
+    type: path
+    operator: branch
+    props:
+      mode: first-match
+      paths:
+        - name: refused
+          condition:
+            conditions:
+              - { field: '{{steps.check.ok}}', operator: equals, value: 'no' }
+          actions:
+            - name: refuse
+              type: flow
+              operator: stop
+              props:
+                status: success
+                message: '{{steps.check.message}}'
+                output: { message: '{{steps.check.message}}' }
+        - name: send
+          actions:
+            - name: mail
+              type: connection
+              operator: call
+              props:
+                connection: pennylane
+                operation: post-gocardless-mandate-mail-requests
+                params:
+                  customer_id: '{{steps.check.customerId}}'
+                  email: { recipients: ['{{steps.check.email}}'] }
+            - name: log
+              type: record
+              operator: create
+              props:
+                table: mandate_requests
+                data: { member: '{{steps.check.memberId}}', member_email: '{{steps.check.email}}' }
+            - name: confirm
+              type: code
+              operator: runTypescript
+              props:
+                code: |
+                  async function execute(context) {
+                    return { message: 'C’est parti ! Pennylane vous envoie un e-mail avec le lien de signature GoCardless.' }
+                  }

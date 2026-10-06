@@ -1,0 +1,46 @@
+# Table: mandates — a read-only mirror of the GoCardless mandates Pennylane
+# holds for each linked member, refreshed by the pennylane-sync automation.
+id: 3
+name: mandates
+fields:
+  - { id: 1, name: pennylane_id, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: member, type: relationship, relatedTable: members, relationType: many-to-one, displayField: email }
+  - { id: 6, name: member_email, type: email, required: true, indexed: true }
+  - id: 3
+    name: status
+    type: single-select
+    options:
+      - { value: active, label: $t:portal.mandate.active, color: '#10b981' }
+      - { value: pending_customer_approval, label: $t:portal.mandate.pending, color: '#f59e0b' }
+      - { value: pending_submission, label: $t:portal.mandate.pending, color: '#f59e0b' }
+      - { value: submitted, label: $t:portal.mandate.pending, color: '#f59e0b' }
+      - { value: failed, label: $t:portal.mandate.failed, color: '#ef4444' }
+      - { value: blocked, label: $t:portal.mandate.failed, color: '#ef4444' }
+      - { value: bank_disconnected, label: $t:portal.mandate.failed, color: '#ef4444' }
+      - { value: cancelled, label: $t:portal.mandate.ended, color: '#94a3b8' }
+      - { value: expired, label: $t:portal.mandate.ended, color: '#94a3b8' }
+      - { value: consumed, label: $t:portal.mandate.ended, color: '#94a3b8' }
+      - { value: replaced, label: $t:portal.mandate.ended, color: '#94a3b8' }
+  - { id: 4, name: bank_account, type: single-line-text }
+  - { id: 5, name: signed_at, type: datetime }
+permissions:
+  read: [coworker, admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]
+  fields:
+    - { field: pennylane_id, read: [coworker, admin], write: [admin] }
+    - { field: member, read: [coworker, admin], write: [admin] }
+    - { field: member_email, read: [coworker, admin], write: [admin] }
+    - { field: status, read: [coworker, admin], write: [admin] }
+    - { field: bank_account, read: [coworker, admin], write: [admin] }
+    - { field: signed_at, read: [coworker, admin], write: [admin] }
+# Rows are scoped by member_email, the member's login email copied onto each
+# row when it is written. A rule through the relationship (member.email) fails on
+# list reads in Sovrium 0.30, so the email is stored where the rule can see it.
+rowLevelPermissions:
+  read:
+    when:
+      field: member_email
+      operator: eq
+      value: { kind: currentUser, path: { kind: scalar, name: email } }

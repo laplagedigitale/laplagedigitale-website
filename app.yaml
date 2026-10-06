@@ -7,6 +7,12 @@ name: la-plage-digitale
 version: 1.0.0
 description: La Plage Digitale — Tiers-lieu de l'innovation à Strasbourg
 
+# Secrets the config reads. A required variable missing at boot stops the
+# server, so set it on Scalingo (env-set) before deploying.
+env:
+  - key: PENNYLANE_API_TOKEN
+    description: Pennylane company API token, read and write (mandate requests write)
+
 design:
   $ref: ./config/design.yaml
 
@@ -15,6 +21,14 @@ auth:
 
 languages:
   $ref: ./config/languages.yaml
+
+# The coworker portal: Pennylane data mirrored per member, read under
+# row-level rules so each coworker sees only their own.
+tables:
+  - $ref: ./config/tables/members.yaml
+  - $ref: ./config/tables/invoices.yaml
+  - $ref: ./config/tables/mandates.yaml
+  - $ref: ./config/tables/mandate-requests.yaml
 
 components:
   - $ref: ./config/components/site-header.yaml
@@ -26,8 +40,19 @@ pages:
   - $ref: ./config/pages/home.yaml
   - $ref: ./config/pages/about.yaml
   - $ref: ./config/pages/contact.yaml
+  - $ref: ./config/pages/login.yaml
+  - $ref: ./config/pages/portal.yaml
   - $ref: ./config/pages/legal.yaml
   - $ref: ./config/pages/privacy.yaml
 
 analytics:
   $ref: ./config/analytics.yaml
+
+connections:
+  - $ref: ./library/connection/pennylane.yaml
+
+automations:
+  - $ref: ./config/automations/member-sign-up.yaml
+  - $ref: ./config/automations/pennylane-match-pending.yaml
+  - $ref: ./config/automations/pennylane-sync.yaml
+  - $ref: ./config/automations/request-mandate.yaml

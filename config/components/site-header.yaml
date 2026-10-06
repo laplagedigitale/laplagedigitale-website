@@ -46,8 +46,17 @@ children:
                   href: $t:nav.href.contact
                   className: 'text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
 
-          - type: link
-            content: $t:nav.cta
+          - type: flex
             props:
-              href: $t:nav.href.contact
-              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-white bg-[#992b8c] hover:bg-[#7e2374] transition-colors'
+              className: 'flex items-center gap-4'
+            children:
+              - type: link
+                content: $t:nav.portal
+                props:
+                  href: $t:nav.href.portal
+                  className: 'hidden sm:inline text-sm font-medium text-white hover:text-[#f3ae13] transition-colors'
+              - type: link
+                content: $t:nav.cta
+                props:
+                  href: $t:nav.href.contact
+                  className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-white bg-[#992b8c] hover:bg-[#7e2374] transition-colors'

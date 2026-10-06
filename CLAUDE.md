@@ -68,7 +68,8 @@ Working rules:
 - Colour token names are kebab-case (`text-muted`, not `textMuted`).
 - Faces live in `design.typeScale.families`; sizes, leading and weight live in `design.typeScale.steps`. A face's `size`, `lineHeight` and `weights` validate but reach nothing.
 - `design.spacing` takes lengths only (`px`/`rem`), each step becoming a utility suffix (`py-section`). A reusable class list belongs on `props.className`, not in a token.
-- **Auth is on because the `auth` block exists** — there is no `enabled` flag; presence is the switch. It mounts `/api/auth/*`, RBAC and the admin endpoints. Every page stays public: auth is there for the admin surface, not to gate the site.
+- **Auth is on because the `auth` block exists** — there is no `enabled` flag; presence is the switch. It mounts `/api/auth/*`, RBAC and the admin endpoints. Every page stays public except `/portal`, the coworker portal (roles `coworker`, `admin`).
+- **Portal data is isolated by the tables, not the page.** Each portal table carries a `rowLevelPermissions.read` rule matching a stored email to `$currentUser.email`. Keep one on any table the portal reads; a relation-chain rule (`member.email`) fails on list reads in 0.30.
 - **`allowSignUp: false` is deliberate.** The default is `true`, which on a public marketing site would let anyone create an account. Users are created by admins; `defaultRole: viewer` keeps them least-privilege.
 - Auth needs a **persistent** database. Scalingo rebuilds the container filesystem on every deploy, so the SQLite default would discard users each time — this is why the PostgreSQL add-on is not optional here.
 
@@ -97,4 +98,6 @@ Declared in `scalingo.json` — see README.md for why each one:
 - `TRUSTED_PROXY_HOPS=1` — accounts for Scalingo's router so rate limits count per visitor
 - `PORT` — injected by Scalingo (default: 3000 locally)
 - `DATABASE_URL` — **injected by the PostgreSQL add-on**, never declared in `scalingo.json`. Its presence is what switches Sovrium off its embedded SQLite default.
+- `PENNYLANE_API_TOKEN` — Pennylane company token (read and write) for the portal's sync and mandate requests. Required: the app refuses to boot without it.
+- `SMTP_*` — needed for coworker invitations and password resets.
 - `AUTH_ADMIN_EMAIL` / `AUTH_ADMIN_PASSWORD` (`generator: secret`) — seed the first administrator. **Both are inert until the config declares an `auth` block** — the admin plugin turns on with `auth` and not before. Seeding runs only against a fresh database and only with both set; later boots no-op rather than duplicating or modifying a user.
