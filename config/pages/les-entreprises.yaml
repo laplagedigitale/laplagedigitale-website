@@ -3,6 +3,7 @@
 name: les-entreprises
 path: /les-entreprises
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:companies.meta.title
   description: $t:companies.meta.description
   openGraph:

@@ -4,6 +4,7 @@
 name: espace-coworking
 path: /espace-coworking
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:space.meta.title
   description: $t:space.meta.description
   openGraph:

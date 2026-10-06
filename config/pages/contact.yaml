@@ -3,6 +3,7 @@
 name: contact
 path: /contact
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:contact.meta.title
   description: $t:contact.meta.description
   openGraph:

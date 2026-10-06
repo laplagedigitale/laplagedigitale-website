@@ -2,6 +2,7 @@
 name: blog
 path: /blog
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:blog.meta.title
   description: $t:blog.meta.description
   openGraph:

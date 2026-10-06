@@ -3,6 +3,7 @@
 name: mentions-legales
 path: /mentions-legales
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:legal.meta.title
   description: $t:legal.meta.description
   openGraph:

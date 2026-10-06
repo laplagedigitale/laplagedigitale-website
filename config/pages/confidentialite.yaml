@@ -3,6 +3,7 @@
 name: confidentialite
 path: /confidentialite
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:privacy.meta.title
   description: $t:privacy.meta.description
   openGraph:

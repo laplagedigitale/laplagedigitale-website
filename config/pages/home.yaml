@@ -4,6 +4,7 @@
 name: home
 path: /
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:home.meta.title
   description: $t:home.meta.description
   openGraph:

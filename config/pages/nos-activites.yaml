@@ -3,6 +3,7 @@
 name: nos-activites
 path: /nos-activites
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:activities.meta.title
   description: $t:activities.meta.description
   openGraph:

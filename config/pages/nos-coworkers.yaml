@@ -3,6 +3,7 @@
 name: nos-coworkers
 path: /nos-coworkers
 meta:
+  noindex: true  # pre-launch: keep out of search engines
   title: $t:coworkers.meta.title
   description: $t:coworkers.meta.description
   openGraph:
