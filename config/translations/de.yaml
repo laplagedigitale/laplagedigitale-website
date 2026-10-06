@@ -12,15 +12,15 @@ href.companies: /de/les-entreprises
 href.blog: /de/blog
 href.contact: /de/contact
 href.legal: /de/mentions-legales
-href.portal: /de/chaloupe
-href.portal.invoices: /de/chaloupe/factures
-href.portal.mandate: /de/chaloupe/prelevement
-href.portal.account: /de/chaloupe/compte
+href.portal: /de/espace-membre
+href.portal.invoices: /de/espace-membre/factures
+href.portal.mandate: /de/espace-membre/prelevement
+href.portal.account: /de/espace-membre/compte
 href.privacy: /de/confidentialite
 
 # ── Navigation ──
 nav.aria: Hauptnavigation
-nav.portal: La Chaloupe
+nav.portal: Mitgliederbereich
 nav.menu: Menü
 nav.home: Startseite
 nav.about: Über uns
@@ -525,7 +525,7 @@ supporters.cta.lead: Die Mitgliedschaft im Verein hält den Dritten Ort und sein
 supporters.cta.join: Mitglied werden
 supporters.cta.about: Über uns
 
-# ── La Chaloupe ── the coworker space (/chaloupe/*), and the portal tables' option labels.
+# ── Espace Membre ── the coworker space (/espace-membre/*), and the portal tables' option labels.
 portal.nav.menu: Menü
 portal.nav.space: Mein Bereich
 portal.nav.invoices: Rechnungen
@@ -585,7 +585,7 @@ portal.status.partially_cancelled: Teilweise storniert
 portal.status.credit_note: Gutschrift
 portal.status.archived: Archiviert
 
-# ── Account ── /chaloupe/compte and /editor/compte (the account-forms template).
+# ── Account ── /espace-membre/compte and /editor/compte (the account-forms template).
 account.title: Mein Konto
 account.signedInAs: "[Angemeldet als $session.email]"
 account.profile: Profil
@@ -607,7 +607,7 @@ account.logout: Abmelden
 
 # ── Sign-in ── /connexion, shared by coworkers and editors.
 auth.kicker: Mitgliederbereich
-auth.pitch: "La Chaloupe für Coworker, der Redaktionsbereich für den Blog: ein Konto, eine Tür."
+auth.pitch: "Der Mitgliederbereich für Coworker, der Redaktionsbereich für den Blog: ein Konto, eine Tür."
 auth.title: Anmelden
 auth.subtitle: "Ihr Konto wird vom Team von La Plage Digitale eröffnet. Noch kein Konto? Schreiben Sie uns."
 auth.submit: Anmelden
@@ -615,7 +615,7 @@ auth.back: ← Zurück zur Website
 
 # ── Spaces ── /app, where /connexion sends every session.
 spaces.title: Meine Bereiche
-spaces.chaloupe: Ihre Rechnungen, Ihre Lastschrift und Ihr Coworker-Konto.
+spaces.member: Ihre Rechnungen, Ihre Lastschrift und Ihr Coworker-Konto.
 spaces.editor: Redaktionsbereich
 spaces.editor.desc: Blogartikel schreiben und veröffentlichen.
 spaces.none: "Ihr Konto öffnet noch keinen Bereich. Bitte wenden Sie sich an das Team von La Plage Digitale."

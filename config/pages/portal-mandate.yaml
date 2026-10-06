@@ -1,12 +1,12 @@
 # Page: portal-mandate — the coworker's GoCardless direct-debit mandate, and
 # the button that asks Pennylane to mail them the signing link.
 name: portal-mandate
-path: /chaloupe/prelevement
+path: /espace-membre/prelevement
 access: { require: [coworker, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "Prélèvement — La Chaloupe"
+  title: "Prélèvement — Espace Membre"
   description: "Votre prélèvement automatique."
   noindex: true
 components:
@@ -14,7 +14,7 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: chaloupe-nav
+      - component: espace-membre-nav
 
       - type: container
         element: main

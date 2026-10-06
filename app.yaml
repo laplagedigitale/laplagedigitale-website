@@ -68,7 +68,7 @@ components:
   - $ref: ./config/components/site-footer.yaml
   # The two signed-in spaces: their left columns, and the account page body
   # they share.
-  - $ref: ./config/components/chaloupe-nav.yaml
+  - $ref: ./config/components/espace-membre-nav.yaml
   - $ref: ./config/components/editor-nav.yaml
   - $ref: ./config/components/account-forms.yaml
 
@@ -100,7 +100,7 @@ pages:
   - $ref: ./config/pages/editor-post-new.yaml
   - $ref: ./config/pages/editor-post-edit.yaml
   - $ref: ./config/pages/editor-account.yaml
-  # La Chaloupe, the coworker space — gated, never indexed.
+  # the Espace Membre, the coworker space — gated, never indexed.
   - $ref: ./config/pages/portal.yaml
   - $ref: ./config/pages/portal-invoices.yaml
   - $ref: ./config/pages/portal-mandate.yaml

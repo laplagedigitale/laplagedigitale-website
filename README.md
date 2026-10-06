@@ -30,9 +30,9 @@ config/
     privacy.yaml
     connexion.yaml             # the one sign-in page (coworkers and editors)
     app-landing.yaml           # /app — "Mes espaces", routes each role
-    portal*.yaml               # La Chaloupe, the coworker space (/chaloupe/*)
+    portal*.yaml               # the Espace Membre, the coworker space (/espace-membre/*)
     editor*.yaml               # the editors' space (/editor/*)
-  tables/                      # data La Chaloupe reads, one per file
+  tables/                      # data the Espace Membre reads, one per file
     members.yaml
     invoices.yaml
     mandates.yaml
@@ -62,13 +62,13 @@ Unknown property 'noindexx'
   at pages[3].meta  (legal.yaml)
 ```
 
-## La Chaloupe — the coworker space
+## Espace Membre — the coworker space
 
-`/chaloupe` (« La Chaloupe ») is where a coworker finds their own Pennylane
+`/espace-membre` (« Espace Membre ») is where a coworker finds their own Pennylane
 invoices, with payment status and PDF, and asks for a GoCardless direct-debit
-mandate. It is an app shell: a sidebar (`chaloupe-nav`) beside a dashboard
-(`/chaloupe`), the invoices (`/chaloupe/factures`), the mandate
-(`/chaloupe/prelevement`) and the account (`/chaloupe/compte`: display name,
+mandate. It is an app shell: a sidebar (`espace-membre-nav`) beside a dashboard
+(`/espace-membre`), the invoices (`/espace-membre/factures`), the mandate
+(`/espace-membre/prelevement`) and the account (`/espace-membre/compte`: display name,
 password, sign-out). The old `/portal` and `/login` addresses redirect.
 
 The blog editors have the same shape at `/editor`: a dashboard, the post lists
@@ -207,8 +207,8 @@ set; on later boots it no-ops rather than duplicating or modifying an existing
 user. The startup banner confirms it with an `Admin:` line.
 
 > [!NOTE]
-> **The site stays public.** Every page except `/chaloupe/*` and `/editor/*` is
-> readable without a session; `/chaloupe` admits the `coworker` and `admin`
+> **The site stays public.** Every page except `/espace-membre/*` and `/editor/*` is
+> readable without a session; `/espace-membre` admits the `coworker` and `admin`
 > roles, `/editor` the `editor` and `admin` roles. `allowSignUp` is
 > `false`, so nobody can create their own account; the default is `true`, which
 > would let anyone sign up on a public site. Coworkers are invited.

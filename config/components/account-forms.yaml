@@ -1,5 +1,5 @@
 # Reusable component template: account-forms — the body of an account page,
-# shared by La Chaloupe (/chaloupe/compte) and the editors' space
+# shared by the Espace Membre (/espace-membre/compte) and the editors' space
 # (/editor/compte): display name, password, sign-out.
 #
 # Both forms post to the auth routes as the signed-in caller (the session is

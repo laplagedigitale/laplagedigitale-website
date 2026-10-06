@@ -36,10 +36,10 @@ components:
             children:
               - type: link
                 visibility: { roles: [coworker, admin] }
-                props: { href: $t:href.portal, data-space: chaloupe, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
+                props: { href: $t:href.portal, data-space: espace-membre, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
                 children:
-                  - { type: text, element: p, content: La Chaloupe, props: { className: 'text-xl font-bold text-navy' } }
-                  - { type: text, element: p, content: $t:spaces.chaloupe, props: { className: 'text-sm text-text-muted mt-1' } }
+                  - { type: text, element: p, content: $t:nav.portal, props: { className: 'text-xl font-bold text-navy' } }
+                  - { type: text, element: p, content: $t:spaces.member, props: { className: 'text-sm text-text-muted mt-1' } }
               - type: link
                 visibility: { roles: [editor, admin] }
                 props: { href: /editor, data-space: editor, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-magenta hover:shadow-md transition' }

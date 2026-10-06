@@ -13,15 +13,15 @@ href.companies: /les-entreprises
 href.blog: /blog
 href.contact: /contact
 href.legal: /mentions-legales
-href.portal: /chaloupe
-href.portal.invoices: /chaloupe/factures
-href.portal.mandate: /chaloupe/prelevement
-href.portal.account: /chaloupe/compte
+href.portal: /espace-membre
+href.portal.invoices: /espace-membre/factures
+href.portal.mandate: /espace-membre/prelevement
+href.portal.account: /espace-membre/compte
 href.privacy: /confidentialite
 
 # ── Navigation ──
 nav.aria: Navigation principale
-nav.portal: La Chaloupe
+nav.portal: Espace Membre
 nav.menu: Menu
 nav.home: Accueil
 nav.about: Qui sommes-nous ?
@@ -526,7 +526,7 @@ supporters.cta.lead: "L'adhésion à l'association fait vivre le tiers-lieu et s
 supporters.cta.join: Adhérer à l'association
 supporters.cta.about: Qui sommes-nous ?
 
-# ── La Chaloupe ── the coworker space (/chaloupe/*), and the portal tables' option labels.
+# ── Espace Membre ── the coworker space (/espace-membre/*), and the portal tables' option labels.
 portal.nav.menu: Menu
 portal.nav.space: Mon espace
 portal.nav.invoices: Factures
@@ -586,7 +586,7 @@ portal.status.partially_cancelled: Partiellement annulée
 portal.status.credit_note: Avoir
 portal.status.archived: Archivée
 
-# ── Account ── /chaloupe/compte and /editor/compte (the account-forms template).
+# ── Account ── /espace-membre/compte and /editor/compte (the account-forms template).
 account.title: Mon compte
 account.signedInAs: "[Connecté en tant que $session.email]"
 account.profile: Profil
@@ -608,7 +608,7 @@ account.logout: Se déconnecter
 
 # ── Sign-in ── /connexion, shared by coworkers and editors.
 auth.kicker: Espace membres
-auth.pitch: "La Chaloupe pour les coworkers, l'espace rédaction pour le blog : un seul compte, une seule porte."
+auth.pitch: "L'Espace Membre pour les coworkers, l'espace rédaction pour le blog : un seul compte, une seule porte."
 auth.title: Connexion
 auth.subtitle: "Votre compte est ouvert par l'équipe de La Plage Digitale. Pas encore de compte ? Écrivez-nous."
 auth.submit: Se connecter
@@ -616,7 +616,7 @@ auth.back: ← Retour au site
 
 # ── Spaces ── /app, where /connexion sends every session.
 spaces.title: Mes espaces
-spaces.chaloupe: Vos factures, votre prélèvement et votre compte de coworker.
+spaces.member: Vos factures, votre prélèvement et votre compte de coworker.
 spaces.editor: Espace rédaction
 spaces.editor.desc: Écrire et publier les articles du blog.
 spaces.none: "Votre compte n'ouvre encore aucun espace. Contactez l'équipe de La Plage Digitale."

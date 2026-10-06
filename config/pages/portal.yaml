@@ -1,16 +1,16 @@
-# Page: portal — « La Chaloupe », the coworker space's dashboard: what is left
+# Page: portal — « Espace Membre », the coworker space's dashboard: what is left
 # to pay, the direct-debit status and the latest invoices at a glance.
 #
 # Every block reads a table under row-level rules (matched on the login
 # email), so a coworker is only ever served their own rows — the filters here
 # are not what keeps data apart, the tables are.
 name: portal
-path: /chaloupe
+path: /espace-membre
 access: { require: [coworker, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "La Chaloupe — La Plage Digitale"
+  title: "Espace Membre — La Plage Digitale"
   description: "L'espace des coworkers de La Plage Digitale."
   noindex: true
 components:
@@ -18,7 +18,7 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: chaloupe-nav
+      - component: espace-membre-nav
 
       - type: container
         element: main
@@ -28,7 +28,7 @@ components:
           - type: container
             children:
               - { type: text, element: p, content: $t:portal.dashboard.hello, props: { className: 'text-sm font-semibold uppercase tracking-wide text-orange' } }
-              - { type: text, element: h1, content: La Chaloupe, props: { className: 'text-4xl font-bold text-navy mt-1' } }
+              - { type: text, element: h1, content: $t:nav.portal, props: { className: 'text-4xl font-bold text-navy mt-1' } }
               - { type: text, element: p, content: $t:portal.dashboard.subtitle, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
 
           # Account link — shown only while the coworker's Pennylane customer

@@ -2,7 +2,7 @@
 # admins alike. Not indexed.
 #
 # A successful sign-in goes to /app, the auth landingPath: the engine sends
-# each role to its own space (coworker → /chaloupe, editor and admin →
+# each role to its own space (coworker → /espace-membre, editor and admin →
 # /editor). Accounts are opened by an admin invitation; there is no sign-up
 # form on purpose (allowSignUp: false).
 name: connexion
@@ -12,7 +12,7 @@ meta:
   favicons:
     $ref: ../favicons.yaml
   title: "Connexion — La Plage Digitale"
-  description: "Connexion à La Chaloupe et à l'espace rédaction de La Plage Digitale."
+  description: "Connexion à l'Espace Membre et à l'espace rédaction de La Plage Digitale."
   noindex: true
 components:
   - type: container

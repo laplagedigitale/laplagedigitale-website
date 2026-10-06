@@ -1,4 +1,4 @@
 # Built-in analytics.
 retentionDays: 365
 respectDoNotTrack: true
-excludedPaths: ['/mentions-legales', '/confidentialite', '/editor', '/connexion', '/chaloupe', '/app']
+excludedPaths: ['/mentions-legales', '/confidentialite', '/editor', '/connexion', '/espace-membre', '/app']
