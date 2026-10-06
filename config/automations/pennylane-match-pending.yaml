@@ -6,6 +6,13 @@
 # Runs every 30 minutes, so a customer created in Pennylane after the account
 # is picked up on its own. The matching is inline: in 0.30 neither a cron nor
 # an auth-triggered run may call another automation.
+#
+# Every step is top-level: in 0.30 a step nested in a loop or a path branch
+# cannot read a sibling nested step (`{{steps.<sibling>.*}}` resolves to
+# nothing), which once left the update with no values. So the customers are
+# read once, every member is classified in one code step, and the result is
+# written in one batch. With nothing pending the run still reads the customers
+# (a `stop` inside a branch ends only the branch) and writes an empty batch.
 name: pennylane-match-pending
 trigger:
   type: cron
@@ -24,50 +31,45 @@ actions:
           - { field: match_status, operator: notEquals, value: matched }
           - { field: match_status, operator: notEquals, value: manual }
       limit: 500
-  - name: each
-    type: loop
-    operator: each
+  - name: customers
+    type: connection
+    operator: call
     props:
-      items: '{{steps.pending.records}}'
+      connection: pennylane
+      operation: get-customers
+      params: { limit: 100 }
+      paginate: all
+  - name: classify
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        members: '{{steps.pending.records}}'
+        customers: '{{steps.customers.data}}'
+      code: |
+        async function execute(context) {
+          const norm = (s: unknown) => String(s ?? '').trim().toLowerCase()
+          const byEmail = new Map<string, string[]>()
+          for (const c of context.inputData.customers ?? []) {
+            for (const e of new Set<string>((c.emails ?? []).map(norm))) {
+              if (e) byEmail.set(e, [...(byEmail.get(e) ?? []), String(c.id)])
+            }
+          }
+          const rows = (context.inputData.members ?? []).map((m: any) => {
+            const ids = byEmail.get(norm(m.email)) ?? []
+            if (ids.length !== 1) context.log.warn(`${m.email}: ${ids.length} Pennylane customers carry this email`)
+            return ids.length === 1
+              ? { email: m.email, pennylane_customer_id: ids[0], match_status: 'matched' }
+              : { email: m.email, pennylane_customer_id: '', match_status: 'not_found' }
+          })
+          context.log.info(`${rows.filter((r: any) => r.match_status === 'matched').length}/${rows.length} matched`)
+          return { rows }
+        }
+  - name: save
+    type: record
+    operator: batchUpsert
+    props:
+      table: members
+      items: '{{steps.classify.rows}}'
+      matchField: email
       continueOnItemError: true
-      actions:
-        - name: plan
-          type: code
-          operator: runTypescript
-          props:
-            inputData: { email: '{{loop.item.email}}' }
-            code: |
-              async function execute(context) {
-                const email = String(context.inputData.email)
-                return { filter: JSON.stringify([{ field: 'emails', operator: 'in', value: [email] }]) }
-              }
-        - name: customers
-          type: connection
-          operator: call
-          props:
-            connection: pennylane
-            operation: get-customers
-            params: { filter: '{{steps.plan.filter}}', limit: 10 }
-        - name: classify
-          type: code
-          operator: runTypescript
-          props:
-            inputData: { body: '{{steps.customers.data}}' }
-            code: |
-              async function execute(context) {
-                const items = context.inputData.body?.items ?? []
-                if (items.length === 1) return { id: String(items[0].id), status: 'matched' }
-                context.log.warn(`${items.length} Pennylane customers carry this email`)
-                return { id: '', status: 'not_found' }
-              }
-        - name: save
-          type: record
-          operator: update
-          props:
-            table: members
-            filter:
-              conditions:
-                - { field: email, operator: equals, value: '{{loop.item.email}}' }
-            data:
-              pennylane_customer_id: '{{steps.classify.id}}'
-              match_status: '{{steps.classify.status}}'
