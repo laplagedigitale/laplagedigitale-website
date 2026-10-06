@@ -34,3 +34,8 @@ roles:
 # An invitation link stays valid for a week — coworkers do not all read their
 # mail the day an account is opened.
 invitationTokenExpiry: 7d
+
+# Self-service API keys: the credential Claude presents to /mcp on x-api-key.
+# A key acts as its owner — same role, same row-level rules — and is revoked
+# on its own, without touching the owner's password.
+apiKeys: true

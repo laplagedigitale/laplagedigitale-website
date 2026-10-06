@@ -100,7 +100,25 @@ Declared in `scalingo.json` — see README.md for why each one:
 - `DATABASE_URL` — **injected by the PostgreSQL add-on**, never declared in `scalingo.json`. Its presence is what switches Sovrium off its embedded SQLite default.
 - `PENNYLANE_API_TOKEN` — Pennylane company token (read and write) for the portal's sync and mandate requests. Required: the app refuses to boot without it.
 - `SMTP_*` — needed for coworker invitations and password resets.
+- `MCP_ENABLED=true` — mounts the MCP server at `/mcp` (see below).
 - `AUTH_ADMIN_EMAIL` / `AUTH_ADMIN_PASSWORD` (`generator: secret`) — seed the first administrator. **Both are inert until the config declares an `auth` block** — the admin plugin turns on with `auth` and not before. Seeding runs only against a fresh database and only with both set; later boots no-op rather than duplicating or modifying a user.
+
+### MCP server
+
+`MCP_ENABLED=true` mounts `/mcp`, so Claude can read the app's data. Every table declares `aiAccess` with `operations: [read, list]` — **read-only by design**: the Pennylane tables are mirrors the sync overwrites, and writes stay in the admin and the portal. An admin key also sees the read-only `{app}_auth_*` / `{app}_system_*` tools and the four `{app}_config_*` tools.
+
+- **Credential**: an API key minted in `/_admin` by the user whose role Claude should inherit, sent on **`x-api-key`** (a key on `Authorization: Bearer` answers 401). Row-level rules apply to the key's owner, so a coworker's key sees only their own rows.
+- **Connect Claude Code**: `claude mcp add --transport http laplage https://la-plage-digitale.osc-fr1.scalingo.io/mcp --header "x-api-key: <key>"`
+- **Check it** by hand: the HTTP route speaks only protocol revision `2026-07-28` (a legacy `initialize` is refused), which needs two headers and a `_meta` envelope. Claude Code handles this itself.
+
+  ```bash
+  curl -s -X POST "$BASE_URL/mcp" -H "x-api-key: $KEY" \
+    -H 'MCP-Protocol-Version: 2026-07-28' -H 'Mcp-Method: tools/list' \
+    -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+    -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{},"io.modelcontextprotocol/clientInfo":{"name":"curl","version":"0"}}}}'
+  ```
+
+  A `200` with an empty list is eligibility (no `aiAccess`), a `401` is the credential. An admin key also lists `{app}_system_automation_runs_*` and `_run_steps_*` — the way to read why a run failed.
 
 ### Automations
 

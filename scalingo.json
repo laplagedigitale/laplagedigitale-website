@@ -62,6 +62,11 @@
       "description": "Timezone of cron automations and formatted dates.",
       "value": "Europe/Paris",
       "required": true
+    },
+    "MCP_ENABLED": {
+      "description": "Mounts the MCP server at /mcp so Claude (or any MCP client) can read the tables marked aiAccess, read-only. Clients authenticate with a per-user API key on the x-api-key header; the key carries its owner's role and row-level rules.",
+      "value": "true",
+      "required": true
     }
   },
   "addons": [
