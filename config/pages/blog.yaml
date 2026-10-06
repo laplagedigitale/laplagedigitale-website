@@ -6,7 +6,7 @@ meta:
   description: $t:blog.meta.description
   openGraph:
     type: website
-    image: /images/og-default.jpg
+    image: /images/pages/accueil/hero.webp
 components:
   - component: site-header
 
