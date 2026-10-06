@@ -101,3 +101,22 @@ Declared in `scalingo.json` — see README.md for why each one:
 - `PENNYLANE_API_TOKEN` — Pennylane company token (read and write) for the portal's sync and mandate requests. Required: the app refuses to boot without it.
 - `SMTP_*` — needed for coworker invitations and password resets.
 - `AUTH_ADMIN_EMAIL` / `AUTH_ADMIN_PASSWORD` (`generator: secret`) — seed the first administrator. **Both are inert until the config declares an `auth` block** — the admin plugin turns on with `auth` and not before. Seeding runs only against a fresh database and only with both set; later boots no-op rather than duplicating or modifying a user.
+
+### Automations
+
+`app.yaml` ends with an `env:` block, the `connections:` installed from the Sovrium library (`library/connection/*.yaml`, written by `sovrium library add connection/<name>`) and the `automations:` list. One file per automation under `config/automations/`.
+
+- **`notion-hebdo`** — every Monday 08:30 (Europe/Paris) posts a French digest of the Notion task database in Slack `#notion-hebdo` and writes one row per week in « Indicateurs d'usage Notion ». The code step reads Notion through the `notion` connection (token injected, cursor pagination in the request body, adaptive `page_size` under the 64 KiB response cap). It adapts to the V1 schema (`Status`) and the V2 schema (`Statut`), so it can be tested against either database.
+- **Run it on demand** (admin only, no need to wait for Monday):
+
+  ```bash
+  curl -s -c /tmp/sv.jar -H 'Content-Type: application/json' \
+    -d '{"email":"<admin>","password":"<pwd>"}' http://localhost:3000/api/auth/sign-in/email
+  curl -s -b /tmp/sv.jar -H 'Content-Type: application/json' \
+    -d '{"dryRun":true,"channel":"C_TEST_CHANNEL"}' http://localhost:3000/api/automations/notion-hebdo/trigger
+  ```
+
+  `dryRun: true` skips the metrics row; `channel` overrides the destination. In production add `-H "Origin: $BASE_URL"` to both calls (CSRF), and read the run with `GET /api/automations/runs/<id>`.
+- **Environment**: `NOTION_TOKEN`, `SLACK_BOT_TOKEN`, `SLACK_CHANNEL_ID`, `NOTION_TASKS_DATA_SOURCE_ID` are required at boot; `NOTION_METRICS_DATA_SOURCE_ID` is optional. Set them with `scalingo env-set` **before** pushing — a missing required variable refuses to start. Keep `formation.web.amount: 1`: the cron scheduler is in-process, a second container would post twice.
+- **Slack app** (`A0C71BTPUCS`): bot scopes `chat:write` and `channels:read`; the bot must be invited to the channel (or have `chat:write.public`). Slack answers errors as HTTP 200 with `ok: false`, which the `assertPosted` step turns into a failed run.
+- The code step is type-checked by `sovrium validate app.yaml`: annotate anything TypeScript cannot infer (an `opts = {}` parameter, `let x` without initial value).

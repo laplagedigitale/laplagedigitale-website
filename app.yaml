@@ -22,6 +22,22 @@ env:
     required: false
     default: tresorerie@laplagedigitale.fr
     secret: false
+  # Weekly Notion → Slack digest (notion-hebdo)
+  - key: NOTION_TOKEN
+    description: Notion internal integration token used to read the task database
+  - key: SLACK_BOT_TOKEN
+    description: Bot token (xoxb-…) of the Slack app A0C71BTPUCS
+  - key: SLACK_CHANNEL_ID
+    description: Channel id of #notion-hebdo (C…)
+    secret: false
+  - key: NOTION_TASKS_DATA_SOURCE_ID
+    description: Data source id of « Suivi des sujets, projets & tâches » (V2)
+    secret: false
+  - key: NOTION_METRICS_DATA_SOURCE_ID
+    description: Data source id of « Indicateurs d'usage Notion »; empty disables the weekly history row
+    required: false
+    default: ""
+    secret: false
 
 design:
   $ref: ./config/design.yaml
@@ -87,6 +103,8 @@ analytics:
 
 connections:
   - $ref: ./library/connection/pennylane.yaml
+  - $ref: ./library/connection/notion.yaml
+  - $ref: ./library/connection/slack.yaml
 
 automations:
   - $ref: ./config/automations/member-sign-up.yaml
@@ -94,3 +112,5 @@ automations:
   - $ref: ./config/automations/pennylane-match-pending.yaml
   - $ref: ./config/automations/pennylane-sync.yaml
   - $ref: ./config/automations/request-mandate.yaml
+  # Weekly Notion → Slack digest (Monday 08:30 Europe/Paris)
+  - $ref: ./config/automations/notion-hebdo.yaml
