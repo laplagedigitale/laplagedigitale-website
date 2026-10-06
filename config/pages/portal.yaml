@@ -2,8 +2,10 @@
 # to pay, the direct-debit status and the latest invoices at a glance.
 #
 # Every block reads a table under row-level rules (matched on the login
-# email), so a coworker is only ever served their own rows — the filters here
-# are not what keeps data apart, the tables are.
+# email), so a coworker is only ever served their own rows — the tables keep
+# data apart. Each block also filters on $currentUser.email, because an admin
+# bypasses row rules: without it an admin's La Chaloupe would show every
+# coworker's invoices as their own.
 name: portal
 path: /chaloupe
 access: { require: [coworker, admin], redirectTo: /connexion }
@@ -37,6 +39,7 @@ components:
             dataSource:
               table: members
               filter:
+                - { field: email, operator: eq, value: $currentUser.email }
                 - { field: match_status, operator: in, value: [pending, not_found] }
               limit: 1
             props:
@@ -57,6 +60,7 @@ components:
                 dataSource:
                   table: invoices
                   filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
                     - { field: status, operator: in, value: [upcoming, late, partially_paid] }
                 kpiAggregate: { function: sum, field: remaining_amount }
                 kpiFormat: { type: currency, options: { currency: EUR } }
@@ -66,6 +70,7 @@ components:
                 dataSource:
                   table: invoices
                   filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
                     - { field: status, operator: eq, value: late }
                 kpiAggregate: { function: count }
                 thresholds:
@@ -76,6 +81,7 @@ components:
                 dataSource:
                   table: invoices
                   filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
                     - { field: status, operator: eq, value: paid }
                 kpiAggregate: { function: count }
 
@@ -95,6 +101,8 @@ components:
                   - type: table
                     dataSource:
                       table: invoices
+                      filter:
+                        - { field: member_email, operator: eq, value: $currentUser.email }
                       sort:
                         - { field: invoice_date, direction: desc }
                       pagination: { pageSize: 5 }
@@ -128,6 +136,8 @@ components:
                   - type: table
                     dataSource:
                       table: mandates
+                      filter:
+                        - { field: member_email, operator: eq, value: $currentUser.email }
                       sort:
                         - { field: signed_at, direction: desc }
                       pagination: { pageSize: 1 }

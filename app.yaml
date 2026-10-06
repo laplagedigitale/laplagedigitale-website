@@ -121,7 +121,6 @@ connections:
 automations:
   - $ref: ./config/automations/member-sign-up.yaml
   - $ref: ./config/automations/pennylane-auto-match.yaml
-  - $ref: ./config/automations/pennylane-match-pending.yaml
   - $ref: ./config/automations/pennylane-sync.yaml
   - $ref: ./config/automations/request-mandate.yaml
   # Weekly Notion → Slack digest (Monday 08:30 Europe/Paris)

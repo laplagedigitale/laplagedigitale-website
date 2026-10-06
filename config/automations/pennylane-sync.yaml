@@ -1,135 +1,189 @@
-# Automation: pennylane-sync — mirrors the invoices and GoCardless mandates of
-# every linked member from Pennylane, every 15 minutes.
+# Automation: pennylane-sync — every 15 minutes, links every member to their
+# Pennylane customer and mirrors the invoices and GoCardless mandates of every
+# linked member, so a new coworker sees all their invoices, with their status,
+# at the latest 15 minutes after their members row exists.
 #
-# One filtered read per resource (customer_id in [...]) whatever the number of
-# members, well inside Pennylane's 25 requests / 5 s. Every run rewrites each
-# invoice, which keeps its 30-minute pdf_url fresh and its status current.
-# Drafts and proformas are never mirrored.
+#   1. link    — a member not yet linked is linked to the Pennylane customer
+#                whose emails include the member's login email. Exactly one
+#                match links it; none or several marks the row not_found for
+#                an admin to settle (set pennylane_customer_id and
+#                match_status: manual, which this step then leaves alone).
+#   2. mirror  — one filtered read per resource (customer_id in [...]) for all
+#                linked members, well inside Pennylane's 25 requests / 5 s.
+#                Every run rewrites each invoice, which keeps its 30-minute
+#                pdf_url fresh and its status current. Drafts and proformas
+#                are never mirrored.
+#
+# Every step is top-level, on purpose: in Sovrium 0.30 a step nested in a
+# `path` branch cannot read a sibling nested step (`{{steps.<sibling>.*}}`
+# resolves to nothing). The previous version read the invoices from inside a
+# branch, received an empty list and mirrored nothing. With no linked member
+# the reads are filtered on customer id 0, which matches nothing.
+#
+# Matching lives here rather than in its own automation because in 0.30 a cron
+# run cannot call another automation, and a member linked in one run should
+# get their invoices in the same run.
 name: pennylane-sync
 trigger:
   type: cron
   expression: '*/15 * * * *'
   timezone: Europe/Paris
+timeout: 300000
+concurrency:
+  limit: 1
 actions:
-  - name: linked
+  - name: members
     type: record
     operator: list
+    props: { table: members, limit: 1000 }
+  - name: customers
+    type: connection
+    operator: call
     props:
-      table: members
-      filter:
-        conditions:
-          - { field: pennylane_customer_id, operator: isNotEmpty }
-      limit: 1000
-  - name: plan
+      connection: pennylane
+      operation: get-customers
+      params: { limit: 100 }
+      paginate: all
+  - name: link
     type: code
     operator: runTypescript
     props:
-      inputData: { members: '{{steps.linked.records}}' }
+      inputData:
+        members: '{{steps.members.records}}'
+        customers: '{{steps.customers.data}}'
       code: |
         async function execute(context) {
-          const members = context.inputData.members ?? []
-          const ids = members.map((m) => Number(m.pennylane_customer_id)).filter((n) => Number.isFinite(n) && n > 0)
+          const norm = (s: unknown) => String(s ?? '').trim().toLowerCase()
+          const byEmail = new Map<string, string[]>()
+          for (const c of context.inputData.customers ?? []) {
+            for (const e of new Set<string>((c.emails ?? []).map(norm))) {
+              if (e) byEmail.set(e, [...(byEmail.get(e) ?? []), String(c.id)])
+            }
+          }
+          const updates: any[] = []
+          const linked: any[] = []
+          for (const m of context.inputData.members ?? []) {
+            const settled = (m.match_status === 'matched' || m.match_status === 'manual') && m.pennylane_customer_id
+            if (settled) {
+              linked.push({ id: String(m.id), email: m.email, customerId: String(m.pennylane_customer_id) })
+              continue
+            }
+            const ids = byEmail.get(norm(m.email)) ?? []
+            if (ids.length === 1) {
+              updates.push({ email: m.email, pennylane_customer_id: ids[0], match_status: 'matched' })
+              linked.push({ id: String(m.id), email: m.email, customerId: ids[0] })
+              context.log.info(`${m.email}: linked to Pennylane customer ${ids[0]}`)
+            } else {
+              context.log.warn(`${m.email}: ${ids.length} Pennylane customers carry this email`)
+              if (m.match_status !== 'not_found') updates.push({ email: m.email, pennylane_customer_id: '', match_status: 'not_found' })
+            }
+          }
+          const ids = [...new Set(linked.map((l) => Number(l.customerId)).filter((n) => Number.isFinite(n) && n > 0))]
+          context.log.info(`${linked.length} linked members, ${updates.length} member rows to update`)
           return {
-            any: ids.length > 0 ? 'yes' : 'no',
-            filter: JSON.stringify([{ field: 'customer_id', operator: 'in', value: ids }]),
+            updates,
+            linked,
+            filter: JSON.stringify([{ field: 'customer_id', operator: 'in', value: ids.length > 0 ? ids : [0] }]),
           }
         }
-  - name: route
-    type: path
-    operator: branch
+  - name: saveMembers
+    type: record
+    operator: batchUpsert
     props:
-      mode: first-match
-      paths:
-        - name: nobody
-          condition:
-            conditions:
-              - { field: '{{steps.plan.any}}', operator: equals, value: 'no' }
-          actions:
-            - name: done
-              type: flow
-              operator: stop
-              props: { status: success, message: No linked member yet }
-        - name: sync
-          actions:
-            - name: invoices
-              type: connection
-              operator: call
-              props:
-                connection: pennylane
-                operation: get-customer-invoices
-                params: { filter: '{{steps.plan.filter}}', limit: 100, sort: '-date' }
-                paginate: all
-            - name: mandates
-              type: connection
-              operator: call
-              props:
-                connection: pennylane
-                operation: get-gocardless-mandates
-                params: { filter: '{{steps.plan.filter}}', limit: 100 }
-                paginate: all
-            - name: rows
-              type: code
-              operator: runTypescript
-              props:
-                inputData:
-                  members: '{{steps.linked.records}}'
-                  invoices: '{{steps.invoices.data}}'
-                  mandates: '{{steps.mandates.data}}'
-                code: |
-                  async function execute(context) {
-                    const memberOf = new Map()
-                    for (const m of context.inputData.members ?? []) memberOf.set(String(m.pennylane_customer_id), { id: String(m.id), email: m.email })
-                    const invoiceStatuses = new Set(['paid', 'partially_paid', 'upcoming', 'late', 'incomplete', 'cancelled', 'partially_cancelled', 'credit_note', 'archived'])
-                    const mandateStatuses = new Set(['active', 'pending_customer_approval', 'pending_submission', 'submitted', 'failed', 'blocked', 'bank_disconnected', 'cancelled', 'expired', 'consumed', 'replaced'])
-                    const num = (v) => (v === null || v === undefined || v === '' ? null : Number(v))
-                    const invoices = []
-                    for (const i of context.inputData.invoices ?? []) {
-                      const member = memberOf.get(String(i.customer?.id))
-                      if (!member || !invoiceStatuses.has(i.status)) continue
-                      invoices.push({
-                        pennylane_id: String(i.id),
-                        member: member.id,
-                        member_email: member.email,
-                        invoice_number: i.invoice_number ?? '',
-                        label: i.label ?? '',
-                        invoice_date: i.date ?? null,
-                        deadline: i.deadline ?? null,
-                        amount: num(i.amount),
-                        remaining_amount: num(i.remaining_amount_with_tax),
-                        status: i.status,
-                        paid: Boolean(i.paid),
-                        pdf_url: i.public_file_url ?? null,
-                      })
-                    }
-                    const mandates = []
-                    for (const m of context.inputData.mandates ?? []) {
-                      const member = memberOf.get(String(m.customer?.id))
-                      if (!member || !mandateStatuses.has(m.status)) continue
-                      mandates.push({
-                        pennylane_id: String(m.id),
-                        member: member.id,
-                        member_email: member.email,
-                        status: m.status,
-                        bank_account: m.external_customer_account ?? '',
-                        signed_at: m.created_at ?? null,
-                      })
-                    }
-                    context.log.info(`${invoices.length} invoices, ${mandates.length} mandates`)
-                    return { invoices, mandates }
-                  }
-            - name: saveInvoices
-              type: record
-              operator: batchUpsert
-              props:
-                table: invoices
-                items: '{{steps.rows.invoices}}'
-                matchField: pennylane_id
-                continueOnItemError: true
-            - name: saveMandates
-              type: record
-              operator: batchUpsert
-              props:
-                table: mandates
-                items: '{{steps.rows.mandates}}'
-                matchField: pennylane_id
-                continueOnItemError: true
+      table: members
+      items: '{{steps.link.updates}}'
+      matchField: email
+      continueOnItemError: true
+  - name: invoices
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-customer-invoices
+      params: { filter: '{{steps.link.filter}}', limit: 100, sort: '-date' }
+      paginate: all
+  - name: mandates
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-gocardless-mandates
+      params: { filter: '{{steps.link.filter}}', limit: 100 }
+      paginate: all
+  - name: rows
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        linked: '{{steps.link.linked}}'
+        invoices: '{{steps.invoices.data}}'
+        mandates: '{{steps.mandates.data}}'
+      code: |
+        async function execute(context) {
+          // A Pennylane customer shared by two members (one company, two
+          // coworkers) is mirrored onto the first of them: an invoice row has
+          // one owner, and pennylane_id is unique.
+          const memberOf = new Map<string, any>()
+          for (const l of context.inputData.linked ?? []) if (!memberOf.has(l.customerId)) memberOf.set(l.customerId, l)
+          const invoiceStatuses = new Set(['paid', 'partially_paid', 'upcoming', 'late', 'incomplete', 'cancelled', 'partially_cancelled', 'credit_note', 'archived'])
+          const mandateStatuses = new Set(['active', 'pending_customer_approval', 'pending_submission', 'submitted', 'failed', 'blocked', 'bank_disconnected', 'cancelled', 'expired', 'consumed', 'replaced'])
+          const skipped = new Map<string, number>()
+          const skip = (why: string) => skipped.set(why, (skipped.get(why) ?? 0) + 1)
+          const num = (v: unknown) => (v === null || v === undefined || v === '' ? null : Number(v))
+          const invoices: any[] = []
+          for (const i of context.inputData.invoices ?? []) {
+            const member = memberOf.get(String(i.customer?.id))
+            if (!member) { skip('invoice of no linked member'); continue }
+            if (!invoiceStatuses.has(i.status)) { skip(`invoice status ${i.status}`); continue }
+            invoices.push({
+              pennylane_id: String(i.id),
+              member: member.id,
+              member_email: member.email,
+              invoice_number: i.invoice_number ?? '',
+              label: i.label ?? '',
+              invoice_date: i.date ?? null,
+              deadline: i.deadline ?? null,
+              amount: num(i.amount),
+              remaining_amount: num(i.remaining_amount_with_tax),
+              status: i.status,
+              paid: Boolean(i.paid),
+              pdf_url: i.public_file_url ?? null,
+            })
+          }
+          const mandates: any[] = []
+          for (const m of context.inputData.mandates ?? []) {
+            const member = memberOf.get(String(m.customer?.id))
+            if (!member) { skip('mandate of no linked member'); continue }
+            if (!mandateStatuses.has(m.status)) { skip(`mandate status ${m.status}`); continue }
+            mandates.push({
+              pennylane_id: String(m.id),
+              member: member.id,
+              member_email: member.email,
+              status: m.status,
+              bank_account: m.external_customer_account ?? '',
+              signed_at: m.created_at ?? null,
+            })
+          }
+          const perMember = new Map<string, number>()
+          for (const i of invoices) perMember.set(i.member_email, (perMember.get(i.member_email) ?? 0) + 1)
+          for (const l of context.inputData.linked ?? []) context.log.info(`${l.email}: ${perMember.get(l.email) ?? 0} invoices`)
+          if (skipped.size > 0) context.log.info(`skipped: ${JSON.stringify(Object.fromEntries(skipped))}`)
+          context.log.info(`${invoices.length} invoices, ${mandates.length} mandates`)
+          return { invoices, mandates }
+        }
+  - name: saveInvoices
+    type: record
+    operator: batchUpsert
+    props:
+      table: invoices
+      items: '{{steps.rows.invoices}}'
+      matchField: pennylane_id
+      continueOnItemError: true
+  - name: saveMandates
+    type: record
+    operator: batchUpsert
+    props:
+      table: mandates
+      items: '{{steps.rows.mandates}}'
+      matchField: pennylane_id
+      continueOnItemError: true

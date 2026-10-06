@@ -41,7 +41,6 @@ config/
   automations/                 # Pennylane sync, mandate request, payment matching
     member-sign-up.yaml
     pennylane-auto-match.yaml
-    pennylane-match-pending.yaml
     pennylane-sync.yaml
     request-mandate.yaml
 library/
@@ -80,9 +79,8 @@ and the pages read those tables:
 
 | Automation                | When                 | Does                                                                 |
 | ------------------------- | -------------------- | -------------------------------------------------------------------- |
-| `member-sign-up`          | account created      | files a `members` row for a `coworker` account                       |
-| `pennylane-match-pending` | every 30 min         | links each unlinked member to the Pennylane customer with that email |
-| `pennylane-sync`          | every 15 min         | mirrors the linked members' invoices and GoCardless mandates         |
+| `member-sign-up`          | account created      | files a `members` row for a `coworker` or `admin` account            |
+| `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, then mirrors every linked member's invoices and GoCardless mandates |
 | `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
 
 **Isolation is the tables' job, not the page's.** Every portal table has a
@@ -95,8 +93,9 @@ automations write.
 
 1. Invite them from `/_admin/users` with the role **`coworker`**. That fires
    `member-sign-up`, which files their `members` row.
-2. Within 30 minutes they are linked to the Pennylane customer whose emails
-   include their login email. If none or several match, the row reads
+2. Within 15 minutes they are linked to the Pennylane customer whose emails
+   include their login email, and all their invoices (every status but
+   drafts and proformas) appear in La Chaloupe. If none or several match, the row reads
    `not_found`: set `pennylane_customer_id` yourself and `match_status` to
    `manual` in `/_admin` — the matcher then leaves it alone.
 3. An account switched to `coworker` *after* it was created fires nothing — add
