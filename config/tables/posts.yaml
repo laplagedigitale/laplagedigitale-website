@@ -1,0 +1,63 @@
+# Table: posts — the blog ("Actualités").
+#
+# Seeded from the WordPress archive (seed/posts.yaml) and edited afterwards by
+# the `editor` role from the /editor front office. Public pages only ever list
+# rows whose status is `published`; the permission block below is about who
+# may *write*, not who may see a draft.
+id: 1
+name: posts
+fields:
+  - { id: 1, name: title, label: Titre, type: single-line-text, required: true, indexed: true }
+  - id: 2
+    name: slug
+    label: Slug (adresse)
+    description: "En minuscules, avec des tirets : devient /blog/<slug>."
+    type: single-line-text
+    required: true
+    unique: true
+    indexed: true
+  - { id: 3, name: excerpt, label: Résumé, description: "Une ou deux phrases (160 caractères max) pour les listes et les moteurs de recherche.", type: long-text }
+  - { id: 4, name: body, label: Contenu, type: rich-text }
+  - id: 5
+    name: cover
+    label: Image de couverture
+    type: single-attachment
+    bucket: blog-images
+    allowedFileTypes: [image/jpeg, image/png, image/webp]
+    maxFileSize: 5242880
+  # Covers migrated from WordPress live in /public/images/blog and are
+  # referenced by path; new posts upload into `cover` instead.
+  - { id: 6, name: legacy_cover, label: Image (archive), type: url }
+  - id: 7
+    name: status
+    label: Statut
+    type: single-select
+    required: true
+    default: draft
+    options:
+      - { value: draft, label: Brouillon, color: '#C9CED7' }
+      - { value: published, label: Publié, color: '#92AA58' }
+    indexed: true
+  - { id: 8, name: published_at, label: Date de publication, type: date, indexed: true }
+  - id: 9
+    name: categories
+    label: Catégories
+    type: multi-select
+    options:
+      - { value: actualites, label: Actualités }
+      - { value: evenements, label: Événements }
+      - { value: newsletter, label: Newsletter }
+      - { value: coding-club, label: Coding Club }
+      - { value: edgefest, label: EdgeFest }
+  - { id: 10, name: author, label: Auteur, type: user, default: $currentUser }
+  - { id: 11, name: legacy_path, label: Ancienne adresse WordPress, type: single-line-text }
+  - { id: 12, name: created_by, type: created-by }
+  - { id: 13, name: updated_by, type: updated-by }
+  - { id: 14, name: created_at, type: created-at }
+  - { id: 15, name: updated_at, type: updated-at }
+
+permissions:
+  read: all
+  create: [admin, editor]
+  update: [admin, editor]
+  delete: [admin, editor]

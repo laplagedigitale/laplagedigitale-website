@@ -1,0 +1,25 @@
+# Form: contact — the public contact form, embedded on /contact.
+#
+# A declared form rather than a table-bound one: `leads` is write-only for
+# visitors (create: all, no read), and only a declared form draws its fields
+# for a reader who may not read the table back. Submissions land in `leads`
+# and the built-in ledger; admins read them in /_admin.
+id: 1
+name: contact
+title: $t:contact.form.title
+submitTo:
+  table: leads
+fields:
+  - { kind: table-field, column: name, label: $t:contact.form.name.label, placeholder: $t:contact.form.name.placeholder, required: true }
+  - { kind: table-field, column: email, label: $t:contact.form.email.label, placeholder: $t:contact.form.email.placeholder, required: true }
+  - { kind: table-field, column: phone, label: $t:contact.form.phone.label, placeholder: $t:contact.form.phone.placeholder }
+  - { kind: table-field, column: subject, label: $t:contact.form.subject.label }
+  - { kind: table-field, column: message, label: $t:contact.form.message.label, placeholder: $t:contact.form.message.placeholder, required: true }
+antiSpam:
+  honeypot: true
+onSuccess:
+  type: message
+  message: $t:contact.form.success.message
+onError:
+  type: message
+  message: $t:contact.form.error

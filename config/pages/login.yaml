@@ -12,7 +12,7 @@ components:
   - type: container
     element: section
     props:
-      className: 'pt-32 pb-24'
+      className: 'py-16 sm:py-24'
     children:
       - type: container
         props:
@@ -22,17 +22,17 @@ components:
             element: h1
             content: $t:login.title
             props:
-              className: 'text-3xl font-bold text-gray-900 mb-2'
+              className: 'text-3xl font-bold text-navy mb-2'
           - type: text
             element: p
             content: $t:login.subtitle
             props:
-              className: 'text-gray-600 mb-8'
+              className: 'text-text-muted mb-8'
           - type: form
             action:
               type: auth
               method: login
               strategy: email
-              onSuccess: { type: navigate, navigate: $t:nav.href.portal }
+              onSuccess: { type: navigate, navigate: $t:href.portal }
 
   - component: site-footer

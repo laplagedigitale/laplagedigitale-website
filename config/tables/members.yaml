@@ -6,7 +6,7 @@
 # row — matched on the login email, so no user id has to be copied by hand.
 # An admin fixes a wrong or missing match by setting pennylane_customer_id and
 # match_status: manual, which the matcher then leaves alone.
-id: 1
+id: 3
 name: members
 fields:
   - { id: 1, name: email, type: email, required: true, unique: true }

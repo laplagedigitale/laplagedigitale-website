@@ -1,6 +1,6 @@
 # Table: mandates — a read-only mirror of the GoCardless mandates Pennylane
 # holds for each linked member, refreshed by the pennylane-sync automation.
-id: 3
+id: 5
 name: mandates
 fields:
   - { id: 1, name: pennylane_id, type: single-line-text, required: true, unique: true }

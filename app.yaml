@@ -4,8 +4,8 @@
 # $refs resolve before validation, so errors are still reported per file.
 
 name: la-plage-digitale
-version: 1.0.0
-description: La Plage Digitale — Tiers-lieu de l'innovation à Strasbourg
+version: 2.0.0
+description: La Plage Digitale — Tiers-lieu et coworking à Strasbourg
 
 # Secrets the config reads. A required variable missing at boot stops the
 # server, so set it on Scalingo (env-set) before deploying.
@@ -22,28 +22,53 @@ auth:
 languages:
   $ref: ./config/languages.yaml
 
-# The coworker portal: Pennylane data mirrored per member, read under
-# row-level rules so each coworker sees only their own.
 tables:
+  - $ref: ./config/tables/posts.yaml
+  - $ref: ./config/tables/leads.yaml
+  # The coworker portal: Pennylane data mirrored per member, read under
+  # row-level rules so each coworker sees only their own.
   - $ref: ./config/tables/members.yaml
   - $ref: ./config/tables/invoices.yaml
   - $ref: ./config/tables/mandates.yaml
   - $ref: ./config/tables/mandate-requests.yaml
 
+buckets:
+  $ref: ./config/buckets.yaml
+
 components:
   - $ref: ./config/components/site-header.yaml
   - $ref: ./config/components/site-footer.yaml
-  - $ref: ./config/components/space-card.yaml
-  - $ref: ./config/components/amenity-item.yaml
+  - $ref: ./config/components/editor-bar.yaml
+
+forms:
+  - $ref: ./config/forms/contact.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
-  - $ref: ./config/pages/about.yaml
+  - $ref: ./config/pages/qui-sommes-nous.yaml
+  - $ref: ./config/pages/nos-activites.yaml
+  - $ref: ./config/pages/nos-soutiens.yaml
+  - $ref: ./config/pages/espace-coworking.yaml
+  - $ref: ./config/pages/les-formules.yaml
+  - $ref: ./config/pages/nos-coworkers.yaml
+  - $ref: ./config/pages/les-entreprises.yaml
+  - $ref: ./config/pages/blog.yaml
+  - $ref: ./config/pages/blog-post.yaml
   - $ref: ./config/pages/contact.yaml
+  - $ref: ./config/pages/mentions-legales.yaml
+  - $ref: ./config/pages/confidentialite.yaml
+  # Editors' front office — gated, never indexed.
+  - $ref: ./config/pages/connexion.yaml
+  - $ref: ./config/pages/editor.yaml
+  - $ref: ./config/pages/editor-post-new.yaml
+  - $ref: ./config/pages/editor-post-edit.yaml
+  # Coworker portal — gated, never indexed.
   - $ref: ./config/pages/login.yaml
   - $ref: ./config/pages/portal.yaml
-  - $ref: ./config/pages/legal.yaml
-  - $ref: ./config/pages/privacy.yaml
+
+# Old WordPress URLs (posts lived at the root, pages had other slugs) — 301s.
+redirects:
+  $ref: ./config/redirects.yaml
 
 analytics:
   $ref: ./config/analytics.yaml

@@ -14,13 +14,22 @@ allowSignUp: false
 # comes from AUTH_ADMIN_EMAIL / AUTH_ADMIN_PASSWORD and is unaffected by this.
 defaultRole: viewer
 
-# Coworkers get their own role so the portal and its tables can name them
-# without opening anything to `member`. Admins invite each coworker from
-# /_admin/users with this role; there is still no self-registration.
+# Two roles beside the built-ins, both created by admins in /_admin/users.
+#
+# Blog editors sign in at /connexion, which sends them to the /editor front
+# office. They write the `posts` table and nothing else — the console at
+# /_admin stays admin-only.
+#
+# Coworkers sign in at /login and reach /portal, their own Pennylane invoices
+# and direct-debit mandate. Inviting one with this role is what files their
+# `members` row; there is still no self-registration.
 roles:
+  - name: editor
+    description: Rédaction du blog — crée, modifie et publie les articles
+    level: 30
   - name: coworker
+    description: Coworker — consulte ses factures et son mandat de prélèvement
     level: 20
-    description: Coworker with access to their own invoices and direct-debit mandate
 
 # An invitation link stays valid for a week — coworkers do not all read their
 # mail the day an account is opened.

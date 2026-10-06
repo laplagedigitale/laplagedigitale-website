@@ -5,7 +5,7 @@
 #
 # A coworker may create rows (the automation runs as them) but only for their
 # own member row, and never edit or delete one.
-id: 4
+id: 6
 name: mandate_requests
 fields:
   - { id: 1, name: member, type: relationship, relatedTable: members, relationType: many-to-one, displayField: email, required: true }

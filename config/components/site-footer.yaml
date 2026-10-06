@@ -1,142 +1,136 @@
 # Reusable component template: site-footer.
+# Navy band with a sand "dot" strip on top — the separator motif of the
+# signage (LE TIERS·LIEU) — then four columns: brand, visit, explore, follow.
 name: site-footer
 type: container
 children:
   - type: container
     element: footer
     props:
-      className: 'bg-[#111d4a] text-gray-300'
+      className: 'bg-navy text-navy-100'
     children:
+      - type: container
+        props:
+          className: 'h-2 w-full bg-[linear-gradient(90deg,var(--color-blue)_0_25%,var(--color-magenta)_25%_50%,var(--color-orange)_50%_75%,var(--color-sage)_75%_100%)]'
       - type: container
         element: section
         props:
-          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16'
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10'
         children:
           - type: grid
             props:
-              className: 'grid grid-cols-1 md:grid-cols-4 gap-12'
+              className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12'
             children:
+              # Brand
               - type: container
-                props:
-                  className: 'md:col-span-2'
                 children:
-                  - type: text
-                    element: h3
-                    content: La Plage Digitale
+                  - type: image
                     props:
-                      className: 'text-white text-xl font-bold mb-3'
+                      src: /brand/logo-blanc.svg
+                      alt: La Plage Digitale
+                      width: 180
+                      height: 60
+                      className: 'h-14 w-auto mb-5'
                   - type: text
                     element: p
                     content: $t:footer.tagline
                     props:
-                      className: 'text-gray-400 mb-6 max-w-md'
+                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy-200 max-w-xs'
+                  - type: text
+                    element: p
+                    content: 'Connecter · Innover · Entreprendre'
+                    props:
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mt-5'
+
+              # Visit
+              - type: container
+                children:
+                  - type: text
+                    element: h2
+                    content: $t:footer.visit
+                    props:
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-white mb-4'
+                  - type: text
+                    element: p
+                    content: '13 rue Jacques Peirotes<br>67000 Strasbourg'
+                    props:
+                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] mb-3'
+                  - type: text
+                    element: p
+                    content: $t:footer.hours
+                    props:
+                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] mb-3'
+                  - type: link
+                    content: '09 77 42 59 29'
+                    props:
+                      href: 'tel:+33977425929'
+                      className: 'block [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] hover:text-white'
+                  - type: link
+                    content: '06 24 41 32 03'
+                    props:
+                      href: 'tel:+33624413203'
+                      className: 'block [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] hover:text-white'
+                  - type: link
+                    content: 'contact@laplagedigitale.fr'
+                    props:
+                      href: 'mailto:contact@laplagedigitale.fr'
+                      className: 'block [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] hover:text-white mt-1'
+
+              # Explore
+              - type: container
+                children:
+                  - type: text
+                    element: h2
+                    content: $t:footer.explore
+                    props:
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-white mb-4'
                   - type: flex
                     props:
-                      className: 'flex gap-4'
+                      className: 'flex flex-col gap-2 [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)]'
                     children:
-                      - type: link
-                        content: LinkedIn
-                        props:
-                          href: 'https://fr.linkedin.com/company/la-plage-digitale'
-                          className: 'text-gray-400 hover:text-white transition-colors'
-                      - type: link
-                        content: Twitter
-                        props:
-                          href: 'https://twitter.com/laplagedigitale'
-                          className: 'text-gray-400 hover:text-white transition-colors'
-                      - type: link
-                        content: Instagram
-                        props:
-                          href: 'https://instagram.com/laplagedigitale'
-                          className: 'text-gray-400 hover:text-white transition-colors'
-                      - type: link
-                        content: Facebook
-                        props:
-                          href: 'https://facebook.com/laplagedigitale'
-                          className: 'text-gray-400 hover:text-white transition-colors'
+                      - { type: link, content: $t:nav.about, props: { href: $t:href.about, className: 'hover:text-white' } }
+                      - { type: link, content: $t:nav.space, props: { href: $t:href.space, className: 'hover:text-white' } }
+                      - { type: link, content: $t:nav.pricing, props: { href: $t:href.pricing, className: 'hover:text-white' } }
+                      - { type: link, content: $t:nav.companies, props: { href: $t:href.companies, className: 'hover:text-white' } }
+                      - { type: link, content: $t:nav.blog, props: { href: $t:href.blog, className: 'hover:text-white' } }
+                      - { type: link, content: $t:nav.contact, props: { href: $t:href.contact, className: 'hover:text-white' } }
 
+              # Follow + join
               - type: container
                 children:
                   - type: text
-                    element: h4
-                    content: Navigation
+                    element: h2
+                    content: $t:footer.follow
                     props:
-                      className: 'text-white font-semibold mb-4'
-                  - type: list
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-white mb-4'
+                  - type: flex
                     props:
-                      className: 'space-y-2'
+                      className: 'flex gap-3 mb-8'
                     children:
-                      - type: list-item
-                        children:
-                          - type: link
-                            content: $t:nav.spaces
-                            props:
-                              href: $t:nav.href.spaces
-                              className: 'text-gray-400 hover:text-white transition-colors'
-                      - type: list-item
-                        children:
-                          - type: link
-                            content: $t:nav.pricing
-                            props:
-                              href: $t:nav.href.pricing
-                              className: 'text-gray-400 hover:text-white transition-colors'
-                      - type: list-item
-                        children:
-                          - type: link
-                            content: $t:nav.about
-                            props:
-                              href: $t:nav.href.about
-                              className: 'text-gray-400 hover:text-white transition-colors'
-                      - type: list-item
-                        children:
-                          - type: link
-                            content: $t:nav.contact
-                            props:
-                              href: $t:nav.href.contact
-                              className: 'text-gray-400 hover:text-white transition-colors'
-
-              - type: container
-                children:
-                  - type: text
-                    element: h4
-                    content: Contact
+                      - { type: link, props: { href: 'https://www.facebook.com/laplagedigitale', target: _blank, rel: 'noopener noreferrer', 'aria-label': Facebook, className: 'grid place-items-center w-10 h-10 rounded-full bg-white/10 hover:bg-magenta transition-colors' }, children: [{ type: icon, props: { name: facebook, size: 18 } }] }
+                      - { type: link, props: { href: 'https://www.instagram.com/laplagedigitale', target: _blank, rel: 'noopener noreferrer', 'aria-label': Instagram, className: 'grid place-items-center w-10 h-10 rounded-full bg-white/10 hover:bg-magenta transition-colors' }, children: [{ type: icon, props: { name: instagram, size: 18 } }] }
+                      - { type: link, props: { href: 'https://www.linkedin.com/company/la-plage-digitale', target: _blank, rel: 'noopener noreferrer', 'aria-label': LinkedIn, className: 'grid place-items-center w-10 h-10 rounded-full bg-white/10 hover:bg-magenta transition-colors' }, children: [{ type: icon, props: { name: linkedin, size: 18 } }] }
+                      - { type: link, props: { href: 'https://twitter.com/laplagedigitale', target: _blank, rel: 'noopener noreferrer', 'aria-label': X (Twitter), className: 'grid place-items-center w-10 h-10 rounded-full bg-white/10 hover:bg-magenta transition-colors' }, children: [{ type: icon, props: { name: twitter, size: 18 } }] }
+                      - { type: link, props: { href: 'https://www.youtube.com/user/LaPlageDigitale', target: _blank, rel: 'noopener noreferrer', 'aria-label': YouTube, className: 'grid place-items-center w-10 h-10 rounded-full bg-white/10 hover:bg-magenta transition-colors' }, children: [{ type: icon, props: { name: youtube, size: 18 } }] }
+                  - type: link
+                    content: $t:nav.cta
                     props:
-                      className: 'text-white font-semibold mb-4'
-                  - type: list
-                    props:
-                      className: 'space-y-2 text-gray-400 text-sm'
-                    children:
-                      - type: list-item
-                        content: $t:contact.address
-                      - type: list-item
-                        content: $t:contact.email
-                      - type: list-item
-                        content: $t:contact.hours
+                      href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
+                      target: _blank
+                      rel: 'noopener noreferrer'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
 
-      - type: container
-        props:
-          className: 'border-t border-gray-800'
-        children:
-          - type: container
+          - type: flex
             props:
-              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row justify-between items-center gap-4'
+              className: 'mt-14 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 justify-between [font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-navy-200'
             children:
               - type: text
                 element: p
                 content: $t:footer.copyright
-                props:
-                  className: 'text-gray-500 text-sm'
               - type: flex
                 props:
-                  className: 'flex gap-6'
+                  className: 'flex gap-5'
                 children:
-                  - type: link
-                    content: $t:footer.legal
-                    props:
-                      href: $t:nav.href.legal
-                      className: 'text-gray-500 hover:text-gray-300 text-sm transition-colors'
-                  - type: link
-                    content: $t:footer.privacy
-                    props:
-                      href: $t:nav.href.privacy
-                      className: 'text-gray-500 hover:text-gray-300 text-sm transition-colors'
+                  - { type: link, content: $t:nav.legal, props: { href: $t:href.legal, className: 'hover:text-white' } }
+                  - { type: link, content: $t:nav.privacy, props: { href: $t:href.privacy, className: 'hover:text-white' } }
+                  - { type: link, content: $t:nav.editor, props: { href: /connexion, className: 'hover:text-white' } }

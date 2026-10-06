@@ -1,0 +1,571 @@
+# English dictionary. Same keys, same order as fr.yaml.
+
+# ── Hrefs ──
+href.home: /en
+href.about: /en/qui-sommes-nous
+href.activities: /en/nos-activites
+href.supporters: /en/nos-soutiens
+href.space: /en/espace-coworking
+href.pricing: /en/les-formules
+href.coworkers: /en/nos-coworkers
+href.companies: /en/les-entreprises
+href.blog: /en/blog
+href.contact: /en/contact
+href.legal: /en/mentions-legales
+href.portal: /en/portal
+href.privacy: /en/confidentialite
+
+# ── Navigation ──
+nav.aria: Main navigation
+nav.portal: Member area
+nav.menu: Menu
+nav.home: Home
+nav.about: About us
+nav.about.desc: The project, the association and the team
+nav.activities: Our activities
+nav.activities.desc: What we offer and host
+nav.supporters: Our supporters
+nav.supporters.desc: Partners, labels and networks
+nav.coworking: Coworking space
+nav.space: The space
+nav.space.desc: Desks, flex seats, private boxes and rooms
+nav.pricing: Plans & pricing
+nav.pricing.desc: Fixed, Nomad, Flex and meeting rooms
+nav.coworkers: Our coworkers
+nav.coworkers.desc: The people who make La Plage
+nav.companies: Resident companies
+nav.companies.desc: The companies based at La Plage
+nav.blog: News
+nav.contact: Practical info
+nav.cta: Become a member
+nav.legal: Legal notice
+nav.privacy: Privacy
+nav.editor: Editors' area
+
+# ── Footer ──
+footer.tagline: "A community-run third place and coworking space in the heart of Strasbourg: over 600 m² to work, meet and start up."
+footer.visit: Find us
+footer.hours: "Monday to Friday, 9am–5pm · 24/7 access for fixed desks"
+footer.explore: Explore
+footer.follow: Follow us
+footer.copyright: "© La Plage Digitale — non-profit association (Alsace-Moselle law of 1908)"
+
+# ── Blog ──
+blog.meta.title: News — La Plage Digitale
+blog.meta.description: "Events, newsletters and news from La Plage Digitale, Strasbourg's third place for innovation, since 2012."
+blog.eyebrow: News
+blog.title: Life at La Plage
+blog.lead: "Events, meetups, monthly newsletters and portraits: more than ten years of Strasbourg's digital scene."
+blog.languageNote: "Our articles are published in French."
+blog.empty: No articles yet.
+post.back: "← All news"
+post.more: More articles
+post.previous: Previous article
+post.next: Next article
+
+# ═══ Page dictionaries (generated from fragments — edit the fragments) ═══
+
+# ── about ──
+about.meta.title: About us — La Plage Digitale
+about.meta.description: "La Plage Digitale, a non-profit born from Alsace Digitale, runs a third place of over 600 m² in the heart of Strasbourg. Our project, board and team."
+about.eyebrow: About us
+about.title: A third place in the heart of Strasbourg
+about.lead: La Plage Digitale welcomes you to its coworking space, at the heart of its third place.
+about.place.eyebrow: The place
+about.place.title: Over 600 m² in the former Coop premises
+about.place.p1: "Set in the former Coop premises on rue Jacques Peirotes, right in the centre of Strasbourg, La Plage Digitale offers over 600 m² for the region's entrepreneurs, innovators and creatives. A meeting point for Strasbourg's entrepreneurial ecosystem, it is a space that fosters creative initiatives, individual and collective alike."
+about.place.p2: "It is also one of the largest coworking spaces in Strasbourg: 52 dedicated desks for coworkers and 30 places available without booking, Monday to Friday from 9 am to 5 pm. Fully equipped meeting rooms host your seminars and team meetings."
+about.place.p3: "Last but not least, our Flex area holds up to 60 people for meetups and evenings run with our community, institutional and private partners — and you can hire it for your own professional events."
+about.place.imageAlt: "The open space at La Plage Digitale: desks, pendant lights and glazed partitions under a concrete roof structure"
+about.project.title: The project
+about.project.p1: "La Plage Digitale exists to speed up the development of innovative projects. It encourages exchanges between coworkers while giving every visitor a personal welcome."
+about.project.p2: "Our coworking space is open to everyone. That diversity is what makes for a warm, caring community: working together, sharing services and values, with respect for each other."
+about.project.motto: Pooling resources and serendipity are the watchwords behind everything we do.
+about.association.title: The association
+about.association.p1: "La Plage Digitale is a non-profit association under local Alsace-Moselle law (loi 1908), set up in 2019 when part of the activity of the Alsace Digitale association was spun off."
+about.association.p2: "It runs the third place and its coworking space. La Plage Digitale is therefore the name of both the association and this dual-purpose venue."
+about.board.eyebrow: Governance
+about.board.title: The board of La Plage Digitale
+about.role.president: President of La Plage Digitale
+about.role.treasurer: Treasurer of La Plage Digitale
+about.role.secretary: Secretary of La Plage Digitale
+about.team.eyebrow: Day to day
+about.team.title: The team
+about.team.lead: They welcome you, answer your questions and keep the Plage running every day.
+about.role.operations: Operations Director of La Plage Digitale
+about.cta.title: Join us!
+about.cta.lead: Become a member of the association or give us a call to arrange a visit.
+about.cta.join: Become a member
+about.cta.call: Call us
+about.cta.callNumber: Call us · +33 9 77 42 59 29
+
+# ── activities ──
+activities.meta.title: Our activities — La Plage Digitale
+activities.meta.description: "The Plage Council, a shared library, meetups, Hack SXB, advice sessions and the Bidouillothèque: life at La Plage Digitale, Strasbourg's third place."
+activities.eyebrow: Third place · Community · Events
+activities.title: Our activities
+activities.lead: "The Plage is more than a desk: it is a community that gets together, shares its resources and opens its doors to Strasbourg's associations and tech communities."
+activities.offer.eyebrow: For our coworkers
+activities.offer.title: What we offer…
+activities.offer.lead: Regular get-togethers and services designed to keep the members' community alive.
+activities.council.title: The Plage Council
+activities.council.text: "Once a month, the Plage Council brings coworkers together: news from the space, everyone's needs and an introduction to the newcomers."
+activities.council.imageAlt: Four people talking around a table covered in documents
+activities.library.title: Shared library
+activities.library.text: Books on a wide range of subjects are available to all members.
+activities.library.imageAlt: The shelves of the shared library
+activities.startupce.title: Startup CE
+activities.startupce.text: "Through our partnership with the Startup CE platform, enjoy a wide range of perks and discounts on cultural and social outings."
+activities.startupce.imageAlt: Illustration of a rocket taking off above a city
+activities.ecology.title: Going green
+activities.ecology.text: "Recycling, raising awareness of good habits and anti-waste measures: we act every day to reduce our footprint."
+activities.ecology.imageAlt: Illustration of La Plage Digitale's environmental approach
+activities.host.eyebrow: Open to the city
+activities.host.title: What we host…
+activities.host.lead: Communities, experts and enthusiasts who make the Plage an open place to learn.
+activities.meetups.title: Meetups
+activities.meetups.text: "Developer communities (Go SXB Go!, Strasbourg JS…) regularly hold meetups to talk about programming languages and how they are evolving."
+activities.meetups.imageAlt: A developer meetup in the Flex area
+activities.advice.title: Advice sessions
+activities.advice.text: "On the 1st and 3rd Friday of each month, get expert advice and answers to your questions on intellectual property and tax."
+activities.advice.imageAlt: Two people in an advice session by a window
+activities.hack.title: Hack SXB
+activities.hack.text: "On the last Friday of each month, Hack SXB is an evening of coding on any topic: bring your own project or join a shared one."
+activities.hack.imageAlt: A Hack SXB evening at La Plage Digitale
+activities.hack.link: hacksxb.com →
+activities.bidouillo.title: Bidouillothèque
+activities.bidouillo.text: "A shared resource centre for hands-on learning and digital and creative projects: VR headsets, computers, tablets, robots… available to hire for educational projects."
+activities.bidouillo.imageAlt: Hands assembling a small electronic robot
+activities.cta.title: Want to take part?
+activities.cta.lead: Become a member of the association to join in the life of the Plage, or get in touch to suggest your event.
+activities.cta.join: Become a member
+activities.cta.contact: Contact us
+
+# ── companies ──
+companies.meta.title: The companies based at La Plage Digitale
+companies.meta.description: "Start-ups, freelancers, non-profits and SMEs: discover the companies that have set up their offices at La Plage Digitale, in the heart of Strasbourg."
+companies.eyebrow: Resident companies
+companies.title: The companies based at La Plage Digitale
+companies.lead: "Start-ups, freelancers, non-profits and SMEs in tech, the environment and consulting, all working side by side at 13 rue Jacques Peirotes."
+companies.wall.title: They work at the Plage
+companies.wall.text: Click a logo to visit the company's website.
+companies.cta.title: Join them
+companies.cta.text: "A fixed desk, a Box for your team or a flex place: there's room for you at the Plage."
+companies.cta.pricing: See our plans
+companies.cta.contact: Contact us
+
+# ── contact ──
+contact.meta.title: "Contact and directions — La Plage Digitale"
+contact.meta.description: "Phone, email, opening hours and directions for La Plage Digitale, the third place and coworking space at 13 rue Jacques Peirotes, Strasbourg."
+contact.eyebrow: "Practical information"
+contact.title: "Get in touch!"
+contact.lead: "Planning a visit, looking for a desk or a meeting room, or organising an event? Our team is here Monday to Friday, and the door is always open."
+contact.reach.eyebrow: "Reach us"
+contact.reach.title: "Let’s talk about your project"
+contact.phone.label: "Phone"
+contact.email.label: "Email"
+contact.address.label: "Address"
+contact.address.directions: "Get directions"
+contact.hours.label: "Opening hours"
+contact.hours.weekdays: "Monday to Friday · 9 am – 5 pm"
+contact.hours.fixed: "Fixed-desk residents have access 24/7."
+contact.map.eyebrow: "Find us"
+contact.map.title: "Right in the heart of Strasbourg"
+contact.map.lead: "La Plage Digitale occupies the former Coop premises at 13 rue Jacques Peirotes, Strasbourg."
+contact.map.iframeTitle: "Map: La Plage Digitale, 13 rue Jacques Peirotes, 67000 Strasbourg"
+contact.form.eyebrow: "Write to us"
+contact.form.title: "Send us a message"
+contact.form.lead: "Drop us a line and we will get back to you quickly — usually within two working days."
+contact.form.submit: "Send message"
+contact.form.success.title: "Thank you, your message has been received!"
+contact.form.success.message: "The La Plage Digitale team will reply very soon. For anything urgent, call us on +33 9 77 42 59 29."
+contact.form.error: "Your message could not be sent. Please try again, or email us directly at contact@laplagedigitale.fr."
+contact.form.name.label: "Full name"
+contact.form.name.placeholder: "Alex Smith"
+contact.form.email.label: "Email"
+contact.form.email.placeholder: "alex@example.com"
+contact.form.phone.label: "Phone (optional)"
+contact.form.phone.placeholder: "+33 6 12 34 56 78"
+contact.form.subject.label: "What is your enquiry about?"
+contact.form.subject.visite: "Visiting the space"
+contact.form.subject.bureauFixe: "Fixed desk"
+contact.form.subject.nomade: "Hot desk"
+contact.form.subject.flex: "Flex space"
+contact.form.subject.salle: "Meeting room"
+contact.form.subject.domiciliation: "Business address"
+contact.form.subject.evenement: "Hosting an event"
+contact.form.subject.autre: "Something else"
+contact.form.message.label: "Your message"
+contact.form.message.placeholder: "Tell us in a few lines what you are looking for…"
+contact.form.privacy: "Your details are used solely to reply to your enquiry and are never sold. To find out more and exercise your rights, see our privacy policy."
+contact.cta.motif: "Coworking · Third place · Events"
+contact.cta.title: "Ready to set up your laptop at the Plage?"
+contact.cta.lead: "Compare our coworking plans, or join the association and help bring the third place to life."
+contact.cta.pricing: "See our plans"
+contact.cta.membership: "Join on HelloAsso"
+
+# ── coworkers ──
+coworkers.meta.title: Our coworkers — La Plage Digitale
+coworkers.meta.description: "Designers, developers, entrepreneurs: meet the people who work every day at La Plage Digitale, a non-profit coworking space in Strasbourg."
+coworkers.eyebrow: Our coworkers
+coworkers.title: The people who make the Plage
+coworkers.lead: "Remote employees, freelancers and founders: they chose La Plage Digitale as their place to work, and they tell you why."
+coworkers.list.title: Coworker profiles
+coworkers.caroline.alt: Portrait of Caroline Bosc
+coworkers.caroline.p1: "After a master's degree in international business, Caroline added a second master's in web studies in Strasbourg."
+coworkers.caroline.p2: "Now a UX designer at Impact Positif, she has been coworking at La Plage Digitale since March 2022."
+coworkers.frederic.alt: Portrait of Frédéric Fuchs
+coworkers.frederic.p1: "Frédéric is head of sales operations at OpenClassrooms, a company whose mission is to make education accessible to everyone."
+coworkers.frederic.p2: "After three years of working from home, he joined us to draw a line between his private and professional life — and to meet new people."
+coworkers.roland.alt: Portrait of Roland Margelidon
+coworkers.roland.p1: "A software engineer, Roland founded his own company, Rolrom, and is building business management software for architecture firms."
+coworkers.roland.p2: "He chose La Plage Digitale because it is a non-profit, community-run coworking space."
+coworkers.bastien.company: Freelance
+coworkers.bastien.alt: Portrait of Bastien Remy
+coworkers.bastien.p1: "A self-employed web developer, Bastien builds custom applications for businesses that need web-based tools."
+coworkers.bastien.p2: "He has been working at La Plage Digitale for five years and feels right at home. For him, the Plage means peace, freedom and flexibility!"
+coworkers.sylvaine.alt: Portrait of Sylvaine Gross
+coworkers.sylvaine.p1: "A true Alsatian Swiss Army knife: after more than 20 years as an all-round secretary, sales assistant and executive assistant, Sylvaine launched her own administrative support business, Mu.se. She has served as treasurer of La Plage Digitale, of which Mu.se has been a member since 2019."
+coworkers.sylvaine.p2: "She is also the coworkers' unofficial supplier of staples, paper clips, correction fluid and scrap paper."
+coworkers.eleonore.alt: Portrait of Eléonore Greif
+coworkers.eleonore.p1: "A documentary maker in another life, Eléonore recently joined the cheerful Mu.se team as an administrative assistant — and the even more cheerful team at La Plage Digitale!"
+coworkers.eleonore.p2: "A chance to work away from home, alongside people who are involved in community life."
+coworkers.cta.title: Could yours be the next portrait?
+coworkers.cta.text: Join the La Plage Digitale community, for a day or for the long run.
+coworkers.cta.pricing: See our plans
+coworkers.cta.companies: Resident companies
+
+# ── home ──
+home.meta.title: La Plage Digitale — Coworking and third place in Strasbourg
+home.meta.description: "Strasbourg's third place for innovation: 600 m² of coworking in the city centre, with dedicated desks, flex places and meeting rooms to hire."
+home.href.fixe: /en/les-formules#fixe
+home.href.nomade: /en/les-formules#nomade
+home.href.flex: /en/les-formules#flex
+home.href.reunion: /en/les-formules#reunion
+home.hero.eyebrow: Coworking · Third place · Strasbourg
+home.hero.title: Strasbourg's third place for innovation
+home.hero.lead: "Over 600 m² for entrepreneurs, innovators and creatives, in the former Coop premises right in the heart of Strasbourg. A desk by the month, a place by the day or a room for your meetings: come and work at the Plage."
+home.hero.cta.space: Work in our space
+home.hero.cta.fixe: Monthly desk
+home.hero.cta.flex: Day desk
+home.hero.cta.reunion: Meeting rooms
+home.hero.imageAlt: "Photo collage of La Plage Digitale: coworkers at work, the library, the shared kitchen, table football and a meetup"
+home.numbers.title: La Plage in numbers
+home.numbers.area: of shared workspace
+home.numbers.fixed: dedicated desks
+home.numbers.flex: flex places, no booking needed
+home.numbers.rooms: meeting rooms for 2 to 60 people
+home.numbers.companies: resident companies
+home.offers.eyebrow: Our plans
+home.offers.title: A plan for every way of working
+home.offers.lead: By the month, by the day or just for a meeting — pick what suits you.
+home.offers.fixe.title: Dedicated
+home.offers.fixe.price: €275 excl. VAT / month
+home.offers.fixe.text: Your own desk in the open space, a locker, 24/7 access and use of the meeting rooms.
+home.offers.nomade.title: Nomad
+home.offers.nomade.price: €175 excl. VAT / month
+home.offers.nomade.text: 24/7 access to the Flex area, with your own set of keys.
+home.offers.flex.title: Flex
+home.offers.flex.price: €14 excl. VAT / day
+home.offers.flex.text: A shared desk for the day, Monday to Friday from 9 am to 5 pm, with no commitment.
+home.offers.reunion.title: Meeting rooms
+home.offers.reunion.price: from €87 excl. VAT / 4 h
+home.offers.reunion.text: Four rooms, each with a screen, for 6 to 60 people, a stone's throw from the cathedral.
+home.offers.more: See details →
+home.offers.cta: All our plans
+home.community.eyebrow: Third place
+home.community.title: More than a coworking space
+home.community.lead: "La Plage Digitale is where Strasbourg's entrepreneurial community meets and shares. Pooling resources and serendipity: every month the community gets together, learns and builds."
+home.community.item1: "The Plage Council — every month, coworkers catch up on the space and welcome newcomers."
+home.community.item2: "Meetups — Go SXB Go!, Strasbourg JS and other developer communities meet here regularly."
+home.community.item3: "Hack SXB — on the last Friday of the month, an evening of coding on open-ended projects."
+home.community.item4: "Shared library, Bidouillothèque, advice sessions — resources shared between members."
+home.community.cta: Discover our activities
+home.community.imageAlt: A developer meetup in the Flex area of La Plage Digitale
+home.news.eyebrow: News
+home.news.title: The latest from the Plage
+home.news.cta: All news →
+home.news.empty: No news yet.
+home.supporters.title: With the support of
+home.supporters.cta: Our supporters and networks →
+home.cta.title: Fancy joining the Plage?
+home.cta.lead: Drop by Monday to Friday from 9 am to 5 pm, or become a member of the association and join the community.
+home.cta.visit: Arrange a visit
+home.cta.join: Become a member
+
+# ── legal ──
+legal.meta.title: "Legal notice — La Plage Digitale"
+legal.meta.description: "Legal notice for the La Plage Digitale website: publisher, publication director, hosting provider, intellectual property and liability."
+legal.eyebrow: "Legal information"
+legal.title: "Legal notice"
+legal.lead: "In accordance with Article 6 of French Law No. 2004-575 of 21 June 2004 on confidence in the digital economy (LCEN), the parties responsible for laplagedigitale.fr are identified below."
+legal.updated: "Last updated: October 2026"
+legal.editor.title: "Publisher"
+legal.editor.p1: "The laplagedigitale.fr website is published by La Plage Digitale, a non-profit association governed by the 1908 local law of Alsace-Moselle, which runs the third place and coworking space of the same name."
+legal.editor.p2: "Registered office: 13 rue Jacques Peirotes, 67000 Strasbourg, France"
+legal.editor.p3: "Phone: +33 9 77 42 59 29 · +33 6 24 41 32 03 · Email: contact@laplagedigitale.fr"
+legal.director.title: "Publication director"
+legal.director.p1: "Simon THIERRY, President of the La Plage Digitale association."
+legal.host.title: "Hosting provider"
+legal.host.p1: "Scalingo SAS, a simplified joint-stock company with share capital of €35,291.90, SIRET 808 665 483 00034 · 13 rue Jacques Peirotes, 67000 Strasbourg, France · https://scalingo.com"
+legal.host.p2: "The website and its data are hosted within the European Union."
+legal.build.title: "Design and build"
+legal.build.p1: "The website is built with Sovrium (https://sovrium.com), a configuration-driven application platform. Text and photographs: La Plage Digitale, unless otherwise stated."
+legal.ip.title: "Intellectual property"
+legal.ip.p1: "All content on this website — text, photographs, illustrations, logos and visual identity — is the property of La Plage Digitale or is used with the permission of its owners, and is protected by the French Intellectual Property Code."
+legal.ip.p2: "Any reproduction, representation, modification or adaptation of all or part of this content, by any means whatsoever, without the prior written consent of La Plage Digitale is prohibited and constitutes infringement under Articles L.335-2 et seq. of the French Intellectual Property Code. The names, logos and trademarks of the companies and partners mentioned belong to their respective owners."
+legal.liability.title: "Liability"
+legal.liability.p1: "La Plage Digitale endeavours to publish accurate and up-to-date information (plans, prices, opening hours, services). This information is provided for guidance only and may change; the association cannot be held liable for any omission, inaccuracy or delay in updating it. Please contact us if you need confirmation."
+legal.liability.p2: "The website is intended to be available at all times, but access may be interrupted, in particular for maintenance. La Plage Digitale cannot be held liable for any damage arising from the use of the website or from being unable to access it."
+legal.links.title: "Links"
+legal.links.p1: "This website contains links to third-party sites (HelloAsso, social networks, the websites of our coworkers and partners). La Plage Digitale has no control over their content and accepts no responsibility for it. Links to this website are welcome, provided they do not harm the association’s reputation."
+legal.data.title: "Personal data and cookies"
+legal.data.p1: "This website sets no advertising or audience-measurement cookies. Information submitted through the contact form is used solely to reply to your enquiry. Full details of how data is processed, how long it is kept and your rights are set out in our privacy policy."
+legal.data.link: "Read the privacy policy →"
+legal.law.title: "Governing law"
+legal.law.p1: "This legal notice is governed by French law. If you have any questions, please email us at contact@laplagedigitale.fr."
+
+# ── pricing ──
+href.pricing.fixe: /en/les-formules#fixe
+href.pricing.nomade: /en/les-formules#nomade
+href.pricing.flex: /en/les-formules#flex
+href.pricing.reunion: /en/les-formules#reunion
+href.pricing.domiciliation: /en/les-formules#domiciliation
+pricing.meta.title: Our coworking plans in Strasbourg
+pricing.meta.description: "Fixed €275 excl. VAT/month, Nomad €175 excl. VAT/month, Flex €14 excl. VAT/day, meeting rooms from €87 for 4 hours, and a business address in Strasbourg."
+pricing.eyebrow: Our plans
+pricing.title: Simple plans, so you can work at your own pace
+pricing.lead: "Your own desk, unlimited access to the flex area or a place for the day: pick the plan that suits you, and book a room whenever you need one."
+pricing.jump.aria: Jump to a plan
+pricing.jump.rooms: Meeting rooms
+pricing.jump.domiciliation: Business address
+pricing.plans.eyebrow: Coworking
+pricing.plans.title: Three plans to settle in
+pricing.plans.vat: "Prices exclude VAT (charged at 20%). Fair use means reasonable use, shared fairly among members."
+pricing.plan.cta: Get in touch
+pricing.fixe.name: Fixed
+pricing.fixe.amount: €275
+pricing.fixe.unit: excl. VAT / month
+pricing.fixe.ttc: €330 per month incl. VAT
+pricing.fixe.desc: "Your own desk in the open-plan space, rented by the month: ideal for long-term work, with access to the meeting rooms."
+pricing.fixe.f1: 24/7 access, with your own keys to La Plage
+pricing.fixe.f2: Your own desk
+pricing.fixe.f3: A personal lockable locker
+pricing.fixe.f4: Storage space
+pricing.fixe.f5: High-speed fibre internet and Wi-Fi
+pricing.fixe.f6: Access to printers and scanners
+pricing.fixe.f7: Access to the meeting rooms, on a fair-use basis
+pricing.fixe.f8: Send and receive post, on a fair-use basis
+pricing.fixe.f9: Business address available (case by case, depending on your activity and length of stay)
+pricing.fixe.f10: Unlimited coffee
+pricing.fixe.f11: Free access to the lounge and café area
+pricing.fixe.offer.title: New business offer
+pricing.fixe.offer.who: "For legal entities (newly founded companies or associations) whose Kbis registration is less than a year old, on a Fixed contract:"
+pricing.fixe.offer.s1: first 3 months
+pricing.fixe.offer.s2: next 3 months
+pricing.fixe.offer.s3: next 6 months
+pricing.fixe.offer.note: "Subject to approval by La Plage Digitale's board. Some exceptions may also be made."
+pricing.nomade.name: Nomad
+pricing.nomade.amount: €175
+pricing.nomade.unit: excl. VAT / month
+pricing.nomade.ttc: €210 per month incl. VAT
+pricing.nomade.desc: "Unlimited access to the flex area, at any hour: for regulars who don't need a desk of their own."
+pricing.nomade.f1: 24/7 access to the flex area, with your own keys
+pricing.nomade.f2: Access to printers and scanners, on a fair-use basis
+pricing.nomade.f3: High-speed fibre internet and Wi-Fi
+pricing.nomade.f4: Free access to the lounge and café area
+pricing.nomade.f5: Unlimited free coffee
+pricing.nomade.info: "Good to know: with this plan, meeting rooms are charged separately."
+pricing.flex.name: Flex
+pricing.flex.amount: €14
+pricing.flex.unit: excl. VAT / day
+pricing.flex.ttc: €16.80 per day incl. VAT
+pricing.flex.desc: "A workspace by the day, for your short-term needs."
+pricing.flex.f1: A shared desk for the day (4 places per large 110 × 195 cm table)
+pricing.flex.f2: High-speed fibre internet and Wi-Fi
+pricing.flex.f3: Access to printers and scanners
+pricing.flex.f4: Unlimited coffee
+pricing.flex.f5: Free access to the lounge and café area
+pricing.flex.info: "9 am to 5 pm, Monday to Friday (excluding public holidays), no booking needed."
+pricing.rooms.eyebrow: Meeting rooms
+pricing.rooms.title: Four rooms, for 6 to 60 people
+pricing.rooms.lead: "Whether or not you are a member, rent a room for a full or half day: perfect for meeting clients and suppliers in the centre of Strasbourg, or running a training session a stone's throw from the cathedral. Every room has a screen."
+pricing.room.screen: Screen
+pricing.room.unit: excl. VAT / 4 h
+pricing.room.crevette.name: The Crevette room 🦐
+pricing.room.crevette.cap: Up to 6 people
+pricing.room.crevette.size: 12 m²
+pricing.room.crevette.price: €87
+pricing.room.crevette.alt: The Crevette room, a small meeting room with a table and screen
+pricing.room.requin.name: The Requin room 🦈
+pricing.room.requin.cap: Up to 8 people
+pricing.room.requin.size: 16 m²
+pricing.room.requin.price: €98
+pricing.room.requin.alt: The Requin room, a meeting room for 8 people
+pricing.room.baleine.name: The Baleine room 🐳
+pricing.room.baleine.cap: Up to 16 people
+pricing.room.baleine.size: 36 m²
+pricing.room.baleine.price: €120
+pricing.room.baleine.alt: The Baleine room, a large meeting room for 16 people
+pricing.room.narval.name: The Narval room 🐋
+pricing.room.narval.cap: Up to 60 people
+pricing.room.narval.size: 82 m²
+pricing.room.narval.price: €253
+pricing.room.narval.alt: The Narval room, a conference space for up to 60 people
+pricing.dom.eyebrow: Business address
+pricing.dom.title: Register your business in Strasbourg
+pricing.dom.text: "Use 13 rue Jacques Peirotes as your company's registered address — no need to rent a desk in our coworking space."
+pricing.dom.price: "€40 / month"
+pricing.dom.priceNote: "Our published rate — get in touch for the details."
+pricing.dom.offer: "Every newly registered company gets 30% off its first 3 months."
+pricing.dom.cta: Request a quote
+pricing.cta.title: A question, or fancy a visit?
+pricing.cta.text: "Call us, email us or drop by Monday to Friday between 9 am and 5 pm — we'll show you around."
+pricing.cta.contact: Contact us
+pricing.cta.visit: Discover the space
+
+# ── privacy ──
+privacy.meta.title: "Privacy policy — La Plage Digitale"
+privacy.meta.description: "How La Plage Digitale handles your data: contact form, cookie-free analytics, retention periods and your GDPR rights."
+privacy.eyebrow: "Your data"
+privacy.title: "Privacy policy"
+privacy.lead: "We collect only what we need, we sell nothing and we use no advertising trackers. Here, in plain terms, is what laplagedigitale.fr does with your data."
+privacy.updated: "Last updated: October 2026"
+privacy.controller.title: "Data controller"
+privacy.controller.p1: "The data controller is the La Plage Digitale association, 13 rue Jacques Peirotes, 67000 Strasbourg, France, represented by its President, Simon THIERRY."
+privacy.controller.p2: "For any question about your data: contact@laplagedigitale.fr."
+privacy.contact.title: "Contact form"
+privacy.contact.p1: "When you write to us through the form on the Contact page, we store your name, email address, phone number (optional), the subject and content of your message, and the date it was sent, in the website’s database."
+privacy.contact.p2: "This data is used solely to reply to your enquiry (a visit, a desk, a room, an event, membership…) and, where relevant, to send you a proposal. Legal basis: steps taken at your request prior to entering into a contract, and our legitimate interest in replying to people who contact us (Article 6(1)(b) and (f) GDPR)."
+privacy.contact.p3: "To protect the form against automated submissions, each submission is also logged with your browser identifier (user agent) and an irreversible fingerprint (salted hash) of your IP address; the IP address itself is never stored."
+privacy.analytics.title: "Cookie-free analytics"
+privacy.analytics.p1: "To understand which pages are read, we use the analytics tool built into our platform, which runs on our own server. It sets no cookies, uses no fingerprinting techniques and sends no data to any third party: no Google Analytics, no advertising pixels."
+privacy.analytics.p2: "It records page views, the referring page, campaign parameters (UTM) and device type. Visits are grouped using a pseudonymous identifier calculated on the server from the date, IP address and browser, which changes every day; the IP address is not stored."
+privacy.analytics.p3: "If your browser sends a “Do Not Track” signal, your visit is not recorded. Statistics are deleted automatically after 365 days, and the Legal notice and Privacy pages are not measured. As it is limited to aggregate statistics, this audience measurement does not require your consent."
+privacy.accounts.title: "Editorial team accounts"
+privacy.accounts.p1: "Only members of the La Plage Digitale team have an account, created by an administrator, to publish blog news: the website offers no public sign-up. For these accounts we store the name, email address, an irreversibly hashed password and the session information needed to sign in."
+privacy.cookies.title: "Cookies"
+privacy.cookies.p1: "This website sets no advertising, profiling or analytics cookies. Only strictly necessary cookies may be set: the session cookie for team members signed in to the editorial area and, if you switch language, a cookie that remembers your choice."
+privacy.cookies.p2: "These technical cookies are exempt from consent under French data protection law (Article 82 of the Loi Informatique et Libertés), which is why the website shows no cookie banner."
+privacy.thirdparty.title: "Third-party content"
+privacy.thirdparty.p1: "The Contact page embeds a Google Maps map. When it loads, Google receives your IP address and may set its own cookies, in accordance with its privacy policy (policies.google.com/privacy). Our full address is written out on the page, so you can do without the map."
+privacy.thirdparty.p2: "Links to HelloAsso (membership) and to our social networks lead to third-party services governed by their own privacy policies. We do not pass any data to them."
+privacy.recipients.title: "Recipients and hosting"
+privacy.recipients.p1: "Your data is accessible only to authorised members of the La Plage Digitale team. It is never sold, rented or transferred for commercial purposes."
+privacy.recipients.p2: "The website and its database are hosted by our technical processor, Scalingo SAS (Strasbourg), within the European Union. No data is transferred outside the European Union."
+privacy.retention.title: "Retention periods"
+privacy.retention.p1: "Contact form messages: 3 years from our last exchange, then deleted. · Visit statistics: 365 days, then deleted automatically. · Team accounts: for as long as the person contributes to the website, then deleted."
+privacy.security.title: "Security"
+privacy.security.p1: "Connections to the website are encrypted (HTTPS), passwords are hashed and access to data is restricted to authorised people. As no method of transmission or storage is infallible, we undertake to inform you as soon as possible should an incident affect your data, in accordance with the GDPR."
+privacy.rights.title: "Your rights"
+privacy.rights.p1: "Under the GDPR and French data protection law, you have the right to access, rectify and erase your data, to restrict or object to its processing, the right to data portability, and the right to give instructions on what happens to your data after your death."
+privacy.rights.p2: "To exercise these rights, email us at contact@laplagedigitale.fr or write to La Plage Digitale, 13 rue Jacques Peirotes, 67000 Strasbourg, France. We will reply within one month. If we have reasonable doubts about your identity, we may ask you for proof."
+privacy.rights.p3: "If, after contacting us, you feel your rights have not been respected, you may lodge a complaint with the CNIL, the French data protection authority: www.cnil.fr/fr/plaintes."
+privacy.changes.title: "Changes to this policy"
+privacy.changes.p1: "We may update this policy to reflect changes to the website or to the law. The date of the latest update is shown at the top of this page."
+
+# ── space ──
+space.meta.title: Coworking space and offices in Strasbourg
+space.meta.description: "3 private Boxes, 52 fixed desks, 30 flex places and 4 meeting rooms for 2 to 60 people at 13 rue Jacques Peirotes, Strasbourg. Take the virtual tour."
+space.eyebrow: The space
+space.title: Coworking space and available offices
+space.lead: "Over 600 m² in the heart of Strasbourg: private offices, fixed desks, drop-in places and rooms to meet in."
+space.hero.alt: "Views of La Plage Digitale's open-plan space: desks, exposed beams and glass roof"
+space.offers.eyebrow: What's on offer
+space.offers.title: A place for every way of working
+space.box.title: Boxes for start-ups
+space.box.text: Private offices for your small team.
+space.fixed.title: Fixed desks
+space.fixed.text: Your own desk in an open-plan space, right in the city centre.
+space.flex.title: Flex places
+space.flex.text: For occasional needs — no booking required, billed by the half-day.
+space.rooms.title: Meeting rooms
+space.rooms.text: For 2 to 60 people — meetings, conferences and seminars.
+space.more: Find out more →
+space.tour.eyebrow: Virtual tour
+space.tour.title: Explore the Plage from your screen
+space.tour.lead: Wander through the open space, the Boxes and the meeting rooms before you visit.
+space.tour.frameTitle: 360° virtual tour of La Plage Digitale (Giraffe360)
+space.how.eyebrow: How it works
+space.how.title: How do I come and work at La Plage Digitale?
+space.how.fixed.title: A fixed desk
+space.how.fixed.text: "Interested in a fixed desk? Just call or email us to find out which desks are available."
+space.how.flex.title: A flex place
+space.how.flex.text: "To work here now and then, choose the Flex plan. Places cannot be booked in advance: simply turn up during opening hours."
+space.how.flex.hours: Monday to Friday, 9 am to 5 pm
+space.how.flex.note: "Occasionally an event is held in the flex area, making it unavailable. Feel free to call us or check our news."
+space.how.flex.cta: See the news →
+space.how.rooms.title: A meeting room
+space.how.rooms.text: "Interested in one of our meeting rooms? Get in touch or drop by to check availability."
+space.how.rooms.cta: Contact us
+space.how.rooms.alt: "La Plage Digitale's meeting rooms: large table, screen and colourful chairs"
+space.cta.title: Ready to set up your laptop?
+space.cta.text: Browse our plans or come and visit — we'll be happy to show you around.
+space.cta.pricing: See our plans
+space.cta.contact: Arrange a visit
+
+# ── supporters ──
+supporters.meta.title: Our supporters — La Plage Digitale
+supporters.meta.description: "La Plage Digitale is supported by the Grand Est Region and the Eurométropole de Strasbourg, and belongs to the Tiers-Lieux Grand Est network."
+supporters.eyebrow: Partners · Labels · Networks
+supporters.title: Our supporters
+supporters.lead: La Plage Digitale grows thanks to the local authorities that back it and the networks that connect it to other third places in the region.
+supporters.public.eyebrow: Public bodies
+supporters.public.title: With the support of
+supporters.public.lead: The local authorities helping the third place to develop.
+supporters.region.text: The Grand Est Region supports La Plage Digitale.
+supporters.ems.text: The Eurométropole de Strasbourg supports La Plage Digitale.
+supporters.networks.eyebrow: Labels and networks
+supporters.networks.title: Our labels and networks
+supporters.networks.lead: The third-place networks and labels La Plage Digitale belongs to.
+supporters.tlge.text: Member of the Grand Est region's third-place network.
+supporters.c3.text: Awarded the Centre Collaboratif Connecté label.
+supporters.visit: Visit the website →
+supporters.cta.title: Support the Plage too
+supporters.cta.lead: Membership of the association keeps the third place and its community alive.
+supporters.cta.join: Become a member
+supporters.cta.about: About us
+
+# ── Coworker portal ── /login and /portal, and the portal tables' option labels.
+login.title: Member area
+login.subtitle: "Sign in to find your invoices and manage your direct debit."
+portal.title: My member area
+portal.subtitle: "Your La Plage Digitale invoices and direct-debit mandate, refreshed every 15 minutes."
+portal.logout: Sign out
+portal.account.linked: Your account is linked to Pennylane.
+portal.account.unlinked: "Your account is not linked to Pennylane yet — we are on it."
+portal.match.pending: Looking you up
+portal.match.matched: Linked
+portal.match.not_found: "Not found — please contact us"
+portal.match.manual: Linked
+portal.mandate.title: Direct debit
+portal.mandate.intro: "Set up a SEPA mandate through GoCardless and your invoices will be paid automatically when due. The signing link is sent to you by email."
+portal.mandate.none: No direct-debit mandate yet.
+portal.mandate.account: Bank account
+portal.mandate.since: Since
+portal.mandate.cta: Set up direct debit
+portal.mandate.done: Request processed
+portal.mandate.error: "The request could not be sent. Please try again in a few minutes or contact us."
+portal.mandate.active: Active
+portal.mandate.pending: Pending approval
+portal.mandate.failed: Failed
+portal.mandate.ended: Ended
+portal.invoices.title: My invoices
+portal.invoices.none: No invoices yet.
+portal.invoices.number: No.
+portal.invoices.label: Description
+portal.invoices.date: Date
+portal.invoices.deadline: Due date
+portal.invoices.amount: Amount incl. VAT
+portal.invoices.remaining: Left to pay
+portal.invoices.status: Status
+portal.invoices.pdf: PDF
+portal.status.paid: Paid
+portal.status.partially_paid: Partially paid
+portal.status.upcoming: Due
+portal.status.late: Overdue
+portal.status.incomplete: Incomplete
+portal.status.cancelled: Cancelled
+portal.status.partially_cancelled: Partially cancelled
+portal.status.credit_note: Credit note
+portal.status.archived: Archived

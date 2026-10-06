@@ -4,7 +4,7 @@
 # pdf_url is Pennylane's public_file_url, which expires 30 minutes after it is
 # issued; the sync rewrites it every 15 minutes, so the link on screen is
 # always one that still opens.
-id: 2
+id: 4
 name: invoices
 fields:
   - { id: 1, name: pennylane_id, type: single-line-text, required: true, unique: true }
