@@ -1,0 +1,55 @@
+# Reusable component template: account-forms — the body of an account page,
+# shared by La Chaloupe (/chaloupe/compte) and the editors' space
+# (/editor/compte): display name, password, sign-out.
+#
+# Both forms post to the auth routes as the signed-in caller (the session is
+# the only identity), and read the reply status only (`raw`).
+name: account-forms
+type: container
+props:
+  className: 'grid grid-cols-1 xl:grid-cols-2 gap-6 max-w-5xl'
+children:
+  - type: card
+    props:
+      className: 'p-6 space-y-4'
+    children:
+      - { type: text, element: h2, content: $t:account.profile, props: { className: 'text-xl font-semibold text-navy' } }
+      - type: form
+        endpoint:
+          # Better Auth's own route: the PATCH /api/auth/user/update the
+          # Sovrium 0.30 docs list answers "not yet implemented".
+          url: /api/auth/update-user
+          method: POST
+          responseEnvelope: raw
+          submitLabel: $t:account.save
+          onSuccess: { type: toast, variant: success, message: $t:account.profile.saved }
+          onError: { type: toast, variant: destructive, message: $t:account.error }
+        fields:
+          - { field: name, control: text, label: $t:account.name, defaultValue: $session.name }
+
+  - type: card
+    props:
+      className: 'p-6 space-y-4'
+    children:
+      - { type: text, element: h2, content: $t:account.password, props: { className: 'text-xl font-semibold text-navy' } }
+      - type: form
+        endpoint:
+          url: /api/auth/change-password
+          method: POST
+          responseEnvelope: raw
+          submitLabel: $t:account.password.submit
+          onSuccess: { type: toast, variant: success, message: $t:account.password.saved }
+          onError: { type: toast, variant: destructive, message: $t:account.password.error }
+        fields:
+          - { field: currentPassword, control: password, label: $t:account.password.current }
+          - { field: newPassword, control: password, label: $t:account.password.new, description: $t:account.password.rule }
+          - { field: revokeOtherSessions, control: switch, label: $t:account.password.revoke, defaultValue: true }
+
+  - type: card
+    props:
+      className: 'p-6 space-y-4 xl:col-span-2'
+    children:
+      - { type: text, element: h2, content: $t:account.session, props: { className: 'text-xl font-semibold text-navy' } }
+      - { type: text, element: p, content: $t:account.session.intro, props: { className: 'text-sm text-text-muted' } }
+      - type: form
+        action: { type: auth, method: logout, submitLabel: $t:account.logout, onSuccess: { type: navigate, navigate: /connexion } }

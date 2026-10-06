@@ -12,12 +12,15 @@ href.companies: /de/les-entreprises
 href.blog: /de/blog
 href.contact: /de/contact
 href.legal: /de/mentions-legales
-href.portal: /de/portal
+href.portal: /de/chaloupe
+href.portal.invoices: /de/chaloupe/factures
+href.portal.mandate: /de/chaloupe/prelevement
+href.portal.account: /de/chaloupe/compte
 href.privacy: /de/confidentialite
 
 # ── Navigation ──
 nav.aria: Hauptnavigation
-nav.portal: Mitgliederbereich
+nav.portal: La Chaloupe
 nav.menu: Menü
 nav.home: Startseite
 nav.about: Über uns
@@ -522,13 +525,29 @@ supporters.cta.lead: Die Mitgliedschaft im Verein hält den Dritten Ort und sein
 supporters.cta.join: Mitglied werden
 supporters.cta.about: Über uns
 
-# ── Coworker portal ── /login and /portal, and the portal tables' option labels.
-login.title: Mitgliederbereich
-login.subtitle: "Melden Sie sich an, um Ihre Rechnungen einzusehen und Ihr Lastschriftmandat zu verwalten."
-portal.title: Mein Mitgliederbereich
-portal.subtitle: "Ihre Rechnungen von La Plage Digitale und Ihr Lastschriftmandat, alle 15 Minuten aktualisiert."
-portal.logout: Abmelden
-portal.account.linked: Ihr Konto ist mit Pennylane verknüpft.
+# ── La Chaloupe ── the coworker space (/chaloupe/*), and the portal tables' option labels.
+portal.nav.menu: Menü
+portal.nav.space: Mein Bereich
+portal.nav.invoices: Rechnungen
+portal.nav.mandate: Lastschrift
+portal.nav.account: Konto
+portal.nav.profile: Mein Konto
+portal.nav.site: Zurück zur Website
+portal.dashboard.hello: "Hallo[, $session.name]"
+portal.dashboard.subtitle: "Ihr Coworker-Bereich: offene Beträge, Ihre Lastschrift und Ihre letzten Rechnungen, alle 15 Minuten aktualisiert."
+portal.dashboard.due: Offener Betrag
+portal.dashboard.late: Überfällige Rechnungen
+portal.dashboard.paid: Bezahlte Rechnungen
+portal.dashboard.latest: Letzte Rechnungen
+portal.dashboard.all: Alle Rechnungen →
+portal.dashboard.manage: Verwalten →
+portal.invoices.intro: "Alle Ihre Rechnungen von La Plage Digitale, aus Pennylane. Ein PDF-Link bleibt 30 Minuten gültig: Laden Sie die Seite neu, wenn er abgelaufen ist."
+portal.invoices.search: Rechnung suchen…
+portal.mandate.current: Mein Mandat
+portal.mandate.how: Wie funktioniert es?
+portal.mandate.how.1: "1. Klicken Sie auf „Lastschrift einrichten“."
+portal.mandate.how.2: "2. Pennylane sendet Ihnen eine E-Mail mit dem GoCardless-Unterschriftslink."
+portal.mandate.how.3: "3. Sobald das Mandat unterschrieben ist, werden Ihre Rechnungen bei Fälligkeit eingezogen."
 portal.account.unlinked: "Ihr Konto ist noch nicht mit Pennylane verknüpft — wir kümmern uns darum."
 portal.match.pending: Wird gesucht
 portal.match.matched: Verknüpft
@@ -565,3 +584,38 @@ portal.status.cancelled: Storniert
 portal.status.partially_cancelled: Teilweise storniert
 portal.status.credit_note: Gutschrift
 portal.status.archived: Archiviert
+
+# ── Account ── /chaloupe/compte and /editor/compte (the account-forms template).
+account.title: Mein Konto
+account.signedInAs: "[Angemeldet als $session.email]"
+account.profile: Profil
+account.name: Anzeigename
+account.save: Speichern
+account.profile.saved: Name gespeichert.
+account.error: "Speichern fehlgeschlagen. Bitte erneut versuchen."
+account.password: Passwort
+account.password.current: Aktuelles Passwort
+account.password.new: Neues Passwort
+account.password.rule: Mindestens 8 Zeichen.
+account.password.revoke: Meine anderen Geräte abmelden
+account.password.submit: Passwort ändern
+account.password.saved: Passwort geändert.
+account.password.error: "Das Passwort konnte nicht geändert werden. Prüfen Sie Ihr aktuelles Passwort."
+account.session: Sitzung
+account.session.intro: Verlassen Sie Ihren Bereich auf diesem Gerät.
+account.logout: Abmelden
+
+# ── Sign-in ── /connexion, shared by coworkers and editors.
+auth.kicker: Mitgliederbereich
+auth.pitch: "La Chaloupe für Coworker, der Redaktionsbereich für den Blog: ein Konto, eine Tür."
+auth.title: Anmelden
+auth.subtitle: "Ihr Konto wird vom Team von La Plage Digitale eröffnet. Noch kein Konto? Schreiben Sie uns."
+auth.submit: Anmelden
+auth.back: ← Zurück zur Website
+
+# ── Spaces ── /app, where /connexion sends every session.
+spaces.title: Meine Bereiche
+spaces.chaloupe: Ihre Rechnungen, Ihre Lastschrift und Ihr Coworker-Konto.
+spaces.editor: Redaktionsbereich
+spaces.editor.desc: Blogartikel schreiben und veröffentlichen.
+spaces.none: "Ihr Konto öffnet noch keinen Bereich. Bitte wenden Sie sich an das Team von La Plage Digitale."

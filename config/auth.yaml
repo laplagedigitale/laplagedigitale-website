@@ -16,13 +16,19 @@ defaultRole: viewer
 
 # Two roles beside the built-ins, both created by admins in /_admin/users.
 #
-# Blog editors sign in at /connexion, which sends them to the /editor front
-# office. They write the `posts` table and nothing else — the console at
-# /_admin stays admin-only.
+# Everyone signs in at /connexion, which sends the session to /app, the
+# "Mes espaces" page (config/pages/app-landing.yaml).
 #
-# Coworkers sign in at /login and reach /portal, their own Pennylane invoices
-# and direct-debit mandate. Inviting one with this role is what files their
-# `members` row; there is still no self-registration.
+# Blog editors land on /editor, the editors' space. They write the `posts`
+# table and nothing else — the console at /_admin stays admin-only.
+#
+# Coworkers land on /chaloupe — « La Chaloupe », their own Pennylane invoices,
+# direct-debit mandate and account. Inviting one with this role is what files
+# their `members` row; there is still no self-registration.
+#
+# Not `landingPath` + `defaultLanding`: in Sovrium 0.30 the resolver sends a
+# custom role with a bare landing to the no-access page (only the built-in
+# admin was routed), so /app does the routing itself.
 roles:
   - name: editor
     description: Rédaction du blog — crée, modifie et publie les articles

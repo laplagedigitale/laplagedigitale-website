@@ -1,0 +1,53 @@
+# Page: app-landing — /app, where /connexion sends every session: « Mes
+# espaces », one card per signed-in space the caller's role opens. A card the
+# role does not open is left out of the HTML (visibility), so a coworker or an
+# editor is given exactly one, and the inline script forwards them to it
+# straight away; an admin, who opens both, chooses.
+name: app-landing
+path: /app
+sitemap: false
+access: { require: authenticated, redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Mes espaces — La Plage Digitale"
+  noindex: true
+scripts:
+  inlineScripts:
+    - position: body-end
+      code: |
+        var spaces = document.querySelectorAll('a[data-space]')
+        if (spaces.length === 1) location.replace(spaces[0].getAttribute('href'))
+components:
+  - type: container
+    element: main
+    props:
+      className: 'min-h-screen flex items-center justify-center bg-background p-6'
+    children:
+      - type: container
+        props:
+          className: 'w-full max-w-2xl space-y-8'
+        children:
+          - { type: image, props: { src: /brand/logo-couleurs.svg, alt: La Plage Digitale, className: 'h-12 w-auto' } }
+          - { type: text, element: h1, content: $t:spaces.title, props: { className: 'text-3xl font-bold text-navy' } }
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+            children:
+              - type: link
+                visibility: { roles: [coworker, admin] }
+                props: { href: $t:href.portal, data-space: chaloupe, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
+                children:
+                  - { type: text, element: p, content: La Chaloupe, props: { className: 'text-xl font-bold text-navy' } }
+                  - { type: text, element: p, content: $t:spaces.chaloupe, props: { className: 'text-sm text-text-muted mt-1' } }
+              - type: link
+                visibility: { roles: [editor, admin] }
+                props: { href: /editor, data-space: editor, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-magenta hover:shadow-md transition' }
+                children:
+                  - { type: text, element: p, content: $t:spaces.editor, props: { className: 'text-xl font-bold text-navy' } }
+                  - { type: text, element: p, content: $t:spaces.editor.desc, props: { className: 'text-sm text-text-muted mt-1' } }
+          - type: text
+            element: p
+            visibility: { roles: [viewer, member] }
+            content: $t:spaces.none
+            props: { className: 'text-text-muted' }

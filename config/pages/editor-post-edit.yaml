@@ -9,37 +9,75 @@ meta:
   title: Modifier l'article — Espace rédaction
   description: Modifier un article.
   noindex: true
+dataSource: { table: posts, mode: single, param: id }
 components:
-  - component: editor-bar
-
-  - type: container
-    element: main
+  - type: flex
     props:
-      className: 'max-w-4xl mx-auto px-4 sm:px-6 py-10'
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - { type: link, content: '← Tous les articles', props: { href: /editor, className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted hover:text-navy' } }
-      - { type: text, element: h1, content: "Modifier l'article", props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mt-3 mb-8' } }
-      - type: form
-        dataSource: { table: posts, mode: single, param: id }
-        action:
-          type: crud
-          operation: update
-          table: posts
-          onSuccess:
-            type: message
-            toast: { variant: success, message: Modifications enregistrées. }
-        fieldGroups:
-          - { label: Article, fields: [title, slug, excerpt, body] }
-          - { label: Illustration, fields: [cover, legacy_cover] }
-          - { label: Publication, fields: [status, published_at, categories, author] }
-        fields:
-          - { field: title }
-          - { field: slug }
-          - { field: excerpt, control: textarea }
-          - { field: body }
-          - { field: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
-          - { field: legacy_cover, readOnly: true }
-          - { field: status }
-          - { field: published_at }
-          - { field: categories }
-          - { field: author }
+      - component: editor-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - { type: link, content: '← Tous les articles', props: { href: /editor/articles, className: 'text-sm text-text-muted hover:text-navy' } }
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - { type: text, element: h1, content: "Modifier l'article", props: { className: 'text-3xl font-bold text-navy' } }
+              - type: link
+                content: "Voir l'article ↗"
+                props:
+                  href: '/blog/$record.slug'
+                  target: _blank
+                  className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-semibold text-navy border border-navy-200 hover:bg-navy-100 transition-colors'
+          # Writing on the left, publication settings on the right (xl and up).
+          # Two forms on the same record, each saving its own fields: one form
+          # draws its fields in a single column, whatever its className says.
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_22rem] gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: Article, props: { className: 'text-lg font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: posts, mode: single, param: id }
+                    action:
+                      type: crud
+                      operation: update
+                      table: posts
+                      onSuccess:
+                        type: message
+                        toast: { variant: success, message: Article enregistré. }
+                    fields:
+                      - { field: title }
+                      - { field: slug }
+                      - { field: excerpt, control: textarea }
+                      - { field: body }
+              - type: card
+                props:
+                  className: 'p-6 space-y-4 xl:sticky xl:top-6'
+                children:
+                  - { type: text, element: h2, content: Publication, props: { className: 'text-lg font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: posts, mode: single, param: id }
+                    action:
+                      type: crud
+                      operation: update
+                      table: posts
+                      onSuccess:
+                        type: message
+                        toast: { variant: success, message: Publication enregistrée. }
+                    fields:
+                      - { field: status }
+                      - { field: published_at }
+                      - { field: categories }
+                      - { field: author }
+                      - { field: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
+                      - { field: legacy_cover, readOnly: true }

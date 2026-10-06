@@ -1,5 +1,5 @@
-# Page: editor — the blog editors' dashboard (WordPress-style post list).
-# Gated to editors and admins; everyone else is sent to /connexion.
+# Page: editor — the blog editors' dashboard: counts, then the drafts in
+# progress. Gated to editors and admins; everyone else is sent to /connexion.
 name: editor
 path: /editor
 sitemap: false
@@ -7,53 +7,117 @@ access: { require: [editor, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: Articles — Espace rédaction
-  description: Gestion des articles du blog.
+  title: "Tableau de bord — Espace rédaction"
+  description: "Espace rédaction du blog."
   noindex: true
 components:
-  - component: editor-bar
-
-  - type: container
-    element: main
+  - type: flex
     props:
-      className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - type: flex
-        props:
-          className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8'
-        children:
-          - type: container
-            children:
-              - { type: text, element: h1, content: Articles, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy' } }
-              - { type: text, element: p, content: "Brouillons et articles publiés. Cliquez sur une ligne pour l'éditer.", props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1' } }
-          - type: link
-            content: '+ Nouvel article'
-            props:
-              href: /editor/posts/new
-              className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+      - component: editor-nav
 
-      - type: table
-        dataSource:
-          table: posts
-          sort:
-            - { field: updated_at, direction: desc }
-          pagination: { pageSize: 25, style: numbered }
-        search:
-          placeholder: Rechercher un article…
-        columns:
-          - { field: title, label: Titre }
-          - { field: status, label: Statut }
-          - { field: published_at, label: Publication }
-          - { field: categories, label: Catégories }
-          - { field: author, label: Auteur }
-          - type: actions
-            actions:
-              - label: Supprimer
-                variant: destructive
-                action:
-                  type: crud
-                  operation: delete
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: "Bonjour[, $session.name]", props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Le tableau de bord de la rédaction.", props: { className: 'text-text-muted mt-1' } }
+              - type: link
+                content: '+ Nouvel article'
+                props:
+                  href: /editor/posts/new
+                  className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+            children:
+              - type: kpi
+                label: Articles publiés
+                icon: globe
+                dataSource:
                   table: posts
-                  confirm: true
-                  confirmMessage: "Supprimer cet article ? Il pourra être restauré par un administrateur."
-        onRowClick: { type: navigate, path: '/editor/posts/$record.id' }
+                  filter:
+                    - { field: status, operator: eq, value: published }
+                kpiAggregate: { function: count }
+              - type: kpi
+                label: Brouillons en cours
+                icon: pencil-line
+                dataSource:
+                  table: posts
+                  filter:
+                    - { field: status, operator: eq, value: draft }
+                kpiAggregate: { function: count }
+              - type: kpi
+                label: Articles au total
+                icon: newspaper
+                dataSource: { table: posts }
+                kpiAggregate: { function: count }
+
+          - type: flex
+            props: { className: 'flex items-center justify-between gap-4' }
+            children:
+              - { type: text, element: h2, content: Derniers brouillons, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: link, content: 'Tous les brouillons →', props: { href: /editor/articles/brouillons, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: table
+                dataSource:
+                  table: posts
+                  filter:
+                    - { field: status, operator: eq, value: draft }
+                  sort:
+                    - { field: updated_at, direction: desc }
+                  pagination: { pageSize: 5 }
+                emptyMessage: Aucun article ici pour le moment.
+                columns:
+                  - { field: title, label: Titre }
+                  - field: status
+                    label: Statut
+                    valueLabels: { draft: Brouillon, published: Publié }
+                  - { field: published_at, label: Publication, format: short-date }
+                  - field: categories
+                    label: Catégories
+                    valueLabels: { actualites: Actualités, evenements: Événements, newsletter: Newsletter, coding-club: Coding Club, edgefest: EdgeFest }
+                  - { field: updated_at, label: Modifié, format: short-date }
+                onRowClick: { type: navigate, path: '/editor/posts/$record.id' }
+
+          - type: flex
+            props: { className: 'flex items-center justify-between gap-4' }
+            children:
+              - { type: text, element: h2, content: Derniers articles publiés, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: link, content: 'Tous les articles publiés →', props: { href: /editor/articles/publies, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: table
+                dataSource:
+                  table: posts
+                  filter:
+                    - { field: status, operator: eq, value: published }
+                  sort:
+                    - { field: updated_at, direction: desc }
+                  pagination: { pageSize: 5 }
+                emptyMessage: Aucun article ici pour le moment.
+                columns:
+                  - { field: title, label: Titre }
+                  - field: status
+                    label: Statut
+                    valueLabels: { draft: Brouillon, published: Publié }
+                  - { field: published_at, label: Publication, format: short-date }
+                  - field: categories
+                    label: Catégories
+                    valueLabels: { actualites: Actualités, evenements: Événements, newsletter: Newsletter, coding-club: Coding Club, edgefest: EdgeFest }
+                  - { field: updated_at, label: Modifié, format: short-date }
+                onRowClick: { type: navigate, path: '/editor/posts/$record.id' }

@@ -1,0 +1,61 @@
+# Page: portal-invoices — every invoice of the signed-in coworker, mirrored
+# from Pennylane by pennylane-sync, with the PDF link it refreshes.
+name: portal-invoices
+path: /chaloupe/factures
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Factures — La Chaloupe"
+  description: "Vos factures La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: chaloupe-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:portal.invoices.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:portal.invoices.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: table
+                dataSource:
+                  table: invoices
+                  sort:
+                    - { field: invoice_date, direction: desc }
+                  pagination: { pageSize: 25, style: numbered }
+                search:
+                  placeholder: $t:portal.invoices.search
+                emptyMessage: $t:portal.invoices.none
+                columns:
+                  - { field: invoice_number, label: $t:portal.invoices.number }
+                  - { field: label, label: $t:portal.invoices.label }
+                  - { field: invoice_date, label: $t:portal.invoices.date, format: short-date }
+                  - { field: deadline, label: $t:portal.invoices.deadline, format: short-date }
+                  - { field: amount, label: $t:portal.invoices.amount, format: currency, align: right }
+                  - { field: remaining_amount, label: $t:portal.invoices.remaining, format: currency, align: right }
+                  - field: status
+                    label: $t:portal.invoices.status
+                    valueLabels:
+                      paid: $t:portal.status.paid
+                      partially_paid: $t:portal.status.partially_paid
+                      upcoming: $t:portal.status.upcoming
+                      late: $t:portal.status.late
+                      incomplete: $t:portal.status.incomplete
+                      cancelled: $t:portal.status.cancelled
+                      partially_cancelled: $t:portal.status.partially_cancelled
+                      credit_note: $t:portal.status.credit_note
+                      archived: $t:portal.status.archived
+                  - { field: pdf_url, label: $t:portal.invoices.pdf }

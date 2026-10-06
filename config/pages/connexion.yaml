@@ -1,12 +1,18 @@
-# Page: connexion — sign-in for blog editors (and admins). Not indexed.
+# Page: connexion — the one sign-in page, for coworkers, blog editors and
+# admins alike. Not indexed.
+#
+# A successful sign-in goes to /app, the auth landingPath: the engine sends
+# each role to its own space (coworker → /chaloupe, editor and admin →
+# /editor). Accounts are opened by an admin invitation; there is no sign-up
+# form on purpose (allowSignUp: false).
 name: connexion
 path: /connexion
 sitemap: false
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: Connexion — Espace rédaction
-  description: Connexion à l'espace rédaction de La Plage Digitale.
+  title: "Connexion — La Plage Digitale"
+  description: "Connexion à La Chaloupe et à l'espace rédaction de La Plage Digitale."
   noindex: true
 components:
   - type: container
@@ -20,11 +26,11 @@ components:
           className: 'hidden lg:flex flex-col justify-between bg-navy text-white p-12'
         children:
           - type: image
-            props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-16 w-auto' }
+            props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-16 w-auto self-start' }
           - type: container
             children:
-              - { type: text, element: p, content: 'Espace rédaction', props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4' } }
-              - { type: text, element: p, content: 'Partagez les actualités de la Plage : événements, newsletters, portraits.', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold leading-tight text-white max-w-md' } }
+              - { type: text, element: p, content: $t:auth.kicker, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4' } }
+              - { type: text, element: p, content: $t:auth.pitch, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold leading-tight text-white max-w-md' } }
           - { type: text, element: p, content: 'Connecter · Innover · Entreprendre', props: { className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] uppercase tracking-widest text-navy-200' } }
       - type: container
         props:
@@ -34,10 +40,11 @@ components:
             props:
               className: 'w-full max-w-sm'
             children:
-              - { type: text, element: h1, content: Connexion, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mb-2' } }
-              - { type: text, element: p, content: "Réservé à l'équipe de rédaction. Pas de compte ? Demandez-le à un administrateur.", props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mb-8' } }
+              - { type: image, props: { src: /brand/logo-couleurs.svg, alt: La Plage Digitale, className: 'lg:hidden h-12 w-auto mb-8' } }
+              - { type: text, element: h1, content: $t:auth.title, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mb-2' } }
+              - { type: text, element: p, content: $t:auth.subtitle, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mb-8' } }
               - type: form
-                action: { type: auth, method: login, submitLabel: Se connecter, onSuccess: { type: navigate, navigate: /editor } }
+                action: { type: auth, method: login, strategy: email, submitLabel: $t:auth.submit, onSuccess: { type: navigate, navigate: /app } }
               - type: link
-                content: "← Retour au site"
-                props: { href: /, className: 'inline-block mt-8 [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted hover:text-navy' }
+                content: $t:auth.back
+                props: { href: $t:href.home, className: 'inline-block mt-8 [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted hover:text-navy' }

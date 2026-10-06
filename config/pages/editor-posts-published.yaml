@@ -1,0 +1,73 @@
+# Page: editor-posts-published — the posts live on /blog.
+name: editor-posts-published
+path: /editor/articles/publies
+sitemap: false
+access: { require: [editor, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Publiés — Espace rédaction"
+  description: "Les articles publiés du blog."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: editor-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: "Publiés", props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Les articles en ligne sur /blog.", props: { className: 'text-text-muted mt-1' } }
+              - type: link
+                content: '+ Nouvel article'
+                props:
+                  href: /editor/posts/new
+                  className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: table
+                dataSource:
+                  table: posts
+                  filter:
+                    - { field: status, operator: eq, value: published }
+                  sort:
+                    - { field: updated_at, direction: desc }
+                  pagination: { pageSize: 25, style: numbered }
+                search:
+                  placeholder: Rechercher un article…
+                emptyMessage: Aucun article ici pour le moment.
+                columns:
+                  - { field: title, label: Titre }
+                  - field: status
+                    label: Statut
+                    valueLabels: { draft: Brouillon, published: Publié }
+                  - { field: published_at, label: Publication, format: short-date }
+                  - field: categories
+                    label: Catégories
+                    valueLabels: { actualites: Actualités, evenements: Événements, newsletter: Newsletter, coding-club: Coding Club, edgefest: EdgeFest }
+                  - { field: updated_at, label: Modifié, format: short-date }
+                  - type: actions
+                    actions:
+                      - label: Supprimer
+                        variant: destructive
+                        action:
+                          type: crud
+                          operation: delete
+                          table: posts
+                          confirm: true
+                          confirmMessage: "Supprimer cet article ? Il pourra être restauré par un administrateur."
+                onRowClick: { type: navigate, path: '/editor/posts/$record.id' }

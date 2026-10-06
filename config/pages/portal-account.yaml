@@ -1,0 +1,30 @@
+# Page: portal-account — the coworker's own account: display name, password,
+# sign-out. Both forms post to the auth routes as the signed-in caller, so
+# there is no user id anywhere on the page.
+name: portal-account
+path: /chaloupe/compte
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Mon compte — La Chaloupe"
+  description: "Votre compte."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: chaloupe-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:account.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:account.signedInAs, props: { className: 'text-text-muted mt-2' } }
+
+          - component: account-forms

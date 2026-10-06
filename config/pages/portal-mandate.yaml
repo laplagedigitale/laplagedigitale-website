@@ -1,0 +1,94 @@
+# Page: portal-mandate — the coworker's GoCardless direct-debit mandate, and
+# the button that asks Pennylane to mail them the signing link.
+name: portal-mandate
+path: /chaloupe/prelevement
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Prélèvement — La Chaloupe"
+  description: "Votre prélèvement automatique."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: chaloupe-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:portal.mandate.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:portal.mandate.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6'
+            children:
+              - type: card
+                props:
+                  className: 'xl:col-span-2 p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: $t:portal.mandate.current, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: table
+                    props: { id: mandate-list }
+                    dataSource:
+                      table: mandates
+                      sort:
+                        - { field: signed_at, direction: desc }
+                    emptyMessage: $t:portal.mandate.none
+                    columns:
+                      - field: status
+                        label: $t:portal.invoices.status
+                        valueLabels:
+                          active: $t:portal.mandate.active
+                          pending_customer_approval: $t:portal.mandate.pending
+                          pending_submission: $t:portal.mandate.pending
+                          submitted: $t:portal.mandate.pending
+                          failed: $t:portal.mandate.failed
+                          blocked: $t:portal.mandate.failed
+                          bank_disconnected: $t:portal.mandate.failed
+                          cancelled: $t:portal.mandate.ended
+                          expired: $t:portal.mandate.ended
+                          consumed: $t:portal.mandate.ended
+                          replaced: $t:portal.mandate.ended
+                      - { field: bank_account, label: $t:portal.mandate.account }
+                      - { field: signed_at, label: $t:portal.mandate.since, format: short-date }
+                  - type: text
+                    element: p
+                    props:
+                      id: mandate-status
+                      className: 'text-sm text-text-muted'
+                  - type: button
+                    content: $t:portal.mandate.cta
+                    props:
+                      className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                    # Calls the manual trigger directly so the run's own message —
+                    # sent, or why it was refused — is shown in #mandate-status.
+                    action:
+                      type: fetch
+                      method: POST
+                      url: /api/automations/request-mandate/trigger
+                      body: {}
+                      onSuccess:
+                        type: toast
+                        message: $t:portal.mandate.done
+                        status: { target: mandate-status, message: $response.output.message }
+                        refetch: mandate-list
+                      onError:
+                        type: toast
+                        message: $t:portal.mandate.error
+
+              - type: card
+                props:
+                  className: 'p-6 space-y-3 bg-blue-100'
+                children:
+                  - { type: text, element: h2, content: $t:portal.mandate.how, props: { className: 'text-lg font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:portal.mandate.how.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:portal.mandate.how.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:portal.mandate.how.3, props: { className: 'text-sm text-navy' } }

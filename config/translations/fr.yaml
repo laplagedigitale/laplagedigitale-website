@@ -13,12 +13,15 @@ href.companies: /les-entreprises
 href.blog: /blog
 href.contact: /contact
 href.legal: /mentions-legales
-href.portal: /portal
+href.portal: /chaloupe
+href.portal.invoices: /chaloupe/factures
+href.portal.mandate: /chaloupe/prelevement
+href.portal.account: /chaloupe/compte
 href.privacy: /confidentialite
 
 # ── Navigation ──
 nav.aria: Navigation principale
-nav.portal: Espace membre
+nav.portal: La Chaloupe
 nav.menu: Menu
 nav.home: Accueil
 nav.about: Qui sommes-nous ?
@@ -523,13 +526,29 @@ supporters.cta.lead: "L'adhésion à l'association fait vivre le tiers-lieu et s
 supporters.cta.join: Adhérer à l'association
 supporters.cta.about: Qui sommes-nous ?
 
-# ── Coworker portal ── /login and /portal, and the portal tables' option labels.
-login.title: Espace membre
-login.subtitle: "Connectez-vous pour retrouver vos factures et gérer votre prélèvement automatique."
-portal.title: Mon espace membre
-portal.subtitle: "Vos factures La Plage Digitale et votre mandat de prélèvement, à jour toutes les 15 minutes."
-portal.logout: Se déconnecter
-portal.account.linked: Votre compte est relié à Pennylane.
+# ── La Chaloupe ── the coworker space (/chaloupe/*), and the portal tables' option labels.
+portal.nav.menu: Menu
+portal.nav.space: Mon espace
+portal.nav.invoices: Factures
+portal.nav.mandate: Prélèvement
+portal.nav.account: Compte
+portal.nav.profile: Mon compte
+portal.nav.site: Retour au site
+portal.dashboard.hello: "Bonjour[, $session.name]"
+portal.dashboard.subtitle: "Votre espace coworker : ce qu'il reste à régler, votre prélèvement et vos dernières factures, à jour toutes les 15 minutes."
+portal.dashboard.due: Reste à payer
+portal.dashboard.late: Factures en retard
+portal.dashboard.paid: Factures réglées
+portal.dashboard.latest: Dernières factures
+portal.dashboard.all: Toutes les factures →
+portal.dashboard.manage: Gérer →
+portal.invoices.intro: "Toutes vos factures La Plage Digitale, issues de Pennylane. Le lien PDF reste valable 30 minutes : rechargez la page s'il a expiré."
+portal.invoices.search: Rechercher une facture…
+portal.mandate.current: Mon mandat
+portal.mandate.how: Comment ça marche ?
+portal.mandate.how.1: "1. Cliquez sur « Mettre en place le prélèvement »."
+portal.mandate.how.2: "2. Pennylane vous envoie un e-mail avec le lien de signature GoCardless."
+portal.mandate.how.3: "3. Une fois le mandat signé, vos factures sont prélevées à leur échéance."
 portal.account.unlinked: "Votre compte n'est pas encore relié à Pennylane — nous nous en occupons."
 portal.match.pending: Recherche en cours
 portal.match.matched: Relié
@@ -566,3 +585,38 @@ portal.status.cancelled: Annulée
 portal.status.partially_cancelled: Partiellement annulée
 portal.status.credit_note: Avoir
 portal.status.archived: Archivée
+
+# ── Account ── /chaloupe/compte and /editor/compte (the account-forms template).
+account.title: Mon compte
+account.signedInAs: "[Connecté en tant que $session.email]"
+account.profile: Profil
+account.name: Nom affiché
+account.save: Enregistrer
+account.profile.saved: Nom enregistré.
+account.error: "L'enregistrement a échoué. Réessayez."
+account.password: Mot de passe
+account.password.current: Mot de passe actuel
+account.password.new: Nouveau mot de passe
+account.password.rule: Au moins 8 caractères.
+account.password.revoke: Déconnecter mes autres appareils
+account.password.submit: Changer le mot de passe
+account.password.saved: Mot de passe modifié.
+account.password.error: "Le mot de passe n'a pas pu être modifié. Vérifiez le mot de passe actuel."
+account.session: Session
+account.session.intro: Vous quittez votre espace sur cet appareil.
+account.logout: Se déconnecter
+
+# ── Sign-in ── /connexion, shared by coworkers and editors.
+auth.kicker: Espace membres
+auth.pitch: "La Chaloupe pour les coworkers, l'espace rédaction pour le blog : un seul compte, une seule porte."
+auth.title: Connexion
+auth.subtitle: "Votre compte est ouvert par l'équipe de La Plage Digitale. Pas encore de compte ? Écrivez-nous."
+auth.submit: Se connecter
+auth.back: ← Retour au site
+
+# ── Spaces ── /app, where /connexion sends every session.
+spaces.title: Mes espaces
+spaces.chaloupe: Vos factures, votre prélèvement et votre compte de coworker.
+spaces.editor: Espace rédaction
+spaces.editor.desc: Écrire et publier les articles du blog.
+spaces.none: "Votre compte n'ouvre encore aucun espace. Contactez l'équipe de La Plage Digitale."
