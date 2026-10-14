@@ -130,19 +130,23 @@ actions:
           }
 
           // --- readers
+          const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
           const plain = (rt) => (rt ?? []).map((t) => t.plain_text ?? '').join('').trim()
           const choice = (p) => p?.select?.name ?? p?.status?.name ?? ''
           // « En attente de » may be people, text, a select or a relation: read whatever it is.
           // Relations come back as page ids, resolved to titles below for the blocked cards only.
+          // A person keeps its Notion id and email (when the integration may read emails),
+          // so it can be matched to a Slack account and pinged.
+          const named = (names) => names.filter(Boolean).map((name) => ({ name, email: '', id: '' }))
           const waitingOf = (p) => {
-            if (!p) return { names: [], relIds: [] }
-            if (p.type === 'people') return { names: (p.people ?? []).map((u) => u.name ?? '').filter(Boolean), relIds: [] }
-            if (p.type === 'multi_select') return { names: (p.multi_select ?? []).map((o) => o.name).filter(Boolean), relIds: [] }
-            if (p.type === 'select' || p.type === 'status') return { names: [choice(p)].filter(Boolean), relIds: [] }
-            if (p.type === 'rich_text') return { names: [plain(p.rich_text)].filter(Boolean), relIds: [] }
-            if (p.type === 'formula') return { names: [String(p.formula?.string ?? '').trim()].filter(Boolean), relIds: [] }
-            if (p.type === 'relation') return { names: [], relIds: (p.relation ?? []).map((r) => r.id).filter(Boolean) }
-            return { names: [], relIds: [] }
+            if (!p) return { people: [], relIds: [] }
+            if (p.type === 'people') return { people: (p.people ?? []).map((u) => ({ name: u.name ?? '', email: u.person?.email ?? '', id: u.id ?? '' })).filter((u) => u.name || u.email), relIds: [] }
+            if (p.type === 'multi_select') return { people: named((p.multi_select ?? []).map((o) => o.name)), relIds: [] }
+            if (p.type === 'select' || p.type === 'status') return { people: named([choice(p)]), relIds: [] }
+            if (p.type === 'rich_text') return { people: named([plain(p.rich_text)]), relIds: [] }
+            if (p.type === 'formula') return { people: named([String(p.formula?.string ?? '').trim()]), relIds: [] }
+            if (p.type === 'relation') return { people: [], relIds: (p.relation ?? []).map((r) => r.id).filter(Boolean) }
+            return { people: [], relIds: [] }
           }
           const cards = pages.filter((pg) => !pg.archived && !pg.in_trash).map((pg) => {
             const pr = pg.properties ?? {}
@@ -154,7 +158,7 @@ actions:
               priority: P.priority ? choice(pr[P.priority]) : '',
               due: P.due ? String(pr[P.due]?.date?.start ?? '').slice(0, 10) : '',
               doneOn: P.doneOn && pr[P.doneOn]?.type === 'date' ? String(pr[P.doneOn]?.date?.start ?? '').slice(0, 10) : '',
-              waiting: P.waiting ? waitingOf(pr[P.waiting]) : { names: [], relIds: [] },
+              waiting: P.waiting ? waitingOf(pr[P.waiting]) : { people: [], relIds: [] },
               ca: caIsCheckbox ? pr[P.ca]?.checkbox === true : false,
               edited: String(pg.last_edited_time ?? ''),
               editorId: pg.last_edited_by?.id,
@@ -182,19 +186,38 @@ actions:
               relTitles[id] = plain(t?.title)
             } catch (e) { context.log.warn('En attente de : page illisible', id) }
           }
-          const waitingNames = (c) => [...c.waiting.names, ...c.waiting.relIds.map((id) => relTitles[id]).filter(Boolean)]
+          const waitingOn = (c) => [...c.waiting.people, ...named(c.waiting.relIds.map((id) => relTitles[id]))]
 
           // --- editors (distinct humans among last_edited_by)
-          const users: Record<string, { name: string; bot: boolean }> = {}
+          const users: Record<string, { name: string; bot: boolean; email: string }> = {}
           let ucursor: string | undefined
           for (let guard = 0; guard < 20; guard++) {
             const u = await notion('get', '/users', { query: { page_size: 100, ...(ucursor ? { start_cursor: ucursor } : {}) } })
-            for (const x of u.results ?? []) users[x.id] = { name: x.name ?? '', bot: x.type === 'bot' }
+            for (const x of u.results ?? []) users[x.id] = { name: x.name ?? '', bot: x.type === 'bot', email: x.person?.email ?? '' }
             if (!u.has_more || !u.next_cursor) break
             ucursor = u.next_cursor
           }
           const editorIds = [...new Set(moved.map((c) => c.editorId).filter((id) => !!id && !users[id]?.bot))]
           const editorNames = editorIds.map((id) => users[id]?.name).filter(Boolean)
+
+          // --- Slack mentions for « En attente de »: Notion email → users.lookupByEmail.
+          // Email from the person itself, else the Notion user list (by id, then by name).
+          // Needs Slack scopes users:read + users:read.email; any miss falls back to the name.
+          const norm = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
+          const emailByName: Record<string, string> = {}
+          for (const u of Object.values(users)) if (!u.bot && u.email && u.name) emailByName[norm(u.name)] ??= u.email
+          const emailOf = (w) => w.email || (w.id && users[w.id]?.email) || emailByName[norm(w.name)] || ''
+          const slackIds: Record<string, string> = {}
+          let slackWarned = false
+          for (const email of [...new Set(blocked.flatMap((c) => waitingOn(c).map(emailOf)).filter(Boolean))].slice(0, 30)) {
+            try {
+              const res = await context.actions.http.get({ url: 'https://slack.com/api/users.lookupByEmail', connection: 'slack', query: { email }, timeout: 10000 })
+              const body = typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+              if (body?.ok && body.user?.id) slackIds[email] = body.user.id
+              else if (body?.error !== 'users_not_found' && !slackWarned) { slackWarned = true; context.log.warn('Slack users.lookupByEmail :', body?.error ?? 'réponse illisible') }
+            } catch (e) { if (!slackWarned) { slackWarned = true; context.log.warn('Slack users.lookupByEmail a échoué :', e?.message ?? String(e)) } }
+          }
+          const mention = (w) => { const id = slackIds[emailOf(w)]; return id ? `<@${id}>` : `*${esc(w.name || emailOf(w))}*` }
 
           // --- metrics history (optional; upsert on the Monday key so a replay is idempotent)
           let previous: { edited: number; editors: number } | null = null
@@ -219,7 +242,6 @@ actions:
           }
 
           // --- Slack mrkdwn: urgent first, each card shown once, empty sections omitted
-          const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
           const link = (c) => `<${c.url}|${esc(c.title).replace(/\|/g, '¦')}>`
           const who = (c) => (c.owners.length ? c.owners.map(esc).join(', ') : '_sans responsable_')
           const plural = (n, s, p) => (n > 1 ? p : s)
@@ -235,9 +257,9 @@ actions:
           }
 
           const blockedRender = (c) => {
-            const w = waitingNames(c)
+            const w = waitingOn(c)
             const late = c.due && c.due < todayYmd ? ` · ${daysLate(c)} j de retard` : ''
-            return `${link(c)} · ${who(c)}` + (w.length ? ` · ⏳ en attente de *${w.map(esc).join(', ')}*` : ' · _on attend qui ?_') + late
+            return `${link(c)} · ${who(c)}` + (w.length ? ` · ⏳ en attente de ${w.map(mention).join(', ')}` : ' · _on attend qui ?_') + late
           }
           const lateRender = (c) => `${link(c)} · ${who(c)} · prévu le ${ddmm(c.due)}, ${daysLate(c)} j de retard`
           const urgent = [
@@ -259,7 +281,7 @@ actions:
           sections.push(`_${moved.length} ${plural(moved.length, 'carte modifiée', 'cartes modifiées')} par ${editorIds.length} ${plural(editorIds.length, 'personne', 'personnes')}${editorNames.length ? ` (${editorNames.map(esc).join(', ')})` : ''}${cmp} · Rituel du lundi : 15 minutes pour balayer le tableau ensemble._`)
 
           const text = sections.join('\n\n')
-          const summary = { cards: cards.length, moved: moved.length, editors: editorIds.length, blocked: blocked.length, awaitingCa: awaitingCa ? awaitingCa.length : null, due: due.length, done: done.length, overdue: overdue.length, previous, dryRun, metricsWritten: !!metricsDs && !dryRun }
+          const summary = { cards: cards.length, slackMentions: Object.keys(slackIds).length, moved: moved.length, editors: editorIds.length, blocked: blocked.length, awaitingCa: awaitingCa ? awaitingCa.length : null, due: due.length, done: done.length, overdue: overdue.length, previous, dryRun, metricsWritten: !!metricsDs && !dryRun }
           context.log.info('Résumé', JSON.stringify(summary))
           return { text, channel, summary }
         }
