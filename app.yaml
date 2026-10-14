@@ -17,6 +17,11 @@ env:
     required: false
     default: 'true'
     secret: false
+  - key: AUTOMATCH_SUPPLIER_APPLY
+    description: pennylane-auto-match also writes its reliable supplier-invoice matches; anything but 'true' keeps that side a dry run
+    required: false
+    default: 'false'
+    secret: false
   - key: TREASURER_EMAIL
     description: Recipient of the pennylane-auto-match morning summary
     required: false
