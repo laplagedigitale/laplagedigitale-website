@@ -427,3 +427,119 @@ operations:
       transaction_reference:
         in: body
         type: object
+  - name: post-company-customer
+    method: POST
+    path: /company_customers
+    summary: Create a company customer
+    params:
+      name:
+        in: body
+        type: string
+        required: true
+      vat_number:
+        in: body
+        type: string
+      reg_no:
+        in: body
+        type: string
+      ledger_account:
+        in: body
+        type: object
+      phone:
+        in: body
+        type: string
+      billing_address:
+        in: body
+        type: object
+        required: true
+      delivery_address:
+        in: body
+        type: object
+      payment_conditions:
+        in: body
+        type: object
+      billing_iban:
+        in: body
+        type: string
+      recipient:
+        in: body
+        type: string
+      reference:
+        in: body
+        type: string
+      notes:
+        in: body
+        type: string
+      emails:
+        in: body
+        type: array
+        items:
+          type: string
+      external_reference:
+        in: body
+        type: string
+      billing_language:
+        in: body
+        type: string
+        enum:
+          - fr_FR
+          - en_GB
+          - de_DE
+          - es_ES
+  - name: post-individual-customer
+    method: POST
+    path: /individual_customers
+    summary: Create an individual customer
+    params:
+      first_name:
+        in: body
+        type: string
+        required: true
+      last_name:
+        in: body
+        type: string
+        required: true
+      phone:
+        in: body
+        type: string
+      billing_address:
+        in: body
+        type: object
+        required: true
+      delivery_address:
+        in: body
+        type: object
+      payment_conditions:
+        in: body
+        type: object
+      billing_iban:
+        in: body
+        type: string
+      recipient:
+        in: body
+        type: string
+      reference:
+        in: body
+        type: string
+      ledger_account:
+        in: body
+        type: object
+      notes:
+        in: body
+        type: string
+      emails:
+        in: body
+        type: array
+        items:
+          type: string
+      external_reference:
+        in: body
+        type: string
+      billing_language:
+        in: body
+        type: string
+        enum:
+          - fr_FR
+          - en_GB
+          - de_DE
+          - es_ES
