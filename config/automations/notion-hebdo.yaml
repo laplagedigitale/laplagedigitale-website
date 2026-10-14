@@ -14,7 +14,8 @@ label: Hebdo Notion → Slack
 description: >-
   Chaque lundi 08:30, publie dans #notion-hebdo d'abord les cartes bloquées (avec
   qui on attend) et en retard, puis le CA, les échéances proches, ce qui a été
-  terminé dans la semaine et ce qui a avancé — chaque carte une seule fois.
+  en cours, ce qui a été terminé dans la semaine et ce qui a avancé — chaque carte
+  une seule fois.
 trigger:
   type: cron
   expression: "30 8 * * 1"
@@ -269,6 +270,7 @@ actions:
           const later = [
             awaitingCa ? section('*🏛️ En attente du CA*', take(awaitingCa), (c) => `${link(c)} · ${who(c)}`) : null,
             section('*📅 À venir (14 jours)*', take(due.filter((c) => c.due >= todayYmd)), (c) => `${ddmm(c.due)} · ${link(c)} · ${who(c)}`),
+            section('*🚧 En cours*', take(cards.filter((c) => c.status === 'En cours')), (c) => `${link(c)} · ${who(c)}`),
             section('*✅ Terminées cette semaine*', take(done), (c) => `${link(c)} · ${who(c)}`),
             section('*🔄 Ont avancé*', take(moved.filter((c) => !CLOSED.has(c.status))), (c) => `${link(c)} · ${who(c)}${c.status ? ` · _${esc(c.status)}_` : ''}`, 10),
           ].filter(Boolean)
