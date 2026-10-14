@@ -1,0 +1,160 @@
+# Page: portal-member — one member's space as an admin sees it, read-only: their
+# Pennylane link, what is left to pay, their invoices and their mandate.
+#
+# Every block filters on the `member` relationship the sync writes on each
+# invoice and mandate, matched to the :id in the address. An admin bypasses
+# the row-level rules on those tables, which is what lets this page read
+# another member's rows; a coworker never reaches it (access is admin only).
+# Nothing here writes: no mandate request is sent on the member's behalf.
+name: portal-member
+path: /espace-membre/membres/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Membre — Espace Membre"
+  description: "L'espace d'un membre, vu par un administrateur."
+  noindex: true
+dataSource: { table: members, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: espace-membre-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: $t:admin.member.back, props: { href: /espace-membre/membres, className: 'text-sm text-text-muted hover:text-navy' } }
+          - type: container
+            children:
+              - { type: text, element: h1, content: $record.name, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $record.email, props: { className: 'text-text-muted mt-1' } }
+              - { type: text, element: p, content: $t:admin.member.readonly, props: { className: 'text-sm text-navy mt-4 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
+
+          # Shown only while the member is not linked to a Pennylane customer,
+          # with what the admin has to do about it.
+          - type: list
+            dataSource:
+              table: members
+              filter:
+                - { field: id, operator: eq, value: $param.id }
+                - { field: match_status, operator: in, value: [pending, not_found] }
+              limit: 1
+            props:
+              className: 'text-sm text-navy [&_li]:rounded-md [&_li]:border [&_li]:border-amber [&_li]:bg-orange-100 [&_li]:px-4 [&_li]:py-3'
+            listDisplay:
+              emptyMessage: ''
+              itemTemplate:
+                title: $t:admin.member.unlinked
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+            children:
+              - type: kpi
+                label: $t:portal.dashboard.due
+                icon: wallet
+                dataSource:
+                  table: invoices
+                  filter:
+                    - { field: member, operator: eq, value: $param.id }
+                    - { field: status, operator: in, value: [upcoming, late, partially_paid] }
+                kpiAggregate: { function: sum, field: remaining_amount }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: $t:portal.dashboard.late
+                icon: alarm-clock
+                dataSource:
+                  table: invoices
+                  filter:
+                    - { field: member, operator: eq, value: $param.id }
+                    - { field: status, operator: eq, value: late }
+                kpiAggregate: { function: count }
+                thresholds:
+                  - { value: 1, color: red }
+              - type: kpi
+                label: $t:portal.dashboard.paid
+                icon: circle-check
+                dataSource:
+                  table: invoices
+                  filter:
+                    - { field: member, operator: eq, value: $param.id }
+                    - { field: status, operator: eq, value: paid }
+                kpiAggregate: { function: count }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6'
+            children:
+              - type: card
+                props:
+                  className: 'xl:col-span-2 p-4 sm:p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: $t:admin.member.invoices, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: table
+                    readOnly: true
+                    dataSource:
+                      table: invoices
+                      filter:
+                        - { field: member, operator: eq, value: $param.id }
+                      sort:
+                        - { field: invoice_date, direction: desc }
+                      pagination: { pageSize: 25, style: numbered }
+                    emptyMessage: $t:portal.invoices.none
+                    columns:
+                      - { field: invoice_number, label: $t:portal.invoices.number }
+                      - { field: label, label: $t:portal.invoices.label }
+                      - { field: invoice_date, label: $t:portal.invoices.date, format: short-date }
+                      - { field: deadline, label: $t:portal.invoices.deadline, format: short-date }
+                      - { field: amount, label: $t:portal.invoices.amount, format: currency, align: right }
+                      - { field: remaining_amount, label: $t:portal.invoices.remaining, format: currency, align: right }
+                      - field: status
+                        label: $t:portal.invoices.status
+                        valueLabels:
+                          paid: $t:portal.status.paid
+                          partially_paid: $t:portal.status.partially_paid
+                          upcoming: $t:portal.status.upcoming
+                          late: $t:portal.status.late
+                          incomplete: $t:portal.status.incomplete
+                          cancelled: $t:portal.status.cancelled
+                          partially_cancelled: $t:portal.status.partially_cancelled
+                          credit_note: $t:portal.status.credit_note
+                          archived: $t:portal.status.archived
+                      - { field: pdf_url, label: $t:portal.invoices.pdf }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: $t:portal.mandate.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: table
+                    readOnly: true
+                    dataSource:
+                      table: mandates
+                      filter:
+                        - { field: member, operator: eq, value: $param.id }
+                      sort:
+                        - { field: signed_at, direction: desc }
+                    emptyMessage: $t:portal.mandate.none
+                    columns:
+                      - field: status
+                        label: $t:portal.invoices.status
+                        valueLabels:
+                          active: $t:portal.mandate.active
+                          pending_customer_approval: $t:portal.mandate.pending
+                          pending_submission: $t:portal.mandate.pending
+                          submitted: $t:portal.mandate.pending
+                          failed: $t:portal.mandate.failed
+                          blocked: $t:portal.mandate.failed
+                          bank_disconnected: $t:portal.mandate.failed
+                          cancelled: $t:portal.mandate.ended
+                          expired: $t:portal.mandate.ended
+                          consumed: $t:portal.mandate.ended
+                          replaced: $t:portal.mandate.ended
+                      - { field: bank_account, label: $t:portal.mandate.account }
+                      - { field: signed_at, label: $t:portal.mandate.since, format: short-date }

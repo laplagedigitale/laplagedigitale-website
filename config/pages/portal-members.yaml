@@ -1,0 +1,147 @@
+# Page: portal-members — the admins' list of members inside the Espace Membre:
+# every coworker with their Pennylane link, the invitations still waiting, and
+# the dialog that invites a new one.
+#
+# An admin bypasses row-level rules, so the members table lists every row here
+# without a filter. A row opens /espace-membre/membres/:id, the member's space
+# seen read-only (portal-member.yaml).
+#
+# Inviting posts to the built-in /api/auth/admin/invite-user with the role
+# fixed to coworker: the invitee chooses their password from the email link.
+# The invitation itself creates the account and fires member-sign-up, so the
+# members row exists at once and pennylane-sync links it within 15 minutes,
+# before the invitee has accepted. The link opens the built-in
+# /accept-invitation, since no page declares `invitation`.
+name: portal-members
+path: /espace-membre/membres
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Membres — Espace Membre"
+  description: "Les membres de La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: espace-membre-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: $t:admin.members.title, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: $t:admin.members.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: button
+                content: $t:admin.members.invite
+                visibility: { capability: administer-accounts }
+                props:
+                  className: 'self-start sm:self-auto w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                  interactions:
+                    click:
+                      modal: invite-member
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: table
+                dataSource:
+                  table: members
+                  sort:
+                    - { field: name, direction: asc }
+                  pagination: { pageSize: 50, style: numbered }
+                search:
+                  placeholder: $t:admin.members.search
+                emptyMessage: $t:admin.members.none
+                onRowClick:
+                  type: navigate
+                  path: /espace-membre/membres/$record.id
+                columns:
+                  - { field: name, label: $t:admin.members.name }
+                  - { field: email, label: $t:admin.members.email }
+                  - field: match_status
+                    label: $t:admin.members.status
+                    valueLabels:
+                      pending: $t:admin.match.pending
+                      matched: $t:admin.match.matched
+                      not_found: $t:admin.match.not_found
+                      manual: $t:admin.match.manual
+                  - { field: pennylane_customer_id, label: $t:admin.members.customer }
+
+          - type: container
+            element: section
+            props:
+              className: 'space-y-3'
+            children:
+              - { type: text, element: h2, content: $t:admin.members.pending, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:admin.members.pending.intro, props: { className: 'text-sm text-text-muted max-w-2xl' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    props:
+                      aria-label: $t:admin.members.pending
+                    dataSource:
+                      auth: invitations
+                    emptyMessage: $t:admin.members.pending.none
+                    columns:
+                      - { field: email, label: $t:admin.members.email }
+                      - { field: sentAt, label: $t:admin.members.pending.sent, format: relative-date }
+                      - { field: expiresAt, label: $t:admin.members.pending.expires, format: short-date }
+                      - type: actions
+                        actions:
+                          - label: $t:admin.members.pending.resend
+                            variant: ghost
+                            action:
+                              type: auth
+                              method: resendInvitation
+                              target: $record.id
+                          - label: $t:admin.members.pending.revoke
+                            variant: ghost
+                            action:
+                              type: auth
+                              method: revokeInvitation
+                              target: $record.id
+                            confirm:
+                              title: $t:admin.members.pending.revoke.title
+                              message: $t:admin.members.pending.revoke.message
+                              confirmLabel: $t:admin.members.pending.revoke
+
+  - type: dialog
+    visibility: { capability: administer-accounts }
+    props:
+      id: invite-member
+      title: $t:admin.members.invite.title
+      description: $t:admin.members.invite.desc
+    children:
+      - type: form
+        endpoint:
+          url: /api/auth/admin/invite-user
+          method: POST
+          responseEnvelope: better-auth
+          submitLabel: $t:admin.members.invite.submit
+          onSuccess:
+            type: toast
+            variant: success
+            message: $t:admin.members.invite.done
+            reload: true
+          onError:
+            type: toast
+            variant: destructive
+            message: $t:admin.members.invite.error
+        fields:
+          - { field: email, control: email, label: $t:admin.members.invite.email, required: true }
+          - { field: name, control: text, label: $t:admin.members.invite.name, required: true }
+          # Always a coworker: that role is what files the members row.
+          - { field: role, control: text, hidden: true, defaultValue: coworker }

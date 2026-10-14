@@ -620,3 +620,40 @@ spaces.member: Vos factures, votre prélèvement et votre compte de coworker.
 spaces.editor: Espace rédaction
 spaces.editor.desc: Écrire et publier les articles du blog.
 spaces.none: "Votre compte n'ouvre encore aucun espace. Contactez l'équipe de La Plage Digitale."
+# Espace Membre — the admins' members pages (/espace-membre/membres)
+admin.nav.group: Administration
+admin.nav.members: Membres
+admin.members.title: Membres
+admin.members.intro: "Les comptes coworkers et leur lien avec Pennylane. Cliquez sur un membre pour voir son espace : ses factures et son prélèvement, en lecture seule."
+admin.members.cta: Gérer les membres →
+admin.members.invite: Inviter un membre
+admin.members.invite.title: Inviter un membre
+admin.members.invite.desc: "Il reçoit un e-mail avec un lien pour choisir son mot de passe, valable 7 jours. Il apparaît tout de suite dans la liste des membres, et ses factures Pennylane sont synchronisées dans les 15 minutes, avant même qu'il accepte."
+admin.members.invite.email: E-mail
+admin.members.invite.name: Nom
+admin.members.invite.submit: Envoyer l'invitation
+admin.members.invite.done: Invitation envoyée.
+admin.members.invite.error: "L'invitation n'a pas pu être envoyée. Vérifiez l'adresse : elle a peut-être déjà un compte."
+admin.members.search: Rechercher un membre…
+admin.members.none: Aucun membre pour le moment.
+admin.members.name: Nom
+admin.members.email: E-mail
+admin.members.status: Pennylane
+admin.members.customer: Client Pennylane
+admin.members.pending: Invitations en attente
+admin.members.pending.intro: "Un lien d'invitation est valable 7 jours. Le membre est déjà dans la liste ci-dessus : son espace se remplit avant qu'il accepte."
+admin.members.pending.none: Aucune invitation en attente.
+admin.members.pending.sent: Envoyée
+admin.members.pending.expires: Expire le
+admin.members.pending.resend: Renvoyer
+admin.members.pending.revoke: Révoquer
+admin.members.pending.revoke.title: Révoquer cette invitation ?
+admin.members.pending.revoke.message: Le lien reçu par e-mail ne fonctionnera plus.
+admin.match.pending: En attente de synchronisation
+admin.match.matched: Relié automatiquement
+admin.match.not_found: "Non trouvé — à relier à la main"
+admin.match.manual: Relié à la main
+admin.member.back: "← Tous les membres"
+admin.member.readonly: "Vue administrateur, en lecture seule : ce que ce membre voit dans son Espace Membre."
+admin.member.unlinked: "Pas encore relié à Pennylane. Si le statut reste « Non trouvé », renseignez pennylane_customer_id et passez match_status à manual dans /_admin."
+admin.member.invoices: Factures

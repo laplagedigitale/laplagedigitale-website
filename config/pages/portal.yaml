@@ -33,6 +33,15 @@ components:
               - { type: text, element: h1, content: $t:nav.portal, props: { className: 'text-4xl font-bold text-navy mt-1' } }
               - { type: text, element: p, content: $t:portal.dashboard.subtitle, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
 
+          # Admins only: the way into the members pages on every screen size
+          # (the sidebar's admin group is hidden below lg).
+          - type: link
+            visibility: { roles: [admin] }
+            content: $t:admin.members.cta
+            props:
+              href: /espace-membre/membres
+              className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+
           # Account link — shown only while the coworker's Pennylane customer
           # is not linked yet, so an empty invoice list is explained.
           - type: list

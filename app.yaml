@@ -111,6 +111,9 @@ pages:
   - $ref: ./config/pages/portal-invoices.yaml
   - $ref: ./config/pages/portal-mandate.yaml
   - $ref: ./config/pages/portal-account.yaml
+  # Admins only: every member, the invitations, and one member's space read-only.
+  - $ref: ./config/pages/portal-members.yaml
+  - $ref: ./config/pages/portal-member.yaml
 
 # Old WordPress URLs (posts lived at the root, pages had other slugs) — 301s.
 redirects:

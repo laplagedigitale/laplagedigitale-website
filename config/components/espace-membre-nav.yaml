@@ -34,3 +34,14 @@ children:
         items:
           - { label: $t:portal.nav.profile, href: /espace-membre/compte, icon: user-round, activeMatch: prefix }
           - { label: $t:portal.nav.site, href: $t:href.home, icon: arrow-left }
+  # Admins only — a sidebar entry cannot be gated on its own, so the admin
+  # group is a second sidebar, left out of the HTML for everyone else. Shown
+  # from lg up; on a phone the dashboard's admin link reaches the same page.
+  - type: sidebar
+    visibility: { roles: [admin] }
+    props:
+      className: 'hidden lg:block lg:border-t lg:border-border lg:pt-4 [&_a[aria-current=page]]:bg-surface [&_a[aria-current=page]]:font-semibold [&_a[aria-current=page]]:text-navy [&_a[aria-current=page]]:shadow-sm'
+    groups:
+      - label: $t:admin.nav.group
+        items:
+          - { label: $t:admin.nav.members, href: /espace-membre/membres, icon: users, activeMatch: prefix }
