@@ -138,15 +138,17 @@ actions:
               party: customers.get(String(i.customer?.id)) ?? '',
             }))
           // Supplier invoices have no draft flag or status: an archived one is
-          // gone, a credit note has nothing left to pay, and only euros compare
-          // with the euro amount of a bank transaction.
+          // gone, and only euros compare with the euro amount of a bank
+          // transaction. Pennylane signs what we still owe a supplier negative
+          // (−36.43), so an invoice left to pay is below zero and a credit note,
+          // owed to us, is not one to match against a payment.
           const supplierInvoices = (context.inputData.supplierInvoices ?? [])
-            .filter((i: any) => !i.archived_at && !i.paid && (i.currency ?? 'EUR') === 'EUR' && Number(i.remaining_amount_with_tax) > 0.01)
+            .filter((i: any) => !i.archived_at && !i.paid && (i.currency ?? 'EUR') === 'EUR' && Number(i.remaining_amount_with_tax) < -0.01)
             .map((i: any) => ({
               id: Number(i.id),
               number: String(i.invoice_number ?? ''),
               date: String(i.date),
-              remaining: round2(Number(i.remaining_amount_with_tax)),
+              remaining: round2(-Number(i.remaining_amount_with_tax)),
               partyId: i.supplier?.id ? String(i.supplier.id) : '',
               party: suppliers.get(String(i.supplier?.id)) ?? '',
             }))
