@@ -86,6 +86,7 @@ and the pages read those tables:
 | `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
 | `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active GoCardless mandate from manual transfer to direct debit, and mails the treasurer what changed |
 | `flex-check-in`           | a Flex check-in      | dates the new `checkins` row, keeps one row per member per day (a full day replaces the half day) and stamps its amount HT |
+| `flex-signup-validate`    | « Valider » on a sign-up | finds or creates the Pennylane customer, links the member to it, invites them as a coworker |
 | `flex-invoicing`          | 1st of month 06:00   | creates one Pennylane invoice per linked member for last month's Flex days, marks them `invoiced`, mails the treasurer |
 
 **Isolation is the tables' job, not the page's.** Every portal table has a
@@ -135,11 +136,26 @@ Flex (14 € HT a full day, 7 € HT a half day, no booking) used to run on a
 Notion page and an Airtable form. It now runs here:
 
 1. **Sign-up** — a newcomer fills the form on **`/flex`**; it lands in
-   `flex_signups` (visitors write, only admins read). An admin creates the
-   Pennylane customer from the billing details, invites the person as a
-   `coworker` from `/espace-membre/membres`, ticks `association_member` on their
-   `members` row if they joined the association, and sets the sign-up's
-   « Suivi » to « Invité·e ». All of it is on **`/espace-membre/flex`**.
+   `flex_signups` (visitors write, only admins read). On
+   **`/espace-membre/flex`** an admin presses **« Valider »** on the sign-up,
+   and `flex-signup-validate` does the rest in one run:
+   - reuses the Pennylane customer whose emails include the sign-up's e-mail,
+     or creates it (a company customer when a company or SIRET is given, an
+     individual one otherwise) with the billing address, phone, SIRET and VAT
+     number. Several customers with that e-mail stop the run: link the member
+     by hand;
+   - links the `members` row to it at once (`match_status: manual`, so the
+     sync never unlinks it) and ticks `association_member` if they joined the
+     association;
+   - invites the person as a `coworker` — the same e-mail as « Inviter un
+     membre » — unless the address already has an account;
+   - sets the sign-up's « Suivi » to « Invité·e » and keeps the customer id.
+
+   A Pennylane error leaves everything as it was; pressing again after any
+   failure picks up where the run stopped, never creating a second customer.
+   « Refuser » sets « Sans suite ». A sign-up sent before the address was
+   split in parts is read from its single address line (« … 67000
+   Strasbourg »); if that fails, fill in postal code and city on the row.
 2. **Check-in** — each visit, the coworker opens **`/espace-membre/presences`**
    and picks half day or full day. The day is set by `flex-check-in`; checking in
    again as a full day replaces the morning's half day. A billing-details change
@@ -254,6 +270,16 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`FLEX_INVOICING_APPLY`** — optional, default `true`. `false` turns the
   monthly Flex invoicing into a dry run (nothing created in Pennylane, no
   check-in marked).
+- **`INVITE_API_KEY`** — an API key minted in `/_admin` (API keys) by an
+  **admin** account. `flex-signup-validate` sends the coworker invitation
+  through the app's own admin endpoint with it, at `BASE_URL`: Sovrium 0.37's
+  automations can create a user but not invite one. Without it every
+  validation is refused before anything is written. The invitation names the
+  key's owner as the inviter; demoting or banning that owner, or revoking the
+  key, stops the invitations.
+- **`FLEX_SIGNUP_APPLY`** — optional, default `true`. `false` makes « Valider »
+  a dry run: the run says which customer it would reuse or create and writes
+  nothing.
 - **`TREASURER_EMAIL`** — optional, default `tresorerie@laplagedigitale.fr`:
   where the payment-matching, direct-debit and Flex invoicing summaries go
   (needs the `SMTP_*` variables).
