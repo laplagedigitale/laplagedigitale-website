@@ -22,6 +22,16 @@ env:
     required: false
     default: 'false'
     secret: false
+  - key: DIRECT_DEBIT_APPLY
+    description: pennylane-direct-debit moves Fixe subscriptions with an active GoCardless mandate to direct debit; 'false' makes it a dry run
+    required: false
+    default: 'true'
+    secret: false
+  - key: DIRECT_DEBIT_AMOUNTS
+    description: Comma-separated monthly amounts (TTC) of the subscriptions pennylane-direct-debit moves to direct debit — the Fixe plan
+    required: false
+    default: '330'
+    secret: false
   - key: TREASURER_EMAIL
     description: Recipient of the pennylane-auto-match morning summary
     required: false
@@ -132,5 +142,7 @@ automations:
   - $ref: ./config/automations/pennylane-auto-match.yaml
   - $ref: ./config/automations/pennylane-sync.yaml
   - $ref: ./config/automations/request-mandate.yaml
+  # Fixe subscriptions with an active mandate → GoCardless direct debit
+  - $ref: ./config/automations/pennylane-direct-debit.yaml
   # Weekly Notion → Slack digest (Monday 08:30 Europe/Paris)
   - $ref: ./config/automations/notion-hebdo.yaml
