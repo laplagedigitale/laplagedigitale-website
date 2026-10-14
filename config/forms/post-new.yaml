@@ -1,0 +1,26 @@
+# Form: post-new — write a new post, placed on /editor/posts/new.
+#
+# A declared form because 0.37 moved `fieldGroups` and the upload controls
+# (`accept`, `dropZone`) off the page `form`. It also answers on
+# /forms/post-new, hence the same gate as the editors' space.
+id: 2
+name: post-new
+title: Nouvel article
+access: { require: [editor, admin], redirectTo: /connexion }
+submitTo:
+  table: posts
+fieldGroups:
+  - { label: Article, fields: [title, slug, excerpt, body] }
+  - { label: Publication, fields: [status, published_at, categories, cover] }
+fields:
+  - { kind: table-field, column: title, placeholder: "Titre de l'article", required: true }
+  - { kind: table-field, column: slug, placeholder: 'mon-article', required: true }
+  - { kind: table-field, column: excerpt }
+  - { kind: table-field, column: body }
+  - { kind: table-field, column: status, defaultValue: draft, required: true }
+  - { kind: table-field, column: published_at, defaultValue: $now }
+  - { kind: table-field, column: categories }
+  - { kind: table-field, column: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
+onSuccess:
+  type: redirect
+  url: /editor/articles

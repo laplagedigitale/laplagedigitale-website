@@ -30,24 +30,4 @@ components:
               className: 'p-6 max-w-3xl'
             children:
               - type: form
-                dataSource: { table: posts }
-                action:
-                  type: crud
-                  operation: create
-                  table: posts
-                  onSuccess:
-                    type: navigate
-                    navigate: /editor/articles
-                    toast: { variant: success, message: Article enregistré. }
-                fieldGroups:
-                  - { label: Article, fields: [title, slug, excerpt, body] }
-                  - { label: Publication, fields: [status, published_at, categories, cover] }
-                fields:
-                  - { field: title, placeholder: "Titre de l'article" }
-                  - { field: slug, placeholder: 'mon-article' }
-                  - { field: excerpt, control: textarea }
-                  - { field: body }
-                  - { field: status, defaultValue: draft }
-                  - { field: published_at, defaultValue: $now }
-                  - { field: categories }
-                  - { field: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
+                formRef: post-new

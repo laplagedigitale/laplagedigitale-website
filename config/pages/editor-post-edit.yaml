@@ -79,5 +79,7 @@ components:
                       - { field: published_at }
                       - { field: categories }
                       - { field: author }
-                      - { field: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
+                      # The file types are the column's (allowedFileTypes); 0.37
+                      # draws an edit form's attachment with its default control.
+                      - { field: cover }
                       - { field: legacy_cover, readOnly: true }

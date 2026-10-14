@@ -74,6 +74,7 @@ components:
 
 forms:
   - $ref: ./config/forms/contact.yaml
+  - $ref: ./config/forms/post-new.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
