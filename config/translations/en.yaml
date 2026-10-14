@@ -16,6 +16,8 @@ href.portal: /en/espace-membre
 href.portal.invoices: /en/espace-membre/factures
 href.portal.mandate: /en/espace-membre/prelevement
 href.portal.account: /en/espace-membre/compte
+href.portal.presences: "/en/espace-membre/presences"
+href.flex: "/en/flex"
 href.privacy: /en/confidentialite
 
 # ── Navigation ──
@@ -243,7 +245,7 @@ home.meta.title: La Plage Digitale — Coworking and third place in Strasbourg
 home.meta.description: "Strasbourg's third place for innovation: 600 m² of coworking in the city centre, with dedicated desks, flex places and meeting rooms to hire."
 home.href.fixe: /en/les-formules#fixe
 home.href.nomade: /en/les-formules#nomade
-home.href.flex: /en/les-formules#flex
+home.href.flex: "/en/flex"
 home.href.reunion: /en/les-formules#reunion
 home.hero.eyebrow: Coworking · Third place · Strasbourg
 home.hero.title: Strasbourg's third place for innovation
@@ -331,7 +333,7 @@ legal.law.p1: "This legal notice is governed by French law. If you have any ques
 # ── pricing ──
 href.pricing.fixe: /en/les-formules#fixe
 href.pricing.nomade: /en/les-formules#nomade
-href.pricing.flex: /en/les-formules#flex
+href.pricing.flex: "/en/flex"
 href.pricing.reunion: /en/les-formules#reunion
 href.pricing.domiciliation: /en/les-formules#domiciliation
 pricing.meta.title: Our coworking plans in Strasbourg
@@ -389,7 +391,9 @@ pricing.flex.f2: High-speed fibre internet and Wi-Fi
 pricing.flex.f3: Access to printers and scanners
 pricing.flex.f4: Unlimited coffee
 pricing.flex.f5: Free access to the lounge and café area
-pricing.flex.info: "9 am to 5 pm, Monday to Friday (excluding public holidays), no booking needed."
+pricing.flex.info: "9 am to 5 pm, Monday to Friday (excluding public holidays), no booking needed. You check in from the Member Area and get one invoice a month."
+pricing.flex.f6: "Or by the half day: €7 excl. VAT (€8.40 incl. VAT)"
+pricing.flex.cta: "How it works — sign up"
 pricing.rooms.eyebrow: Meeting rooms
 pricing.rooms.title: Four rooms, for 6 to 60 people
 pricing.rooms.lead: "Whether or not you are a member, rent a room for a full or half day: perfect for meeting clients and suppliers in the centre of Strasbourg, or running a training session a stone's throw from the cathedral. Every room has a screen."
@@ -529,6 +533,7 @@ supporters.cta.about: About us
 portal.nav.menu: Menu
 portal.nav.space: My space
 portal.nav.invoices: Invoices
+portal.nav.presences: "Check-ins"
 portal.nav.mandate: Direct debit
 portal.nav.account: Account
 portal.nav.profile: My account
@@ -622,6 +627,7 @@ spaces.none: "Your account does not open any space yet. Please contact the La Pl
 # Member Area — the admins' members pages (/espace-membre/membres)
 admin.nav.group: Administration
 admin.nav.members: Members
+admin.nav.flex: "Flex"
 admin.members.title: Members
 admin.members.intro: "Coworker accounts and their link to Pennylane. Click a member to see their space — invoices and direct debit — read-only."
 admin.members.cta: Manage members →
@@ -639,6 +645,7 @@ admin.members.name: Name
 admin.members.email: Email
 admin.members.status: Pennylane
 admin.members.customer: Pennylane customer
+admin.members.association: "Association member"
 admin.members.pending: Pending invitations
 admin.members.pending.intro: "An invitation link is valid for 7 days. The member is already in the list above: their space fills up before they accept."
 admin.members.pending.none: No invitation waiting.
@@ -656,3 +663,101 @@ admin.member.back: "← All members"
 admin.member.readonly: "Admin view, read-only: what this member sees in their Member Area."
 admin.member.unlinked: "Not linked to Pennylane yet. If the status stays \"Not found\", set pennylane_customer_id and switch match_status to manual in /_admin."
 admin.member.invoices: Invoices
+
+# Flex — /flex, the check-in (/espace-membre/presences) and the admins' Flex desk
+flex.meta.title: "Flex — a desk by the day | La Plage Digitale"
+flex.meta.description: "Work at La Plage Digitale by the day or half day, no booking needed: €14 excl. VAT a day, €7 a half day, one invoice a month. Sign up online."
+flex.eyebrow: "Flex plan"
+flex.title: "A desk by the day, no booking needed"
+flex.lead: "Come whenever you like, Monday to Friday from 9 am to 5 pm: check in from your Member Area and we send you a single invoice each month."
+flex.cta.signup: "Sign up"
+flex.cta.checkin: "Already signed up? Check in"
+flex.price.title: "Prices and practical information"
+flex.price.full: "Full day"
+flex.price.half: "Half day"
+flex.price.half.amount: "€7"
+flex.price.half.unit: "excl. VAT / half day"
+flex.price.half.ttc: "€8.40 per half day incl. VAT"
+flex.info.hours: "Monday to Friday, 9 am to 5 pm (excluding public holidays)."
+flex.info.booking: "No booking: just come in, there are 30 flex places."
+flex.info.invoice: "One invoice a month, issued on the 1st of the following month to your billing name and address, and shown in your Member Area."
+flex.info.gift: "Member of the La Plage Digitale association? Your first day of the year is on us."
+flex.how.title: "How does it work?"
+flex.how.1.title: "Sign up"
+flex.how.1.text: "Fill in the form below once, with your billing details."
+flex.how.2.title: "Get your access"
+flex.how.2.text: "We create your coworker account: you receive an email to choose your password. On your first visit, come and say hello at the front desk."
+flex.how.3.title: "Check in every time"
+flex.how.3.text: "When you arrive, open Member Area › Check-ins and choose half day or full day. Staying the whole day after all? Check in again as a full day: it replaces the half day."
+flex.how.4.title: "One invoice a month"
+flex.how.4.text: "On the 1st of the month, the invoice for last month's days is issued. It shows in your Member Area, with direct debit as an option."
+flex.signup.eyebrow: "First visit"
+flex.signup.title: "Sign up for Flex"
+flex.signup.lead: "A few details, just once: we create your account and send you your Member Area access, usually within one working day. Any question? contact+flex@laplagedigitale.fr"
+flex.signup.form.title: "Your details"
+flex.signup.first_name: "First name"
+flex.signup.last_name: "Last name"
+flex.signup.email: "Email"
+flex.signup.email.help: "This is your account address: your access and your invoices are sent there."
+flex.signup.phone: "Phone"
+flex.signup.company: "Company (optional)"
+flex.signup.billing_name: "Billing name"
+flex.signup.billing_name.help: "Your name or your company name, as it should appear on the invoice."
+flex.signup.billing_address: "Billing address"
+flex.signup.billing_address.placeholder: "13 rue Jacques Peirotes, 67000 Strasbourg"
+flex.signup.siret: "SIRET (optional)"
+flex.signup.vat_number: "EU VAT number (optional)"
+flex.signup.association: "I would like to join the La Plage Digitale association"
+flex.signup.association.help: "Membership supports the third place and gives you one free Flex day a year. We will send you the membership link."
+flex.signup.terms: "I accept the terms of use and the terms of sale"
+flex.signup.terms.help: "See our [legal notice](/en/mentions-legales)."
+flex.signup.success: "Thank you, your sign-up has arrived! We are creating your account and will email you your Member Area access. See you soon at the Plage!"
+flex.signup.error: "Your sign-up could not be sent. Please try again, or write to contact+flex@laplagedigitale.fr."
+flex.signup.status.new: "New"
+flex.signup.status.invited: "Invited"
+flex.signup.status.declined: "Closed"
+flex.duration.full: "Full day"
+flex.duration.half: "Half day"
+flex.status.to_invoice: "To invoice"
+flex.status.invoiced: "Invoiced"
+flex.status.offered: "Free"
+flex.checkin.title: "Check in"
+flex.checkin.lead: "Do it every time you come on Flex, as soon as you arrive. Today's date is recorded automatically."
+flex.checkin.submit: "I'm here"
+flex.checkin.account: "Account"
+flex.checkin.success: "Got it — have a good day at the Plage!"
+flex.checkin.duration: "Duration"
+flex.checkin.duration.help: "Staying the whole day after all? Check in again as a full day: it replaces the half day."
+flex.checkin.error: "Your check-in could not be saved. Try again, or let the front desk know."
+flex.presences.title: "My check-ins"
+flex.presences.intro: "Check in every time you come on Flex. Your days are invoiced once a month, on the 1st, and the invoice shows in Invoices."
+flex.presences.how: "Good to know"
+flex.presences.how.1: "First visit? Please come to the front desk first."
+flex.presences.how.2: "Half day: €7 excl. VAT. Full day: €14 excl. VAT. One check-in per day."
+flex.presences.how.3: "Check in as soon as you arrive: if you forget, the team will remind you."
+flex.presences.billing: "Your billing details changed (name, address, company)? Write to us and we will update them for your next invoices."
+flex.presences.billing.cta: "Change my billing details →"
+flex.presences.month: "Check-ins this month"
+flex.presences.due: "To invoice (excl. VAT)"
+flex.presences.offered: "Free days"
+flex.presences.history: "Check-in history"
+flex.presences.none: "No check-ins yet."
+flex.col.date: "Date"
+flex.col.duration: "Duration"
+flex.col.amount: "Amount excl. VAT"
+flex.col.status: "Status"
+admin.flex.title: "Flex"
+admin.flex.intro: "Every Flex check-in and the sign-ups received on /flex. Check-ins \"To invoice\" are invoiced automatically in Pennylane on the 1st of the month."
+admin.flex.month: "Check-ins this month"
+admin.flex.due: "To invoice (excl. VAT)"
+admin.flex.signups.new: "Sign-ups to handle"
+admin.flex.checkins: "Check-ins"
+admin.flex.checkins.intro: "Editable in place: change the duration and the amount together (€14 a full day, €7 a half day). An \"Invoiced\" check-in is already in Pennylane: issue a credit note first."
+admin.flex.search: "Search check-ins…"
+admin.flex.invoice: "Pennylane invoice"
+admin.flex.signups: "Sign-ups"
+admin.flex.signups.intro: "For each sign-up: create the customer in Pennylane with their billing details, invite the person from Members, tick \"Association member\" if needed, then set the follow-up to \"Invited\"."
+admin.flex.signups.none: "No sign-ups yet."
+admin.flex.signups.date: "Received"
+admin.flex.signups.association: "Membership"
+admin.flex.signups.status: "Follow-up"

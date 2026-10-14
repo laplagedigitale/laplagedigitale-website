@@ -1,8 +1,10 @@
 # Page: portal-member — one member's space as an admin sees it, read-only: their
-# Pennylane link, what is left to pay, their invoices and their mandate.
+# Pennylane link, what is left to pay, their invoices, their mandate and their
+# Flex check-ins.
 #
 # Every block filters on the `member` relationship the sync writes on each
-# invoice and mandate, matched to the :id in the address. An admin bypasses
+# invoice and mandate (and flex-check-in on each check-in), matched to the :id
+# in the address. An admin bypasses
 # the row-level rules on those tables, which is what lets this page read
 # another member's rows; a coworker never reaches it (access is admin only).
 # Nothing here writes: no mandate request is sent on the member's behalf.
@@ -158,3 +160,35 @@ components:
                           replaced: $t:portal.mandate.ended
                       - { field: bank_account, label: $t:portal.mandate.account }
                       - { field: signed_at, label: $t:portal.mandate.since, format: short-date }
+
+          # Flex days, read-only here — corrections are made in /espace-membre/flex.
+          - type: card
+            props:
+              className: 'p-4 sm:p-6 space-y-4'
+            children:
+              - { type: text, element: h2, content: $t:flex.presences.history, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: table
+                readOnly: true
+                dataSource:
+                  table: checkins
+                  filter:
+                    - { field: member, operator: eq, value: $param.id }
+                  sort:
+                    - { field: date, direction: desc }
+                  pagination: { pageSize: 25, style: numbered }
+                emptyMessage: $t:flex.presences.none
+                columns:
+                  - { field: date, label: $t:flex.col.date, format: short-date }
+                  - field: duration
+                    label: $t:flex.col.duration
+                    valueLabels:
+                      full: $t:flex.duration.full
+                      half: $t:flex.duration.half
+                  - { field: amount, label: $t:flex.col.amount, format: currency, align: right }
+                  - field: status
+                    label: $t:flex.col.status
+                    valueLabels:
+                      to_invoice: $t:flex.status.to_invoice
+                      invoiced: $t:flex.status.invoiced
+                      offered: $t:flex.status.offered
+                  - { field: pennylane_invoice_id, label: $t:admin.flex.invoice }

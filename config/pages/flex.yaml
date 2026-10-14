@@ -1,0 +1,197 @@
+# Page: flex — how the Flex day pass works, and the online first-visit sign-up.
+# Replaces the Notion page « Flex » and the paper sign-up at the reception desk.
+#
+# Flow: a newcomer signs up here (config/forms/flex-signup.yaml → flex_signups);
+# an admin creates their Pennylane customer and invites them as a coworker from
+# /espace-membre/membres; from then on they check in from the Espace Membre
+# (/espace-membre/presences) each time they come, and get one invoice a month
+# (flex-invoicing).
+#
+# Linked from the Flex card of /les-formules, the Flex offer on the home page
+# and the Flex places of /espace-coworking.
+name: flex
+path: /flex
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  noindex: true  # pre-launch: keep out of search engines
+  title: $t:flex.meta.title
+  description: $t:flex.meta.description
+  openGraph:
+    type: website
+    image: /images/pages/les-formules/salle-narval.webp
+components:
+  - component: site-header
+
+  # ── Hero ──
+  - type: container
+    element: section
+    props:
+      className: 'relative overflow-hidden bg-navy text-white'
+    children:
+      - type: container
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+        children:
+          - type: text
+            element: p
+            content: $t:flex.eyebrow
+            props:
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
+          - type: text
+            element: h1
+            content: $t:flex.title
+            props:
+              className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-4xl'
+          - type: text
+            element: p
+            content: $t:flex.lead
+            props:
+              className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row gap-4 mt-10'
+            children:
+              - { type: link, content: $t:flex.cta.signup, props: { href: '#inscription', className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:flex.cta.checkin, props: { href: $t:href.portal.presences, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors' } }
+
+  - type: container
+    element: main
+    props:
+      className: 'bg-background'
+    children:
+      # ── Price + practical info ──
+      - type: container
+        element: section
+        props:
+          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+          'aria-labelledby': flex-price-title
+        children:
+          - type: text
+            element: h2
+            content: $t:flex.price.title
+            props:
+              id: flex-price-title
+              className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mb-10'
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 md:grid-cols-3 gap-6'
+            children:
+              - type: container
+                element: article
+                props:
+                  className: 'flex flex-col bg-white rounded-lg shadow-md border-t-8 border-orange p-6 sm:p-8'
+                children:
+                  - { type: text, element: h3, content: $t:flex.price.full, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase tracking-widest text-text-muted' } }
+                  - type: flex
+                    props: { className: 'flex items-baseline flex-wrap gap-x-2 mt-4' }
+                    children:
+                      - { type: text, element: span, content: $t:pricing.flex.amount, props: { className: '[font-size:var(--text-display)] [line-height:var(--text-display--line-height)] [font-weight:var(--text-display--font-weight)] [letter-spacing:var(--text-display--letter-spacing)] font-extrabold text-navy leading-none' } }
+                      - { type: text, element: span, content: $t:pricing.flex.unit, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-text-muted' } }
+                  - { type: text, element: p, content: $t:pricing.flex.ttc, props: { className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-2' } }
+              - type: container
+                element: article
+                props:
+                  className: 'flex flex-col bg-white rounded-lg shadow-md border-t-8 border-blue p-6 sm:p-8'
+                children:
+                  - { type: text, element: h3, content: $t:flex.price.half, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase tracking-widest text-text-muted' } }
+                  - type: flex
+                    props: { className: 'flex items-baseline flex-wrap gap-x-2 mt-4' }
+                    children:
+                      - { type: text, element: span, content: $t:flex.price.half.amount, props: { className: '[font-size:var(--text-display)] [line-height:var(--text-display--line-height)] [font-weight:var(--text-display--font-weight)] [letter-spacing:var(--text-display--letter-spacing)] font-extrabold text-navy leading-none' } }
+                      - { type: text, element: span, content: $t:flex.price.half.unit, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-text-muted' } }
+                  - { type: text, element: p, content: $t:flex.price.half.ttc, props: { className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-2' } }
+              - type: container
+                element: article
+                props:
+                  className: 'flex flex-col bg-sand rounded-lg p-6 sm:p-8 space-y-3 [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text'
+                children:
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: clock, size: 18, className: 'text-navy shrink-0 mt-1' } }, { type: text, element: span, content: $t:flex.info.hours }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: calendar-x, size: 18, className: 'text-navy shrink-0 mt-1' } }, { type: text, element: span, content: $t:flex.info.booking }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: receipt, size: 18, className: 'text-navy shrink-0 mt-1' } }, { type: text, element: span, content: $t:flex.info.invoice }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: gift, size: 18, className: 'text-navy shrink-0 mt-1' } }, { type: text, element: span, content: $t:flex.info.gift }] }
+
+      # ── How it works ──
+      - type: container
+        element: section
+        props:
+          className: 'bg-white'
+          'aria-labelledby': flex-how-title
+        children:
+          - type: container
+            props:
+              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+            children:
+              - type: text
+                element: h2
+                content: $t:flex.how.title
+                props:
+                  id: flex-how-title
+                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mb-10'
+              - type: grid
+                props:
+                  className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'
+                children:
+                  - type: container
+                    props: { className: 'bg-background rounded-lg p-6 border-t-4 border-orange' }
+                    children:
+                      - { type: text, element: p, content: '1', props: { className: 'text-3xl font-extrabold text-orange' } }
+                      - { type: text, element: h3, content: $t:flex.how.1.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-2' } }
+                      - { type: text, element: p, content: $t:flex.how.1.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-2' } }
+                  - type: container
+                    props: { className: 'bg-background rounded-lg p-6 border-t-4 border-blue' }
+                    children:
+                      - { type: text, element: p, content: '2', props: { className: 'text-3xl font-extrabold text-blue' } }
+                      - { type: text, element: h3, content: $t:flex.how.2.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-2' } }
+                      - { type: text, element: p, content: $t:flex.how.2.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-2' } }
+                  - type: container
+                    props: { className: 'bg-background rounded-lg p-6 border-t-4 border-magenta' }
+                    children:
+                      - { type: text, element: p, content: '3', props: { className: 'text-3xl font-extrabold text-magenta' } }
+                      - { type: text, element: h3, content: $t:flex.how.3.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-2' } }
+                      - { type: text, element: p, content: $t:flex.how.3.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-2' } }
+                  - type: container
+                    props: { className: 'bg-background rounded-lg p-6 border-t-4 border-forest' }
+                    children:
+                      - { type: text, element: p, content: '4', props: { className: 'text-3xl font-extrabold text-forest' } }
+                      - { type: text, element: h3, content: $t:flex.how.4.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-2' } }
+                      - { type: text, element: p, content: $t:flex.how.4.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-2' } }
+
+      # ── Sign-up form ──
+      - type: container
+        element: section
+        props:
+          id: inscription
+          className: 'scroll-mt-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
+          'aria-labelledby': flex-signup-title
+        children:
+          - type: container
+            props:
+              className: 'bg-sand rounded-lg p-6 sm:p-8 border-t-4 border-orange [&_.embedded-form]:!block [&_.embedded-form]:!w-full'
+            children:
+              - type: text
+                element: p
+                content: $t:flex.signup.eyebrow
+                props:
+                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
+              - type: text
+                element: h2
+                content: $t:flex.signup.title
+                props:
+                  id: flex-signup-title
+                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mb-4'
+              - type: text
+                element: p
+                content: $t:flex.signup.lead
+                props:
+                  className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted mb-8'
+              - type: form
+                formRef: flex-signup
+                props: { headingLevel: h3 }
+              - type: text
+                element: p
+                content: $t:contact.form.privacy
+                props:
+                  className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-6'
+
+  - component: site-footer

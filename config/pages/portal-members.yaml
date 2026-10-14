@@ -77,6 +77,8 @@ components:
                       not_found: $t:admin.match.not_found
                       manual: $t:admin.match.manual
                   - { field: pennylane_customer_id, label: $t:admin.members.customer }
+                  # Ticked by an admin: one Flex full day offered per year.
+                  - { field: association_member, label: $t:admin.members.association }
 
           - type: container
             element: section

@@ -17,6 +17,8 @@ href.portal: /espace-membre
 href.portal.invoices: /espace-membre/factures
 href.portal.mandate: /espace-membre/prelevement
 href.portal.account: /espace-membre/compte
+href.portal.presences: "/espace-membre/presences"
+href.flex: "/flex"
 href.privacy: /confidentialite
 
 # ── Navigation ──
@@ -244,7 +246,7 @@ home.meta.title: La Plage Digitale — Coworking et tiers-lieu à Strasbourg
 home.meta.description: "Tiers-lieu de l'innovation au cœur de Strasbourg : 600 m² de coworking, bureaux fixes, places flex et salles de réunion à louer."
 home.href.fixe: /les-formules#fixe
 home.href.nomade: /les-formules#nomade
-home.href.flex: /les-formules#flex
+home.href.flex: "/flex"
 home.href.reunion: /les-formules#reunion
 home.hero.eyebrow: Coworking · Tiers-lieu · Strasbourg
 home.hero.title: Le tiers-lieu de l'innovation à Strasbourg
@@ -332,7 +334,7 @@ legal.law.p1: "Les présentes mentions légales sont régies par le droit franç
 # ── pricing ──
 href.pricing.fixe: /les-formules#fixe
 href.pricing.nomade: /les-formules#nomade
-href.pricing.flex: /les-formules#flex
+href.pricing.flex: "/flex"
 href.pricing.reunion: /les-formules#reunion
 href.pricing.domiciliation: /les-formules#domiciliation
 pricing.meta.title: Nos formules de coworking à Strasbourg
@@ -390,7 +392,9 @@ pricing.flex.f2: Internet haut débit (fibre) et Wi-Fi
 pricing.flex.f3: Accès aux imprimantes et scanners
 pricing.flex.f4: Café à volonté
 pricing.flex.f5: Accès gratuit à l'espace détente et à la cafétéria
-pricing.flex.info: "De 9h à 17h, du lundi au vendredi (hors jours fériés), sans réservation."
+pricing.flex.info: "De 9h à 17h, du lundi au vendredi (hors jours fériés), sans réservation. Vous pointez votre arrivée depuis l'Espace Membre, et recevez une facture par mois."
+pricing.flex.f6: "Ou à la demi-journée : 7 € HT (8,40 € TTC)"
+pricing.flex.cta: "Comment ça marche ? S'inscrire"
 pricing.rooms.eyebrow: Salles de réunion
 pricing.rooms.title: Quatre salles, de 6 à 60 personnes
 pricing.rooms.lead: "Membre de La Plage ou non, louez une salle à la journée ou à la demi-journée : idéal pour recevoir clients et prestataires en plein centre de Strasbourg, ou animer une formation à deux pas de la cathédrale. Chaque salle est équipée d'un écran."
@@ -530,6 +534,7 @@ supporters.cta.about: Qui sommes-nous ?
 portal.nav.menu: Menu
 portal.nav.space: Mon espace
 portal.nav.invoices: Factures
+portal.nav.presences: "Présences"
 portal.nav.mandate: Prélèvement
 portal.nav.account: Compte
 portal.nav.profile: Mon compte
@@ -623,6 +628,7 @@ spaces.none: "Votre compte n'ouvre encore aucun espace. Contactez l'équipe de L
 # Espace Membre — the admins' members pages (/espace-membre/membres)
 admin.nav.group: Administration
 admin.nav.members: Membres
+admin.nav.flex: "Flex"
 admin.members.title: Membres
 admin.members.intro: "Les comptes coworkers et leur lien avec Pennylane. Cliquez sur un membre pour voir son espace : ses factures et son prélèvement, en lecture seule."
 admin.members.cta: Gérer les membres →
@@ -640,6 +646,7 @@ admin.members.name: Nom
 admin.members.email: E-mail
 admin.members.status: Pennylane
 admin.members.customer: Client Pennylane
+admin.members.association: "Adhérent"
 admin.members.pending: Invitations en attente
 admin.members.pending.intro: "Un lien d'invitation est valable 7 jours. Le membre est déjà dans la liste ci-dessus : son espace se remplit avant qu'il accepte."
 admin.members.pending.none: Aucune invitation en attente.
@@ -657,3 +664,101 @@ admin.member.back: "← Tous les membres"
 admin.member.readonly: "Vue administrateur, en lecture seule : ce que ce membre voit dans son Espace Membre."
 admin.member.unlinked: "Pas encore relié à Pennylane. Si le statut reste « Non trouvé », renseignez pennylane_customer_id et passez match_status à manual dans /_admin."
 admin.member.invoices: Factures
+
+# Flex — /flex, the check-in (/espace-membre/presences) and the admins' Flex desk
+flex.meta.title: "Flex — un bureau à la journée | La Plage Digitale"
+flex.meta.description: "Venez travailler à La Plage Digitale à la journée ou à la demi-journée, sans réservation : 14 € HT la journée, 7 € HT la demi-journée, une facture par mois. Inscription en ligne."
+flex.eyebrow: "Formule Flex"
+flex.title: "Un bureau à la journée, sans réservation"
+flex.lead: "Venez quand vous voulez, du lundi au vendredi de 9h à 17h : vous pointez votre arrivée depuis votre Espace Membre, et nous vous envoyons une seule facture par mois."
+flex.cta.signup: "Je m'inscris"
+flex.cta.checkin: "Déjà inscrit·e ? Pointer mon arrivée"
+flex.price.title: "Tarifs et infos pratiques"
+flex.price.full: "Journée complète"
+flex.price.half: "Demi-journée"
+flex.price.half.amount: "7 €"
+flex.price.half.unit: "HT / demi-journée"
+flex.price.half.ttc: "soit 8,40 € TTC la demi-journée"
+flex.info.hours: "Du lundi au vendredi, de 9h à 17h (hors jours fériés)."
+flex.info.booking: "Pas de réservation : présentez-vous directement, il y a 30 places flex."
+flex.info.invoice: "Une facture par mois, émise le 1er du mois suivant à vos nom et adresse de facturation, et visible dans votre Espace Membre."
+flex.info.gift: "Adhérent·e de l'association La Plage Digitale ? Votre première journée de l'année est offerte."
+flex.how.title: "Comment ça marche ?"
+flex.how.1.title: "Inscrivez-vous"
+flex.how.1.text: "Remplissez le formulaire ci-dessous une seule fois, avec vos infos de facturation."
+flex.how.2.title: "Recevez votre accès"
+flex.how.2.text: "Nous créons votre compte coworker : vous recevez un e-mail pour choisir votre mot de passe. Lors de votre première visite, passez nous voir à l'accueil."
+flex.how.3.title: "Pointez à chaque venue"
+flex.how.3.text: "En arrivant, ouvrez Espace Membre › Présences et indiquez demi-journée ou journée complète. Vous restez finalement la journée ? Pointez à nouveau en journée complète : elle remplace la demi-journée."
+flex.how.4.title: "Une facture par mois"
+flex.how.4.text: "Le 1er du mois, la facture de vos présences du mois écoulé est émise. Elle apparaît dans votre Espace Membre, avec le prélèvement automatique en option."
+flex.signup.eyebrow: "Première visite"
+flex.signup.title: "Inscription au Flex"
+flex.signup.lead: "Quelques infos, une seule fois : nous créons votre compte et vous envoyons votre accès à l'Espace Membre, en général sous un jour ouvré. Une question ? contact+flex@laplagedigitale.fr"
+flex.signup.form.title: "Vos informations"
+flex.signup.first_name: "Prénom"
+flex.signup.last_name: "Nom"
+flex.signup.email: "E-mail"
+flex.signup.email.help: "C'est l'adresse de votre compte : vous y recevrez votre accès et vos factures."
+flex.signup.phone: "Téléphone"
+flex.signup.company: "Entreprise (facultatif)"
+flex.signup.billing_name: "Nom de facturation"
+flex.signup.billing_name.help: "Votre nom ou celui de votre entreprise, tel qu’il doit figurer sur la facture."
+flex.signup.billing_address: "Adresse de facturation"
+flex.signup.billing_address.placeholder: "13 rue Jacques Peirotes, 67000 Strasbourg"
+flex.signup.siret: "SIRET (facultatif)"
+flex.signup.vat_number: "N° de TVA intracommunautaire (facultatif)"
+flex.signup.association: "Je souhaite adhérer à l'association La Plage Digitale"
+flex.signup.association.help: "L'adhésion soutient le tiers-lieu et vous offre une journée Flex par an. Nous vous envoyons le lien d'adhésion."
+flex.signup.terms: "J'accepte les conditions générales d'utilisation et de vente"
+flex.signup.terms.help: "À lire dans nos [mentions légales](/mentions-legales)."
+flex.signup.success: "Merci, votre inscription est bien arrivée ! Nous créons votre compte et vous envoyons votre accès à l'Espace Membre par e-mail. À très vite sur la Plage !"
+flex.signup.error: "Votre inscription n’a pas pu être envoyée. Merci de réessayer, ou écrivez-nous à contact+flex@laplagedigitale.fr."
+flex.signup.status.new: "Nouvelle"
+flex.signup.status.invited: "Invité·e"
+flex.signup.status.declined: "Sans suite"
+flex.duration.full: "Journée complète"
+flex.duration.half: "Demi-journée"
+flex.status.to_invoice: "À facturer"
+flex.status.invoiced: "Facturé"
+flex.status.offered: "Offert"
+flex.checkin.title: "Je pointe mon arrivée"
+flex.checkin.lead: "À faire à chaque venue en Flex, dès votre arrivée. La date du jour est enregistrée automatiquement."
+flex.checkin.submit: "Je suis arrivé·e"
+flex.checkin.account: "Compte"
+flex.checkin.success: "C’est noté, bonne journée sur la Plage !"
+flex.checkin.duration: "Durée"
+flex.checkin.duration.help: "Vous restez finalement la journée ? Pointez à nouveau en journée complète : elle remplace la demi-journée."
+flex.checkin.error: "Votre présence n’a pas pu être enregistrée. Réessayez, ou signalez-vous à l’accueil."
+flex.presences.title: "Mes présences"
+flex.presences.intro: "Pointez à chaque venue en Flex. Vos présences sont facturées une fois par mois, le 1er, et la facture apparaît dans Factures."
+flex.presences.how: "Bon à savoir"
+flex.presences.how.1: "Première visite ? Présentez-vous d'abord à l'accueil."
+flex.presences.how.2: "Demi-journée : 7 € HT. Journée complète : 14 € HT. Une seule présence par jour."
+flex.presences.how.3: "Pointez dès votre arrivée : si vous oubliez, l'équipe vous le rappellera."
+flex.presences.billing: "Vos infos de facturation changent (nom, adresse, entreprise) ? Écrivez-nous : nous les mettons à jour pour les prochaines factures."
+flex.presences.billing.cta: "Changer mes infos de facturation →"
+flex.presences.month: "Présences ce mois"
+flex.presences.due: "À facturer (HT)"
+flex.presences.offered: "Journées offertes"
+flex.presences.history: "Historique des présences"
+flex.presences.none: "Aucune présence pour le moment."
+flex.col.date: "Date"
+flex.col.duration: "Durée"
+flex.col.amount: "Montant HT"
+flex.col.status: "Statut"
+admin.flex.title: "Flex"
+admin.flex.intro: "Toutes les présences Flex et les inscriptions reçues sur /flex. Les présences « À facturer » sont facturées automatiquement le 1er du mois dans Pennylane."
+admin.flex.month: "Présences ce mois"
+admin.flex.due: "À facturer (HT)"
+admin.flex.signups.new: "Inscriptions à traiter"
+admin.flex.checkins: "Présences"
+admin.flex.checkins.intro: "Modifiable directement : corrigez la durée et le montant ensemble (14 € la journée, 7 € la demi-journée). Une présence « Facturé » est déjà dans Pennylane : faites d'abord un avoir."
+admin.flex.search: "Rechercher une présence…"
+admin.flex.invoice: "Facture Pennylane"
+admin.flex.signups: "Inscriptions"
+admin.flex.signups.intro: "Pour chaque inscription : créez le client dans Pennylane avec ses infos de facturation, invitez la personne depuis Membres, cochez « Adhérent » si besoin, puis passez le suivi à « Invité·e »."
+admin.flex.signups.none: "Aucune inscription pour le moment."
+admin.flex.signups.date: "Reçue le"
+admin.flex.signups.association: "Adhésion"
+admin.flex.signups.status: "Suivi"

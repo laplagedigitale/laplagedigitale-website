@@ -28,6 +28,7 @@ children:
       - label: $t:portal.nav.space
         items:
           - { label: $t:nav.portal, href: /espace-membre, icon: layout-dashboard }
+          - { label: $t:portal.nav.presences, href: /espace-membre/presences, icon: calendar-check, activeMatch: prefix }
           - { label: $t:portal.nav.invoices, href: /espace-membre/factures, icon: receipt, activeMatch: prefix }
           - { label: $t:portal.nav.mandate, href: /espace-membre/prelevement, icon: landmark, activeMatch: prefix }
       - label: $t:portal.nav.account
@@ -45,3 +46,4 @@ children:
       - label: $t:admin.nav.group
         items:
           - { label: $t:admin.nav.members, href: /espace-membre/membres, icon: users, activeMatch: prefix }
+          - { label: $t:admin.nav.flex, href: /espace-membre/flex, icon: calendar-days, activeMatch: prefix }

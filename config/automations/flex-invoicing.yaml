@@ -1,0 +1,326 @@
+# Automation: flex-invoicing — on the 1st of every month at 06:00 (Europe/Paris),
+# bills last month's Flex check-ins: ONE finalized Pennylane customer invoice
+# per member, dated the run day, due 15 days later, labelled « Flex — <mois
+# année> », with one line per kind of day:
+#
+#   « Flex — journée complète »  N × 14 € HT   VAT 20 % (FR_200)
+#   « Flex — demi-journée »      N ×  7 € HT   VAT 20 % (FR_200)
+#
+# The unit price is the amount flex-check-in stored on each row, so a price
+# change never re-prices a day already worked. The invoice is created through
+# the connection's `post-customer-invoices` operation (Pennylane API v2
+# POST /customer_invoices, free-text invoice_lines; installed with
+# `sovrium library add pennylane/post-customer-invoices`). pennylane-sync then
+# mirrors it into the member's Factures within 15 minutes.
+#
+# What is billed: every check-in still `to_invoice`, without an invoice id,
+# dated before the 1st of the current month — last month's, plus any older day
+# that was skipped (a member linked to Pennylane late is billed for it on the
+# next run). Members whose members row is not linked (match_status matched or
+# manual, with a pennylane_customer_id) are skipped and listed in the mail;
+# their rows stay `to_invoice`.
+#
+# Idempotent twice over: a billed row carries the invoice id and the status
+# `invoiced`, so it is never selected again; and each invoice carries
+# external_reference `flex-<member id>-<YYYY-MM>`, looked up before creating,
+# so a run that died between creating an invoice and marking the rows reuses
+# that invoice instead of billing the member twice.
+#
+# Association members (members.association_member, ticked by an admin) get
+# their first full day of each calendar year offered: that row becomes
+# `offered`, 0 €, and stays off the invoice. Only full days count, and a year
+# that already has an offered row offers nothing more.
+#
+# TODO: the invoice is not e-mailed by this run. Pennylane generates the PDF a
+# few minutes after creation (POST /customer_invoices/{id}/send_by_email answers
+# 409 until then), so sending belongs in a later pass — or in Pennylane's own
+# reminders. The coworker sees it in Factures as soon as pennylane-sync runs.
+#
+# FLEX_INVOICING_APPLY=false makes the run a dry run without a redeploy: it
+# logs and mails what it would create, and writes nothing anywhere.
+#
+# On demand (admin), e.g. to test or to bill a given month:
+#   POST /api/automations/flex-invoicing/trigger
+#   {"dryRun": true}                      → dry run for last month
+#   {"dryRun": true, "month": "2026-09"}  → dry run up to the end of September
+#
+# Every step is top-level, as in pennylane-sync: in 0.30 a step nested in a
+# `path` branch cannot read a sibling nested step. The Pennylane calls happen
+# inside the `bill` code step, one member at a time.
+name: flex-invoicing
+label: Facturation Flex mensuelle
+trigger:
+  type: cron
+  expression: '0 6 1 * *'
+  timezone: Europe/Paris
+timeout: 600000
+concurrency:
+  limit: 1
+actions:
+  - name: plan
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        # Absent on scheduled fires (renders empty); set by an on-demand POST body.
+        dryRun: '{{trigger.data.body.dryRun}}'
+        month: '{{trigger.data.body.month}}'
+      code: |
+        async function execute(context) {
+          const TZ = 'Europe/Paris'
+          const apply = String(context.env.FLEX_INVOICING_APPLY ?? 'true').toLowerCase() !== 'false'
+          const dryRun = !apply || String(context.inputData.dryRun ?? '').toLowerCase() === 'true'
+          // Today in Paris, as YYYY-MM-DD.
+          const today = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+          const [y, m] = today.split('-').map((s: string) => Number(s))
+          // The billed month: last month, or the YYYY-MM an admin asked for.
+          const asked = String(context.inputData.month ?? '').trim()
+          let py = m === 1 ? y - 1 : y
+          let pm = m === 1 ? 12 : m - 1
+          if (/^\d{4}-\d{2}$/.test(asked)) {
+            py = Number(asked.slice(0, 4))
+            pm = Number(asked.slice(5, 7))
+          } else if (asked) {
+            throw new Error(`month « ${asked} » : attendu AAAA-MM`)
+          }
+          const pad = (n: number) => String(n).padStart(2, '0')
+          const period = `${py}-${pad(pm)}`
+          const end = pm === 12 ? `${py + 1}-01-01` : `${py}-${pad(pm + 1)}-01`
+          const deadline = new Date(Date.parse(`${today}T12:00:00Z`) + 15 * 86400000).toISOString().slice(0, 10)
+          const monthName = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${period}-15T12:00:00Z`))
+          context.log.info(`period ${period} (days before ${end}), invoice date ${today}, due ${deadline}, ${dryRun ? 'DRY RUN' : 'apply'}`)
+          return { dryRun: dryRun ? 'yes' : 'no', period, end, today, deadline, label: `Flex — ${monthName}` }
+        }
+  - name: toInvoice
+    type: record
+    operator: list
+    props:
+      table: checkins
+      filter:
+        conditions:
+          - { field: status, operator: equals, value: to_invoice }
+      sort: [{ field: date, direction: asc }]
+      limit: 5000
+  # Offered rows, to know which association members already had their free
+  # day in a given year.
+  - name: offered
+    type: record
+    operator: list
+    props:
+      table: checkins
+      filter:
+        conditions:
+          - { field: status, operator: equals, value: offered }
+      limit: 5000
+  - name: members
+    type: record
+    operator: list
+    props: { table: members, limit: 1000 }
+  - name: bill
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 300000
+      inputData:
+        dryRun: '{{steps.plan.dryRun}}'
+        end: '{{steps.plan.end}}'
+        period: '{{steps.plan.period}}'
+        today: '{{steps.plan.today}}'
+        deadline: '{{steps.plan.deadline}}'
+        label: '{{steps.plan.label}}'
+        rows: '{{steps.toInvoice.records}}'
+        offered: '{{steps.offered.records}}'
+        members: '{{steps.members.records}}'
+      code: |
+        async function execute(context) {
+          const PRICE: Record<string, number> = { full: 14, half: 7 }
+          const LINE: Record<string, { label: string; unit: string }> = {
+            full: { label: 'Flex — journée complète', unit: 'jour' },
+            half: { label: 'Flex — demi-journée', unit: 'demi-journée' },
+          }
+          const inp = context.inputData
+          const dryRun = String(inp.dryRun) === 'yes'
+          const end = String(inp.end)
+          const period = String(inp.period)
+          const norm = (s: unknown) => String(s ?? '').trim().toLowerCase()
+          const dayOf = (r: any) => String(r.date ?? '').slice(0, 10)
+          const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+          const esc = (s: unknown) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          const eur = (n: number) => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+
+          const members = new Map<string, any>()
+          for (const m of (inp.members ?? []) as any[]) members.set(norm(m.email), m)
+          // Years in which each member already had their free day.
+          const offeredYears = new Set<string>()
+          for (const r of (inp.offered ?? []) as any[]) offeredYears.add(`${norm(r.member_email)}|${dayOf(r).slice(0, 4)}`)
+
+          // Billable rows, grouped per member.
+          const byMember = new Map<string, any[]>()
+          for (const r of (inp.rows ?? []) as any[]) {
+            if (String(r.pennylane_invoice_id ?? '') !== '') continue
+            const day = dayOf(r)
+            if (!day || day >= end) continue
+            const key = norm(r.member_email)
+            byMember.set(key, [...(byMember.get(key) ?? []), r])
+          }
+
+          const done: string[] = []
+          const skipped: string[] = []
+          const failed: string[] = []
+          let invoices = 0
+          let total = 0
+          for (const [email, rows] of byMember) {
+            const m = members.get(email)
+            const linked = m && (m.match_status === 'matched' || m.match_status === 'manual') && Number(m.pennylane_customer_id) > 0
+            if (!linked) {
+              skipped.push(`<li><b>${esc(email)}</b> · ${rows.length} jour(s) — pas relié à Pennylane, rien n’a été facturé</li>`)
+              context.log.warn(`${email}: ${rows.length} check-ins skipped, member not linked to Pennylane`)
+              continue
+            }
+            rows.sort((a: any, b: any) => dayOf(a).localeCompare(dayOf(b)))
+
+            // The association's free day: the first full day of each year not
+            // yet offered.
+            const gift: any[] = []
+            if (m.association_member === true || m.association_member === 'true') {
+              const years = new Set<string>()
+              for (const r of rows) {
+                const year = dayOf(r).slice(0, 4)
+                if (r.duration !== 'full' || years.has(year) || offeredYears.has(`${email}|${year}`)) continue
+                years.add(year)
+                gift.push(r)
+              }
+            }
+            const billed = rows.filter((r: any) => !gift.includes(r))
+
+            // One line per (kind of day, unit price), dates in the description.
+            const lines = new Map<string, { duration: string; price: number; days: string[] }>()
+            for (const r of billed) {
+              const duration = r.duration === 'half' ? 'half' : 'full'
+              const price = r.amount === null || r.amount === undefined || r.amount === '' ? PRICE[duration] : Number(r.amount)
+              const k = `${duration}|${price}`
+              const line = lines.get(k) ?? { duration, price, days: [] }
+              line.days.push(dayOf(r))
+              lines.set(k, line)
+            }
+            const fmtDay = (d: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(`${d}T12:00:00Z`))
+            const invoiceLines = [...lines.values()].map((l) => ({
+              label: LINE[l.duration].label,
+              quantity: l.days.length,
+              raw_currency_unit_price: l.price.toFixed(2),
+              unit: LINE[l.duration].unit,
+              vat_rate: 'FR_200',
+              description: l.days.map(fmtDay).join(', '),
+            }))
+            const ht = [...lines.values()].reduce((s, l) => s + l.price * l.days.length, 0)
+            const who = `<b>${esc(m.name || email)}</b> (${esc(email)})`
+            const summary = `${billed.length} jour(s), ${eur(ht)} HT${gift.length ? `, ${gift.length} jour offert (adhérent)` : ''}`
+
+            if (dryRun) {
+              done.push(`<li>${who} · ${summary} — <i>non créée (mode test)</i></li>`)
+              context.log.info(`${email}: would invoice ${JSON.stringify(invoiceLines)}${gift.length ? `, would offer ${gift.map(dayOf).join(', ')}` : ''}`)
+              total += ht
+              if (billed.length) invoices++
+              continue
+            }
+
+            // The free day is marked only once the invoice exists (or when there
+            // is nothing to invoice), so a failed run leaves every row as it was.
+            const offer = async () => {
+              for (const r of gift) {
+                await context.actions.record.update({ table: 'checkins', id: String(r.id), data: { status: 'offered', amount: 0 } })
+                offeredYears.add(`${email}|${dayOf(r).slice(0, 4)}`)
+              }
+            }
+            try {
+              if (billed.length === 0) {
+                await offer()
+                done.push(`<li>${who} · jour offert uniquement, pas de facture</li>`)
+                continue
+              }
+              // An invoice a previous run created and could not mark is reused.
+              const reference = `flex-${m.id}-${period}`
+              const found = await context.actions.connection.call({
+                connection: 'pennylane',
+                operation: 'get-customer-invoices',
+                params: { filter: JSON.stringify([{ field: 'external_reference', operator: 'eq', value: reference }]), limit: 1 },
+              })
+              let invoice: any = ((found?.data as any)?.items ?? [])[0]
+              if (invoice) {
+                context.log.warn(`${email}: invoice ${invoice.id} already carries ${reference} — reused, not created again`)
+              } else {
+                const created = await context.actions.connection.call({
+                  connection: 'pennylane',
+                  operation: 'post-customer-invoices',
+                  params: {
+                    customer_id: Number(m.pennylane_customer_id),
+                    date: String(inp.today),
+                    deadline: String(inp.deadline),
+                    label: String(inp.label),
+                    currency: 'EUR',
+                    language: 'fr_FR',
+                    external_reference: reference,
+                    invoice_lines: invoiceLines,
+                  },
+                })
+                invoice = created?.data
+              }
+              const invoiceId = String(invoice?.id ?? '')
+              if (!invoiceId) throw new Error('Pennylane n’a pas renvoyé d’id de facture')
+              for (const r of billed) {
+                await context.actions.record.update({ table: 'checkins', id: String(r.id), data: { status: 'invoiced', pennylane_invoice_id: invoiceId } })
+              }
+              await offer()
+              invoices++
+              total += ht
+              done.push(`<li>${who} · ${summary} · facture ${esc(invoice?.invoice_number ?? invoiceId)}</li>`)
+              context.log.info(`${email}: invoice ${invoiceId}, ${billed.length} check-ins marked`)
+            } catch (e) {
+              const error = String(e instanceof Error ? e.message : e).slice(0, 500)
+              failed.push(`<li>${who} · ${summary} — <i>${esc(error)}</i></li>`)
+              context.log.error(`${email}: ${error}`)
+            }
+            // Pennylane allows 25 requests per 5 seconds.
+            await sleep(400)
+          }
+
+          const section = (title: string, list: string[]) => (list.length ? `<h3>${title} (${list.length})</h3><ul>${list.join('')}</ul>` : '')
+          context.log.info(`${invoices} invoices, ${eur(total)} HT, ${skipped.length} skipped, ${failed.length} failed${dryRun ? ' (dry run)' : ''}`)
+          return {
+            notify: done.length + skipped.length + failed.length > 0 ? 'yes' : 'no',
+            invoices,
+            subject: `Facturation Flex ${period}${dryRun ? ' (mode test)' : ''} — ${invoices} facture(s), ${eur(total)} HT, ${failed.length} échec(s)`,
+            body: [
+              '<p>Bonjour,</p>',
+              `<p>Facturation des présences Flex jusqu’au ${esc(period)} inclus.${dryRun ? ' <b>Mode test : rien n’a été créé dans Pennylane ni modifié dans les présences.</b>' : ''}</p>`,
+              section(dryRun ? 'Factures à créer' : 'Factures créées', done),
+              section('Membres non reliés à Pennylane — à relier, ils seront facturés le mois prochain', skipped),
+              section('Échecs — rien n’a été marqué, le prochain passage réessaiera', failed),
+              '<p>— L’automatisation flex-invoicing</p>',
+            ].join(''),
+          }
+        }
+  - name: route
+    type: path
+    operator: branch
+    props:
+      mode: first-match
+      paths:
+        - name: quiet
+          condition:
+            conditions:
+              - { field: '{{steps.bill.notify}}', operator: equals, value: 'no' }
+          actions:
+            - name: done
+              type: flow
+              operator: stop
+              props: { status: success, message: No Flex check-in to invoice }
+        - name: notify
+          actions:
+            - name: mail
+              type: email
+              operator: send
+              props:
+                to: $env.TREASURER_EMAIL
+                subject: '{{steps.bill.subject}}'
+                body: '{{steps.bill.body}}'

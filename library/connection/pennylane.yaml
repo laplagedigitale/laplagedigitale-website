@@ -181,3 +181,249 @@ operations:
       cursorParam: cursor
       cursorPath: next_cursor
       itemsPath: items
+  - name: post-customer-invoices
+    method: POST
+    path: /customer_invoices
+    summary: Create a customer invoice
+    params:
+      date:
+        in: body
+        type: string
+        required: true
+        format: date
+      deadline:
+        in: body
+        type: string
+        required: true
+        format: date
+      customer_id:
+        in: body
+        type: integer
+        required: true
+      customer_invoice_template_id:
+        in: body
+        type: integer
+      pdf_invoice_free_text:
+        in: body
+        type: string
+      pdf_invoice_subject:
+        in: body
+        type: string
+      pdf_description:
+        in: body
+        type: string
+      currency:
+        in: body
+        type: string
+        enum:
+          - EUR
+          - USD
+          - GBP
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BYR
+          - BZD
+          - CAD
+          - CDF
+          - CHE
+          - CHF
+          - CLF
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - FJD
+          - FKP
+          - GEL
+          - GGP
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - IMP
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JEP
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LTL
+          - LVL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MRU
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SLE
+          - SOS
+          - SRD
+          - STD
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - UYU
+          - UZS
+          - VEF
+          - VES
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XCD
+          - XDR
+          - XOF
+          - XPF
+          - YER
+          - ZAR
+          - ZMK
+          - ZMW
+          - ZWL
+      special_mention:
+        in: body
+        type: string
+      language:
+        in: body
+        type: string
+        enum:
+          - fr_FR
+          - en_GB
+          - de_DE
+          - es_ES
+      discount:
+        in: body
+        type: object
+      invoice_line_sections:
+        in: body
+        type: array
+      label:
+        in: body
+        type: string
+      external_reference:
+        in: body
+        type: string
+      purchase_order_reference:
+        in: body
+        type: string
+      sales_order_reference:
+        in: body
+        type: string
+      draft:
+        in: body
+        type: string
+      invoice_lines:
+        in: body
+        type: array
+        required: true
+      installments:
+        in: body
+        type: array
+      transaction_reference:
+        in: body
+        type: object

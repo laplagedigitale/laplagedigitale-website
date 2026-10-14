@@ -1,0 +1,33 @@
+# Form: flex-signup — the public first-visit sign-up to Flex, embedded on /flex.
+# It replaces the Notion page and the paper sign-up at the reception desk.
+#
+# Declared like `contact`: flex_signups is write-only for visitors (create:
+# all, no read), and only a declared form draws its fields for a reader who may
+# not read the table back. Nothing is created but the row — an admin creates the
+# Pennylane customer and invites the person as a coworker from
+# /espace-membre/membres; the invitation files their members row.
+id: 4
+name: flex-signup
+title: $t:flex.signup.form.title
+submitTo:
+  table: flex_signups
+fields:
+  - { kind: table-field, column: first_name, label: $t:flex.signup.first_name, required: true }
+  - { kind: table-field, column: last_name, label: $t:flex.signup.last_name, required: true }
+  - { kind: table-field, column: email, label: $t:flex.signup.email, helpText: $t:flex.signup.email.help, placeholder: $t:contact.form.email.placeholder, required: true }
+  - { kind: table-field, column: phone, label: $t:flex.signup.phone, placeholder: $t:contact.form.phone.placeholder, required: true }
+  - { kind: table-field, column: company, label: $t:flex.signup.company }
+  - { kind: table-field, column: billing_name, label: $t:flex.signup.billing_name, helpText: $t:flex.signup.billing_name.help, required: true }
+  - { kind: table-field, column: billing_address, label: $t:flex.signup.billing_address, placeholder: $t:flex.signup.billing_address.placeholder, required: true }
+  - { kind: table-field, column: siret, label: $t:flex.signup.siret }
+  - { kind: table-field, column: vat_number, label: $t:flex.signup.vat_number }
+  - { kind: table-field, column: association, label: $t:flex.signup.association, helpText: $t:flex.signup.association.help }
+  - { kind: table-field, column: accept_terms, label: $t:flex.signup.terms, helpText: $t:flex.signup.terms.help, required: true }
+antiSpam:
+  honeypot: true
+onSuccess:
+  type: message
+  message: $t:flex.signup.success
+onError:
+  type: message
+  message: $t:flex.signup.error
