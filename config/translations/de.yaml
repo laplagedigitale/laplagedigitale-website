@@ -619,3 +619,40 @@ spaces.member: Ihre Rechnungen, Ihre Lastschrift und Ihr Coworker-Konto.
 spaces.editor: Redaktionsbereich
 spaces.editor.desc: Blogartikel schreiben und veröffentlichen.
 spaces.none: "Ihr Konto öffnet noch keinen Bereich. Bitte wenden Sie sich an das Team von La Plage Digitale."
+# Mitgliederbereich — the admins' members pages (/espace-membre/membres)
+admin.nav.group: Verwaltung
+admin.nav.members: Mitglieder
+admin.members.title: Mitglieder
+admin.members.intro: "Die Coworker-Konten und ihre Verknüpfung mit Pennylane. Klicken Sie auf ein Mitglied, um seinen Bereich zu sehen — Rechnungen und Lastschrift, nur lesend."
+admin.members.cta: Mitglieder verwalten →
+admin.members.invite: Mitglied einladen
+admin.members.invite.title: Mitglied einladen
+admin.members.invite.desc: "Es erhält eine E-Mail mit einem Link zum Festlegen des Passworts, 7 Tage gültig. Es erscheint sofort in der Mitgliederliste, und seine Pennylane-Rechnungen werden innerhalb von 15 Minuten synchronisiert — schon bevor es annimmt."
+admin.members.invite.email: E-Mail
+admin.members.invite.name: Name
+admin.members.invite.submit: Einladung senden
+admin.members.invite.done: Einladung gesendet.
+admin.members.invite.error: "Die Einladung konnte nicht gesendet werden. Prüfen Sie die Adresse — vielleicht besteht schon ein Konto."
+admin.members.search: Mitglied suchen…
+admin.members.none: Noch keine Mitglieder.
+admin.members.name: Name
+admin.members.email: E-Mail
+admin.members.status: Pennylane
+admin.members.customer: Pennylane-Kunde
+admin.members.pending: Offene Einladungen
+admin.members.pending.intro: "Ein Einladungslink ist 7 Tage gültig. Das Mitglied steht bereits in der Liste oben: sein Bereich füllt sich, bevor es annimmt."
+admin.members.pending.none: Keine offene Einladung.
+admin.members.pending.sent: Gesendet
+admin.members.pending.expires: Läuft ab am
+admin.members.pending.resend: Erneut senden
+admin.members.pending.revoke: Widerrufen
+admin.members.pending.revoke.title: Diese Einladung widerrufen?
+admin.members.pending.revoke.message: Der Link in der E-Mail funktioniert dann nicht mehr.
+admin.match.pending: Wartet auf die Synchronisation
+admin.match.matched: Automatisch verknüpft
+admin.match.not_found: "Nicht gefunden — von Hand verknüpfen"
+admin.match.manual: Von Hand verknüpft
+admin.member.back: "← Alle Mitglieder"
+admin.member.readonly: "Admin-Ansicht, nur lesend: was dieses Mitglied in seinem Mitgliederbereich sieht."
+admin.member.unlinked: "Noch nicht mit Pennylane verknüpft. Bleibt der Status „Nicht gefunden“, tragen Sie pennylane_customer_id ein und setzen match_status in /_admin auf manual."
+admin.member.invoices: Rechnungen

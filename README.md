@@ -91,8 +91,10 @@ automations write.
 
 **Onboarding a coworker:**
 
-1. Invite them from `/_admin/users` with the role **`coworker`**. That fires
-   `member-sign-up`, which files their `members` row.
+1. Invite them from **`/espace-membre/membres`** (admins only: « Inviter un
+   membre ») — or from `/_admin/users` with the role **`coworker`**. The
+   invitation creates the account at once, which fires `member-sign-up` and
+   files their `members` row, so the sync starts before they accept.
 2. Within 15 minutes they are linked to the Pennylane customer whose emails
    include their login email, and all their invoices (every status but
    drafts and proformas) appear in La Chaloupe. If none or several match, the row reads
@@ -100,6 +102,12 @@ automations write.
    `manual` in `/_admin` — the matcher then leaves it alone.
 3. An account switched to `coworker` *after* it was created fires nothing — add
    its `members` row by hand (the email is enough).
+
+**Members pages (admins only).** `/espace-membre/membres` lists every member
+with their Pennylane link and the pending invitations (resend, revoke); a row
+opens `/espace-membre/membres/:id`, that member's space read-only — their
+invoices, what is left to pay and their mandate. No session is swapped and
+nothing can be sent on the member's behalf.
 
 Pennylane's invoice PDF link (`public_file_url`) expires 30 minutes after it is
 issued; the 15-minute sync rewrites it, so the link on screen still opens.
