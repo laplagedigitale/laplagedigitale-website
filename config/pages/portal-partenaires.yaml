@@ -1,0 +1,155 @@
+# Page: portal-partenaires — partner discounts for coworkers and members (the
+# Notion « Les partenariats de La Plage » database, copied). Names and
+# addresses are not translated; each advantage is a member.partners.* key.
+name: portal-partenaires
+path: /espace-membre/partenaires
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Partenaires — Espace Membre"
+  description: "Les partenaires de La Plage Digitale."
+  noindex: true
+# The signed-in member's own row: the formule gates (here and in the
+# sidebar) read it.
+dataSource: { table: members, mode: single, filter: [{ field: email, operator: eq, value: $currentUser.email }] }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: espace-membre-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:member.partners.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:member.partners.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props: { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6' }
+            children:
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.partners.food, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Maison Mésange", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.mesange, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "7 rue de la Mésange, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                      - { type: link, content: "www.maison-mesange.fr", props: { href: 'https://www.maison-mesange.fr/', target: _blank, rel: noopener, className: 'text-xs font-semibold text-blue hover:text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.lunch.terms, props: { className: 'text-xs text-text-muted' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Aux Armes de Strasbourg", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.armes, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "9 place Gutenberg, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                      - { type: link, content: "www.auxarmesdestrasbourg.com", props: { href: 'https://www.auxarmesdestrasbourg.com/', target: _blank, rel: noopener, className: 'text-xs font-semibold text-blue hover:text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.lunch.terms, props: { className: 'text-xs text-text-muted' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Le Saint-Sépulcre", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.sepulcre, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "15 rue des Orfèvres, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                      - { type: link, content: "www.saintsepulcre.fr", props: { href: 'https://www.saintsepulcre.fr/', target: _blank, rel: noopener, className: 'text-xs font-semibold text-blue hover:text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.lunch.terms, props: { className: 'text-xs text-text-muted' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Café Bâle", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.bale, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "24 rue d'Austerlitz, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Les Jardins de Babylone", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.babylone, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "9 rue de Berne, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "L'Épicurien", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.epicurien, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "9 rue de Berne, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Les Tontons Flambeurs", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.tontons, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "13b route de Vienne, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                      - { type: link, content: "tontonsflambeurs.fr", props: { href: 'https://tontonsflambeurs.fr', target: _blank, rel: noopener, className: 'text-xs font-semibold text-blue hover:text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Jabiru Café", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.jabiru, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "60 route de Zurich, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                      - { type: link, content: "jabirucafe.com", props: { href: 'https://jabirucafe.com', target: _blank, rel: noopener, className: 'text-xs font-semibold text-blue hover:text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Le Bagerhoff", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.bagerhoff, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "13 rue de la Brigade Alsace-Lorraine, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.partners.delivery, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "CISV Ouest", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.cisv, props: { className: 'text-sm text-navy' } }
+                      - { type: link, content: "cisv-ouest.fr/fromages", props: { href: 'https://cisv-ouest.fr/fromages/', target: _blank, rel: noopener, className: 'text-xs font-semibold text-blue hover:text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "La Ferme Dollinger", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.dollinger, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "Hoerdt", props: { className: 'text-xs text-text-muted' } }
+                      - { type: link, content: "www.ferme-dollinger.com", props: { href: 'https://www.ferme-dollinger.com', target: _blank, rel: noopener, className: 'text-xs font-semibold text-blue hover:text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "YSE Consigne", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.yse, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "Hangenbieten", props: { className: 'text-xs text-text-muted' } }
+                      - { type: link, content: "yseconsigne.com", props: { href: 'https://yseconsigne.com', target: _blank, rel: noopener, className: 'text-xs font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.partners.shops, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Le Thé des Muses", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.muses, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "19 rue Sainte-Barbe, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Vélo Emploi — Chez Biclou", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.biclou, props: { className: 'text-sm text-navy' } }
+                      - { type: text, element: p, content: "11 rue Jacques Peirotes, Strasbourg", props: { className: 'text-xs text-text-muted' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.partners.workshops, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Emma Bulle", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.emma, props: { className: 'text-sm text-navy' } }
+                  - type: container
+                    props: { className: 'py-3 border-t border-border first:border-t-0 space-y-1' }
+                    children:
+                      - { type: text, element: h3, content: "Les Ateliers du Vivant", props: { className: 'font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.partners.vivant, props: { className: 'text-sm text-navy' } }

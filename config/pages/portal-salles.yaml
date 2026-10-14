@@ -1,0 +1,146 @@
+# Page: portal-salles — the four meeting rooms with their price, then how to
+# book: Fixe members (rooms included in fair use) through the shared Google
+# calendars, everyone else through the booking-request form. The house rules
+# for rooms come from the Règlement d'utilisation des locaux (art. 3.4, 6.4).
+name: portal-salles
+path: /espace-membre/salles
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Salles de réunion — Espace Membre"
+  description: "Réserver une salle de réunion à La Plage Digitale."
+  noindex: true
+# The signed-in member's own row: the formule gates (here and in the
+# sidebar) read it.
+dataSource: { table: members, mode: single, filter: [{ field: email, operator: eq, value: $currentUser.email }] }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: espace-membre-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:member.rooms.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:member.rooms.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props: { className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4' }
+            children:
+              - type: container
+                element: article
+                props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue' }
+                children:
+                  - { type: image, props: { src: /images/pages/les-formules/salle-crevette.webp, alt: $t:pricing.room.crevette.alt, className: 'w-full aspect-[16/9] object-cover' } }
+                  - type: container
+                    props: { className: 'flex flex-col flex-1 p-5 gap-3' }
+                    children:
+                      - { type: text, element: h3, content: $t:pricing.room.crevette.name, props: { className: 'text-lg font-semibold text-navy' } }
+                      - type: flex
+                        props: { className: 'flex flex-wrap gap-2 text-xs font-bold text-navy' }
+                        children:
+                          - { type: flex, props: { className: 'inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1' }, children: [{ type: icon, props: { name: users, size: 14 } }, { type: text, element: span, content: $t:pricing.room.crevette.cap }] }
+                          - { type: flex, props: { className: 'inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1' }, children: [{ type: icon, props: { name: ruler, size: 14 } }, { type: text, element: span, content: $t:pricing.room.crevette.size }] }
+                      - type: flex
+                        props: { className: 'flex items-baseline gap-2 mt-auto pt-3 border-t border-border' }
+                        children:
+                          - { type: text, element: span, content: $t:pricing.room.crevette.price, props: { className: 'text-2xl font-extrabold text-navy' } }
+                          - { type: text, element: span, content: $t:pricing.room.unit, props: { className: 'text-sm font-bold text-text-muted' } }
+              - type: container
+                element: article
+                props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-orange' }
+                children:
+                  - { type: image, props: { src: /images/pages/les-formules/salle-requin.webp, alt: $t:pricing.room.requin.alt, className: 'w-full aspect-[16/9] object-cover' } }
+                  - type: container
+                    props: { className: 'flex flex-col flex-1 p-5 gap-3' }
+                    children:
+                      - { type: text, element: h3, content: $t:pricing.room.requin.name, props: { className: 'text-lg font-semibold text-navy' } }
+                      - type: flex
+                        props: { className: 'flex flex-wrap gap-2 text-xs font-bold text-navy' }
+                        children:
+                          - { type: flex, props: { className: 'inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1' }, children: [{ type: icon, props: { name: users, size: 14 } }, { type: text, element: span, content: $t:pricing.room.requin.cap }] }
+                          - { type: flex, props: { className: 'inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1' }, children: [{ type: icon, props: { name: ruler, size: 14 } }, { type: text, element: span, content: $t:pricing.room.requin.size }] }
+                      - type: flex
+                        props: { className: 'flex items-baseline gap-2 mt-auto pt-3 border-t border-border' }
+                        children:
+                          - { type: text, element: span, content: $t:pricing.room.requin.price, props: { className: 'text-2xl font-extrabold text-navy' } }
+                          - { type: text, element: span, content: $t:pricing.room.unit, props: { className: 'text-sm font-bold text-text-muted' } }
+              - type: container
+                element: article
+                props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue' }
+                children:
+                  - { type: image, props: { src: /images/pages/les-formules/salle-baleine.webp, alt: $t:pricing.room.baleine.alt, className: 'w-full aspect-[16/9] object-cover' } }
+                  - type: container
+                    props: { className: 'flex flex-col flex-1 p-5 gap-3' }
+                    children:
+                      - { type: text, element: h3, content: $t:pricing.room.baleine.name, props: { className: 'text-lg font-semibold text-navy' } }
+                      - type: flex
+                        props: { className: 'flex flex-wrap gap-2 text-xs font-bold text-navy' }
+                        children:
+                          - { type: flex, props: { className: 'inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1' }, children: [{ type: icon, props: { name: users, size: 14 } }, { type: text, element: span, content: $t:pricing.room.baleine.cap }] }
+                          - { type: flex, props: { className: 'inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1' }, children: [{ type: icon, props: { name: ruler, size: 14 } }, { type: text, element: span, content: $t:pricing.room.baleine.size }] }
+                      - type: flex
+                        props: { className: 'flex items-baseline gap-2 mt-auto pt-3 border-t border-border' }
+                        children:
+                          - { type: text, element: span, content: $t:pricing.room.baleine.price, props: { className: 'text-2xl font-extrabold text-navy' } }
+                          - { type: text, element: span, content: $t:pricing.room.unit, props: { className: 'text-sm font-bold text-text-muted' } }
+              - type: container
+                element: article
+                props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-orange' }
+                children:
+                  - { type: image, props: { src: /images/pages/les-formules/salle-narval.webp, alt: $t:pricing.room.narval.alt, className: 'w-full aspect-[16/9] object-cover' } }
+                  - type: container
+                    props: { className: 'flex flex-col flex-1 p-5 gap-3' }
+                    children:
+                      - { type: text, element: h3, content: $t:pricing.room.narval.name, props: { className: 'text-lg font-semibold text-navy' } }
+                      - type: flex
+                        props: { className: 'flex flex-wrap gap-2 text-xs font-bold text-navy' }
+                        children:
+                          - { type: flex, props: { className: 'inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1' }, children: [{ type: icon, props: { name: users, size: 14 } }, { type: text, element: span, content: $t:pricing.room.narval.cap }] }
+                          - { type: flex, props: { className: 'inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1' }, children: [{ type: icon, props: { name: ruler, size: 14 } }, { type: text, element: span, content: $t:pricing.room.narval.size }] }
+                      - type: flex
+                        props: { className: 'flex items-baseline gap-2 mt-auto pt-3 border-t border-border' }
+                        children:
+                          - { type: text, element: span, content: $t:pricing.room.narval.price, props: { className: 'text-2xl font-extrabold text-navy' } }
+                          - { type: text, element: span, content: $t:pricing.room.unit, props: { className: 'text-sm font-bold text-text-muted' } }
+
+          - type: card
+            visibility: { record: { field: formules, contains: fixe } }
+            props: { className: 'p-5 sm:p-6 space-y-3 bg-blue-100' }
+            children:
+              - { type: text, element: h2, content: $t:member.rooms.fixe.title, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:member.rooms.fixe.text, props: { className: 'text-sm text-navy' } }
+
+          - type: grid
+            props: { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6' }
+            children:
+              - type: card
+                visibility: { record: { field: formules, contains: fixe } }
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.rooms.gcal.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.gcal.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.gcal.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.gcal.3, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.gcal.access, props: { className: 'text-sm text-text-muted' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.rooms.request.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.request.text, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.rooms.request.cta, props: { href: $t:member.link.rooms.request, target: _blank, rel: noopener, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.rooms.rules.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.rules.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.rules.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.rules.3, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.rooms.rules.4, props: { className: 'text-sm text-navy' } }

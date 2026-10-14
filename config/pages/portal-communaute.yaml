@@ -1,0 +1,81 @@
+# Page: portal-communaute — Slack, the Conseil de la Plage, the regular
+# get-togethers, events, the association and the social networks (Notion
+# « Comment ça fonctionne ici ? » and « Suivez-nous »). The Slack invite and
+# the Tally form for Conseil topics are member.* keys, so a renewed link
+# changes in one place.
+name: portal-communaute
+path: /espace-membre/communaute
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Vie de la communauté — Espace Membre"
+  description: "La vie de la communauté de La Plage Digitale."
+  noindex: true
+# The signed-in member's own row: the formule gates (here and in the
+# sidebar) read it.
+dataSource: { table: members, mode: single, filter: [{ field: email, operator: eq, value: $currentUser.email }] }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: espace-membre-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:member.community.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:member.community.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: card
+            props: { className: 'p-5 sm:p-6 space-y-3 bg-blue-100' }
+            children:
+              - { type: text, element: h2, content: $t:member.community.slack.title, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:member.community.slack.text, props: { className: 'text-sm text-navy' } }
+              - { type: link, content: $t:member.community.slack.join, props: { href: $t:member.slack.invite, target: _blank, rel: noopener, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:member.community.slack.open, props: { href: $t:member.slack.workspace, target: _blank, rel: noopener, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
+
+          - type: grid
+            props: { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6' }
+            children:
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.community.conseil.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.community.conseil.text, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.community.conseil.cta, props: { href: $t:member.link.conseil, target: _blank, rel: noopener, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.community.rituals.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.community.rituals.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.community.rituals.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.community.rituals.3, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.community.rituals.4, props: { className: 'text-sm text-navy' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.community.events.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.community.events.text, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.community.events.cta, props: { href: $t:member.link.events, target: _blank, rel: noopener, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.community.asso.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.community.asso.text, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.community.asso.cta, props: { href: $t:member.community.asso.href, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.community.social.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: flex
+                    props: { className: 'flex flex-wrap gap-3' }
+                    children:
+                      - { type: link, content: LinkedIn, props: { href: 'https://www.linkedin.com/company/la-plage-digitale/', target: _blank, rel: noopener, className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-blue-100 hover:bg-sand' } }
+                      - { type: link, content: Instagram, props: { href: 'https://www.instagram.com/laplagedigitale', target: _blank, rel: noopener, className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-blue-100 hover:bg-sand' } }
+                      - { type: link, content: Facebook, props: { href: 'https://www.facebook.com/share/14wYN5ft4i/', target: _blank, rel: noopener, className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-blue-100 hover:bg-sand' } }

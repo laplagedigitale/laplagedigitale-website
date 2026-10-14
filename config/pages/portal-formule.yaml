@@ -1,0 +1,146 @@
+# Page: portal-formule — what the member's formules include, one card per formule
+# they hold (gated on members.formules), and how to change or end it. The
+# Fixe, Nomade and Flex cards reuse the pricing page's keys, so prices and
+# features never disagree between the two.
+name: portal-formule
+path: /espace-membre/formule
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Ma formule — Espace Membre"
+  description: "Votre formule à La Plage Digitale."
+  noindex: true
+# The signed-in member's own row: the formule gates (here and in the
+# sidebar) read it.
+dataSource: { table: members, mode: single, filter: [{ field: email, operator: eq, value: $currentUser.email }] }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: espace-membre-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:member.formule.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:member.formule.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: card
+            visibility: { record: { field: formules, isEmpty: true } }
+            props: { className: 'p-5 sm:p-6 space-y-3' }
+            children:
+              - { type: text, element: h2, content: $t:member.formule.none.title, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:member.home.formule.none, props: { className: 'text-sm text-navy' } }
+
+          - type: card
+            visibility: { record: { field: formules, contains: fixe } }
+            props: { className: 'p-5 sm:p-6 space-y-3' }
+            children:
+              - { type: text, element: h2, content: $t:pricing.fixe.name, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: flex
+                props: { className: 'flex flex-wrap items-baseline gap-2' }
+                children:
+                  - { type: text, element: span, content: $t:pricing.fixe.amount, props: { className: 'text-3xl font-extrabold text-navy' } }
+                  - { type: text, element: span, content: $t:pricing.fixe.unit, props: { className: 'text-sm font-bold text-text-muted' } }
+                  - { type: text, element: span, content: $t:pricing.fixe.ttc, props: { className: 'text-sm text-text-muted' } }
+              - { type: text, element: p, content: $t:pricing.fixe.desc, props: { className: 'text-sm text-navy' } }
+              - type: flex
+                props: { className: 'flex flex-col gap-2' }
+                children:
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f1, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f2, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f3, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f4, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f5, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f6, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f7, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f8, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f9, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f10, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.fixe.f11, props: { className: 'text-sm text-navy' } }] }
+              - { type: text, element: p, content: $t:member.formule.fixe.keys, props: { className: 'text-sm text-text-muted' } }
+
+          - type: card
+            visibility: { record: { field: formules, contains: nomade } }
+            props: { className: 'p-5 sm:p-6 space-y-3' }
+            children:
+              - { type: text, element: h2, content: $t:pricing.nomade.name, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: flex
+                props: { className: 'flex flex-wrap items-baseline gap-2' }
+                children:
+                  - { type: text, element: span, content: $t:pricing.nomade.amount, props: { className: 'text-3xl font-extrabold text-navy' } }
+                  - { type: text, element: span, content: $t:pricing.nomade.unit, props: { className: 'text-sm font-bold text-text-muted' } }
+                  - { type: text, element: span, content: $t:pricing.nomade.ttc, props: { className: 'text-sm text-text-muted' } }
+              - { type: text, element: p, content: $t:pricing.nomade.desc, props: { className: 'text-sm text-navy' } }
+              - type: flex
+                props: { className: 'flex flex-col gap-2' }
+                children:
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.nomade.f1, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.nomade.f2, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.nomade.f3, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.nomade.f4, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.nomade.f5, props: { className: 'text-sm text-navy' } }] }
+              - { type: text, element: p, content: $t:pricing.nomade.info, props: { className: 'text-sm text-text-muted' } }
+              - { type: text, element: p, content: $t:member.formule.fixe.keys, props: { className: 'text-sm text-text-muted' } }
+
+          - type: card
+            visibility: { record: { field: formules, contains: flex } }
+            props: { className: 'p-5 sm:p-6 space-y-3' }
+            children:
+              - { type: text, element: h2, content: $t:pricing.flex.name, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: flex
+                props: { className: 'flex flex-wrap items-baseline gap-2' }
+                children:
+                  - { type: text, element: span, content: $t:pricing.flex.amount, props: { className: 'text-3xl font-extrabold text-navy' } }
+                  - { type: text, element: span, content: $t:pricing.flex.unit, props: { className: 'text-sm font-bold text-text-muted' } }
+                  - { type: text, element: span, content: $t:pricing.flex.ttc, props: { className: 'text-sm text-text-muted' } }
+              - { type: text, element: p, content: $t:pricing.flex.desc, props: { className: 'text-sm text-navy' } }
+              - type: flex
+                props: { className: 'flex flex-col gap-2' }
+                children:
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.flex.f1, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.flex.f2, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.flex.f3, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.flex.f4, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.flex.f5, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.flex.f6, props: { className: 'text-sm text-navy' } }] }
+              - { type: text, element: p, content: $t:pricing.flex.info, props: { className: 'text-sm text-text-muted' } }
+              - { type: link, content: $t:member.home.flex.cta, props: { href: /espace-membre/presences, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+
+          - type: card
+            visibility: { record: { field: formules, contains: box } }
+            props: { className: 'p-5 sm:p-6 space-y-3' }
+            children:
+              - { type: text, element: h2, content: $t:formule.box, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:member.formule.box.desc, props: { className: 'text-sm text-navy' } }
+              - type: flex
+                props: { className: 'flex flex-col gap-2' }
+                children:
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.formule.box.1, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.formule.box.2, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.formule.box.3, props: { className: 'text-sm text-navy' } }] }
+                  - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.formule.box.4, props: { className: 'text-sm text-navy' } }] }
+              - { type: text, element: p, content: $t:member.formule.box.note, props: { className: 'text-sm text-text-muted' } }
+
+          - type: card
+            visibility: { record: { field: formules, contains: domiciliation } }
+            props: { className: 'p-5 sm:p-6 space-y-3' }
+            children:
+              - { type: text, element: h2, content: $t:formule.domiciliation, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:member.formule.dom.price, props: { className: 'text-3xl font-extrabold text-navy' } }
+              - { type: text, element: p, content: $t:pricing.dom.text, props: { className: 'text-sm text-navy' } }
+              - { type: text, element: p, content: $t:member.formule.dom.mail, props: { className: 'text-sm text-text-muted' } }
+
+          - type: card
+            props: { className: 'p-5 sm:p-6 space-y-3 bg-blue-100' }
+            children:
+              - { type: text, element: h2, content: $t:member.formule.change.title, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:member.formule.change.text, props: { className: 'text-sm text-navy' } }
+              - { type: link, content: $t:member.formule.change.cta, props: { href: $t:member.formule.change.href, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:member.formule.all, props: { href: $t:href.pricing, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }

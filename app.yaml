@@ -150,6 +150,12 @@ pages:
   - $ref: ./config/pages/portal-invoices.yaml
   - $ref: ./config/pages/portal-presences.yaml
   - $ref: ./config/pages/portal-mandate.yaml
+  - $ref: ./config/pages/portal-formule.yaml
+  - $ref: ./config/pages/portal-salles.yaml
+  - $ref: ./config/pages/portal-guide.yaml
+  - $ref: ./config/pages/portal-communaute.yaml
+  - $ref: ./config/pages/portal-documents.yaml
+  - $ref: ./config/pages/portal-partenaires.yaml
   - $ref: ./config/pages/portal-account.yaml
   # Admins only: every member, the invitations, one member's space read-only,
   # and every Flex check-in and sign-up.
