@@ -37,6 +37,23 @@ env:
     required: false
     default: 'true'
     secret: false
+  - key: FLEX_SIGNUP_APPLY
+    description: flex-signup-validate creates the Pennylane customer, links the member and sends the invitation; 'false' makes the « Valider » button a dry run
+    required: false
+    default: 'true'
+    secret: false
+  # flex-signup-validate sends the coworker invitation through this app's own
+  # admin API (config/connections/sovrium-admin.yaml): an admin's API key,
+  # minted in /_admin, and the public origin to call.
+  - key: INVITE_API_KEY
+    description: API key of an admin account (minted in /_admin), sent on x-api-key to /api/auth/admin/invite-user; empty refuses every Flex validation
+    required: false
+    default: ''
+  - key: BASE_URL
+    description: Public origin of the app; also read by Sovrium itself (links, cookies, CSRF)
+    required: false
+    default: http://localhost:3000
+    secret: false
   - key: TREASURER_EMAIL
     description: Recipient of the pennylane-auto-match morning summary
     required: false
@@ -151,6 +168,8 @@ connections:
   - $ref: ./library/connection/pennylane.yaml
   - $ref: ./library/connection/notion.yaml
   - $ref: ./library/connection/slack.yaml
+  # Hand-written: this app's own admin API, for the Flex invitation.
+  - $ref: ./config/connections/sovrium-admin.yaml
 
 automations:
   - $ref: ./config/automations/member-sign-up.yaml
@@ -162,5 +181,8 @@ automations:
   # Flex: one row per member per day, then the monthly Pennylane invoice
   - $ref: ./config/automations/flex-check-in.yaml
   - $ref: ./config/automations/flex-invoicing.yaml
+  # Flex: the « Valider » button on a sign-up — Pennylane customer, member
+  # link, coworker invitation
+  - $ref: ./config/automations/flex-signup-validate.yaml
   # Weekly Notion → Slack digest (Monday 08:30 Europe/Paris)
   - $ref: ./config/automations/notion-hebdo.yaml

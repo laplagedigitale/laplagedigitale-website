@@ -1,0 +1,258 @@
+# Automation: flex-signup-validate — the « Valider » button on each new Flex
+# sign-up in /espace-membre/flex. One press does what an admin used to do by
+# hand in three places:
+#
+#   1. customer — the Pennylane customer whose emails include the sign-up's
+#                 e-mail is reused; none is created (company customer when the
+#                 sign-up names a company or a SIRET, individual otherwise),
+#                 with the billing address, phone, SIRET and VAT number and
+#                 external_reference `flex-signup-<id>`. Several customers
+#                 carrying the e-mail stop the run: an admin picks one.
+#   2. member   — the members row (upserted by e-mail) gets that customer id
+#                 and match_status `manual`, so it is linked now rather than at
+#                 the next pennylane-sync, and the sync's « several customers
+#                 carry this e-mail → not_found » rule can never unlink it
+#                 (a `manual` row is left alone). A ticked « adhérer à
+#                 l'association » ticks association_member; an unticked one
+#                 never clears it (that box is an admin's).
+#   3. invite   — the person is invited as a `coworker`: the same e-mail the
+#                 « Inviter un membre » dialog sends, through the
+#                 sovrium-admin connection (see its header for why). An address
+#                 that already has an account, invited or onboarded, is not
+#                 invited again. The invitation fires member-sign-up, whose
+#                 upsert on e-mail only rewrites the name.
+#   4. sign-up  — status `invited`, with the Pennylane customer id.
+#
+# Nothing is written before Pennylane answers: a Pennylane error (a bad token
+# answers 401) fails the run with the sign-up still `new` and nothing else
+# touched. The customer id is stored on the sign-up as soon as the customer
+# exists, so a run that stops later — the invitation refused — is pressed
+# again and reuses it.
+#
+# Idempotent: a sign-up that is not `new` is a no-op; the customer is found
+# again by the id kept on the sign-up, by its e-mail or by its
+# external_reference; the member write is an upsert; an address that already
+# has an account is not invited twice. `concurrency.limit: 1` keeps a double
+# click from running two validations side by side.
+#
+# A refusal (several customers, an address it cannot read, a member already
+# linked to another customer) throws, so the run is `failed` and the button
+# shows its error toast; the reason is the run's error in /_admin. Admins only:
+# the trigger's role, and the page's access rule.
+#
+# FLEX_SIGNUP_APPLY=false (or {"dryRun": true} on the trigger endpoint) logs
+# what it would do and writes nothing anywhere — handy to check the e-mail
+# match against the real Pennylane before the first validation:
+#   POST /api/automations/flex-signup-validate/trigger
+#   {"signupId": "12", "dryRun": true}
+#
+# Every step is top-level, as in pennylane-sync (a step nested in a `path`
+# branch cannot read a sibling in 0.30): the calls happen inside `validate`.
+name: flex-signup-validate
+label: Valider une inscription Flex
+trigger:
+  type: manual
+  label: Valider une inscription Flex
+  requiredRole: admin
+  inputSchema:
+    signupId: { type: string }
+    dryRun: { type: boolean }
+timeout: 120000
+concurrency:
+  limit: 1
+actions:
+  - name: signup
+    type: record
+    operator: read
+    props:
+      table: flex_signups
+      id: '{{trigger.input.signupId}}'
+  - name: validate
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 90000
+      inputData:
+        signup: '{{steps.signup.record}}'
+        dryRun: '{{trigger.input.dryRun}}'
+      code: |
+        async function execute(context) {
+          const s: any = context.inputData.signup ?? {}
+          const apply = String(context.env.FLEX_SIGNUP_APPLY ?? 'true').toLowerCase() !== 'false'
+          const dryRun = !apply || String(context.inputData.dryRun ?? '').toLowerCase() === 'true'
+          const norm = (v: unknown) => String(v ?? '').trim().toLowerCase()
+          const text = (v: unknown) => String(v ?? '').trim()
+          const signupId = String(s.id ?? '')
+          const email = norm(s.email)
+          if (!signupId || !email) throw new Error('Inscription introuvable ou sans e-mail.')
+          if (s.status !== 'new') {
+            context.log.info(`sign-up ${signupId} is ${s.status}: nothing to do`)
+            return { message: `Inscription déjà traitée (${s.status}) : rien à faire.`, customerId: text(s.pennylane_customer_id) }
+          }
+          if (!dryRun && !text(context.env.INVITE_API_KEY)) {
+            throw new Error('INVITE_API_KEY n’est pas défini : l’invitation ne pourrait pas partir. Rien n’a été modifié.')
+          }
+
+          // ── The billing address, in Pennylane's parts ──
+          // Older sign-ups carry the whole address in billing_address: read a
+          // « 67000 Strasbourg » tail (optionally followed by « France ») off it.
+          let street = text(s.billing_address)
+          let postal = text(s.billing_postal_code)
+          let city = text(s.billing_city)
+          const country = text(s.billing_country) || 'FR'
+          if (!postal || !city) {
+            const m = street.match(/^([\s\S]*?)[\s,]*\b(\d{4,5})\s+([^\d,\n][^,\n]*?)\s*(?:[,\n]\s*(?:France|FR))?\s*$/i)
+            if (m) {
+              street = m[1].replace(/[\s,]+$/, '')
+              postal = postal || m[2]
+              city = city || m[3]
+            }
+          }
+          if (!street || !postal || !city) {
+            throw new Error(`Adresse de facturation incomplète (« ${text(s.billing_address)} ») : renseignez code postal et ville sur l’inscription, puis validez à nouveau. Rien n’a été modifié.`)
+          }
+          const billing_address = { address: street, postal_code: postal, city, country_alpha2: country }
+
+          // ── Who already exists ──
+          const reference = `flex-signup-${signupId}`
+          const listed: any = await context.actions.connection.call({
+            connection: 'pennylane',
+            operation: 'get-customers',
+            params: { limit: 100 },
+            paginate: 'all',
+          })
+          const customers: any[] = Array.isArray(listed?.data) ? listed.data : (listed?.data?.items ?? [])
+          const byEmail = customers.filter((c: any) => (c.emails ?? []).some((e: unknown) => norm(e) === email))
+          const byReference = customers.filter((c: any) => text(c.external_reference) === reference)
+          const found = [...new Set([...byEmail, ...byReference].map((c: any) => String(c.id)))]
+          context.log.info(`${customers.length} Pennylane customers read, ${found.length} carry ${email} or ${reference}`)
+
+          const members: any = await context.actions.record.list({ table: 'members', limit: 1000 })
+          const member: any = ((members?.records ?? []) as any[]).find((m: any) => norm(m.email) === email)
+          const memberLinked = member && (member.match_status === 'matched' || member.match_status === 'manual') && text(member.pennylane_customer_id)
+            ? text(member.pennylane_customer_id) : ''
+
+          // Does the address already have an account (onboarded or invited)?
+          // Asked before anything is written, so a revoked or wrong
+          // INVITE_API_KEY fails here and not after the customer exists.
+          let account: any = null
+          if (text(context.env.INVITE_API_KEY)) {
+            const users: any = await context.actions.connection.call({
+              connection: 'sovrium-admin',
+              operation: 'get-users',
+              params: { q: email, limit: 50 },
+            })
+            const body: any = users?.data ?? {}
+            const accounts: any[] = Array.isArray(body) ? body : (body.users ?? body.items ?? body.data ?? body.rows ?? [])
+            account = accounts.find((u: any) => norm(u.email) === email) ?? null
+          }
+
+          let customerId = text(s.pennylane_customer_id)
+          let origin = 'kept on the sign-up by an earlier run'
+          if (!customerId) {
+            if (found.length > 1) {
+              throw new Error(`${found.length} clients Pennylane portent ${email} (ids ${found.join(', ')}) : reliez le membre à la main (pennylane_customer_id, match_status manual) puis passez l’inscription à « Invité·e ». Rien n’a été modifié.`)
+            }
+            if (found.length === 1) {
+              customerId = found[0]
+              origin = 'found in Pennylane by e-mail'
+            } else if (memberLinked) {
+              customerId = memberLinked
+              origin = 'already linked on the members row'
+            }
+          }
+          if (customerId && memberLinked && memberLinked !== customerId) {
+            throw new Error(`Le membre ${email} est déjà relié au client Pennylane ${memberLinked}, pas au client ${customerId} : vérifiez lequel est le bon. Rien n’a été modifié.`)
+          }
+
+          const company = text(s.company) || text(s.siret) ? true : false
+          const first = text(s.first_name)
+          const last = text(s.last_name)
+          const name = `${first} ${last}`.trim()
+          const omitEmpty = (o: Record<string, unknown>) => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== '' && v !== undefined && v !== null))
+          const customerBody = company
+            ? omitEmpty({
+                name: text(s.billing_name) || text(s.company) || name,
+                emails: [email],
+                phone: text(s.phone),
+                billing_address,
+                reg_no: text(s.siret).replace(/\s+/g, ''),
+                vat_number: text(s.vat_number).replace(/\s+/g, ''),
+                external_reference: reference,
+                billing_language: 'fr_FR',
+              })
+            : omitEmpty({
+                first_name: first,
+                last_name: last,
+                emails: [email],
+                phone: text(s.phone),
+                billing_address,
+                external_reference: reference,
+                billing_language: 'fr_FR',
+              })
+
+          if (dryRun) {
+            const would = customerId
+              ? `reprendrait le client Pennylane ${customerId} (${origin})`
+              : `créerait le client ${company ? 'entreprise' : 'particulier'} ${JSON.stringify(customerBody)}`
+            context.log.info(`DRY RUN ${email}: ${would}`)
+            const invite = account ? 'ne l’inviterait pas (un compte existe déjà)' : 'l’inviterait comme coworker'
+            return { message: `Mode test : ${would}, relierait le membre ${email} et ${invite}. Rien n’a été écrit.`, customerId }
+          }
+
+          // ── 1. The customer ──
+          if (!customerId) {
+            const created: any = await context.actions.connection.call({
+              connection: 'pennylane',
+              operation: company ? 'post-company-customer' : 'post-individual-customer',
+              params: customerBody,
+            })
+            customerId = text(created?.data?.id)
+            if (!customerId) throw new Error('Pennylane n’a pas renvoyé d’id de client.')
+            origin = `created as ${company ? 'company' : 'individual'} customer`
+          }
+          context.log.info(`${email}: Pennylane customer ${customerId} (${origin})`)
+          // Kept at once, so a run that stops below reuses this customer.
+          if (text(s.pennylane_customer_id) !== customerId) {
+            await context.actions.record.update({ table: 'flex_signups', id: signupId, data: { pennylane_customer_id: customerId } })
+          }
+
+          // ── 2. The member, linked now ──
+          const memberData: Record<string, unknown> = {
+            email: member?.email ?? email,
+            pennylane_customer_id: customerId,
+            match_status: 'manual',
+          }
+          if (!text(member?.name) && name) memberData.name = name
+          if (s.association === true || s.association === 'true') memberData.association_member = true
+          await context.actions.record.upsert({
+            table: 'members',
+            filter: { conditions: [{ field: 'email', operator: 'equals', value: member?.email ?? email }] },
+            data: memberData,
+          })
+          context.log.info(`${email}: members row linked to ${customerId}${memberData.association_member ? ', association member' : ''}`)
+
+          // ── 3. The invitation ──
+          let invited = 'no'
+          if (account) {
+            context.log.info(`${email}: account ${account.id ?? ''} already exists (role ${account.role ?? '?'}) — not invited again`)
+          } else {
+            const sent: any = await context.actions.connection.call({
+              connection: 'sovrium-admin',
+              operation: 'invite-user',
+              params: { email, name: name || email, role: 'coworker' },
+            })
+            invited = 'yes'
+            context.log.info(`${email}: invited as coworker (${JSON.stringify(sent?.data ?? {}).slice(0, 200)})`)
+          }
+
+          // ── 4. The sign-up ──
+          await context.actions.record.update({ table: 'flex_signups', id: signupId, data: { status: 'invited', pennylane_customer_id: customerId } })
+          return {
+            message: invited === 'yes'
+              ? `${email} : client Pennylane ${customerId}, membre relié, invitation envoyée.`
+              : `${email} : client Pennylane ${customerId}, membre relié ; un compte existait déjà, pas de nouvelle invitation.`,
+            customerId,
+            invited,
+          }
+        }

@@ -2,11 +2,17 @@
 # replacing the Notion page and the sign-up at the reception desk.
 #
 # Write-only for visitors, like `leads`: anyone may submit, nobody but admins
-# reads. A submission creates no account — an admin reads it here or in
-# /espace-membre/flex, creates the Pennylane customer with the billing details,
-# then invites the person as a coworker from /espace-membre/membres (the
-# invitation files their members row, and pennylane-sync links it). `status`
-# is the admin's own follow-up.
+# reads. A submission creates no account. An admin reviews it in
+# /espace-membre/flex and presses « Valider », which runs flex-signup-validate:
+# it finds or creates the Pennylane customer, links the members row to it,
+# invites the person as a coworker, then sets `status` to `invited` and keeps
+# the customer id here. « Refuser » sets `declined`.
+#
+# The billing address is stored in parts because Pennylane asks for them
+# separately (address, postal code, city, country). Sign-ups sent before the
+# split carry the whole address in billing_address and nothing in the new
+# fields; flex-signup-validate reads a « 67000 Strasbourg » tail out of it, and
+# an admin fills the two fields by hand when it cannot.
 id: 9
 name: flex_signups
 # Read-only over MCP: Claude lists and reads, never writes. Row-level and
@@ -21,7 +27,26 @@ fields:
   - { id: 4, name: phone, label: Téléphone, type: single-line-text, required: true }
   - { id: 5, name: company, label: Entreprise, type: single-line-text }
   - { id: 6, name: billing_name, label: Nom de facturation, type: single-line-text, required: true }
+  # The street part since the split; the whole address on older rows.
   - { id: 7, name: billing_address, label: Adresse de facturation, type: long-text, required: true }
+  # Not required at table level: older rows have none. The form requires them.
+  - { id: 14, name: billing_postal_code, label: Code postal, type: single-line-text }
+  - { id: 15, name: billing_city, label: Ville, type: single-line-text }
+  - id: 16
+    name: billing_country
+    label: Pays
+    type: single-select
+    default: FR
+    options:
+      - { value: FR, label: $t:flex.signup.country.FR }
+      - { value: DE, label: $t:flex.signup.country.DE }
+      - { value: BE, label: $t:flex.signup.country.BE }
+      - { value: CH, label: $t:flex.signup.country.CH }
+      - { value: LU, label: $t:flex.signup.country.LU }
+      - { value: NL, label: $t:flex.signup.country.NL }
+      - { value: IT, label: $t:flex.signup.country.IT }
+      - { value: ES, label: $t:flex.signup.country.ES }
+      - { value: GB, label: $t:flex.signup.country.GB }
   - { id: 8, name: siret, label: SIRET, type: single-line-text }
   - { id: 9, name: vat_number, label: N° de TVA, type: single-line-text }
   - { id: 10, name: association, label: Adhésion à l'association, type: checkbox }
@@ -36,6 +61,9 @@ fields:
       - { value: invited, label: $t:flex.signup.status.invited, color: '#10b981' }
       - { value: declined, label: $t:flex.signup.status.declined, color: '#94a3b8' }
   - { id: 13, name: created_at, type: created-at }
+  # Written by flex-signup-validate as soon as the customer exists, so a run
+  # stopped halfway reuses it instead of creating a second one.
+  - { id: 17, name: pennylane_customer_id, label: Client Pennylane, type: single-line-text }
 
 # Anyone may submit; nobody but admins reads.
 permissions:

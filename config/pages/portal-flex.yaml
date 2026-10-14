@@ -8,11 +8,13 @@
 # day) or a forgotten day added. A row already `invoiced` is in Pennylane:
 # correct the invoice there (credit note) before touching the row.
 #
-# A sign-up creates no account. The admin creates the Pennylane customer from
-# its billing details, invites the person as a coworker from
-# /espace-membre/membres (that files their members row; pennylane-sync links
-# it), ticks association_member when they joined the association, then sets the
-# sign-up's Suivi to « Invité ».
+# A sign-up creates no account. « Valider », on a sign-up still `new`, runs
+# flex-signup-validate: it finds or creates the Pennylane customer, links the
+# members row to it (and ticks association_member when they joined the
+# association), invites the person as a coworker and sets Suivi to « Invité·e ».
+# The button awaits the run, so a refused or failed validation shows the error
+# toast; why it failed is the run's error in /_admin. « Refuser » sets the
+# sign-up to `declined` through the records API.
 #
 # The monthly invoicing runs by itself on the 1st; to preview it, trigger
 # flex-invoicing with {"dryRun": true} (see config/automations/flex-invoicing.yaml).
@@ -126,6 +128,7 @@ components:
                 children:
                   - type: table
                     props:
+                      id: flex-signups
                       aria-label: $t:admin.flex.signups
                     dataSource:
                       table: flex_signups
@@ -142,6 +145,9 @@ components:
                       - { field: company, label: $t:flex.signup.company }
                       - { field: billing_name, label: $t:flex.signup.billing_name }
                       - { field: billing_address, label: $t:flex.signup.billing_address, truncate: true }
+                      - { field: billing_postal_code, label: $t:flex.signup.billing_postal_code }
+                      - { field: billing_city, label: $t:flex.signup.billing_city }
+                      - { field: billing_country, label: $t:flex.signup.billing_country }
                       - { field: siret, label: $t:flex.signup.siret }
                       - { field: vat_number, label: $t:flex.signup.vat_number }
                       - { field: association, label: $t:admin.flex.signups.association }
@@ -151,3 +157,48 @@ components:
                           new: $t:flex.signup.status.new
                           invited: $t:flex.signup.status.invited
                           declined: $t:flex.signup.status.declined
+                      - { field: pennylane_customer_id, label: $t:admin.flex.signups.customer }
+                      # Only on a sign-up still to handle. Each refreshes the
+                      # grid, so the row's Suivi changes in place.
+                      - type: actions
+                        actions:
+                          - label: $t:admin.flex.signups.validate
+                            visibleWhen: { field: status, eq: new }
+                            confirm:
+                              title: $t:admin.flex.signups.validate.title
+                              message: $t:admin.flex.signups.validate.message
+                              confirmLabel: $t:admin.flex.signups.validate
+                            action:
+                              type: automation
+                              name: flex-signup-validate
+                              await: true
+                              inputData:
+                                signupId: $record.id
+                              onSuccess:
+                                type: message
+                                toast: { variant: success, message: $t:admin.flex.signups.validate.done }
+                              onError:
+                                type: message
+                                toast: { variant: error, message: $t:admin.flex.signups.validate.error }
+                          - label: $t:admin.flex.signups.decline
+                            variant: ghost
+                            visibleWhen: { field: status, eq: new }
+                            confirm:
+                              title: $t:admin.flex.signups.decline.title
+                              message: $t:admin.flex.signups.decline.message
+                              confirmLabel: $t:admin.flex.signups.decline
+                            action:
+                              type: fetch
+                              method: PATCH
+                              url: /api/tables/flex_signups/records/$record.id
+                              body:
+                                fields: { status: declined }
+                              onSuccess:
+                                type: toast
+                                variant: success
+                                message: $t:admin.flex.signups.decline.done
+                                refetch: flex-signups
+                              onError:
+                                type: toast
+                                variant: error
+                                message: $t:admin.flex.signups.decline.error

@@ -1,0 +1,61 @@
+# Connection: sovrium-admin — this app's own admin API, called by
+# flex-signup-validate to send a coworker invitation.
+#
+# Why a connection to ourselves: in Sovrium 0.37 the automation `auth` family
+# has createUser, assignRole, banUser and unbanUser, but no invitation. A
+# created user gets a generated password nobody receives; the invitation —
+# the e-mail with the link where the person picks their own password, the
+# one the « Inviter un membre » dialog sends (portal-members.yaml) — is only
+# reachable as POST /api/auth/admin/invite-user. So the automation calls that
+# endpoint, through BASE_URL, with an admin's API key.
+#
+# INVITE_API_KEY: mint it in /_admin (API keys) signed in as an admin, then
+# `scalingo env-set INVITE_API_KEY=…`. A key acts as its owner, so the owner
+# must stay an admin; revoking the key, or demoting its owner, stops the
+# invitations (the validation then fails before touching anything). Hand-written
+# rather than installed with `sovrium library`: there is no library entry for
+# the app's own API.
+#
+# Locally BASE_URL is a loopback address, which the outbound guard refuses:
+# start with SOVRIUM_ALLOW_PRIVATE_OUTBOUND=1 to exercise the invitation.
+name: sovrium-admin
+type: apiKey
+label: Sovrium (admin API of this app)
+description: "This app's own admin endpoints, authenticated with an admin API key on x-api-key"
+props:
+  key: $env.INVITE_API_KEY
+  header: x-api-key
+baseUrl: $env.BASE_URL
+operations:
+  # The account directory, searched by e-mail or name. An invited account is in
+  # it from the invitation on, accepted or not.
+  - name: get-users
+    method: GET
+    path: /api/admin/users
+    summary: List the app's accounts, searched by e-mail or name
+    params:
+      q:
+        in: query
+        type: string
+      limit:
+        in: query
+        type: integer
+  # Creates the account with the given role and mails the single-use link.
+  # Answers 422 when the address already belongs to an onboarded account.
+  - name: invite-user
+    method: POST
+    path: /api/auth/admin/invite-user
+    summary: Invite a user with a role; Sovrium mails the invitation link
+    params:
+      email:
+        in: body
+        type: string
+        required: true
+      name:
+        in: body
+        type: string
+        required: true
+      role:
+        in: body
+        type: string
+        required: true

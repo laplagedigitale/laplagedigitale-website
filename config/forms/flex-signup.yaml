@@ -3,9 +3,12 @@
 #
 # Declared like `contact`: flex_signups is write-only for visitors (create:
 # all, no read), and only a declared form draws its fields for a reader who may
-# not read the table back. Nothing is created but the row — an admin creates the
-# Pennylane customer and invites the person as a coworker from
-# /espace-membre/membres; the invitation files their members row.
+# not read the table back. Nothing is created but the row: an admin presses
+# « Valider » on /espace-membre/flex, and flex-signup-validate creates the
+# Pennylane customer and invites the person as a coworker.
+#
+# The address is asked in parts (street, postal code, city, country) because
+# Pennylane's billing_address takes them separately.
 id: 4
 name: flex-signup
 title: $t:flex.signup.form.title
@@ -19,6 +22,9 @@ fields:
   - { kind: table-field, column: company, label: $t:flex.signup.company }
   - { kind: table-field, column: billing_name, label: $t:flex.signup.billing_name, helpText: $t:flex.signup.billing_name.help, required: true }
   - { kind: table-field, column: billing_address, label: $t:flex.signup.billing_address, placeholder: $t:flex.signup.billing_address.placeholder, required: true }
+  - { kind: table-field, column: billing_postal_code, label: $t:flex.signup.billing_postal_code, placeholder: '67000', required: true }
+  - { kind: table-field, column: billing_city, label: $t:flex.signup.billing_city, placeholder: Strasbourg, required: true }
+  - { kind: table-field, column: billing_country, label: $t:flex.signup.billing_country, required: true }
   - { kind: table-field, column: siret, label: $t:flex.signup.siret }
   - { kind: table-field, column: vat_number, label: $t:flex.signup.vat_number }
   - { kind: table-field, column: association, label: $t:flex.signup.association, helpText: $t:flex.signup.association.help }
