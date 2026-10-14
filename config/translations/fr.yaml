@@ -260,7 +260,7 @@ home.numbers.title: La Plage en chiffres
 home.numbers.area: d'espace de travail partagé
 home.numbers.fixed: bureaux fixes
 home.numbers.flex: places flex sans réservation
-home.numbers.rooms: salles de réunion, de 2 à 60 personnes
+home.numbers.rooms: salles de réunion, de 6 à 60 personnes
 home.numbers.companies: entreprises résidentes
 home.offers.eyebrow: Nos formules
 home.offers.title: Une formule pour chaque façon de travailler
@@ -423,7 +423,7 @@ pricing.room.narval.alt: La salle Narval, espace de conférence pouvant accueill
 pricing.dom.eyebrow: Domiciliation
 pricing.dom.title: Domiciliez votre entreprise à Strasbourg
 pricing.dom.text: "Installez le siège de votre entreprise au 13 rue Jacques Peirotes, sans même louer de bureau dans notre espace de coworking."
-pricing.dom.price: "40 € / mois"
+pricing.dom.price: "40 € HT / mois"
 pricing.dom.priceNote: "Tarif affiché par La Plage Digitale ; contactez-nous pour les détails."
 pricing.dom.offer: "Pour toute nouvelle entreprise domiciliée, 30 % de réduction sur les 3 premiers mois."
 pricing.dom.cta: Demander un devis
@@ -474,7 +474,7 @@ privacy.changes.p1: "Nous pouvons mettre à jour cette politique pour tenir comp
 
 # ── space ──
 space.meta.title: Espace coworking et bureaux à Strasbourg
-space.meta.description: "3 Box, 52 bureaux fixes, 30 places flex et 4 salles de réunion de 2 à 60 personnes, au 13 rue Jacques Peirotes à Strasbourg. Visite virtuelle en ligne."
+space.meta.description: "3 Box, 52 bureaux fixes, 30 places flex et 4 salles de réunion de 6 à 60 personnes, au 13 rue Jacques Peirotes à Strasbourg. Visite virtuelle en ligne."
 space.eyebrow: L'espace
 space.title: Espace coworking et bureaux disponibles
 space.lead: "Plus de 600 m² au cœur de Strasbourg : des bureaux fermés, des postes fixes, des places à la demande et des salles pour se réunir."
@@ -486,9 +486,9 @@ space.box.text: Des bureaux fermés pour accueillir votre petite équipe.
 space.fixed.title: Bureaux fixes
 space.fixed.text: Un bureau personnel en open space, au cœur de la ville.
 space.flex.title: Places flex
-space.flex.text: Pour les besoins ponctuels, accessibles sans réservation et facturées à la demi-journée.
+space.flex.text: Pour les besoins ponctuels, accessibles sans réservation, à la journée ou à la demi-journée.
 space.rooms.title: Salles de réunion
-space.rooms.text: De 2 à 60 personnes, pour vos réunions, conférences et séminaires.
+space.rooms.text: De 6 à 60 personnes, pour vos réunions, conférences et séminaires.
 space.more: En savoir plus →
 space.how.eyebrow: Mode d'emploi
 space.how.title: Comment venir travailler à La Plage Digitale ?
@@ -559,6 +559,13 @@ portal.match.pending: Recherche en cours
 portal.match.matched: Relié
 portal.match.not_found: "Non trouvé — contactez-nous"
 portal.match.manual: Relié
+formule.fixe: Fixe
+formule.nomade: Nomade
+formule.flex: Flex
+formule.box: Bureau privé (Box)
+formule.domiciliation: Domiciliation
+formule.source.auto: Depuis Pennylane
+formule.source.manual: Fixée à la main
 portal.mandate.title: Prélèvement automatique
 portal.mandate.intro: "Mettez en place un mandat SEPA via GoCardless : vos factures seront réglées automatiquement à leur échéance. Le lien de signature vous est envoyé par e-mail."
 portal.mandate.none: Aucun mandat de prélèvement pour le moment.
@@ -621,7 +628,7 @@ auth.back: ← Retour au site
 
 # ── Spaces ── /app, where /connexion sends every session.
 spaces.title: Mes espaces
-spaces.member: Vos factures, votre prélèvement et votre compte de coworker.
+spaces.member: "Votre formule, vos factures, les salles, le guide pratique et la vie de La Plage."
 spaces.editor: Espace rédaction
 spaces.editor.desc: Écrire et publier les articles du blog.
 spaces.none: "Votre compte n'ouvre encore aucun espace. Contactez l'équipe de La Plage Digitale."
@@ -661,7 +668,11 @@ admin.match.matched: Relié automatiquement
 admin.match.not_found: "Non trouvé — à relier à la main"
 admin.match.manual: Relié à la main
 admin.member.back: "← Tous les membres"
-admin.member.readonly: "Vue administrateur, en lecture seule : ce que ce membre voit dans son Espace Membre."
+admin.members.formules: "Formules"
+admin.member.formules: "Formules"
+admin.member.formules.help: "« Depuis Pennylane » : la synchronisation les déduit des abonnements Pennylane et des présences Flex, toutes les 15 minutes. Pour corriger, choisissez les formules et passez la source à « Fixée à la main » : la synchronisation n'y touchera plus."
+admin.member.formules.source: "Source"
+admin.member.readonly: "Vue administrateur : ce que ce membre voit dans son Espace Membre. Seules ses formules se modifient ici."
 admin.member.unlinked: "Pas encore relié à Pennylane. Si le statut reste « Non trouvé », renseignez pennylane_customer_id et passez match_status à manual dans /_admin."
 admin.member.invoices: Factures
 
@@ -785,3 +796,197 @@ admin.flex.signups.decline.title: "Classer cette inscription sans suite ?"
 admin.flex.signups.decline.message: "Aucun client ni compte ne sera créé pour $record.email."
 admin.flex.signups.decline.done: "Inscription classée sans suite."
 admin.flex.signups.decline.error: "L’inscription n’a pas pu être modifiée."
+
+# ── Espace Membre, personalised by formule ── (member.*). Content copied from
+# the Notion « Kit du Plagiste », FAQ, Parking and Partenariats pages and the
+# Règlement d'utilisation des locaux. Never put a code or password here.
+member.slack.invite: "https://join.slack.com/t/laplagedigitale/shared_invite/zt-30b6jl334-VKe2EhHTlObiTRsABbeOEQ"
+member.slack.workspace: "https://laplagedigitale.slack.com"
+member.link.conseil: "https://tally.so/r/n9p1R4"
+member.link.rooms.request: "https://laplagedigitale.notion.site/Demande-de-r-servation-de-salle-de-r-union-9d83046f1ea148939b05d3348b47caa6"
+member.link.events: "https://laplagedigitale.notion.site/Nos-v-nements-La-Plage-Digitale-1456e67669d080bbba6ff617141ed625"
+member.link.scan.driver: "https://support.brother.com/g/b/downloadend.aspx?c=fr&lang=fr&prod=mfcl8690cdw_eu_as&os=10068&dlid=dlf106359_000&flang=11&type3=10272"
+member.nav.home: "Accueil"
+member.nav.formule: "Ma formule"
+member.nav.rooms: "Salles de réunion"
+member.nav.place: "La Plage"
+member.nav.guide: "Guide pratique"
+member.nav.community: "Vie de la communauté"
+member.nav.docs: "Règlement & documents"
+member.nav.partners: "Partenaires"
+member.nav.links: "Liens"
+member.nav.slack: "Slack de La Plage ↗"
+member.nav.flex: "Flex"
+member.home.subtitle: "Tout pour votre place à La Plage : votre formule, vos factures, les salles et la vie du lieu."
+member.home.formule: "Votre formule"
+member.home.formule.none: "Votre formule n'est pas encore renseignée : elle s'affichera ici dès que votre contrat est enregistré. Une question ? contact@laplagedigitale.fr"
+member.home.flex.title: "Vous êtes là aujourd'hui ?"
+member.home.flex.text: "Pointez votre présence en Flex : demi-journée 7 € HT, journée 14 € HT, facturées le 1er du mois."
+member.home.flex.cta: "Pointer ma présence"
+member.home.more: "Ma formule →"
+member.home.fixe.title: "Fixe — votre bureau attitré"
+member.home.fixe.1: "Accès 24h/24 et 7j/7, avec vos clés"
+member.home.fixe.2: "Salles Crevette, Requin et Baleine incluses, en usage équitable"
+member.home.fixe.3: "Un casier personnel fermé à clé et des rangements"
+member.home.fixe.4: "Réception et envoi de courrier"
+member.home.nomade.title: "Nomade — l'espace flex à toute heure"
+member.home.nomade.1: "Accès 24h/24 et 7j/7 à l'espace flex, avec vos clés"
+member.home.nomade.2: "Imprimantes et scanners, en usage équitable"
+member.home.nomade.3: "Salles de réunion en supplément"
+member.home.flexcard.title: "Flex — à la journée"
+member.home.flexcard.1: "Du lundi au vendredi, de 9h à 17h, sans réservation"
+member.home.flexcard.2: "Une facture par mois, le 1er, pour vos présences"
+member.home.flexcard.3: "Adhérent·e de l'association : une journée offerte par an"
+member.home.box.title: "Bureau privé — votre Box"
+member.home.box.1: "Votre bureau fermé, accessible 24h/24 et 7j/7 avec vos clés"
+member.home.box.2: "Cuisine, espace détente, imprimantes et café"
+member.home.box.3: "Les conditions précises sont celles de votre contrat"
+member.home.dom.title: "Domiciliation"
+member.home.dom.1: "Siège au 13 rue Jacques Peirotes, 67000 Strasbourg"
+member.home.dom.2: "Courrier relevé les lundis, mercredis et vendredis"
+member.home.dom.3: "Réexpédition possible, avec supplément"
+member.home.start: "Pour bien démarrer"
+member.home.start.slack: "Rejoindre le Slack"
+member.home.start.guide: "Lire le guide pratique"
+member.home.start.rooms: "Réserver une salle"
+member.home.start.mandate: "Mettre en place le prélèvement"
+member.home.start.idea: "Proposer un sujet au Conseil"
+member.formule.title: "Ma formule"
+member.formule.intro: "Ce que comprend votre formule, et comment la faire évoluer."
+member.formule.included: "Inclus"
+member.formule.fixe.keys: "Clés et badges : remis par l'association contre caution. Ils ne se prêtent pas et ne se reproduisent pas."
+member.formule.box.desc: "Votre bureau privé fermé, loué au mois, au sein de La Plage."
+member.formule.box.1: "Accès 24h/24 et 7j/7, avec les clés de La Plage"
+member.formule.box.2: "Internet haut débit (fibre) et Wi-Fi"
+member.formule.box.3: "Accès aux imprimantes et scanners"
+member.formule.box.4: "Cuisine, espace détente et café"
+member.formule.box.note: "Surface, nombre de postes et accès aux salles de réunion : ce sont les conditions de votre contrat qui s'appliquent."
+member.formule.dom.price: "40 € HT / mois"
+member.formule.dom.mail: "Le courrier est relevé les lundis, mercredis et vendredis. La réexpédition est possible, avec un supplément."
+member.formule.none.title: "Formule à venir"
+member.formule.change.title: "Changer de formule ou partir"
+member.formule.change.text: "Passer d'une formule à une autre, ajouter un poste, mettre fin à votre contrat : écrivez-nous, nous vous répondons sous quelques jours ouvrés."
+member.formule.change.cta: "Écrire à La Plage"
+member.formule.change.href: "mailto:contact@laplagedigitale.fr?subject=Ma%20formule"
+member.formule.all: "Voir toutes les formules →"
+member.rooms.title: "Salles de réunion"
+member.rooms.intro: "Quatre salles, de 6 à 60 personnes, à réserver à la demi-journée ou à la journée."
+member.rooms.fixe.title: "Inclus dans votre formule Fixe"
+member.rooms.fixe.text: "Crevette, Requin et Baleine sont à vous en usage équitable. Narval, les réservations répétées à la journée et les activités payantes (une formation, par exemple) sont facturées."
+member.rooms.gcal.title: "Réserver avec Google Agenda"
+member.rooms.gcal.1: "1. Ajoutez les agendas des salles : vous recevez une invitation par e-mail, cliquez sur « Ajouter cet agenda ». Ils apparaissent sous « Autres agendas »."
+member.rooms.gcal.2: "2. Créez un événement dans votre agenda, puis « Rechercher une salle » et choisissez-la. Déjà prise ? Changez de salle ou de créneau."
+member.rooms.gcal.3: "3. Vérifiez que l'événement apparaît dans l'agenda de la salle. Pour annuler, supprimez l'événement."
+member.rooms.gcal.access: "Pas encore les agendas ? Demandez l'accès à contact@laplagedigitale.fr."
+member.rooms.request.title: "Demander une réservation"
+member.rooms.request.text: "Hors formule Fixe, les salles sont facturées au tarif ci-dessus. Envoyez-nous votre demande : date, créneau, salle et nombre de personnes."
+member.rooms.request.cta: "Faire une demande ↗"
+member.rooms.rules.title: "Les bons réflexes"
+member.rooms.rules.1: "Une salle réservée mais vide 15 minutes après le début du créneau peut être considérée comme libre."
+member.rooms.rules.2: "Rendez la salle propre et rangée."
+member.rooms.rules.3: "Réglez la température en arrivant, jamais plus de 5 °C sous la température extérieure."
+member.rooms.rules.4: "Un appel rapide ? La salle du baby-foot dépanne, mais les joueurs restent prioritaires."
+member.guide.title: "Guide pratique"
+member.guide.intro: "Le Kit du Plagiste : tout ce qu'il faut savoir pour travailler à La Plage au quotidien."
+member.guide.about.title: "C'est quoi, La Plage Digitale ?"
+member.guide.about.1: "Une association de droit local (loi 1908), créée en 2019, qui gère un tiers-lieu et un espace de coworking dans les anciens locaux de la Coop, au cœur de Strasbourg : plus de 600 m²."
+member.guide.about.2: "Un tiers-lieu pour se rencontrer et créer ensemble, et un coworking pour les indépendants, les associations et les entreprises."
+member.guide.about.3: "Adresse : 13 rue Jacques Peirotes, 67000 Strasbourg. Porte coulissante à l'avant, porte vitrée à l'arrière côté rue de Genève."
+member.guide.access.title: "Horaires et accès"
+member.guide.access.1: "L'accueil est assuré du lundi au vendredi, de 9h à 17h30. Les Flex viennent de 9h à 17h."
+member.guide.access.2: "Fixe, Nomade et Box accèdent aux locaux 24h/24 et 7j/7 avec leurs clés ou badges, remis contre caution. Ils ne se prêtent pas et ne se reproduisent pas."
+member.guide.access.3: "Le premier arrivé ouvre le rideau métallique arrière : il ferme une sortie de secours. Le dernier parti éteint les lumières, règle la porte avant pour qu'elle reste fermée, verrouille la porte arrière et baisse le rideau."
+member.guide.access.4: "Une personne inconnue de l'association est accompagnée pendant sa visite. Une nouvelle recrue dans votre équipe (salarié·e, stagiaire) ? Prévenez-nous."
+member.guide.net.title: "Internet et Wi-Fi"
+member.guide.net.1: "Fibre en filaire aux bureaux et Wi-Fi dans toutes les salles. Le nom du réseau et son mot de passe sont affichés dans les salles, ou demandez-les à l'accueil."
+member.guide.net.2: "Pas de routeur ni de répéteur sans l'accord de l'association, et aucun téléchargement illégal. Un très gros volume de données ? Une ligne dédiée est possible."
+member.guide.print.title: "Imprimer et scanner"
+member.guide.print.1: "Imprimantes et scanners servent aux documents courants de votre activité. Les impressions personnelles, commerciales (flyers, affiches) ou en gros volume sortent de l'usage équitable."
+member.guide.print.2: "Pour scanner vers votre ordinateur : installez le pilote Brother MFC-L8690CDW, puis « Numériser » et choisissez l'imprimante de La Plage."
+member.guide.print.cta: "Télécharger le pilote Brother ↗"
+member.guide.kitchen.title: "Cuisine et frigos"
+member.guide.kitchen.1: "Fours, micro-ondes et plaques sont à tous. Nettoyez votre place et votre vaisselle, videz le lave-vaisselle quand il est propre."
+member.guide.kitchen.2: "Frigo libre-service : étiquette orange 🟠 avec la date du jour, ce qu'il contient se partage. Frigo personnel : étiquette bleue 🔵 avec votre nom."
+member.guide.kitchen.3: "Tout produit sans étiquette, ou périmé, est jeté lors du nettoyage. Le papier va à côté des imprimantes, les emballages dans la poubelle jaune."
+member.guide.together.title: "Vivre ensemble"
+member.guide.together.1: "Téléphones en silencieux, voix basses dans les salles partagées, appels et visios hors de l'open space, repas odorants à la cuisine."
+member.guide.together.2: "Les plantes sont entretenues par les Jardins de Gally : ne les arrosez pas et n'y versez rien. Vos propres plantes restent à votre charge."
+member.guide.together.3: "Ni tabac ni vapoteuse. L'alcool, seulement lors d'événements autorisés par le conseil d'administration. Pas d'animaux, sauf d'assistance ou de soutien émotionnel."
+member.guide.together.4: "La température des salles de bureaux est réglée par l'équipe. Malade et contagieux ? Restez chez vous, ou portez un masque."
+member.guide.furniture.title: "Mobilier"
+member.guide.furniture.1: "Bureau assis-debout bloqué ? Baissez-le au maximum : un double clic indique que les pieds se sont réinitialisés."
+member.guide.furniture.2: "Toujours en panne, ou un autre meuble Kinnarps abîmé ? Photographiez l'étiquette de référence (sous le plateau ou le siège) et le problème, et envoyez le tout à sav@kinnarps.com."
+member.guide.furniture.3: "Votre propre mobilier ? Seulement avec l'accord de l'équipe. On ne monte pas sur les meubles."
+member.guide.parking.title: "Parking « Triangle des Bermudes »"
+member.guide.parking.1: "Deux places côté rue de Genève, pour les coworkers adhérents et les fournisseurs de La Plage. Pas pour les invités de passage. Une place est réservée à Kinnarps, mais se réserve quand même."
+member.guide.parking.2: "Réservez dans l'agenda Google « Le Triangle des Bermudes » (demandez l'accès comme pour les salles). Chaque place a deux agendas : inscrivez-vous dans les deux."
+member.guide.parking.3: "Prenez le badge de la barrière à l'accueil et rapportez-le après usage (personne à l'accueil ? dans le pot à stylos du bureau). Un badge perdu est refacturé. Usage équitable : pas de stationnement quotidien ni prolongé."
+member.guide.mail.title: "Casiers et courrier"
+member.guide.mail.1: "Les Fixe ont un casier personnel fermé à clé. Pour les autres formules, un casier est possible sur demande, avec une convention."
+member.guide.mail.2: "Courrier et colis sont reçus à l'accueil. La boîte aux lettres est relevée les lundis, mercredis et vendredis."
+member.guide.safety.title: "Sécurité"
+member.guide.safety.1: "La Plage est un établissement recevant du public : 200 personnes au plus. Laissez toujours les sorties de secours dégagées, et ouvrables de l'intérieur."
+member.guide.safety.2: "Point de rassemblement en cas d'évacuation : derrière le bâtiment, côté rue de Genève."
+member.guide.safety.3: "Vous êtes responsable du matériel que vous laissez sur place : une assurance contre le vol est recommandée. Une structure sous contrat doit avoir une responsabilité civile professionnelle."
+member.guide.contact.title: "Une question, un problème ?"
+member.guide.contact.1: "L'accueil, ou contact@laplagedigitale.fr pour tout le reste."
+member.guide.contact.2: "Flex : contact+flex@laplagedigitale.fr. Communication, événements et partenariats : lucie.dubief@laplagedigitale.fr."
+member.guide.contact.3: "Une idée pour améliorer le lieu, un souci qui revient ? Proposez-le au Conseil de la Plage."
+member.community.title: "Vie de la communauté"
+member.community.intro: "La Plage, ce sont d'abord celles et ceux qui y travaillent. Voici comment en faire partie."
+member.community.slack.title: "Le Slack de La Plage"
+member.community.slack.text: "Infos pratiques, annonces, entraide et afterworks : tout passe par le Slack, en particulier #général."
+member.community.slack.join: "Rejoindre le Slack ↗"
+member.community.slack.open: "Déjà inscrit ? Ouvrir laplagedigitale.slack.com ↗"
+member.community.conseil.title: "Le Conseil de la Plage"
+member.community.conseil.text: "Le premier jeudi du mois à midi, les coworkers se retrouvent pour les nouvelles du lieu, les projets en cours, les idées et les problèmes à régler. Absent ? Envoyez votre sujet avant."
+member.community.conseil.cta: "Proposer un sujet ↗"
+member.community.rituals.title: "Les rendez-vous"
+member.community.rituals.1: "Mardis Gourmands : chaque mardi vers 10h, un coworker offre un petit-déjeuner à partager. Envie d'en organiser un ? Dites-le à l'équipe."
+member.community.rituals.2: "Baby-foot : rendez-vous vers 13h30 et 16h dans la salle à l'entrée."
+member.community.rituals.3: "Afterworks : régulièrement dans les bars du quartier, et parfois à La Plage pour les grandes occasions."
+member.community.rituals.4: "Démarches solidaires : groupes de don du sang entre 12h et 14h, journées internationales solidaires."
+member.community.events.title: "Événements"
+member.community.events.text: "La Plage accueille meetups, conférences et afterworks, et prête gracieusement ses espaces aux communautés et associations. Vous organisez quelque chose ?"
+member.community.events.cta: "Les événements et la demande ↗"
+member.community.asso.title: "L'association"
+member.community.asso.text: "La Plage Digitale est une association : en devenant adhérent·e, vous participez à ses décisions, et en Flex une journée vous est offerte chaque année. Bénévoles bienvenus pour tenir la permanence de l'accueil."
+member.community.asso.cta: "Adhérer ou aider : écrivez-nous"
+member.community.asso.href: "mailto:contact@laplagedigitale.fr?subject=Adh%C3%A9sion"
+member.community.social.title: "Suivez-nous"
+member.docs.title: "Règlement & documents"
+member.docs.intro: "Les textes qui s'appliquent à toutes celles et ceux qui utilisent La Plage, et l'essentiel à retenir."
+member.docs.summary.title: "L'essentiel"
+member.docs.summary.1: "Safe space : aucun propos ni comportement choquant, violent, sexuel ou discriminatoire, conformément à la Charte des valeurs."
+member.docs.summary.2: "Usage équitable : internet, électricité, imprimantes, salles de réunion, thé et café sont libres tant que cela ne gêne personne. Au-delà, ils peuvent être facturés."
+member.docs.summary.3: "Chacun prend soin des espaces partagés et signale les problèmes à l'accueil."
+member.docs.summary.4: "Confidentialité : on ne regarde pas les écrans et documents des autres, et on n'en divulgue rien."
+member.docs.summary.5: "Le conseil d'administration peut suspendre l'accès de toute personne qui ne respecte pas ces règles."
+member.docs.files.title: "Les textes complets"
+member.docs.rul: "Règlement d'utilisation des locaux (13/09/2023) ↓"
+member.docs.charte: "Charte des valeurs (13/09/2023) ↓"
+member.docs.ria: "Règlement intérieur associatif (07/03/2025) ↓"
+member.docs.statuts: "Statuts de l'association (16/05/2025) ↓"
+member.partners.title: "Partenaires"
+member.partners.intro: "Des réductions pour les coworkers et adhérents : mentionnez La Plage Digitale et présentez votre carte membre. Pas encore de carte ? Demandez-la à l'accueil."
+member.partners.food: "Restaurants"
+member.partners.shops: "Boutiques et services"
+member.partners.delivery: "Livraisons à La Plage"
+member.partners.workshops: "Ateliers"
+member.partners.lunch.terms: "L'offre vaut pour les déjeuners à la carte, du lundi au vendredi, hors jours fériés et période de Noël, jusqu'à 4 personnes."
+member.partners.mesange: "Tarif étudiant sur la formule du jour, sur place ou à emporter."
+member.partners.armes: "10 % sur les repas, hors boissons."
+member.partners.sepulcre: "10 % sur les repas, hors boissons."
+member.partners.bale: "15 % sur tous les plats de la carte, hors boissons et plats du jour."
+member.partners.babylone: "10 % sur l'addition, hors boissons."
+member.partners.tontons: "10 % sur la commande, hors boissons."
+member.partners.jabiru: "10 % sur la carte le midi, hors boissons alcoolisées."
+member.partners.epicurien: "10 % sur l'addition, hors menus « découverte »."
+member.partners.bagerhoff: "15 % sur l'addition."
+member.partners.muses: "10 % sur les thés, infusions en vrac et accessoires."
+member.partners.biclou: "10 % sur la main-d'œuvre de toutes les réparations en atelier."
+member.partners.cisv: "Fromages du Jura livrés à La Plage, environ une fois par mois."
+member.partners.dollinger: "Paniers de fruits et légumes livrés à La Plage tous les jeudis."
+member.partners.yse: "Produits consignés livrés à La Plage (boissons, céréales, compotes…), et 5 % de réduction avec le code LAPLAGEDIGITALE."
+member.partners.emma: "Ateliers bien-être au travail, participation libre."
+member.partners.vivant: "Ateliers dans les parcs et espaces verts de Strasbourg."

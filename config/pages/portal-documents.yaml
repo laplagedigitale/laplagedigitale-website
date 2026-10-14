@@ -1,0 +1,55 @@
+# Page: portal-documents — the gist of the Règlement d'utilisation des locaux
+# and the four reference texts, served from public/documents/ (copied from
+# the Notion « Règlementations en vigueur » page, whose file links expire).
+name: portal-documents
+path: /espace-membre/documents
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Règlement & documents — Espace Membre"
+  description: "Le règlement et les documents de La Plage Digitale."
+  noindex: true
+# The signed-in member's own row: the formule gates (here and in the
+# sidebar) read it.
+dataSource: { table: members, mode: single, filter: [{ field: email, operator: eq, value: $currentUser.email }] }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: espace-membre-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:member.docs.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:member.docs.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props: { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6' }
+            children:
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.docs.summary.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: flex
+                    props: { className: 'flex flex-col gap-2' }
+                    children:
+                      - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.docs.summary.1, props: { className: 'text-sm text-navy' } }] }
+                      - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.docs.summary.2, props: { className: 'text-sm text-navy' } }] }
+                      - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.docs.summary.3, props: { className: 'text-sm text-navy' } }] }
+                      - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.docs.summary.4, props: { className: 'text-sm text-navy' } }] }
+                      - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:member.docs.summary.5, props: { className: 'text-sm text-navy' } }] }
+              - type: card
+                props: { className: 'p-5 sm:p-6 space-y-3' }
+                children:
+                  - { type: text, element: h2, content: $t:member.docs.files.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: $t:member.docs.rul, props: { href: /documents/reglement-utilisation-des-locaux-2023-09-13.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: $t:member.docs.charte, props: { href: /documents/charte-des-valeurs-2023-09-13.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: $t:member.docs.ria, props: { href: /documents/reglement-interieur-associatif-2025-03-07.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: $t:member.docs.statuts, props: { href: /documents/statuts-2025-05-16.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-navy' } }

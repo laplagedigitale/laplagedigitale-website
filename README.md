@@ -64,13 +64,43 @@ Unknown property 'noindexx'
 
 ## Espace Membre — the coworker space
 
-`/espace-membre` (« Espace Membre ») is where a coworker finds their own Pennylane
-invoices, with payment status and PDF, and asks for a GoCardless direct-debit
-mandate. It is an app shell: a sidebar (`espace-membre-nav`) beside a dashboard
-(`/espace-membre`), the Flex check-ins (`/espace-membre/presences`), the
-invoices (`/espace-membre/factures`), the mandate
-(`/espace-membre/prelevement`) and the account (`/espace-membre/compte`: display name,
-password, sign-out). The old `/portal` and `/login` addresses redirect.
+`/espace-membre` (« Espace Membre ») is where a coworker administers their place
+at La Plage: their formule, their Pennylane invoices (payment status and PDF),
+their GoCardless direct-debit mandate, the meeting rooms, the practical guide
+and community life — everything that used to live in the Notion « Kit du
+Plagiste ». It is an app shell: a sidebar (`espace-membre-nav`) beside
+
+| Page | Path | Shows |
+| ---- | ---- | ----- |
+| Accueil | `/espace-membre` | formule badges and one card per formule held, the Flex check-in card, what is left to pay, latest invoices, mandate, first steps |
+| Ma formule | `/espace-membre/formule` | what each formule held includes, how to change it |
+| Factures / Prélèvement | `/espace-membre/factures`, `/prelevement` | invoices; the mandate and its request button |
+| Salles de réunion | `/espace-membre/salles` | the four rooms; Google Calendar booking (Fixe) or the request form; room rules |
+| Présences | `/espace-membre/presences` | the Flex check-in (sidebar entry for Flex members only) |
+| Guide pratique | `/espace-membre/guide` | access, Wi-Fi, printing, kitchen, furniture, parking, lockers and mail, safety, contacts |
+| Vie de la communauté | `/espace-membre/communaute` | Slack, Conseil de la Plage, rituals, events, the association |
+| Règlement & documents | `/espace-membre/documents` | the gist of the rules and the four PDFs in `public/documents/` |
+| Partenaires | `/espace-membre/partenaires` | partner discounts |
+| Compte | `/espace-membre/compte` | display name, password, sign-out |
+
+The old `/portal` and `/login` addresses redirect.
+
+**Personalised by formule.** `members.formules` (multi-select: `fixe`,
+`nomade`, `flex`, `box`, `domiciliation`) says what the member rents.
+`pennylane-sync` derives it from the member's active Pennylane subscriptions
+(by amount, then by label), their Flex check-ins of the last 90 days and an
+accepted Flex sign-up. An admin corrects it on `/espace-membre/membres/:id`
+with source « Fixée à la main », which the sync never overwrites. Every
+coworker page binds the signed-in member's own row
+(`dataSource: { table: members, mode: single, filter: email = $currentUser.email }`)
+and gates its formule blocks with `visibility: { record: { field: formules, contains: … } }`.
+Sovrium cannot gate on "does not contain", so nothing is shown *only* to
+non-Flex members. **An account with no `members` row gets a 404** on these
+pages: `member-sign-up` files one for every new coworker and admin; add it by
+hand (the email is enough) for an older account.
+
+**No code or password goes into these pages** — not the Wi-Fi password, nor a
+door, alarm, locker or mailbox code: they stay on site, at reception.
 
 The blog editors have the same shape at `/editor`: a dashboard, the post lists
 (all, drafts, published), the post forms and an account page. Both spaces share
@@ -82,7 +112,7 @@ and the pages read those tables:
 | Automation                | When                 | Does                                                                 |
 | ------------------------- | -------------------- | -------------------------------------------------------------------- |
 | `member-sign-up`          | account created      | files a `members` row for a `coworker` or `admin` account            |
-| `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, then mirrors every linked member's invoices and GoCardless mandates |
+| `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, mirrors every linked member's invoices and GoCardless mandates, and derives each member's formules (Fixe, Nomade, Flex, Box, Domiciliation) from their subscriptions and check-ins |
 | `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
 | `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active GoCardless mandate from manual transfer to direct debit, and mails the treasurer what changed |
 | `flex-check-in`           | a Flex check-in      | dates the new `checkins` row, keeps one row per member per day (a full day replaces the half day) and stamps its amount HT |
@@ -103,7 +133,7 @@ automations write.
    files their `members` row, so the sync starts before they accept.
 2. Within 15 minutes they are linked to the Pennylane customer whose emails
    include their login email, and all their invoices (every status but
-   drafts and proformas) appear in La Chaloupe. If none or several match, the row reads
+   drafts and proformas) appear in the Espace Membre. If none or several match, the row reads
    `not_found`: set `pennylane_customer_id` yourself and `match_status` to
    `manual` in `/_admin` — the matcher then leaves it alone.
 3. An account switched to `coworker` *after* it was created fires nothing — add

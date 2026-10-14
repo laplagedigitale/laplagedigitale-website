@@ -76,6 +76,14 @@ components:
                       matched: $t:admin.match.matched
                       not_found: $t:admin.match.not_found
                       manual: $t:admin.match.manual
+                  - field: formules
+                    label: $t:admin.members.formules
+                    valueLabels:
+                      fixe: $t:formule.fixe
+                      nomade: $t:formule.nomade
+                      flex: $t:formule.flex
+                      box: $t:formule.box
+                      domiciliation: $t:formule.domiciliation
                   - { field: pennylane_customer_id, label: $t:admin.members.customer }
                   # Ticked by an admin: one Flex full day offered per year.
                   - { field: association_member, label: $t:admin.members.association }
