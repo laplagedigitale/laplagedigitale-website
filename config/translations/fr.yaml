@@ -260,7 +260,7 @@ home.numbers.title: La Plage en chiffres
 home.numbers.area: d'espace de travail partagé
 home.numbers.fixed: bureaux fixes
 home.numbers.flex: places flex sans réservation
-home.numbers.rooms: salles de réunion, de 2 à 60 personnes
+home.numbers.rooms: salles de réunion, de 6 à 60 personnes
 home.numbers.companies: entreprises résidentes
 home.offers.eyebrow: Nos formules
 home.offers.title: Une formule pour chaque façon de travailler
@@ -423,7 +423,7 @@ pricing.room.narval.alt: La salle Narval, espace de conférence pouvant accueill
 pricing.dom.eyebrow: Domiciliation
 pricing.dom.title: Domiciliez votre entreprise à Strasbourg
 pricing.dom.text: "Installez le siège de votre entreprise au 13 rue Jacques Peirotes, sans même louer de bureau dans notre espace de coworking."
-pricing.dom.price: "40 € / mois"
+pricing.dom.price: "40 € HT / mois"
 pricing.dom.priceNote: "Tarif affiché par La Plage Digitale ; contactez-nous pour les détails."
 pricing.dom.offer: "Pour toute nouvelle entreprise domiciliée, 30 % de réduction sur les 3 premiers mois."
 pricing.dom.cta: Demander un devis
@@ -474,7 +474,7 @@ privacy.changes.p1: "Nous pouvons mettre à jour cette politique pour tenir comp
 
 # ── space ──
 space.meta.title: Espace coworking et bureaux à Strasbourg
-space.meta.description: "3 Box, 52 bureaux fixes, 30 places flex et 4 salles de réunion de 2 à 60 personnes, au 13 rue Jacques Peirotes à Strasbourg. Visite virtuelle en ligne."
+space.meta.description: "3 Box, 52 bureaux fixes, 30 places flex et 4 salles de réunion de 6 à 60 personnes, au 13 rue Jacques Peirotes à Strasbourg. Visite virtuelle en ligne."
 space.eyebrow: L'espace
 space.title: Espace coworking et bureaux disponibles
 space.lead: "Plus de 600 m² au cœur de Strasbourg : des bureaux fermés, des postes fixes, des places à la demande et des salles pour se réunir."
@@ -486,9 +486,9 @@ space.box.text: Des bureaux fermés pour accueillir votre petite équipe.
 space.fixed.title: Bureaux fixes
 space.fixed.text: Un bureau personnel en open space, au cœur de la ville.
 space.flex.title: Places flex
-space.flex.text: Pour les besoins ponctuels, accessibles sans réservation et facturées à la demi-journée.
+space.flex.text: Pour les besoins ponctuels, accessibles sans réservation, à la journée ou à la demi-journée.
 space.rooms.title: Salles de réunion
-space.rooms.text: De 2 à 60 personnes, pour vos réunions, conférences et séminaires.
+space.rooms.text: De 6 à 60 personnes, pour vos réunions, conférences et séminaires.
 space.more: En savoir plus →
 space.how.eyebrow: Mode d'emploi
 space.how.title: Comment venir travailler à La Plage Digitale ?
@@ -628,7 +628,7 @@ auth.back: ← Retour au site
 
 # ── Spaces ── /app, where /connexion sends every session.
 spaces.title: Mes espaces
-spaces.member: Vos factures, votre prélèvement et votre compte de coworker.
+spaces.member: "Votre formule, vos factures, les salles, le guide pratique et la vie de La Plage."
 spaces.editor: Espace rédaction
 spaces.editor.desc: Écrire et publier les articles du blog.
 spaces.none: "Votre compte n'ouvre encore aucun espace. Contactez l'équipe de La Plage Digitale."

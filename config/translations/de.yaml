@@ -259,7 +259,7 @@ home.numbers.title: La Plage in Zahlen
 home.numbers.area: gemeinsame Arbeitsfläche
 home.numbers.fixed: Festplätze
 home.numbers.flex: Flex-Plätze ohne Reservierung
-home.numbers.rooms: Besprechungsräume für 2 bis 60 Personen
+home.numbers.rooms: Besprechungsräume für 6 bis 60 Personen
 home.numbers.companies: ansässige Unternehmen
 home.offers.eyebrow: Unsere Angebote
 home.offers.title: Ein Angebot für jede Arbeitsweise
@@ -422,7 +422,7 @@ pricing.room.narval.alt: Der Raum Narval, ein Konferenzraum für bis zu 60 Perso
 pricing.dom.eyebrow: Geschäftsadresse
 pricing.dom.title: Ihre Geschäftsadresse in Straßburg
 pricing.dom.text: "Melden Sie den Sitz Ihres Unternehmens in der 13 rue Jacques Peirotes an – ganz ohne Schreibtisch in unserem Coworking-Space."
-pricing.dom.price: "40 € / Monat"
+pricing.dom.price: "40 € netto / Monat"
 pricing.dom.priceNote: "Unser veröffentlichter Preis – sprechen Sie uns für Details an."
 pricing.dom.offer: "Für jedes neu angemeldete Unternehmen gibt es 30 % Rabatt auf die ersten 3 Monate."
 pricing.dom.cta: Angebot anfragen
@@ -473,7 +473,7 @@ privacy.changes.p1: "Wir können diese Datenschutzerklärung anpassen, um Änder
 
 # ── space ──
 space.meta.title: Coworking-Space und Büros in Straßburg
-space.meta.description: "3 Boxen, 52 feste Arbeitsplätze, 30 Flex-Plätze und 4 Besprechungsräume für 2 bis 60 Personen in der 13 rue Jacques Peirotes, Straßburg. Virtueller Rundgang."
+space.meta.description: "3 Boxen, 52 feste Arbeitsplätze, 30 Flex-Plätze und 4 Besprechungsräume für 6 bis 60 Personen in der 13 rue Jacques Peirotes, Straßburg. Virtueller Rundgang."
 space.eyebrow: Der Raum
 space.title: Coworking-Space und verfügbare Büros
 space.lead: "Über 600 m² im Herzen von Straßburg: abgeschlossene Büros, feste Arbeitsplätze, flexible Plätze und Räume für Besprechungen."
@@ -485,9 +485,9 @@ space.box.text: Abgeschlossene Büros für Ihr kleines Team.
 space.fixed.title: Feste Arbeitsplätze
 space.fixed.text: Ihr eigener Schreibtisch im Open Space, mitten in der Stadt.
 space.flex.title: Flex-Plätze
-space.flex.text: Für den gelegentlichen Bedarf – ohne Reservierung, abgerechnet pro halbem Tag.
+space.flex.text: Für den gelegentlichen Bedarf – ohne Reservierung, tage- oder halbtageweise.
 space.rooms.title: Besprechungsräume
-space.rooms.text: Für 2 bis 60 Personen – für Meetings, Konferenzen und Seminare.
+space.rooms.text: Für 6 bis 60 Personen – für Meetings, Konferenzen und Seminare.
 space.more: Mehr erfahren →
 space.how.eyebrow: So funktioniert's
 space.how.title: Wie kann ich bei La Plage Digitale arbeiten?
@@ -627,7 +627,7 @@ auth.back: ← Zurück zur Website
 
 # ── Spaces ── /app, where /connexion sends every session.
 spaces.title: Meine Bereiche
-spaces.member: Ihre Rechnungen, Ihre Lastschrift und Ihr Coworker-Konto.
+spaces.member: "Ihr Tarif, Rechnungen, Räume, Leitfaden und das Leben bei La Plage."
 spaces.editor: Redaktionsbereich
 spaces.editor.desc: Blogartikel schreiben und veröffentlichen.
 spaces.none: "Ihr Konto öffnet noch keinen Bereich. Bitte wenden Sie sich an das Team von La Plage Digitale."

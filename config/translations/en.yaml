@@ -259,7 +259,7 @@ home.numbers.title: La Plage in numbers
 home.numbers.area: of shared workspace
 home.numbers.fixed: dedicated desks
 home.numbers.flex: flex places, no booking needed
-home.numbers.rooms: meeting rooms for 2 to 60 people
+home.numbers.rooms: meeting rooms for 6 to 60 people
 home.numbers.companies: resident companies
 home.offers.eyebrow: Our plans
 home.offers.title: A plan for every way of working
@@ -422,7 +422,7 @@ pricing.room.narval.alt: The Narval room, a conference space for up to 60 people
 pricing.dom.eyebrow: Business address
 pricing.dom.title: Register your business in Strasbourg
 pricing.dom.text: "Use 13 rue Jacques Peirotes as your company's registered address — no need to rent a desk in our coworking space."
-pricing.dom.price: "€40 / month"
+pricing.dom.price: "€40 excl. VAT / month"
 pricing.dom.priceNote: "Our published rate — get in touch for the details."
 pricing.dom.offer: "Every newly registered company gets 30% off its first 3 months."
 pricing.dom.cta: Request a quote
@@ -473,7 +473,7 @@ privacy.changes.p1: "We may update this policy to reflect changes to the website
 
 # ── space ──
 space.meta.title: Coworking space and offices in Strasbourg
-space.meta.description: "3 private Boxes, 52 fixed desks, 30 flex places and 4 meeting rooms for 2 to 60 people at 13 rue Jacques Peirotes, Strasbourg. Take the virtual tour."
+space.meta.description: "3 private Boxes, 52 fixed desks, 30 flex places and 4 meeting rooms for 6 to 60 people at 13 rue Jacques Peirotes, Strasbourg. Take the virtual tour."
 space.eyebrow: The space
 space.title: Coworking space and available offices
 space.lead: "Over 600 m² in the heart of Strasbourg: private offices, fixed desks, drop-in places and rooms to meet in."
@@ -485,9 +485,9 @@ space.box.text: Private offices for your small team.
 space.fixed.title: Fixed desks
 space.fixed.text: Your own desk in an open-plan space, right in the city centre.
 space.flex.title: Flex places
-space.flex.text: For occasional needs — no booking required, billed by the half-day.
+space.flex.text: For occasional needs — no booking required, by the day or the half day.
 space.rooms.title: Meeting rooms
-space.rooms.text: For 2 to 60 people — meetings, conferences and seminars.
+space.rooms.text: For 6 to 60 people — meetings, conferences and seminars.
 space.more: Find out more →
 space.how.eyebrow: How it works
 space.how.title: How do I come and work at La Plage Digitale?
@@ -627,7 +627,7 @@ auth.back: ← Back to the site
 
 # ── Spaces ── /app, where /connexion sends every session.
 spaces.title: My spaces
-spaces.member: Your invoices, direct debit and coworker account.
+spaces.member: "Your plan, invoices, rooms, practical guide and life at La Plage."
 spaces.editor: Editors' space
 spaces.editor.desc: Write and publish the blog posts.
 spaces.none: "Your account does not open any space yet. Please contact the La Plage Digitale team."
