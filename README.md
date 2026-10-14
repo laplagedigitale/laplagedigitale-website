@@ -67,7 +67,8 @@ Unknown property 'noindexx'
 `/espace-membre` (« Espace Membre ») is where a coworker finds their own Pennylane
 invoices, with payment status and PDF, and asks for a GoCardless direct-debit
 mandate. It is an app shell: a sidebar (`espace-membre-nav`) beside a dashboard
-(`/espace-membre`), the invoices (`/espace-membre/factures`), the mandate
+(`/espace-membre`), the Flex check-ins (`/espace-membre/presences`), the
+invoices (`/espace-membre/factures`), the mandate
 (`/espace-membre/prelevement`) and the account (`/espace-membre/compte`: display name,
 password, sign-out). The old `/portal` and `/login` addresses redirect.
 
@@ -84,6 +85,8 @@ and the pages read those tables:
 | `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, then mirrors every linked member's invoices and GoCardless mandates |
 | `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
 | `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active GoCardless mandate from manual transfer to direct debit, and mails the treasurer what changed |
+| `flex-check-in`           | a Flex check-in      | dates the new `checkins` row, keeps one row per member per day (a full day replaces the half day) and stamps its amount HT |
+| `flex-invoicing`          | 1st of month 06:00   | creates one Pennylane invoice per linked member for last month's Flex days, marks them `invoiced`, mails the treasurer |
 
 **Isolation is the tables' job, not the page's.** Every portal table has a
 row-level rule matching the row's email to the signed-in user's email, so the
@@ -108,8 +111,10 @@ automations write.
 **Members pages (admins only).** `/espace-membre/membres` lists every member
 with their Pennylane link and the pending invitations (resend, revoke); a row
 opens `/espace-membre/membres/:id`, that member's space read-only — their
-invoices, what is left to pay and their mandate. No session is swapped and
-nothing can be sent on the member's behalf.
+invoices, what is left to pay, their mandate and their Flex check-ins. No
+session is swapped and nothing can be sent on the member's behalf. The members
+table also carries the « Adhérent » box (`association_member`), and
+`/espace-membre/flex` lists every Flex check-in (editable) and sign-up.
 
 Pennylane's invoice PDF link (`public_file_url`) expires 30 minutes after it is
 issued; the 15-minute sync rewrites it, so the link on screen still opens.
@@ -123,6 +128,37 @@ the `signIn` auth event does not fire on an email-and-password sign-in; neither
 an auth- nor a cron-triggered run may call another automation; a row rule
 through a relationship (`member.email`) fails on list reads; and an `or` filter
 on an automation `list` step matches nothing.
+
+## Flex — the day pass
+
+Flex (14 € HT a full day, 7 € HT a half day, no booking) used to run on a
+Notion page and an Airtable form. It now runs here:
+
+1. **Sign-up** — a newcomer fills the form on **`/flex`**; it lands in
+   `flex_signups` (visitors write, only admins read). An admin creates the
+   Pennylane customer from the billing details, invites the person as a
+   `coworker` from `/espace-membre/membres`, ticks `association_member` on their
+   `members` row if they joined the association, and sets the sign-up's
+   « Suivi » to « Invité·e ». All of it is on **`/espace-membre/flex`**.
+2. **Check-in** — each visit, the coworker opens **`/espace-membre/presences`**
+   and picks half day or full day. The day is set by `flex-check-in`; checking in
+   again as a full day replaces the morning's half day. A billing-details change
+   goes through contact+flex@ (no per-check-in override).
+3. **Invoicing** — on the 1st at 06:00, `flex-invoicing` bills every check-in
+   still `to_invoice` dated before the 1st: one finalized Pennylane invoice per
+   member, dated that day, due 15 days later, then `pennylane-sync` mirrors it
+   into the member's Factures. An association member's first full day of the
+   year is `offered` (0 €). A member not linked to Pennylane is skipped and
+   named in the treasurer's mail; their days are billed once they are linked.
+   A billed row carries its invoice id and is never billed twice, and each
+   invoice carries `external_reference` `flex-<member id>-<YYYY-MM>` so a rerun
+   reuses it. The run does not e-mail the invoice (Pennylane needs a few minutes
+   to build the PDF): send it from Pennylane.
+
+Set `FLEX_INVOICING_APPLY=false` to preview: the run then only logs and mails
+what it would create. An admin can also start it by hand:
+`POST /api/automations/flex-invoicing/trigger` with `{"dryRun": true}` (and
+`"month": "YYYY-MM"` to bill up to the end of another month).
 
 ## Payment matching
 
@@ -215,8 +251,12 @@ that does not exist fails the build rather than deploying something unexpected.
   matching into a dry run.
 - **`AUTOMATCH_SUPPLIER_APPLY`** — optional, default `false`: the supplier side
   of the payment matching only logs `would_apply` until this is `true`.
+- **`FLEX_INVOICING_APPLY`** — optional, default `true`. `false` turns the
+  monthly Flex invoicing into a dry run (nothing created in Pennylane, no
+  check-in marked).
 - **`TREASURER_EMAIL`** — optional, default `tresorerie@laplagedigitale.fr`:
-  where the payment-matching summary goes (needs the `SMTP_*` variables).
+  where the payment-matching, direct-debit and Flex invoicing summaries go
+  (needs the `SMTP_*` variables).
 
 Two more variables seed the first administrator:
 
