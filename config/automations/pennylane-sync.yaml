@@ -16,7 +16,9 @@
 #   3. formules — what each member rents, for the Espace Membre: read from
 #                the active Pennylane subscriptions of their customer (a
 #                company's subscription counts for each of its coworkers),
-#                plus `flex` for anyone who checked in over the last 90 days.
+#                plus `flex` for anyone who checked in over the last 90 days
+#                or whose Flex sign-up was accepted (invited), so a new Flex
+#                coworker sees the check-in before their first day.
 #                A row an admin set by hand (formule_source: manual) is never
 #                touched; a row whose formules did not change is not written.
 #
@@ -210,6 +212,10 @@ actions:
       table: checkins
       sort: [{ field: date, direction: desc }]
       limit: 5000
+  - name: flexSignups
+    type: record
+    operator: list
+    props: { table: flex_signups, limit: 5000 }
   - name: formules
     type: code
     operator: runTypescript
@@ -219,6 +225,7 @@ actions:
         linked: '{{steps.link.linked}}'
         subscriptions: '{{steps.subscriptions.data}}'
         checkins: '{{steps.checkins.records}}'
+        flexSignups: '{{steps.flexSignups.records}}'
       code: |
         async function execute(context) {
           // The total TTC of a subscription names its formule: the amounts
@@ -245,7 +252,12 @@ actions:
           const membersOf = new Map<string, string[]>()
           for (const l of context.inputData.linked ?? []) membersOf.set(l.customerId, [...(membersOf.get(l.customerId) ?? []), l.email])
           const derived = new Map<string, Set<string>>()
-          const add = (email: string, f: string) => derived.set(email, (derived.get(email) ?? new Set<string>()).add(f))
+          // Keyed by lower-cased email: a sign-up, a check-in and a login may not
+          // spell an address alike.
+          const add = (email: string, f: string) => {
+            const e = email.trim().toLowerCase()
+            derived.set(e, (derived.get(e) ?? new Set<string>()).add(f))
+          }
           for (const s of context.inputData.subscriptions ?? []) {
             if (s.status !== 'in_progress' && s.status !== 'not_started') continue
             const amount = String(Number(s.customer_invoice_data?.amount))
@@ -255,12 +267,13 @@ actions:
           }
           const since = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10)
           for (const c of context.inputData.checkins ?? []) if (String(c.date ?? '') >= since && c.member_email) add(c.member_email, 'flex')
+          for (const f of context.inputData.flexSignups ?? []) if (f.status === 'invited' && f.email) add(String(f.email), 'flex')
 
           const ORDER = ['fixe', 'nomade', 'flex', 'box', 'domiciliation']
           const updates: any[] = []
           for (const m of context.inputData.members ?? []) {
             if (m.formule_source === 'manual') continue
-            const next = ORDER.filter((f) => derived.get(m.email)?.has(f))
+            const next = ORDER.filter((f) => derived.get(String(m.email).trim().toLowerCase())?.has(f))
             const current = ORDER.filter((f) => (m.formules ?? []).includes(f))
             if (next.join() === current.join()) continue
             updates.push({ email: m.email, formules: next, formule_source: 'auto' })

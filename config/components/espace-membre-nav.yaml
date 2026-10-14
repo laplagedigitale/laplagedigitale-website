@@ -9,11 +9,20 @@
 # the current-entry match (aria-current) runs on the unresolved href, so a
 # translated one is never marked. The language still follows the reader — a
 # language picked in the switcher is a cookie the server composes /espace-membre in.
+#
+# Personalised by formule: a sidebar entry cannot be gated on its own, so an
+# entry only some formules need lives in a sidebar of its own, gated on the
+# member's `formules` (visibility.record). That gate reads the page's own
+# record, so EVERY coworker page binds the signed-in member's row
+# (`dataSource: { table: members, mode: single, filter: email = $currentUser.email }`);
+# on a page with no member record the gate does not apply and the entry shows.
+# Like the admin sidebar, the extra sidebars are hidden below lg — on a phone
+# the dashboard carries the same way in (the Flex « Pointer » card).
 name: espace-membre-nav
 type: container
 element: aside
 props:
-  className: 'flex flex-row items-center justify-between gap-4 border-b border-border bg-sand px-4 py-3 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:flex-none lg:flex-col lg:items-stretch lg:justify-start lg:border-b-0 lg:border-r lg:px-3 lg:py-6'
+  className: 'flex flex-row items-center justify-between gap-4 border-b border-border bg-sand px-4 py-3 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:w-64 lg:flex-none lg:flex-col lg:items-stretch lg:justify-start lg:border-b-0 lg:border-r lg:px-3 lg:py-6'
 children:
   - type: link
     props: { href: $t:href.portal, className: 'flex items-center gap-3 lg:px-3 lg:mb-6' }
@@ -23,21 +32,37 @@ children:
   - type: sidebar
     drawer: { below: lg, label: $t:portal.nav.menu }
     props:
-      className: 'lg:flex-1 [&_a[aria-current=page]]:bg-surface [&_a[aria-current=page]]:font-semibold [&_a[aria-current=page]]:text-navy [&_a[aria-current=page]]:shadow-sm'
+      className: 'lg:flex-none [&_a[aria-current=page]]:bg-surface [&_a[aria-current=page]]:font-semibold [&_a[aria-current=page]]:text-navy [&_a[aria-current=page]]:shadow-sm'
     groups:
       - label: $t:portal.nav.space
         items:
-          - { label: $t:nav.portal, href: /espace-membre, icon: layout-dashboard }
-          - { label: $t:portal.nav.presences, href: /espace-membre/presences, icon: calendar-check, activeMatch: prefix }
+          - { label: $t:member.nav.home, href: /espace-membre, icon: layout-dashboard }
+          - { label: $t:member.nav.formule, href: /espace-membre/formule, icon: badge-check, activeMatch: prefix }
           - { label: $t:portal.nav.invoices, href: /espace-membre/factures, icon: receipt, activeMatch: prefix }
           - { label: $t:portal.nav.mandate, href: /espace-membre/prelevement, icon: landmark, activeMatch: prefix }
+          - { label: $t:member.nav.rooms, href: /espace-membre/salles, icon: presentation, activeMatch: prefix }
+      - label: $t:member.nav.place
+        items:
+          - { label: $t:member.nav.guide, href: /espace-membre/guide, icon: book-open, activeMatch: prefix }
+          - { label: $t:member.nav.community, href: /espace-membre/communaute, icon: users-round, activeMatch: prefix }
+          - { label: $t:member.nav.docs, href: /espace-membre/documents, icon: file-text, activeMatch: prefix }
+          - { label: $t:member.nav.partners, href: /espace-membre/partenaires, icon: handshake, activeMatch: prefix }
       - label: $t:portal.nav.account
         items:
           - { label: $t:portal.nav.profile, href: /espace-membre/compte, icon: user-round, activeMatch: prefix }
+          - { label: $t:member.nav.slack, href: $t:member.slack.invite, icon: message-circle }
           - { label: $t:portal.nav.site, href: $t:href.home, icon: arrow-left }
-  # Admins only — a sidebar entry cannot be gated on its own, so the admin
-  # group is a second sidebar, left out of the HTML for everyone else. Shown
-  # from lg up; on a phone the dashboard's admin link reaches the same page.
+  # Flex only: the daily check-in.
+  - type: sidebar
+    visibility: { record: { field: formules, contains: flex } }
+    props:
+      className: 'hidden lg:block lg:border-t lg:border-border lg:pt-4 [&_a[aria-current=page]]:bg-surface [&_a[aria-current=page]]:font-semibold [&_a[aria-current=page]]:text-navy [&_a[aria-current=page]]:shadow-sm'
+    groups:
+      - label: $t:member.nav.flex
+        items:
+          - { label: $t:portal.nav.presences, href: /espace-membre/presences, icon: calendar-check, activeMatch: prefix }
+  # Admins only — left out of the HTML for everyone else. Shown from lg up; on
+  # a phone the dashboard's admin link reaches the same page.
   - type: sidebar
     visibility: { roles: [admin] }
     props:

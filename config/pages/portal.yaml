@@ -1,6 +1,13 @@
-# Page: portal — « Espace Membre », the coworker space's dashboard: what is left
-# to pay, the Flex days of the month, the direct-debit status and the latest
-# invoices at a glance.
+# Page: portal — « Espace Membre », the coworker space's dashboard, personalised
+# by the member's formules: a card per formule they hold (Fixe, Nomade, Flex,
+# Box, Domiciliation), the Flex check-in for Flex members, what is left to pay,
+# the direct-debit status, the latest invoices and the first steps.
+#
+# The page is bound to the signed-in member's own row (filtered on their
+# email, so an admin gets their own row too, not the first one they may read);
+# each formule block is gated on `formules` (visibility.record). A coworker
+# with no members row gets a 404 here — member-sign-up files one for every new
+# coworker and admin.
 #
 # Every block reads a table under row-level rules (matched on the login
 # email), so a coworker is only ever served their own rows — the tables keep
@@ -16,6 +23,7 @@ meta:
   title: "Espace Membre — La Plage Digitale"
   description: "L'espace des coworkers de La Plage Digitale."
   noindex: true
+dataSource: { table: members, mode: single, filter: [{ field: email, operator: eq, value: $currentUser.email }] }
 components:
   - type: flex
     props:
@@ -32,7 +40,17 @@ components:
             children:
               - { type: text, element: p, content: $t:portal.dashboard.hello, props: { className: 'text-sm font-semibold uppercase tracking-wide text-orange' } }
               - { type: text, element: h1, content: $t:nav.portal, props: { className: 'text-4xl font-bold text-navy mt-1' } }
-              - { type: text, element: p, content: $t:portal.dashboard.subtitle, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - { type: text, element: p, content: $t:member.home.subtitle, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: flex
+                props: { className: 'flex flex-wrap items-center gap-2 mt-4' }
+                children:
+                  - { type: text, element: span, content: $t:member.home.formule, props: { className: 'text-sm text-text-muted mr-1' } }
+                  - { type: text, element: span, content: $t:formule.fixe, visibility: { record: { field: formules, contains: fixe } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-blue-100 text-navy' } }
+                  - { type: text, element: span, content: $t:formule.nomade, visibility: { record: { field: formules, contains: nomade } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-blue-100 text-navy' } }
+                  - { type: text, element: span, content: $t:formule.flex, visibility: { record: { field: formules, contains: flex } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-orange-100 text-navy' } }
+                  - { type: text, element: span, content: $t:formule.box, visibility: { record: { field: formules, contains: box } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-blue-100 text-navy' } }
+                  - { type: text, element: span, content: $t:formule.domiciliation, visibility: { record: { field: formules, contains: domiciliation } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-sand text-navy' } }
+              - { type: text, element: p, content: $t:member.home.formule.none, visibility: { record: { field: formules, isEmpty: true } }, props: { className: 'text-sm text-navy mt-3 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
 
           # Admins only: the way into the members pages on every screen size
           # (the sidebar's admin group is hidden below lg).
@@ -60,8 +78,71 @@ components:
                 title: $t:portal.account.unlinked
                 subtitle: $record.email
 
-          # Four tiles: the invoices, then the Flex days of the month (0 for a
-          # Fixe coworker, who never checks in).
+          # Flex members: the daily check-in, first thing on the page (the
+          # sidebar's Présences entry is hidden on a phone).
+          - type: card
+            visibility: { record: { field: formules, contains: flex } }
+            props: { className: 'p-5 sm:p-6 bg-orange-100 border-amber flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4' }
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h2, content: $t:member.home.flex.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.flex.text, props: { className: 'text-sm text-navy mt-1' } }
+              - { type: link, content: $t:member.home.flex.cta, props: { href: /espace-membre/presences, className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+
+          # What each formule the member holds gives them, in short.
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'
+            children:
+              - type: card
+                visibility: { record: { field: formules, contains: fixe } }
+                props: { className: 'p-5 space-y-2' }
+                children:
+                  - { type: text, element: h2, content: $t:member.home.fixe.title, props: { className: 'text-lg font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.fixe.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.fixe.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.fixe.3, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.fixe.4, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.home.more, props: { href: /espace-membre/formule, className: 'inline-block pt-1 text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                visibility: { record: { field: formules, contains: nomade } }
+                props: { className: 'p-5 space-y-2' }
+                children:
+                  - { type: text, element: h2, content: $t:member.home.nomade.title, props: { className: 'text-lg font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.nomade.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.nomade.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.nomade.3, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.home.more, props: { href: /espace-membre/formule, className: 'inline-block pt-1 text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                visibility: { record: { field: formules, contains: flex } }
+                props: { className: 'p-5 space-y-2' }
+                children:
+                  - { type: text, element: h2, content: $t:member.home.flexcard.title, props: { className: 'text-lg font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.flexcard.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.flexcard.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.flexcard.3, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.home.more, props: { href: /espace-membre/formule, className: 'inline-block pt-1 text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                visibility: { record: { field: formules, contains: box } }
+                props: { className: 'p-5 space-y-2' }
+                children:
+                  - { type: text, element: h2, content: $t:member.home.box.title, props: { className: 'text-lg font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.box.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.box.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.box.3, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.home.more, props: { href: /espace-membre/formule, className: 'inline-block pt-1 text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                visibility: { record: { field: formules, contains: domiciliation } }
+                props: { className: 'p-5 space-y-2' }
+                children:
+                  - { type: text, element: h2, content: $t:member.home.dom.title, props: { className: 'text-lg font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.dom.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.dom.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:member.home.dom.3, props: { className: 'text-sm text-navy' } }
+                  - { type: link, content: $t:member.home.more, props: { href: /espace-membre/formule, className: 'inline-block pt-1 text-sm font-semibold text-blue hover:text-navy' } }
+
+          # The invoices, then — Flex members only — the days of the month.
           - type: grid
             props:
               className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
@@ -97,6 +178,7 @@ components:
                     - { field: status, operator: eq, value: paid }
                 kpiAggregate: { function: count }
               - type: kpi
+                visibility: { record: { field: formules, contains: flex } }
                 label: $t:flex.presences.month
                 icon: calendar-check
                 dataSource:
@@ -179,3 +261,17 @@ components:
                           consumed: $t:portal.mandate.ended
                           replaced: $t:portal.mandate.ended
                       - { field: bank_account, label: $t:portal.mandate.account }
+
+          # First steps, for everyone.
+          - type: card
+            props: { className: 'p-6 space-y-4' }
+            children:
+              - { type: text, element: h2, content: $t:member.home.start, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: flex
+                props: { className: 'flex flex-wrap gap-3' }
+                children:
+                  - { type: link, content: $t:member.home.start.slack, props: { href: $t:member.slack.invite, target: _blank, rel: noopener, className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-blue-100 hover:bg-sand' } }
+                  - { type: link, content: $t:member.home.start.guide, props: { href: /espace-membre/guide, className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-blue-100 hover:bg-sand' } }
+                  - { type: link, content: $t:member.home.start.rooms, props: { href: /espace-membre/salles, className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-blue-100 hover:bg-sand' } }
+                  - { type: link, content: $t:member.home.start.mandate, props: { href: /espace-membre/prelevement, className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-blue-100 hover:bg-sand' } }
+                  - { type: link, content: $t:member.home.start.idea, props: { href: $t:member.link.conseil, target: _blank, rel: noopener, className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-blue-100 hover:bg-sand' } }

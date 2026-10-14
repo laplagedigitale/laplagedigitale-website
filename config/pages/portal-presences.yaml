@@ -23,6 +23,8 @@ meta:
   title: "Présences — Espace Membre"
   description: "Vos présences Flex à La Plage Digitale."
   noindex: true
+# The signed-in member's own row: the sidebar's formule gates read it.
+dataSource: { table: members, mode: single, filter: [{ field: email, operator: eq, value: $currentUser.email }] }
 components:
   - type: flex
     props:
