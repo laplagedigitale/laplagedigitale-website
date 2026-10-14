@@ -118,18 +118,30 @@ on an automation `list` step matches nothing.
 
 `pennylane-auto-match` runs every morning at 06:30 (Europe/Paris), before
 Pennylane's dunning emails go out, so a client who has paid is not reminded.
-It reads the incoming transfers still to allocate (`outstanding_balance` not
-zero — a transfer already matched is never reused) and the open customer
-invoices, and matches a pair in Pennylane only when the amount is exact and
-either the bank label carries the invoice number (as written, or just its
-7-digit sequence, which survives a missing "F" or a wrong month) or the amount,
-client name and date clearly agree ahead of any other candidate. Doubtful pairs
-are never written: they land in `payment_matches` as `review`.
+It reads the bank transactions still to allocate (`outstanding_balance` not
+zero — a transaction already matched is never reused) and matches them on two
+sides with the same rules:
 
-Each run logs every pair in `payment_matches` and mails a summary to
-`TREASURER_EMAIL` when something was matched, failed, or is newly to review.
-Set `AUTOMATCH_APPLY=false` to make it a dry run (pairs logged as
-`would_apply`, nothing written to Pennylane).
+- **customer** — incoming transfers against open customer invoices;
+- **supplier** — outgoing payments (transfers, card payments, direct debits)
+  against open supplier invoices in euros we have paid but Pennylane has not
+  matched yet.
+
+A pair is matched in Pennylane only when the amount is exact and either the
+bank label carries the invoice number or the amount, counterparty name and
+date clearly agree ahead of any other candidate. On the customer side the
+number also counts by its 7-digit sequence alone, which survives a missing "F"
+or a wrong month; a supplier's number follows its own format, so only the
+number as written counts. The name is recognised from the label or, more
+reliably, from the customer or supplier Pennylane has already attached to the
+transaction. Doubtful pairs are never written: they land in `payment_matches`
+as `review`.
+
+Each run logs every pair in `payment_matches` (its `side` column says which)
+and mails a summary to `TREASURER_EMAIL` when something was matched, failed,
+or is newly to review. Set `AUTOMATCH_APPLY=false` to make the whole run a dry
+run (pairs logged as `would_apply`, nothing written to Pennylane). The supplier
+side is a dry run until `AUTOMATCH_SUPPLIER_APPLY=true`.
 
 ## Setup
 
@@ -191,6 +203,8 @@ that does not exist fails the build rather than deploying something unexpected.
   payments to invoices. The app refuses to boot without it.
 - **`AUTOMATCH_APPLY`** — optional, default `true`. `false` turns the payment
   matching into a dry run.
+- **`AUTOMATCH_SUPPLIER_APPLY`** — optional, default `false`: the supplier side
+  of the payment matching only logs `would_apply` until this is `true`.
 - **`TREASURER_EMAIL`** — optional, default `tresorerie@laplagedigitale.fr`:
   where the payment-matching summary goes (needs the `SMTP_*` variables).
 

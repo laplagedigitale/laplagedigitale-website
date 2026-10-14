@@ -1,7 +1,12 @@
 # Table: payment_matches — the log of the pennylane-auto-match automation.
-# One row per (invoice, bank transfer) pair it applied, failed to apply, or
+# One row per (invoice, bank transaction) pair it applied, failed to apply, or
 # left for the treasurer to check by hand. match_key is the upsert key, so a
 # pair left to review is one row however many mornings it is seen.
+#
+# `side` says which invoice the row is about: a customer invoice paid by an
+# incoming transfer, or a supplier invoice paid from our accounts. Rows logged
+# before the supplier side existed default to customer. customer_name holds
+# the counterparty — the supplier on a supplier row.
 #
 # Admin only: it names clients, amounts and bank labels.
 id: 7
@@ -9,7 +14,7 @@ name: payment_matches
 # Read-only over MCP: Claude lists and reads, never writes. Row-level and
 # field rules still apply, as the owner of the API key.
 aiAccess:
-  description: "Log of the pennylane-auto-match automation: each invoice/bank-transfer pair it applied, failed or left for review."
+  description: "Log of the pennylane-auto-match automation: each invoice/bank-transaction pair (customer or supplier side) it applied, failed or left for review."
   operations: [read, list]
 fields:
   - { id: 1, name: match_key, type: single-line-text, required: true, unique: true }
@@ -39,6 +44,13 @@ fields:
   - { id: 12, name: transaction_label, type: long-text }
   - { id: 13, name: error, type: long-text }
   - { id: 14, name: run_at, type: datetime, indexed: true }
+  - id: 15
+    name: side
+    type: single-select
+    default: customer
+    options:
+      - { value: customer, label: Client, color: '#3b82f6' }
+      - { value: supplier, label: Fournisseur, color: '#8b5cf6' }
 permissions:
   read: [admin]
   create: [admin]
