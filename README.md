@@ -43,6 +43,7 @@ config/
     pennylane-auto-match.yaml
     pennylane-sync.yaml
     request-mandate.yaml
+    pennylane-direct-debit.yaml
 library/
   connection/pennylane.yaml    # installed by `sovrium library`; see below
 ```
@@ -82,6 +83,7 @@ and the pages read those tables:
 | `member-sign-up`          | account created      | files a `members` row for a `coworker` or `admin` account            |
 | `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, then mirrors every linked member's invoices and GoCardless mandates |
 | `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
+| `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active GoCardless mandate from manual transfer to direct debit, and mails the treasurer what changed |
 
 **Isolation is the tables' job, not the page's.** Every portal table has a
 row-level rule matching the row's email to the signed-in user's email, so the

@@ -1,0 +1,157 @@
+# Automation: pennylane-direct-debit — every morning, moves the Fixe
+# subscriptions (330 € TTC a month) of every customer whose GoCardless mandate
+# is active from manual transfers to direct debit, so the next invoice the
+# subscription issues is collected by GoCardless instead of waiting for a
+# transfer.
+#
+# The coworker signs the mandate from the portal (request-mandate); GoCardless
+# activates it a few days later. This run picks it up from Pennylane itself,
+# not from the mirrored mandates table, so a customer who is not a portal
+# member yet is switched as well. Only subscriptions still `offline`, running
+# or about to start, and whose amount is one of DIRECT_DEBIT_AMOUNTS, are
+# touched: the domiciliation, the private offices and anything already on
+# direct debit are left alone. Nothing is ever switched back.
+#
+# It runs at 05:45, ahead of the invoices Pennylane issues on the 20th at
+# about 06:30, so a mandate activated the day before already pays that
+# morning's invoice. The treasurer gets a mail only when something was
+# switched, would be (dry run) or failed; a failure is mailed again each
+# morning until it is settled in Pennylane.
+#
+# DIRECT_DEBIT_APPLY=false makes the run a dry run without a redeploy.
+name: pennylane-direct-debit
+trigger:
+  type: cron
+  expression: '45 5 * * *'
+  timezone: Europe/Paris
+actions:
+  # Pennylane over the connection (token injected). Pages are kept small: the
+  # engine reads at most 64 KiB of a response, and a subscription is ~2 KiB.
+  - name: switch
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 240000
+      code: |
+        async function execute(context) {
+          const BASE = 'https://app.pennylane.com/api/external/v2'
+          const apply = String(context.env.DIRECT_DEBIT_APPLY ?? 'true').toLowerCase() !== 'false'
+          const amounts = new Set<number>(
+            String(context.env.DIRECT_DEBIT_AMOUNTS ?? '330')
+              .split(',')
+              .map((s: string) => Number(s.trim()))
+              .filter((n: number) => Number.isFinite(n) && n > 0),
+          )
+          const read = (res: any, what: string): any => {
+            if (res?.truncated) throw new Error(`${what} : réponse tronquée (64 KiB)`)
+            return typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+          }
+          const listAll = async (path: string, query: Record<string, unknown>): Promise<any[]> => {
+            const items: any[] = []
+            let cursor = ''
+            for (let page = 0; page < 50; page++) {
+              const res = await context.actions.http.get({
+                url: BASE + path,
+                connection: 'pennylane',
+                query: cursor ? { ...query, cursor } : query,
+                timeout: 20000,
+              })
+              const body = read(res, path)
+              items.push(...(body?.items ?? []))
+              if (!body?.has_more || !body?.next_cursor) return items
+              cursor = String(body.next_cursor)
+            }
+            throw new Error(`${path} : plus de 50 pages`)
+          }
+
+          const mandates = await listAll('/gocardless_mandates', { limit: 100 })
+          const customers = [...new Set<number>(
+            mandates.filter((m: any) => m.status === 'active').map((m: any) => Number(m.customer?.id)).filter((n: number) => Number.isFinite(n) && n > 0),
+          )]
+          context.log.info(`${mandates.length} mandates, ${customers.length} customers with an active one`)
+          if (customers.length === 0) return { notify: 'no', subject: '', body: '' }
+
+          const subscriptions = await listAll('/billing_subscriptions', {
+            limit: 20,
+            filter: JSON.stringify([{ field: 'customer_id', operator: 'in', value: customers }]),
+          })
+          const due = subscriptions.filter(
+            (s: any) =>
+              s.payment_method === 'offline' &&
+              (s.status === 'in_progress' || s.status === 'not_started') &&
+              amounts.has(Number(s.customer_invoice_data?.amount)),
+          )
+
+          const rows: { id: string; who: string; amount: number; next: string; status: string; error: string }[] = []
+          for (const s of due) {
+            const row = {
+              id: String(s.id),
+              who: (s.email_settings?.recipients ?? []).join(', ') || `client ${s.customer?.id}`,
+              amount: Number(s.customer_invoice_data?.amount),
+              next: String(s.next_occurrence ?? ''),
+              status: 'would_switch',
+              error: '',
+            }
+            if (apply) {
+              try {
+                await context.actions.http.put({
+                  url: `${BASE}/billing_subscriptions/${s.id}`,
+                  connection: 'pennylane',
+                  body: { payment_method: 'gocardless_direct_debit' },
+                  timeout: 20000,
+                })
+                row.status = 'switched'
+              } catch (e) {
+                row.status = 'failed'
+                row.error = String(e instanceof Error ? e.message : e).slice(0, 500)
+                context.log.warn(`subscription ${s.id} (${row.who}): ${row.error}`)
+              }
+            }
+            rows.push(row)
+          }
+
+          const esc = (s: unknown) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          const eur = (n: number) => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+          const line = (r: any) => `<li><b>${esc(r.who)}</b> · ${eur(r.amount)} · prochaine facture le ${esc(r.next)} · abonnement ${esc(r.id)}${r.error ? ` — <i>${esc(r.error)}</i>` : ''}</li>`
+          const section = (title: string, list: any[]) => (list.length ? `<h3>${title} (${list.length})</h3><ul>${list.map(line).join('')}</ul>` : '')
+          const switched = rows.filter((r) => r.status === 'switched')
+          const planned = rows.filter((r) => r.status === 'would_switch')
+          const failed = rows.filter((r) => r.status === 'failed')
+          context.log.info(`${switched.length} switched, ${planned.length} would switch, ${failed.length} failed`)
+          return {
+            notify: rows.length > 0 ? 'yes' : 'no',
+            subject: `Prélèvement GoCardless — ${switched.length + planned.length} abonnement(s) passé(s) en prélèvement, ${failed.length} échec(s)`,
+            body: [
+              '<p>Bonjour Thomas,</p>',
+              '<p>Ces abonnements Fixe ont un mandat GoCardless actif : leurs prochaines factures seront prélevées automatiquement.</p>',
+              section('Passés en prélèvement', switched),
+              section('À passer en prélèvement (mode test, rien n’a été écrit dans Pennylane)', planned),
+              section('Échecs — à passer à la main dans Pennylane', failed),
+              '<p>— L’automatisation pennylane-direct-debit</p>',
+            ].join(''),
+          }
+        }
+  - name: route
+    type: path
+    operator: branch
+    props:
+      mode: first-match
+      paths:
+        - name: quiet
+          condition:
+            conditions:
+              - { field: '{{steps.switch.notify}}', operator: equals, value: 'no' }
+          actions:
+            - name: done
+              type: flow
+              operator: stop
+              props: { status: success, message: No Fixe subscription to move to direct debit }
+        - name: notify
+          actions:
+            - name: mail
+              type: email
+              operator: send
+              props:
+                to: $env.TREASURER_EMAIL
+                subject: '{{steps.switch.subject}}'
+                body: '{{steps.switch.body}}'
