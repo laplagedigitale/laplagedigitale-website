@@ -1,0 +1,161 @@
+# Page: portal-presences — the Flex coworker's check-in: « je suis arrivé·e »
+# for today (half or full day), and the history of their days with what each
+# costs and whether it was invoiced. Replaces the Airtable check-in form.
+#
+# The check-in form takes the email from the session and sends no date;
+# flex-check-in dates the row and keeps one row per day — a full day replaces
+# the morning's half day. The days are billed on the 1st of the month
+# by flex-invoicing, and the invoice appears in Factures.
+#
+# Like every Espace Membre page, each block filters on $currentUser.email on
+# top of the table's row-level rule: an admin bypasses row rules, and would
+# otherwise see every coworker's days as their own here.
+#
+# Changing one's billing details is not a per-check-in option (the Airtable
+# checkbox): the coworker writes to us, and an admin updates the Pennylane
+# customer.
+name: portal-presences
+path: /espace-membre/presences
+access: { require: [coworker, admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Présences — Espace Membre"
+  description: "Vos présences Flex à La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: espace-membre-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: $t:flex.presences.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:flex.presences.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6'
+            children:
+              # Posts to the records API rather than through a declared form:
+              # the records API enforces the table's row-level create rule (a
+              # coworker can only check themselves in), which a declared form's
+              # submission did not in 0.37 — it accepted another email in the
+              # hidden field. No date is sent: flex-check-in dates the row in
+              # Europe/Paris, then keeps one row for the day.
+              - type: card
+                props:
+                  className: 'xl:col-span-2 p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: $t:flex.checkin.title, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:flex.checkin.lead, props: { className: 'text-sm text-text-muted' } }
+                  - type: form
+                    endpoint:
+                      url: /api/tables/checkins/records
+                      method: POST
+                      submitLabel: $t:flex.checkin.submit
+                      onSuccess:
+                        type: toast
+                        variant: success
+                        message: $t:flex.checkin.success
+                        reload: true
+                      onError:
+                        type: toast
+                        variant: destructive
+                        message: $t:flex.checkin.error
+                    fields:
+                      # Shown, labelled « Compte », rather than hidden: 0.37 draws an
+                      # endpoint field's `hidden` (and `readOnly`) as a plain text
+                      # box. Another email is refused by the records API anyway
+                      # (row-level create rule).
+                      - { field: member_email, control: email, label: $t:flex.checkin.account, readOnly: true, required: true, defaultValue: $session.email }
+                      - field: duration
+                        control: select
+                        label: $t:flex.checkin.duration
+                        description: $t:flex.checkin.duration.help
+                        required: true
+                        defaultValue: full
+                        options:
+                          - { value: full, label: $t:flex.duration.full }
+                          - { value: half, label: $t:flex.duration.half }
+
+              - type: card
+                props:
+                  className: 'p-6 space-y-3 bg-blue-100'
+                children:
+                  - { type: text, element: h2, content: $t:flex.presences.how, props: { className: 'text-lg font-semibold text-navy' } }
+                  - { type: text, element: p, content: $t:flex.presences.how.1, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:flex.presences.how.2, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:flex.presences.how.3, props: { className: 'text-sm text-navy' } }
+                  - { type: text, element: p, content: $t:flex.presences.billing, props: { className: 'text-sm text-navy pt-2 border-t border-blue' } }
+                  - { type: link, content: $t:flex.presences.billing.cta, props: { href: 'mailto:contact+flex@laplagedigitale.fr?subject=Flex%20%E2%80%94%20infos%20de%20facturation', className: 'text-sm font-semibold text-blue hover:text-navy' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+            children:
+              - type: kpi
+                label: $t:flex.presences.month
+                icon: calendar-check
+                dataSource:
+                  table: checkins
+                  filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
+                    - { field: date, operator: gte, value: $startOfMonth }
+                kpiAggregate: { function: count }
+              - type: kpi
+                label: $t:flex.presences.due
+                icon: wallet
+                dataSource:
+                  table: checkins
+                  filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
+                    - { field: status, operator: eq, value: to_invoice }
+                kpiAggregate: { function: sum, field: amount }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: $t:flex.presences.offered
+                icon: gift
+                dataSource:
+                  table: checkins
+                  filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
+                    - { field: status, operator: eq, value: offered }
+                kpiAggregate: { function: count }
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6 space-y-4'
+            children:
+              - { type: text, element: h2, content: $t:flex.presences.history, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: table
+                readOnly: true
+                dataSource:
+                  table: checkins
+                  filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
+                  sort:
+                    - { field: date, direction: desc }
+                  pagination: { pageSize: 25, style: numbered }
+                emptyMessage: $t:flex.presences.none
+                columns:
+                  - { field: date, label: $t:flex.col.date, format: short-date }
+                  - field: duration
+                    label: $t:flex.col.duration
+                    valueLabels:
+                      full: $t:flex.duration.full
+                      half: $t:flex.duration.half
+                  - { field: amount, label: $t:flex.col.amount, format: currency, align: right }
+                  - field: status
+                    label: $t:flex.col.status
+                    valueLabels:
+                      to_invoice: $t:flex.status.to_invoice
+                      invoiced: $t:flex.status.invoiced
+                      offered: $t:flex.status.offered

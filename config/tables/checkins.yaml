@@ -1,0 +1,90 @@
+# Table: checkins — one row per Flex coworker per day spent at La Plage, filled
+# from the « Présences » page of the Espace Membre and billed once a month by
+# flex-invoicing (one Pennylane invoice per member).
+#
+# A coworker creates their own rows — the check-in form on
+# /espace-membre/presences posts member_email (from the session) and the
+# duration to the records API, which enforces the row-level create rule below
+# — and reads only their own. Everything about money (amount, status, the
+# Pennylane invoice id) is written by the automations or by an admin, never by
+# the coworker:
+#
+#   - flex-check-in, on every new row, keeps one row per member per day (a full
+#     day replaces the same day's half day), links the members row and stamps
+#     the amount HT;
+#   - flex-invoicing, on the 1st of the month, bills the rows still
+#     `to_invoice` and writes the invoice id back, so a row carrying one is
+#     never billed again.
+#
+# An admin corrects any row in /espace-membre/flex (or /_admin): change the
+# duration and the amount together, or delete a mistaken check-in.
+id: 8
+name: checkins
+# Read-only over MCP: Claude lists and reads, never writes. Row-level and
+# field rules still apply, as the owner of the API key.
+aiAccess:
+  description: "Flex check-ins: one row per coworker per day (half or full day), with its amount HT and whether it was invoiced in Pennylane, offered, or is still to invoice."
+  operations: [read, list]
+fields:
+  - { id: 1, name: member_email, type: email, required: true, indexed: true }
+  - { id: 2, name: member, type: relationship, relatedTable: members, relationType: many-to-one, displayField: email }
+  # Left empty by the check-in form: flex-check-in writes the day (Europe/Paris)
+  # the row was created. An admin adding a forgotten day sets it.
+  - { id: 3, name: date, type: date, indexed: true, weekday: short }
+  - id: 4
+    name: duration
+    type: single-select
+    required: true
+    default: full
+    options:
+      - { value: full, label: $t:flex.duration.full, color: '#2563eb' }
+      - { value: half, label: $t:flex.duration.half, color: '#38bdf8' }
+  # HT, stamped by flex-check-in from the price of the day it was written —
+  # stored rather than computed, so a later price change never rewrites a
+  # month already billed.
+  - { id: 5, name: amount, type: currency, currency: EUR, precision: 2 }
+  - id: 6
+    name: status
+    type: single-select
+    default: to_invoice
+    options:
+      - { value: to_invoice, label: $t:flex.status.to_invoice, color: '#f59e0b' }
+      - { value: invoiced, label: $t:flex.status.invoiced, color: '#10b981' }
+      - { value: offered, label: $t:flex.status.offered, color: '#8b5cf6' }
+  - { id: 7, name: pennylane_invoice_id, type: single-line-text, indexed: true }
+  - { id: 8, name: created_at, type: created-at }
+  # Who wrote the row, stamped by the engine from the session (never from the
+  # request): the coworker, or the admin who added a day for them.
+  - { id: 9, name: created_by, type: created-by }
+permissions:
+  read: [coworker, admin]
+  create: [coworker, admin]
+  update: [admin]
+  delete: [admin]
+  # A coworker writes only what the check-in form sends; the rest is admin
+  # (and automation) territory.
+  fields:
+    - { field: member_email, read: [coworker, admin], write: [coworker, admin] }
+    - { field: member, read: [coworker, admin], write: [admin] }
+    - { field: date, read: [coworker, admin], write: [coworker, admin] }
+    - { field: duration, read: [coworker, admin], write: [coworker, admin] }
+    - { field: amount, read: [coworker, admin], write: [admin] }
+    - { field: status, read: [coworker, admin], write: [admin] }
+    - { field: pennylane_invoice_id, read: [coworker, admin], write: [admin] }
+    - { field: created_at, read: [coworker, admin] }
+    - { field: created_by, read: [admin] }
+# Rows are scoped by member_email, the login email the form copies from the
+# session — like invoices: a rule through the relationship (member.email)
+# fails on list reads in Sovrium 0.30. The create rule stops a coworker from
+# checking in someone else.
+rowLevelPermissions:
+  read:
+    when:
+      field: member_email
+      operator: eq
+      value: { kind: currentUser, path: { kind: scalar, name: email } }
+  create:
+    when:
+      field: member_email
+      operator: eq
+      value: { kind: currentUser, path: { kind: scalar, name: email } }

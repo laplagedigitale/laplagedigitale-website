@@ -1,0 +1,98 @@
+# Automation: flex-check-in — settles each new Flex check-in, so there is one
+# row per member per day, dated, linked to its members row and priced.
+#
+# Why an automation on create rather than an upsert: the check-in form can only
+# create (it posts to the records API, which is what enforces the table's
+# row-level create rule — a coworker cannot check someone else in), and a
+# unique (member, day) key would refuse the second check-in of the day outright,
+# which is exactly how a coworker turns their half day into a full day. So the
+# form always creates, and this run, started by the new row, resolves the day:
+#
+#   - a row without a date (the form sends none) is dated the day it was
+#     created, in Europe/Paris; a date in the future is refused (row dropped);
+#   - a day already invoiced or offered is never changed: the new row is
+#     dropped (an admin corrects a billed day by hand);
+#   - a full day replaces whatever else the day holds (the morning's half day,
+#     or a duplicate full day);
+#   - a half day on a day that already has a check-in is a duplicate: dropped.
+#
+# The kept row gets its date, its `member` link (the admin member view filters
+# on it) and its amount HT. Deletions are soft deletes. The trigger fires on
+# create only, so this run's own updates and deletes start nothing.
+#
+# A run started by a record event writes as the system, which is what lets it
+# write amount and member — fields a coworker may not write.
+name: flex-check-in
+trigger:
+  type: record
+  table: checkins
+  events: [create]
+actions:
+  # The member's recent rows; the day is compared in code (the new row may not
+  # carry its date yet).
+  - name: recent
+    type: record
+    operator: list
+    props:
+      table: checkins
+      filter:
+        conditions:
+          - { field: member_email, operator: equals, value: '{{trigger.data.record.member_email}}' }
+      sort: [{ field: created_at, direction: desc }]
+      limit: 200
+  - name: member
+    type: record
+    operator: list
+    props:
+      table: members
+      filter:
+        conditions:
+          - { field: email, operator: equals, value: '{{trigger.data.record.member_email}}' }
+      limit: 1
+  - name: settle
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        id: '{{trigger.data.record.id}}'
+        date: '{{trigger.data.record.date}}'
+        duration: '{{trigger.data.record.duration}}'
+        createdAt: '{{trigger.data.record.created_at}}'
+        rows: '{{steps.recent.records}}'
+        member: '{{steps.member.records}}'
+      code: |
+        async function execute(context) {
+          // Prices HT of a Flex day. flex-invoicing bills the amount stored here.
+          const PRICE: Record<string, number> = { full: 14, half: 7 }
+          const parisDay = (d: Date) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d)
+          const today = parisDay(new Date())
+          const id = String(context.inputData.id)
+          const created = Date.parse(String(context.inputData.createdAt ?? ''))
+          const given = String(context.inputData.date ?? '').slice(0, 10)
+          const day = given || (Number.isFinite(created) ? parisDay(new Date(created)) : today)
+          const duration = String(context.inputData.duration ?? 'full') === 'half' ? 'half' : 'full'
+          const remove = (rowId: string) =>
+            context.actions.record.delete({ table: 'checkins', filter: { conditions: [{ field: 'id', operator: 'equals', value: rowId }] } })
+          const drop = async (why: string) => {
+            await remove(id)
+            context.log.info(`${day}: new ${duration} check-in ${id} dropped — ${why}`)
+            return { outcome: 'dropped', reason: why, date: day }
+          }
+
+          if (day > today) return drop('the day is in the future')
+          const others = ((context.inputData.rows ?? []) as any[]).filter((r: any) => String(r.id) !== id && String(r.date ?? '').slice(0, 10) === day)
+          const locked = others.filter((r: any) => r.status !== 'to_invoice' || String(r.pennylane_invoice_id ?? '') !== '')
+          if (locked.length > 0) return drop('the day is already invoiced or offered')
+          if (duration === 'half' && others.length > 0) return drop('the day already has a check-in')
+
+          for (const r of others) {
+            await remove(String(r.id))
+            context.log.info(`${day}: ${r.duration} check-in ${r.id} replaced by full day ${id}`)
+          }
+          const member = ((context.inputData.member ?? []) as any[])[0]
+          const data: Record<string, unknown> = { date: day, amount: PRICE[duration] }
+          if (member) data.member = String(member.id)
+          else context.log.warn('no members row for this email yet — the check-in stays unlinked until an admin adds one')
+          await context.actions.record.update({ table: 'checkins', id, data })
+          return { outcome: others.length > 0 ? 'replaced' : 'kept', reason: '', date: day }
+        }

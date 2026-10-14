@@ -1,0 +1,42 @@
+# Table: flex_signups — the public « Je m'inscris au Flex » form on /flex,
+# replacing the Notion page and the sign-up at the reception desk.
+#
+# Write-only for visitors, like `leads`: anyone may submit, nobody but admins
+# reads. A submission creates no account — an admin reads it here or in
+# /espace-membre/flex, creates the Pennylane customer with the billing details,
+# then invites the person as a coworker from /espace-membre/membres (the
+# invitation files their members row, and pennylane-sync links it). `status`
+# is the admin's own follow-up.
+id: 9
+name: flex_signups
+# Read-only over MCP: Claude lists and reads, never writes. Row-level and
+# field rules still apply, as the owner of the API key.
+aiAccess:
+  description: "Sign-ups to the Flex day pass sent from /flex: identity, billing details, association membership and the admin's follow-up (new, invited, declined)."
+  operations: [read, list]
+fields:
+  - { id: 1, name: first_name, label: Prénom, type: single-line-text, required: true }
+  - { id: 2, name: last_name, label: Nom, type: single-line-text, required: true }
+  - { id: 3, name: email, label: E-mail, type: email, required: true }
+  - { id: 4, name: phone, label: Téléphone, type: single-line-text, required: true }
+  - { id: 5, name: company, label: Entreprise, type: single-line-text }
+  - { id: 6, name: billing_name, label: Nom de facturation, type: single-line-text, required: true }
+  - { id: 7, name: billing_address, label: Adresse de facturation, type: long-text, required: true }
+  - { id: 8, name: siret, label: SIRET, type: single-line-text }
+  - { id: 9, name: vat_number, label: N° de TVA, type: single-line-text }
+  - { id: 10, name: association, label: Adhésion à l'association, type: checkbox }
+  - { id: 11, name: accept_terms, label: CGU et CGV acceptées, type: checkbox, required: true }
+  - id: 12
+    name: status
+    label: Suivi
+    type: single-select
+    default: new
+    options:
+      - { value: new, label: $t:flex.signup.status.new, color: '#f59e0b' }
+      - { value: invited, label: $t:flex.signup.status.invited, color: '#10b981' }
+      - { value: declined, label: $t:flex.signup.status.declined, color: '#94a3b8' }
+  - { id: 13, name: created_at, type: created-at }
+
+# Anyone may submit; nobody but admins reads.
+permissions:
+  create: all

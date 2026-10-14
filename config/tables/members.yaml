@@ -6,6 +6,7 @@
 # row — matched on the login email, so no user id has to be copied by hand.
 # An admin fixes a wrong or missing match by setting pennylane_customer_id and
 # match_status: manual, which the matcher then leaves alone.
+# association_member is also the admin's to tick (the free Flex day).
 id: 3
 name: members
 # Read-only over MCP: Claude lists and reads, never writes. Row-level and
@@ -26,6 +27,10 @@ fields:
       - { value: matched, label: $t:portal.match.matched, color: '#10b981' }
       - { value: not_found, label: $t:portal.match.not_found, color: '#f59e0b' }
       - { value: manual, label: $t:portal.match.manual, color: '#10b981' }
+  # Member of the La Plage Digitale association this year — set by an admin.
+  # flex-invoicing offers such a member their first full Flex day of each
+  # calendar year.
+  - { id: 5, name: association_member, type: checkbox }
 permissions:
   read: [coworker, admin]
   create: [admin]
@@ -38,6 +43,7 @@ permissions:
     - { field: name, read: [coworker, admin], write: [admin] }
     - { field: pennylane_customer_id, read: [coworker, admin], write: [admin] }
     - { field: match_status, read: [coworker, admin], write: [admin] }
+    - { field: association_member, read: [coworker, admin], write: [admin] }
 rowLevelPermissions:
   read:
     when:

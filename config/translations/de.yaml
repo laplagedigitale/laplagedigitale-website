@@ -16,6 +16,8 @@ href.portal: /de/espace-membre
 href.portal.invoices: /de/espace-membre/factures
 href.portal.mandate: /de/espace-membre/prelevement
 href.portal.account: /de/espace-membre/compte
+href.portal.presences: "/de/espace-membre/presences"
+href.flex: "/de/flex"
 href.privacy: /de/confidentialite
 
 # ── Navigation ──
@@ -243,7 +245,7 @@ home.meta.title: La Plage Digitale — Coworking und Dritter Ort in Straßburg
 home.meta.description: "Der Dritte Ort für Innovation in Straßburg: 600 m² Coworking im Stadtzentrum, mit Festplätzen, Flex-Plätzen und Besprechungsräumen zur Miete."
 home.href.fixe: /de/les-formules#fixe
 home.href.nomade: /de/les-formules#nomade
-home.href.flex: /de/les-formules#flex
+home.href.flex: "/de/flex"
 home.href.reunion: /de/les-formules#reunion
 home.hero.eyebrow: Coworking · Dritter Ort · Straßburg
 home.hero.title: Der Dritte Ort für Innovation in Straßburg
@@ -331,7 +333,7 @@ legal.law.p1: "Dieses Impressum unterliegt französischem Recht. Bei Fragen schr
 # ── pricing ──
 href.pricing.fixe: /de/les-formules#fixe
 href.pricing.nomade: /de/les-formules#nomade
-href.pricing.flex: /de/les-formules#flex
+href.pricing.flex: "/de/flex"
 href.pricing.reunion: /de/les-formules#reunion
 href.pricing.domiciliation: /de/les-formules#domiciliation
 pricing.meta.title: Unsere Coworking-Angebote in Straßburg
@@ -389,7 +391,9 @@ pricing.flex.f2: Glasfaser-Internet und WLAN
 pricing.flex.f3: Nutzung von Druckern und Scannern
 pricing.flex.f4: Kaffee so viel Sie möchten
 pricing.flex.f5: Kostenloser Zugang zu Lounge und Cafeteria
-pricing.flex.info: "Von 9 bis 17 Uhr, Montag bis Freitag (außer an Feiertagen), ohne Reservierung."
+pricing.flex.info: "Von 9 bis 17 Uhr, Montag bis Freitag (außer an Feiertagen), ohne Reservierung. Sie checken im Mitgliederbereich ein und erhalten eine Rechnung pro Monat."
+pricing.flex.f6: "Oder für einen halben Tag: 7 € zzgl. MwSt. (8,40 € inkl. MwSt.)"
+pricing.flex.cta: "So funktioniert es — anmelden"
 pricing.rooms.eyebrow: Besprechungsräume
 pricing.rooms.title: Vier Räume für 6 bis 60 Personen
 pricing.rooms.lead: "Ob Mitglied oder nicht: Mieten Sie einen Raum für einen ganzen oder halben Tag – ideal, um Kunden und Dienstleister mitten in Straßburg zu empfangen oder Schulungen nur wenige Schritte vom Münster entfernt durchzuführen. Jeder Raum ist mit einem Bildschirm ausgestattet."
@@ -529,6 +533,7 @@ supporters.cta.about: Über uns
 portal.nav.menu: Menü
 portal.nav.space: Mein Bereich
 portal.nav.invoices: Rechnungen
+portal.nav.presences: "Anwesenheiten"
 portal.nav.mandate: Lastschrift
 portal.nav.account: Konto
 portal.nav.profile: Mein Konto
@@ -622,6 +627,7 @@ spaces.none: "Ihr Konto öffnet noch keinen Bereich. Bitte wenden Sie sich an da
 # Mitgliederbereich — the admins' members pages (/espace-membre/membres)
 admin.nav.group: Verwaltung
 admin.nav.members: Mitglieder
+admin.nav.flex: "Flex"
 admin.members.title: Mitglieder
 admin.members.intro: "Die Coworker-Konten und ihre Verknüpfung mit Pennylane. Klicken Sie auf ein Mitglied, um seinen Bereich zu sehen — Rechnungen und Lastschrift, nur lesend."
 admin.members.cta: Mitglieder verwalten →
@@ -639,6 +645,7 @@ admin.members.name: Name
 admin.members.email: E-Mail
 admin.members.status: Pennylane
 admin.members.customer: Pennylane-Kunde
+admin.members.association: "Vereinsmitglied"
 admin.members.pending: Offene Einladungen
 admin.members.pending.intro: "Ein Einladungslink ist 7 Tage gültig. Das Mitglied steht bereits in der Liste oben: sein Bereich füllt sich, bevor es annimmt."
 admin.members.pending.none: Keine offene Einladung.
@@ -656,3 +663,101 @@ admin.member.back: "← Alle Mitglieder"
 admin.member.readonly: "Admin-Ansicht, nur lesend: was dieses Mitglied in seinem Mitgliederbereich sieht."
 admin.member.unlinked: "Noch nicht mit Pennylane verknüpft. Bleibt der Status „Nicht gefunden“, tragen Sie pennylane_customer_id ein und setzen match_status in /_admin auf manual."
 admin.member.invoices: Rechnungen
+
+# Flex — /flex, the check-in (/espace-membre/presences) and the admins' Flex desk
+flex.meta.title: "Flex — ein Schreibtisch für einen Tag | La Plage Digitale"
+flex.meta.description: "Arbeiten Sie tage- oder halbtageweise bei La Plage Digitale, ohne Reservierung: 14 € zzgl. MwSt. pro Tag, 7 € pro halben Tag, eine Rechnung pro Monat. Online anmelden."
+flex.eyebrow: "Flex-Tarif"
+flex.title: "Ein Schreibtisch für einen Tag, ohne Reservierung"
+flex.lead: "Kommen Sie, wann Sie möchten, Montag bis Freitag von 9 bis 17 Uhr: Sie checken in Ihrem Mitgliederbereich ein, und wir schicken Ihnen eine einzige Rechnung pro Monat."
+flex.cta.signup: "Jetzt anmelden"
+flex.cta.checkin: "Schon angemeldet? Einchecken"
+flex.price.title: "Preise und praktische Infos"
+flex.price.full: "Ganzer Tag"
+flex.price.half: "Halber Tag"
+flex.price.half.amount: "7 €"
+flex.price.half.unit: "zzgl. MwSt. / halber Tag"
+flex.price.half.ttc: "8,40 € inkl. MwSt. pro halben Tag"
+flex.info.hours: "Montag bis Freitag, 9 bis 17 Uhr (außer an Feiertagen)."
+flex.info.booking: "Keine Reservierung: Kommen Sie einfach vorbei, es gibt 30 Flex-Plätze."
+flex.info.invoice: "Eine Rechnung pro Monat, ausgestellt am 1. des Folgemonats auf Ihren Rechnungsnamen und Ihre Rechnungsadresse und sichtbar in Ihrem Mitgliederbereich."
+flex.info.gift: "Mitglied im Verein La Plage Digitale? Ihr erster Tag im Jahr ist kostenlos."
+flex.how.title: "Wie funktioniert es?"
+flex.how.1.title: "Anmelden"
+flex.how.1.text: "Füllen Sie das Formular unten einmalig mit Ihren Rechnungsdaten aus."
+flex.how.2.title: "Zugang erhalten"
+flex.how.2.text: "Wir legen Ihr Coworker-Konto an: Sie erhalten eine E-Mail, um Ihr Passwort zu wählen. Bei Ihrem ersten Besuch melden Sie sich bitte am Empfang."
+flex.how.3.title: "Bei jedem Besuch einchecken"
+flex.how.3.text: "Öffnen Sie bei Ihrer Ankunft Mitgliederbereich › Anwesenheiten und wählen Sie halber oder ganzer Tag. Sie bleiben doch den ganzen Tag? Checken Sie erneut als ganzer Tag ein: Er ersetzt den halben Tag."
+flex.how.4.title: "Eine Rechnung pro Monat"
+flex.how.4.text: "Am 1. des Monats wird die Rechnung für die Tage des Vormonats ausgestellt. Sie erscheint in Ihrem Mitgliederbereich, optional mit Lastschrift."
+flex.signup.eyebrow: "Erster Besuch"
+flex.signup.title: "Anmeldung zu Flex"
+flex.signup.lead: "Ein paar Angaben, nur einmal: Wir legen Ihr Konto an und schicken Ihnen den Zugang zum Mitgliederbereich, meist innerhalb eines Werktags. Fragen? contact+flex@laplagedigitale.fr"
+flex.signup.form.title: "Ihre Angaben"
+flex.signup.first_name: "Vorname"
+flex.signup.last_name: "Nachname"
+flex.signup.email: "E-Mail"
+flex.signup.email.help: "Das ist die Adresse Ihres Kontos: Ihr Zugang und Ihre Rechnungen gehen dorthin."
+flex.signup.phone: "Telefon"
+flex.signup.company: "Unternehmen (optional)"
+flex.signup.billing_name: "Rechnungsname"
+flex.signup.billing_name.help: "Ihr Name oder der Ihres Unternehmens, so wie er auf der Rechnung stehen soll."
+flex.signup.billing_address: "Rechnungsadresse"
+flex.signup.billing_address.placeholder: "13 rue Jacques Peirotes, 67000 Strasbourg"
+flex.signup.siret: "SIRET (optional)"
+flex.signup.vat_number: "USt-IdNr. (optional)"
+flex.signup.association: "Ich möchte dem Verein La Plage Digitale beitreten"
+flex.signup.association.help: "Die Mitgliedschaft unterstützt den Dritten Ort und schenkt Ihnen einen Flex-Tag pro Jahr. Wir schicken Ihnen den Link zur Mitgliedschaft."
+flex.signup.terms: "Ich akzeptiere die Nutzungs- und Verkaufsbedingungen"
+flex.signup.terms.help: "Nachzulesen in unserem [Impressum](/de/mentions-legales)."
+flex.signup.success: "Danke, Ihre Anmeldung ist angekommen! Wir legen Ihr Konto an und schicken Ihnen den Zugang zum Mitgliederbereich per E-Mail. Bis bald an der Plage!"
+flex.signup.error: "Ihre Anmeldung konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie an contact+flex@laplagedigitale.fr."
+flex.signup.status.new: "Neu"
+flex.signup.status.invited: "Eingeladen"
+flex.signup.status.declined: "Erledigt"
+flex.duration.full: "Ganzer Tag"
+flex.duration.half: "Halber Tag"
+flex.status.to_invoice: "Abzurechnen"
+flex.status.invoiced: "Abgerechnet"
+flex.status.offered: "Kostenlos"
+flex.checkin.title: "Einchecken"
+flex.checkin.lead: "Bei jedem Flex-Besuch, gleich bei Ihrer Ankunft. Das heutige Datum wird automatisch erfasst."
+flex.checkin.submit: "Ich bin da"
+flex.checkin.account: "Konto"
+flex.checkin.success: "Notiert — einen schönen Tag an der Plage!"
+flex.checkin.duration: "Dauer"
+flex.checkin.duration.help: "Sie bleiben doch den ganzen Tag? Checken Sie erneut als ganzer Tag ein: Er ersetzt den halben Tag."
+flex.checkin.error: "Ihr Check-in konnte nicht gespeichert werden. Versuchen Sie es erneut oder melden Sie sich am Empfang."
+flex.presences.title: "Meine Anwesenheiten"
+flex.presences.intro: "Checken Sie bei jedem Flex-Besuch ein. Ihre Tage werden einmal im Monat, am 1., abgerechnet, und die Rechnung erscheint unter Rechnungen."
+flex.presences.how: "Gut zu wissen"
+flex.presences.how.1: "Erster Besuch? Bitte melden Sie sich zuerst am Empfang."
+flex.presences.how.2: "Halber Tag: 7 € zzgl. MwSt. Ganzer Tag: 14 € zzgl. MwSt. Ein Check-in pro Tag."
+flex.presences.how.3: "Checken Sie gleich bei Ihrer Ankunft ein: Wenn Sie es vergessen, erinnert Sie das Team daran."
+flex.presences.billing: "Ihre Rechnungsdaten haben sich geändert (Name, Adresse, Unternehmen)? Schreiben Sie uns, wir aktualisieren sie für Ihre nächsten Rechnungen."
+flex.presences.billing.cta: "Rechnungsdaten ändern →"
+flex.presences.month: "Anwesenheiten diesen Monat"
+flex.presences.due: "Abzurechnen (netto)"
+flex.presences.offered: "Kostenlose Tage"
+flex.presences.history: "Verlauf der Anwesenheiten"
+flex.presences.none: "Noch keine Anwesenheiten."
+flex.col.date: "Datum"
+flex.col.duration: "Dauer"
+flex.col.amount: "Betrag netto"
+flex.col.status: "Status"
+admin.flex.title: "Flex"
+admin.flex.intro: "Alle Flex-Anwesenheiten und die auf /flex eingegangenen Anmeldungen. Anwesenheiten „Abzurechnen“ werden am 1. des Monats automatisch in Pennylane abgerechnet."
+admin.flex.month: "Anwesenheiten diesen Monat"
+admin.flex.due: "Abzurechnen (netto)"
+admin.flex.signups.new: "Offene Anmeldungen"
+admin.flex.checkins: "Anwesenheiten"
+admin.flex.checkins.intro: "Direkt bearbeitbar: Dauer und Betrag zusammen ändern (14 € ganzer Tag, 7 € halber Tag). Eine Anwesenheit „Abgerechnet“ ist bereits in Pennylane: zuerst eine Gutschrift erstellen."
+admin.flex.search: "Anwesenheit suchen…"
+admin.flex.invoice: "Pennylane-Rechnung"
+admin.flex.signups: "Anmeldungen"
+admin.flex.signups.intro: "Für jede Anmeldung: den Kunden in Pennylane mit den Rechnungsdaten anlegen, die Person unter Mitglieder einladen, bei Bedarf „Vereinsmitglied“ ankreuzen und dann den Stand auf „Eingeladen“ setzen."
+admin.flex.signups.none: "Noch keine Anmeldungen."
+admin.flex.signups.date: "Eingegangen am"
+admin.flex.signups.association: "Mitgliedschaft"
+admin.flex.signups.status: "Stand"

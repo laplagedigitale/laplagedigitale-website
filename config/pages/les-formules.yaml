@@ -177,9 +177,11 @@ components:
                       - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-1' } }, { type: text, element: span, content: $t:pricing.flex.f3 }] }
                       - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-1' } }, { type: text, element: span, content: $t:pricing.flex.f4 }] }
                       - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-1' } }, { type: text, element: span, content: $t:pricing.flex.f5 }] }
+                      - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-1' } }, { type: text, element: span, content: $t:pricing.flex.f6 }] }
                   - { type: text, element: p, content: $t:pricing.flex.info, props: { className: 'mt-8 [font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted pl-4 border-l-4 border-orange' } }
                   - { type: container, props: { className: 'flex-1' } }
-                  - { type: link, content: $t:pricing.plan.cta, props: { href: $t:href.contact, className: 'inline-flex items-center justify-center mt-8 px-6 py-3 rounded-full font-bold text-white bg-navy hover:bg-navy-700 transition-colors' } }
+                  # Flex has its own page: how it works and the online sign-up.
+                  - { type: link, content: $t:pricing.flex.cta, props: { href: $t:href.flex, className: 'inline-flex items-center justify-center mt-8 px-6 py-3 rounded-full font-bold text-white bg-navy hover:bg-navy-700 transition-colors' } }
 
           - type: text
             element: p

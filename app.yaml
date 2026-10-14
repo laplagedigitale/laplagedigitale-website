@@ -32,6 +32,11 @@ env:
     required: false
     default: '330'
     secret: false
+  - key: FLEX_INVOICING_APPLY
+    description: flex-invoicing creates the monthly Flex invoices in Pennylane and marks the check-ins; 'false' makes it a dry run
+    required: false
+    default: 'true'
+    secret: false
   - key: TREASURER_EMAIL
     description: Recipient of the pennylane-auto-match morning summary
     required: false
@@ -72,6 +77,10 @@ tables:
   - $ref: ./config/tables/invoices.yaml
   - $ref: ./config/tables/mandates.yaml
   - $ref: ./config/tables/mandate-requests.yaml
+  # Flex: the day check-ins (portal, row-level like invoices) and the public
+  # sign-ups from /flex (write-only for visitors, like leads).
+  - $ref: ./config/tables/checkins.yaml
+  - $ref: ./config/tables/flex-signups.yaml
   # Log of the payment matching: admin only.
   - $ref: ./config/tables/payment-matches.yaml
 
@@ -90,6 +99,7 @@ components:
 forms:
   - $ref: ./config/forms/contact.yaml
   - $ref: ./config/forms/post-new.yaml
+  - $ref: ./config/forms/flex-signup.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
@@ -98,6 +108,8 @@ pages:
   - $ref: ./config/pages/nos-soutiens.yaml
   - $ref: ./config/pages/espace-coworking.yaml
   - $ref: ./config/pages/les-formules.yaml
+  # Flex: how it works, and the first-visit sign-up.
+  - $ref: ./config/pages/flex.yaml
   - $ref: ./config/pages/nos-coworkers.yaml
   - $ref: ./config/pages/les-entreprises.yaml
   - $ref: ./config/pages/blog.yaml
@@ -119,11 +131,14 @@ pages:
   # the Espace Membre, the coworker space — gated, never indexed.
   - $ref: ./config/pages/portal.yaml
   - $ref: ./config/pages/portal-invoices.yaml
+  - $ref: ./config/pages/portal-presences.yaml
   - $ref: ./config/pages/portal-mandate.yaml
   - $ref: ./config/pages/portal-account.yaml
-  # Admins only: every member, the invitations, and one member's space read-only.
+  # Admins only: every member, the invitations, one member's space read-only,
+  # and every Flex check-in and sign-up.
   - $ref: ./config/pages/portal-members.yaml
   - $ref: ./config/pages/portal-member.yaml
+  - $ref: ./config/pages/portal-flex.yaml
 
 # Old WordPress URLs (posts lived at the root, pages had other slugs) — 301s.
 redirects:
@@ -144,5 +159,8 @@ automations:
   - $ref: ./config/automations/request-mandate.yaml
   # Fixe subscriptions with an active mandate → GoCardless direct debit
   - $ref: ./config/automations/pennylane-direct-debit.yaml
+  # Flex: one row per member per day, then the monthly Pennylane invoice
+  - $ref: ./config/automations/flex-check-in.yaml
+  - $ref: ./config/automations/flex-invoicing.yaml
   # Weekly Notion → Slack digest (Monday 08:30 Europe/Paris)
   - $ref: ./config/automations/notion-hebdo.yaml

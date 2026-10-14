@@ -1,5 +1,6 @@
 # Page: portal — « Espace Membre », the coworker space's dashboard: what is left
-# to pay, the direct-debit status and the latest invoices at a glance.
+# to pay, the Flex days of the month, the direct-debit status and the latest
+# invoices at a glance.
 #
 # Every block reads a table under row-level rules (matched on the login
 # email), so a coworker is only ever served their own rows — the tables keep
@@ -59,9 +60,11 @@ components:
                 title: $t:portal.account.unlinked
                 subtitle: $record.email
 
+          # Four tiles: the invoices, then the Flex days of the month (0 for a
+          # Fixe coworker, who never checks in).
           - type: grid
             props:
-              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+              className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
             children:
               - type: kpi
                 label: $t:portal.dashboard.due
@@ -92,6 +95,15 @@ components:
                   filter:
                     - { field: member_email, operator: eq, value: $currentUser.email }
                     - { field: status, operator: eq, value: paid }
+                kpiAggregate: { function: count }
+              - type: kpi
+                label: $t:flex.presences.month
+                icon: calendar-check
+                dataSource:
+                  table: checkins
+                  filter:
+                    - { field: member_email, operator: eq, value: $currentUser.email }
+                    - { field: date, operator: gte, value: $startOfMonth }
                 kpiAggregate: { function: count }
 
           - type: grid
