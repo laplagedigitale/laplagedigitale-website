@@ -1,8 +1,12 @@
-# Page: portal-guide — the practical guide (the Notion « Kit du Plagiste », its
-# FAQ and the parking page, checked against the Règlement d'utilisation des
-# locaux). One card per topic, each with an anchor id. It never carries a
-# door, alarm, locker or mailbox code, nor the Wi-Fi password: those stay
-# on site, at reception.
+# Page: portal-guide — the practical guide, laid out like documentation: one
+# reading column (the Notion « Kit du Plagiste », its FAQ and the parking page,
+# checked against the Règlement d'utilisation des locaux) in four parts (h2)
+# of topics (h3), and a « Sur cette page » outline built by the `toc`
+# component from those headings — sticky beside the text from lg up, on top of
+# it on a phone. Reading size is text-base, text-lg from sm up.
+#
+# It never carries a door, alarm, locker or mailbox code, nor the Wi-Fi
+# password: those stay on site, at reception.
 name: portal-guide
 path: /espace-membre/guide
 access: { require: [coworker, admin], redirectTo: /connexion }
@@ -12,8 +16,7 @@ meta:
   title: "Guide pratique — Espace Membre"
   description: "Le guide pratique des coworkers de La Plage Digitale."
   noindex: true
-# The signed-in member's own row: the formule gates (here and in the
-# sidebar) read it.
+# The signed-in member's own row: the formule gates in the sidebar read it.
 dataSource: { table: members, mode: single, filter: [{ field: email, operator: eq, value: $currentUser.email }] }
 components:
   - type: flex
@@ -25,91 +28,125 @@ components:
       - type: container
         element: main
         props:
-          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10'
         children:
-          - type: container
+          - type: flex
+            props: { className: 'flex flex-col xl:flex-row xl:items-start gap-10' }
             children:
-              - { type: text, element: h1, content: $t:member.guide.title, props: { className: 'text-3xl font-bold text-navy' } }
-              - { type: text, element: p, content: $t:member.guide.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
-
-          - type: grid
-            props: { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6' }
-            children:
-              - type: card
-                props: { id: about, className: 'p-5 sm:p-6 space-y-3' }
+              - type: container
+                element: article
+                props: { className: 'flex-1 min-w-0 max-w-3xl space-y-8' }
                 children:
-                  - { type: text, element: h2, content: $t:member.guide.about.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.about.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.about.2, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.about.3, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: access, className: 'p-5 sm:p-6 space-y-3' }
+                  - type: container
+                    element: header
+                    props: { className: 'space-y-3' }
+                    children:
+                      - { type: text, element: h1, content: $t:member.guide.title, props: { className: 'text-3xl sm:text-4xl font-bold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.intro, props: { className: 'text-lg sm:text-xl leading-relaxed text-text-muted' } }
+                  # On a phone and a narrow screen: the outline before the text.
+                  - type: container
+                    element: nav
+                    props: { className: 'xl:hidden rounded-lg border border-border bg-surface p-4' }
+                    children:
+                      - { type: text, element: p, content: $t:member.guide.toc, props: { className: 'text-xs font-semibold uppercase tracking-wide text-text-muted mb-2' } }
+                      - { type: toc, props: { className: 'text-sm [&_a]:block [&_a]:py-1 [&_a]:text-text-muted [&_a:hover]:text-navy [&_a[aria-current]]:font-semibold [&_a[aria-current]]:text-navy [&_a.active]:font-semibold [&_a.active]:text-navy' } }
+                  - { type: text, element: h2, content: $t:member.guide.group.welcome, props: { id: bienvenue, className: 'scroll-mt-6 text-2xl sm:text-3xl font-bold text-navy pt-10 first:pt-0 border-t border-border first:border-t-0' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.about.title, props: { id: la-plage, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.about.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.about.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.about.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.access.title, props: { id: horaires-et-acces, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.access.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.access.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.access.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.access.4, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - { type: text, element: h2, content: $t:member.guide.group.daily, props: { id: au-quotidien, className: 'scroll-mt-6 text-2xl sm:text-3xl font-bold text-navy pt-10 first:pt-0 border-t border-border first:border-t-0' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.kitchen.title, props: { id: cuisine, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.kitchen.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.kitchen.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.kitchen.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.together.title, props: { id: vivre-ensemble, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.together.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.together.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.together.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.together.4, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.mail.title, props: { id: casiers-et-courrier, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.mail.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.mail.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.parking.title, props: { id: parking, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.parking.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.parking.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.parking.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - { type: text, element: h2, content: $t:member.guide.group.equipment, props: { id: equipements, className: 'scroll-mt-6 text-2xl sm:text-3xl font-bold text-navy pt-10 first:pt-0 border-t border-border first:border-t-0' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.net.title, props: { id: internet-et-wifi, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.net.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.net.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.print.title, props: { id: imprimer-et-scanner, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.print.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.print.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: link, content: $t:member.guide.print.cta, props: { href: $t:member.link.scan.driver, target: _blank, rel: noopener, className: 'inline-block text-base font-semibold text-blue underline underline-offset-4 hover:text-navy' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.furniture.title, props: { id: mobilier, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.furniture.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.furniture.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.furniture.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - { type: text, element: h2, content: $t:member.guide.group.help, props: { id: securite-et-contacts, className: 'scroll-mt-6 text-2xl sm:text-3xl font-bold text-navy pt-10 first:pt-0 border-t border-border first:border-t-0' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.safety.title, props: { id: securite, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.safety.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.safety.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.safety.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-4' }
+                    children:
+                      - { type: text, element: h3, content: $t:member.guide.contact.title, props: { id: contacts, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: $t:member.guide.contact.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.contact.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: text, element: p, content: $t:member.guide.contact.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
+                      - { type: link, content: $t:member.home.start.idea, props: { href: $t:member.link.conseil, target: _blank, rel: noopener, className: 'inline-block text-base font-semibold text-blue underline underline-offset-4 hover:text-navy' } }
+              # From xl up: the outline beside the text, following the reader.
+              - type: container
+                element: aside
+                props: { className: 'hidden xl:block w-64 shrink-0 sticky top-10' }
                 children:
-                  - { type: text, element: h2, content: $t:member.guide.access.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.access.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.access.2, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.access.3, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.access.4, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: net, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.net.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.net.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.net.2, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: print, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.print.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.print.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.print.2, props: { className: 'text-sm text-navy' } }
-                  - { type: link, content: $t:member.guide.print.cta, props: { href: $t:member.link.scan.driver, target: _blank, rel: noopener, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
-              - type: card
-                props: { id: kitchen, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.kitchen.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.kitchen.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.kitchen.2, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.kitchen.3, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: together, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.together.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.together.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.together.2, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.together.3, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.together.4, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: furniture, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.furniture.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.furniture.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.furniture.2, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.furniture.3, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: parking, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.parking.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.parking.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.parking.2, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.parking.3, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: mail, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.mail.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.mail.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.mail.2, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: safety, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.safety.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.safety.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.safety.2, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.safety.3, props: { className: 'text-sm text-navy' } }
-              - type: card
-                props: { id: contact, className: 'p-5 sm:p-6 space-y-3' }
-                children:
-                  - { type: text, element: h2, content: $t:member.guide.contact.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.contact.1, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.contact.2, props: { className: 'text-sm text-navy' } }
-                  - { type: text, element: p, content: $t:member.guide.contact.3, props: { className: 'text-sm text-navy' } }
-                  - { type: link, content: $t:member.home.start.idea, props: { href: $t:member.link.conseil, target: _blank, rel: noopener, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: text, element: p, content: $t:member.guide.toc, props: { className: 'text-xs font-semibold uppercase tracking-wide text-text-muted mb-2' } }
+                  - { type: toc, props: { sticky: true, className: 'text-sm [&_a]:block [&_a]:py-1 [&_a]:text-text-muted [&_a:hover]:text-navy [&_a[aria-current]]:font-semibold [&_a[aria-current]]:text-navy [&_a.active]:font-semibold [&_a.active]:text-navy' } }
