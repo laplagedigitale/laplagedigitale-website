@@ -14,7 +14,7 @@ When working on `app.yaml` or any Sovrium configuration, **always fetch `https:/
 ### Key Concepts
 
 - **Config-driven**: The entire app (design system, languages, components, pages, analytics) is declared in YAML — `app.yaml` plus the partials it `$ref`s from `config/`.
-- **Version**: pinned in `.sovrium-version` (currently 0.30.0) — the Scalingo buildpack downloads exactly that release.
+- **Version**: pinned in `.sovrium-version` (currently 0.37.0) — the Scalingo buildpack downloads exactly that release.
 - **49 field types**, **90 component types**, built-in auth, RBAC permissions, i18n.
 - App is started with `sovrium start app.yaml` (CLI only, no TypeScript needed).
 
