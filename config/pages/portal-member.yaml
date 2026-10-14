@@ -7,7 +7,8 @@
 # in the address. An admin bypasses
 # the row-level rules on those tables, which is what lets this page read
 # another member's rows; a coworker never reaches it (access is admin only).
-# Nothing here writes: no mandate request is sent on the member's behalf.
+# Only the formules card writes (the member row); no mandate request is sent
+# on the member's behalf.
 name: portal-member
 path: /espace-membre/membres/:id
 sitemap: false
@@ -37,6 +38,22 @@ components:
               - { type: text, element: h1, content: $record.name, props: { className: 'text-3xl font-bold text-navy' } }
               - { type: text, element: p, content: $record.email, props: { className: 'text-text-muted mt-1' } }
               - { type: text, element: p, content: $t:admin.member.readonly, props: { className: 'text-sm text-navy mt-4 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
+
+          # The one thing an admin edits here: the member's formules, which
+          # decide what their Espace Membre shows. pennylane-sync fills them
+          # from Pennylane; « Fixée à la main » keeps a correction from being
+          # overwritten by the next sync.
+          - type: card
+            props:
+              className: 'p-4 sm:p-6 space-y-3 max-w-2xl'
+            children:
+              - { type: text, element: h2, content: $t:admin.member.formules, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:admin.member.formules.help, props: { className: 'text-sm text-text-muted' } }
+              - type: form
+                action: { type: crud, operation: update, table: members }
+                fields:
+                  - { field: formules, label: $t:admin.members.formules }
+                  - { field: formule_source, label: $t:admin.member.formules.source }
 
           # Shown only while the member is not linked to a Pennylane customer,
           # with what the admin has to do about it.

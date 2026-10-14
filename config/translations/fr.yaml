@@ -559,6 +559,13 @@ portal.match.pending: Recherche en cours
 portal.match.matched: Relié
 portal.match.not_found: "Non trouvé — contactez-nous"
 portal.match.manual: Relié
+formule.fixe: Fixe
+formule.nomade: Nomade
+formule.flex: Flex
+formule.box: Bureau privé (Box)
+formule.domiciliation: Domiciliation
+formule.source.auto: Depuis Pennylane
+formule.source.manual: Fixée à la main
 portal.mandate.title: Prélèvement automatique
 portal.mandate.intro: "Mettez en place un mandat SEPA via GoCardless : vos factures seront réglées automatiquement à leur échéance. Le lien de signature vous est envoyé par e-mail."
 portal.mandate.none: Aucun mandat de prélèvement pour le moment.
@@ -661,7 +668,11 @@ admin.match.matched: Relié automatiquement
 admin.match.not_found: "Non trouvé — à relier à la main"
 admin.match.manual: Relié à la main
 admin.member.back: "← Tous les membres"
-admin.member.readonly: "Vue administrateur, en lecture seule : ce que ce membre voit dans son Espace Membre."
+admin.members.formules: "Formules"
+admin.member.formules: "Formules"
+admin.member.formules.help: "« Depuis Pennylane » : la synchronisation les déduit des abonnements Pennylane et des présences Flex, toutes les 15 minutes. Pour corriger, choisissez les formules et passez la source à « Fixée à la main » : la synchronisation n'y touchera plus."
+admin.member.formules.source: "Source"
+admin.member.readonly: "Vue administrateur : ce que ce membre voit dans son Espace Membre. Seules ses formules se modifient ici."
 admin.member.unlinked: "Pas encore relié à Pennylane. Si le statut reste « Non trouvé », renseignez pennylane_customer_id et passez match_status à manual dans /_admin."
 admin.member.invoices: Factures
 

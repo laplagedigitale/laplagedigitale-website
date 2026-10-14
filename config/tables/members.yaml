@@ -7,6 +7,10 @@
 # An admin fixes a wrong or missing match by setting pennylane_customer_id and
 # match_status: manual, which the matcher then leaves alone.
 # association_member is also the admin's to tick (the free Flex day).
+# formules is what the member rents — the Espace Membre shows each member the
+# pages and sections of their formules. pennylane-sync derives it from their
+# active Pennylane subscriptions (and Flex check-ins); an admin who corrects it
+# sets formule_source: manual, which the sync then leaves alone.
 id: 3
 name: members
 # Read-only over MCP: Claude lists and reads, never writes. Row-level and
@@ -31,6 +35,24 @@ fields:
   # flex-invoicing offers such a member their first full Flex day of each
   # calendar year.
   - { id: 5, name: association_member, type: checkbox }
+  # Several at once: a Fixe desk with the Nomade add-on, a Box with a
+  # domiciliation. Empty until the sync or an admin sets it.
+  - id: 6
+    name: formules
+    type: multi-select
+    options:
+      - { value: fixe, label: $t:formule.fixe, color: '#0f766e' }
+      - { value: nomade, label: $t:formule.nomade, color: '#2563eb' }
+      - { value: flex, label: $t:formule.flex, color: '#f59e0b' }
+      - { value: box, label: $t:formule.box, color: '#7c3aed' }
+      - { value: domiciliation, label: $t:formule.domiciliation, color: '#64748b' }
+  - id: 7
+    name: formule_source
+    type: single-select
+    default: auto
+    options:
+      - { value: auto, label: $t:formule.source.auto, color: '#94a3b8' }
+      - { value: manual, label: $t:formule.source.manual, color: '#10b981' }
 permissions:
   read: [coworker, admin]
   create: [admin]
@@ -44,6 +66,8 @@ permissions:
     - { field: pennylane_customer_id, read: [coworker, admin], write: [admin] }
     - { field: match_status, read: [coworker, admin], write: [admin] }
     - { field: association_member, read: [coworker, admin], write: [admin] }
+    - { field: formules, read: [coworker, admin], write: [admin] }
+    - { field: formule_source, read: [coworker, admin], write: [admin] }
 rowLevelPermissions:
   read:
     when:

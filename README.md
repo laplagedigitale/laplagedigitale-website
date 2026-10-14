@@ -82,7 +82,7 @@ and the pages read those tables:
 | Automation                | When                 | Does                                                                 |
 | ------------------------- | -------------------- | -------------------------------------------------------------------- |
 | `member-sign-up`          | account created      | files a `members` row for a `coworker` or `admin` account            |
-| `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, then mirrors every linked member's invoices and GoCardless mandates |
+| `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, mirrors every linked member's invoices and GoCardless mandates, and derives each member's formules (Fixe, Nomade, Flex, Box, Domiciliation) from their subscriptions and check-ins |
 | `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
 | `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active GoCardless mandate from manual transfer to direct debit, and mails the treasurer what changed |
 | `flex-check-in`           | a Flex check-in      | dates the new `checkins` row, keeps one row per member per day (a full day replaces the half day) and stamps its amount HT |

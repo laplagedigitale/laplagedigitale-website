@@ -558,6 +558,13 @@ portal.match.pending: Wird gesucht
 portal.match.matched: Verknüpft
 portal.match.not_found: "Nicht gefunden — bitte kontaktieren Sie uns"
 portal.match.manual: Verknüpft
+formule.fixe: Fester Arbeitsplatz
+formule.nomade: Nomade
+formule.flex: Flex
+formule.box: Privatbüro (Box)
+formule.domiciliation: Geschäftsadresse
+formule.source.auto: Aus Pennylane
+formule.source.manual: Manuell gesetzt
 portal.mandate.title: Lastschrift
 portal.mandate.intro: "Richten Sie über GoCardless ein SEPA-Mandat ein, dann werden Ihre Rechnungen bei Fälligkeit automatisch bezahlt. Den Link zur Unterzeichnung erhalten Sie per E-Mail."
 portal.mandate.none: Noch kein Lastschriftmandat.
@@ -660,7 +667,11 @@ admin.match.matched: Automatisch verknüpft
 admin.match.not_found: "Nicht gefunden — von Hand verknüpfen"
 admin.match.manual: Von Hand verknüpft
 admin.member.back: "← Alle Mitglieder"
-admin.member.readonly: "Admin-Ansicht, nur lesend: was dieses Mitglied in seinem Mitgliederbereich sieht."
+admin.members.formules: "Tarife"
+admin.member.formules: "Tarife"
+admin.member.formules.help: "„Aus Pennylane“: Die Synchronisierung leitet sie alle 15 Minuten aus den Pennylane-Abonnements und Flex-Anwesenheiten ab. Zum Korrigieren die Tarife wählen und die Quelle auf „Manuell gesetzt“ stellen: Die Synchronisierung lässt sie dann unverändert."
+admin.member.formules.source: "Quelle"
+admin.member.readonly: "Admin-Ansicht: was dieses Mitglied in seinem Mitgliederbereich sieht. Nur die Tarife lassen sich hier ändern."
 admin.member.unlinked: "Noch nicht mit Pennylane verknüpft. Bleibt der Status „Nicht gefunden“, tragen Sie pennylane_customer_id ein und setzen match_status in /_admin auf manual."
 admin.member.invoices: Rechnungen
 

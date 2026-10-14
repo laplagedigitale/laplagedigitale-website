@@ -558,6 +558,13 @@ portal.match.pending: Looking you up
 portal.match.matched: Linked
 portal.match.not_found: "Not found — please contact us"
 portal.match.manual: Linked
+formule.fixe: Fixed desk
+formule.nomade: Nomad
+formule.flex: Flex
+formule.box: Private office (Box)
+formule.domiciliation: Business address
+formule.source.auto: From Pennylane
+formule.source.manual: Set by hand
 portal.mandate.title: Direct debit
 portal.mandate.intro: "Set up a SEPA mandate through GoCardless and your invoices will be paid automatically when due. The signing link is sent to you by email."
 portal.mandate.none: No direct-debit mandate yet.
@@ -660,7 +667,11 @@ admin.match.matched: Linked automatically
 admin.match.not_found: "Not found — link by hand"
 admin.match.manual: Linked by hand
 admin.member.back: "← All members"
-admin.member.readonly: "Admin view, read-only: what this member sees in their Member Area."
+admin.members.formules: "Plans"
+admin.member.formules: "Plans"
+admin.member.formules.help: "“From Pennylane”: the sync derives them from the Pennylane subscriptions and Flex check-ins every 15 minutes. To correct them, pick the plans and set the source to “Set by hand”: the sync will leave them alone."
+admin.member.formules.source: "Source"
+admin.member.readonly: "Admin view: what this member sees in their Member Area. Only their plans can be changed here."
 admin.member.unlinked: "Not linked to Pennylane yet. If the status stays \"Not found\", set pennylane_customer_id and switch match_status to manual in /_admin."
 admin.member.invoices: Invoices
 

@@ -13,6 +13,12 @@
 #                Every run rewrites each invoice, which keeps its 30-minute
 #                pdf_url fresh and its status current. Drafts and proformas
 #                are never mirrored.
+#   3. formules — what each member rents, for the Espace Membre: read from
+#                the active Pennylane subscriptions of their customer (a
+#                company's subscription counts for each of its coworkers),
+#                plus `flex` for anyone who checked in over the last 90 days.
+#                A row an admin set by hand (formule_source: manual) is never
+#                touched; a row whose formules did not change is not written.
 #
 # Every step is top-level, on purpose: in Sovrium 0.30 a step nested in a
 # `path` branch cannot read a sibling nested step (`{{steps.<sibling>.*}}`
@@ -186,4 +192,87 @@ actions:
       table: mandates
       items: '{{steps.rows.mandates}}'
       matchField: pennylane_id
+      continueOnItemError: true
+  # Subscriptions are ~2 KiB each and a response is read up to 64 KiB, so
+  # pages of 20.
+  - name: subscriptions
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-billing-subscriptions
+      params: { filter: '{{steps.link.filter}}', limit: 20 }
+      paginate: all
+  - name: checkins
+    type: record
+    operator: list
+    props:
+      table: checkins
+      sort: [{ field: date, direction: desc }]
+      limit: 5000
+  - name: formules
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        members: '{{steps.members.records}}'
+        linked: '{{steps.link.linked}}'
+        subscriptions: '{{steps.subscriptions.data}}'
+        checkins: '{{steps.checkins.records}}'
+      code: |
+        async function execute(context) {
+          // The total TTC of a subscription names its formule: the amounts
+          // La Plage bills today (Fixe and its half-time, reduced and
+          // multi-desk variants, Fixe + Nomade, Nomade, domiciliation monthly
+          // or yearly, the Box offices). An amount not listed falls back to
+          // the words of the label; neither leaves the subscription unread,
+          // with a warning, for an admin to set by hand.
+          const BY_AMOUNT: Record<string, string[]> = {
+            '330': ['fixe'], '165': ['fixe'], '303.6': ['fixe'], '1320': ['fixe'],
+            '540': ['fixe', 'nomade'], '210': ['nomade'],
+            '48': ['domiciliation'], '576': ['domiciliation'],
+            '2808': ['box'], '3120': ['box'],
+          }
+          const byText = (text: string): string[] => {
+            const t = text.toLowerCase()
+            if (/\bbox\b|bureaux? priv|sardine|clipper|sloop|go[ée]lette/.test(t)) return ['box']
+            const out: string[] = []
+            if (/fixe/.test(t)) out.push('fixe')
+            if (/nomade/.test(t)) out.push('nomade')
+            if (/domicil/.test(t)) out.push('domiciliation')
+            return out
+          }
+          const membersOf = new Map<string, string[]>()
+          for (const l of context.inputData.linked ?? []) membersOf.set(l.customerId, [...(membersOf.get(l.customerId) ?? []), l.email])
+          const derived = new Map<string, Set<string>>()
+          const add = (email: string, f: string) => derived.set(email, (derived.get(email) ?? new Set<string>()).add(f))
+          for (const s of context.inputData.subscriptions ?? []) {
+            if (s.status !== 'in_progress' && s.status !== 'not_started') continue
+            const amount = String(Number(s.customer_invoice_data?.amount))
+            const found = BY_AMOUNT[amount] ?? byText(`${s.label ?? ''} ${s.customer_invoice_data?.pdf_invoice_subject ?? ''}`)
+            if (found.length === 0) context.log.warn(`subscription ${s.id} (${amount} €): formule not recognised`)
+            for (const email of membersOf.get(String(s.customer?.id)) ?? []) for (const f of found) add(email, f)
+          }
+          const since = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10)
+          for (const c of context.inputData.checkins ?? []) if (String(c.date ?? '') >= since && c.member_email) add(c.member_email, 'flex')
+
+          const ORDER = ['fixe', 'nomade', 'flex', 'box', 'domiciliation']
+          const updates: any[] = []
+          for (const m of context.inputData.members ?? []) {
+            if (m.formule_source === 'manual') continue
+            const next = ORDER.filter((f) => derived.get(m.email)?.has(f))
+            const current = ORDER.filter((f) => (m.formules ?? []).includes(f))
+            if (next.join() === current.join()) continue
+            updates.push({ email: m.email, formules: next, formule_source: 'auto' })
+            context.log.info(`${m.email}: formules ${current.join('+') || '—'} → ${next.join('+') || '—'}`)
+          }
+          return { updates }
+        }
+  - name: saveFormules
+    type: record
+    operator: batchUpsert
+    props:
+      table: members
+      items: '{{steps.formules.updates}}'
+      matchField: email
       continueOnItemError: true
