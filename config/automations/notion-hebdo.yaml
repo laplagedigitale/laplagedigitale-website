@@ -12,8 +12,9 @@
 name: notion-hebdo
 label: Hebdo Notion → Slack
 description: >-
-  Chaque lundi 08:30, publie dans #notion-hebdo ce qui a bougé dans le suivi des
-  sujets, les cartes bloquées, les échéances proches et deux indicateurs d'adoption.
+  Chaque lundi 08:30, publie dans #notion-hebdo d'abord les cartes bloquées (avec
+  qui on attend) et en retard, puis le CA, les échéances proches, ce qui a été
+  terminé dans la semaine et ce qui a avancé — chaque carte une seule fois.
 trigger:
   type: cron
   expression: "30 8 * * 1"
@@ -97,6 +98,8 @@ actions:
             priority: pick('Priorité'),
             due: pick('Date de clôture estimée'),
             ca: pick('Décision CA'),
+            waiting: pick('En attente de'),
+            doneOn: pick('Terminé le', 'Date de fin', 'Date de clôture'),
           }
           const statusType = P.status ? props[P.status].type : undefined
           const caIsCheckbox = !!P.ca && props[P.ca].type === 'checkbox'
@@ -127,8 +130,24 @@ actions:
           }
 
           // --- readers
+          const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
           const plain = (rt) => (rt ?? []).map((t) => t.plain_text ?? '').join('').trim()
           const choice = (p) => p?.select?.name ?? p?.status?.name ?? ''
+          // « En attente de » may be people, text, a select or a relation: read whatever it is.
+          // Relations come back as page ids, resolved to titles below for the blocked cards only.
+          // A person keeps its Notion id and email (when the integration may read emails),
+          // so it can be matched to a Slack account and pinged.
+          const named = (names) => names.filter(Boolean).map((name) => ({ name, email: '', id: '' }))
+          const waitingOf = (p) => {
+            if (!p) return { people: [], relIds: [] }
+            if (p.type === 'people') return { people: (p.people ?? []).map((u) => ({ name: u.name ?? '', email: u.person?.email ?? '', id: u.id ?? '' })).filter((u) => u.name || u.email), relIds: [] }
+            if (p.type === 'multi_select') return { people: named((p.multi_select ?? []).map((o) => o.name)), relIds: [] }
+            if (p.type === 'select' || p.type === 'status') return { people: named([choice(p)]), relIds: [] }
+            if (p.type === 'rich_text') return { people: named([plain(p.rich_text)]), relIds: [] }
+            if (p.type === 'formula') return { people: named([String(p.formula?.string ?? '').trim()]), relIds: [] }
+            if (p.type === 'relation') return { people: [], relIds: (p.relation ?? []).map((r) => r.id).filter(Boolean) }
+            return { people: [], relIds: [] }
+          }
           const cards = pages.filter((pg) => !pg.archived && !pg.in_trash).map((pg) => {
             const pr = pg.properties ?? {}
             return {
@@ -138,6 +157,8 @@ actions:
               owners: P.owner ? (pr[P.owner]?.people ?? []).map((u) => u.name ?? '').filter(Boolean) : [],
               priority: P.priority ? choice(pr[P.priority]) : '',
               due: P.due ? String(pr[P.due]?.date?.start ?? '').slice(0, 10) : '',
+              doneOn: P.doneOn && pr[P.doneOn]?.type === 'date' ? String(pr[P.doneOn]?.date?.start ?? '').slice(0, 10) : '',
+              waiting: P.waiting ? waitingOf(pr[P.waiting]) : { people: [], relIds: [] },
               ca: caIsCheckbox ? pr[P.ca]?.checkbox === true : false,
               edited: String(pg.last_edited_time ?? ''),
               editorId: pg.last_edited_by?.id,
@@ -147,22 +168,56 @@ actions:
           // --- sections
           const moved = cards.filter((c) => c.edited >= sinceIso)
           const blocked = cards.filter((c) => c.status === 'Bloquée')
+          // Finished since the last digest: the completion date when the base has one,
+          // otherwise the last edit of a « Terminé » card within the 7-day window.
+          const sinceYmd = ymd(new Date(now.getTime() - 7 * DAY))
+          const done = cards.filter((c) => c.status === 'Terminé' && (c.doneOn ? c.doneOn > sinceYmd : c.edited >= sinceIso))
           const awaitingCa = caIsCheckbox ? cards.filter((c) => c.ca && !CLOSED.has(c.status))
             : caIsStatusOption ? cards.filter((c) => c.status === 'Décision CA') : null
           const due = cards.filter((c) => c.due && !CLOSED.has(c.status) && c.due <= horizonYmd).sort((a, b) => a.due.localeCompare(b.due))
           const overdue = due.filter((c) => c.due < todayYmd)
 
+          // --- relation targets of « En attente de » (blocked cards only, cached)
+          const relTitles: Record<string, string> = {}
+          for (const id of [...new Set(blocked.flatMap((c) => c.waiting.relIds))].slice(0, 30)) {
+            try {
+              const pg = await notion('get', `/pages/${id}`)
+              const t = Object.values(pg.properties ?? {}).find((v: any) => v?.type === 'title') as any
+              relTitles[id] = plain(t?.title)
+            } catch (e) { context.log.warn('En attente de : page illisible', id) }
+          }
+          const waitingOn = (c) => [...c.waiting.people, ...named(c.waiting.relIds.map((id) => relTitles[id]))]
+
           // --- editors (distinct humans among last_edited_by)
-          const users: Record<string, { name: string; bot: boolean }> = {}
+          const users: Record<string, { name: string; bot: boolean; email: string }> = {}
           let ucursor: string | undefined
           for (let guard = 0; guard < 20; guard++) {
             const u = await notion('get', '/users', { query: { page_size: 100, ...(ucursor ? { start_cursor: ucursor } : {}) } })
-            for (const x of u.results ?? []) users[x.id] = { name: x.name ?? '', bot: x.type === 'bot' }
+            for (const x of u.results ?? []) users[x.id] = { name: x.name ?? '', bot: x.type === 'bot', email: x.person?.email ?? '' }
             if (!u.has_more || !u.next_cursor) break
             ucursor = u.next_cursor
           }
           const editorIds = [...new Set(moved.map((c) => c.editorId).filter((id) => !!id && !users[id]?.bot))]
           const editorNames = editorIds.map((id) => users[id]?.name).filter(Boolean)
+
+          // --- Slack mentions for « En attente de »: Notion email → users.lookupByEmail.
+          // Email from the person itself, else the Notion user list (by id, then by name).
+          // Needs Slack scopes users:read + users:read.email; any miss falls back to the name.
+          const norm = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
+          const emailByName: Record<string, string> = {}
+          for (const u of Object.values(users)) if (!u.bot && u.email && u.name) emailByName[norm(u.name)] ??= u.email
+          const emailOf = (w) => w.email || (w.id && users[w.id]?.email) || emailByName[norm(w.name)] || ''
+          const slackIds: Record<string, string> = {}
+          let slackWarned = false
+          for (const email of [...new Set(blocked.flatMap((c) => waitingOn(c).map(emailOf)).filter(Boolean))].slice(0, 30)) {
+            try {
+              const res = await context.actions.http.get({ url: 'https://slack.com/api/users.lookupByEmail', connection: 'slack', query: { email }, timeout: 10000 })
+              const body = typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+              if (body?.ok && body.user?.id) slackIds[email] = body.user.id
+              else if (body?.error !== 'users_not_found' && !slackWarned) { slackWarned = true; context.log.warn('Slack users.lookupByEmail :', body?.error ?? 'réponse illisible') }
+            } catch (e) { if (!slackWarned) { slackWarned = true; context.log.warn('Slack users.lookupByEmail a échoué :', e?.message ?? String(e)) } }
+          }
+          const mention = (w) => { const id = slackIds[emailOf(w)]; return id ? `<@${id}>` : `*${esc(w.name || emailOf(w))}*` }
 
           // --- metrics history (optional; upsert on the Monday key so a replay is idempotent)
           let previous: { edited: number; editors: number } | null = null
@@ -186,35 +241,47 @@ actions:
             }
           }
 
-          // --- Slack mrkdwn
-          const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-          const who = (c) => (c.owners.length ? c.owners.map(esc).join(', ') : 'sans responsable')
-          const line = (c, prefix = '') => `• ${prefix}${esc(c.title)} — ${who(c)} (<${c.url}|ouvrir>)`
-          const list = (items, render) => {
-            const shown = items.slice(0, MAX_LINES).map(render)
-            if (items.length > MAX_LINES) shown.push(`_… et ${items.length - MAX_LINES} autres_`)
-            return shown.join('\n')
-          }
+          // --- Slack mrkdwn: urgent first, each card shown once, empty sections omitted
+          const link = (c) => `<${c.url}|${esc(c.title).replace(/\|/g, '¦')}>`
+          const who = (c) => (c.owners.length ? c.owners.map(esc).join(', ') : '_sans responsable_')
           const plural = (n, s, p) => (n > 1 ? p : s)
-          const STATUS_ORDER = ['En cours', 'Bloquée', 'Décision CA', 'En attente', 'Idée', 'Terminé', 'Annulé', 'Archivé']
-          const byStatus = new Map<string, any[]>()
-          for (const c of moved) { const k = c.status || 'Sans statut'; byStatus.set(k, [...(byStatus.get(k) ?? []), c]) }
-          const statuses = [...byStatus.keys()].sort((a, b) => (STATUS_ORDER.indexOf(a) + 1 || 99) - (STATUS_ORDER.indexOf(b) + 1 || 99))
+          const daysLate = (c) => Math.round((Date.parse(todayYmd) - Date.parse(c.due)) / DAY)
+          const shown = new Set<string>()
+          const take = (items) => items.filter((c) => !shown.has(c.url))
+          const section = (title, items, render, max = MAX_LINES) => {
+            if (!items.length) return null
+            items.forEach((c) => shown.add(c.url))
+            const rows = items.slice(0, max).map((c) => `• ${render(c)}`)
+            if (items.length > max) rows.push(`_… et ${items.length - max} ${plural(items.length - max, 'autre', 'autres')}_`)
+            return `${title} (${items.length})\n${rows.join('\n')}`
+          }
+
+          const blockedRender = (c) => {
+            const w = waitingOn(c)
+            const late = c.due && c.due < todayYmd ? ` · ${daysLate(c)} j de retard` : ''
+            return `${link(c)} · ${who(c)}` + (w.length ? ` · ⏳ en attente de ${w.map(mention).join(', ')}` : ' · _on attend qui ?_') + late
+          }
+          const lateRender = (c) => `${link(c)} · ${who(c)} · prévu le ${ddmm(c.due)}, ${daysLate(c)} j de retard`
+          const urgent = [
+            section('*⛔ Bloquées*', take(blocked), blockedRender),
+            section('*⏰ En retard*', take(overdue), lateRender),
+          ].filter(Boolean)
+          const later = [
+            awaitingCa ? section('*🏛️ En attente du CA*', take(awaitingCa), (c) => `${link(c)} · ${who(c)}`) : null,
+            section('*📅 À venir (14 jours)*', take(due.filter((c) => c.due >= todayYmd)), (c) => `${ddmm(c.due)} · ${link(c)} · ${who(c)}`),
+            section('*✅ Terminées cette semaine*', take(done), (c) => `${link(c)} · ${who(c)}`),
+            section('*🔄 Ont avancé*', take(moved.filter((c) => !CLOSED.has(c.status))), (c) => `${link(c)} · ${who(c)}${c.status ? ` · _${esc(c.status)}_` : ''}`, 10),
+          ].filter(Boolean)
 
           const sections: string[] = []
-          sections.push(`*Hebdo Notion — ${longDate}*\n_Suivi des sujets, projets & tâches_${dryRun ? '  (test, sans écriture)' : ''}`)
-          sections.push(`*Ce qui a bougé (7 derniers jours)* — ${moved.length} ${plural(moved.length, 'carte', 'cartes')}` +
-            (moved.length ? '\n' + statuses.map((s) => `_${esc(s)}_\n${list(byStatus.get(s), (c) => line(c))}`).join('\n') : '\nRien n’a bougé cette semaine.'))
-          sections.push(`*Bloqué* — ${blocked.length}` + (blocked.length ? '\n' + list(blocked, (c) => line(c)) : '\nAucune carte bloquée.'))
-          if (awaitingCa) sections.push(`*En attente du CA* — ${awaitingCa.length}` + (awaitingCa.length ? '\n' + list(awaitingCa, (c) => line(c)) : '\nRien en attente.'))
-          sections.push(`*Échéances (en retard ou sous 14 jours)* — ${due.length}` +
-            (due.length ? '\n' + list(due, (c) => line(c, `${ddmm(c.due)}${c.due < todayYmd ? ' (en retard)' : ''} · `)) : '\nAucune échéance proche.'))
+          sections.push(`*📋 Hebdo Notion — ${longDate}*${dryRun ? '  _(test, sans écriture)_' : ''}`)
+          sections.push(urgent.length ? `*À traiter en priorité*\n\n${urgent.join('\n\n')}` : '✨ Rien de bloqué ni en retard cette semaine.')
+          sections.push(...later)
           const cmp = previous ? ` (semaine précédente : ${previous.edited} ${plural(previous.edited, 'carte', 'cartes')}, ${previous.editors} ${plural(previous.editors, 'personne', 'personnes')})` : ''
-          sections.push(`*Adoption*\n${moved.length} ${plural(moved.length, 'carte modifiée', 'cartes modifiées')} par ${editorIds.length} ${plural(editorIds.length, 'personne', 'personnes')}${editorNames.length ? ` (${editorNames.map(esc).join(', ')})` : ''}${cmp}`)
-          sections.push(`_Rituel du lundi : 15 minutes pour balayer le tableau ensemble._`)
+          sections.push(`_${moved.length} ${plural(moved.length, 'carte modifiée', 'cartes modifiées')} par ${editorIds.length} ${plural(editorIds.length, 'personne', 'personnes')}${editorNames.length ? ` (${editorNames.map(esc).join(', ')})` : ''}${cmp} · Rituel du lundi : 15 minutes pour balayer le tableau ensemble._`)
 
           const text = sections.join('\n\n')
-          const summary = { cards: cards.length, moved: moved.length, editors: editorIds.length, blocked: blocked.length, awaitingCa: awaitingCa ? awaitingCa.length : null, due: due.length, overdue: overdue.length, previous, dryRun, metricsWritten: !!metricsDs && !dryRun }
+          const summary = { cards: cards.length, slackMentions: Object.keys(slackIds).length, moved: moved.length, editors: editorIds.length, blocked: blocked.length, awaitingCa: awaitingCa ? awaitingCa.length : null, due: due.length, done: done.length, overdue: overdue.length, previous, dryRun, metricsWritten: !!metricsDs && !dryRun }
           context.log.info('Résumé', JSON.stringify(summary))
           return { text, channel, summary }
         }
