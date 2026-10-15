@@ -32,6 +32,11 @@ env:
     required: false
     default: '330'
     secret: false
+  - key: MANDATE_MAIL_CUSTOM
+    description: request-mandate sends its own subject and body (with the way back to the Espace Membre) instead of Pennylane's default; 'true' only once a test mail showed the GoCardless link is kept
+    required: false
+    default: 'false'
+    secret: false
   - key: FLEX_INVOICING_APPLY
     description: flex-invoicing creates the monthly Flex invoices in Pennylane and marks the check-ins; 'false' makes it a dry run
     required: false

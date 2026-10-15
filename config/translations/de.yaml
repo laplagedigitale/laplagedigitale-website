@@ -552,7 +552,7 @@ portal.mandate.current: Mein Mandat
 portal.mandate.how: Wie funktioniert es?
 portal.mandate.how.1: "1. Klicken Sie auf „Lastschrift einrichten“."
 portal.mandate.how.2: "2. Pennylane sendet Ihnen eine E-Mail mit dem GoCardless-Unterschriftslink."
-portal.mandate.how.3: "3. Sobald das Mandat unterschrieben ist, werden Ihre Rechnungen bei Fälligkeit eingezogen."
+portal.mandate.how.3: "3. Nach der Unterzeichnung lässt GoCardless Sie auf einer Pennylane-Seite: Schließen Sie sie und kehren Sie hierher zurück, Ihr Mandat erscheint innerhalb von 15 Minuten. Ihre Rechnungen werden dann bei Fälligkeit eingezogen."
 portal.account.unlinked: "Ihr Konto ist noch nicht mit Pennylane verknüpft — wir kümmern uns darum."
 portal.match.pending: Wird gesucht
 portal.match.matched: Verknüpft

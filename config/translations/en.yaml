@@ -552,7 +552,7 @@ portal.mandate.current: My mandate
 portal.mandate.how: How does it work?
 portal.mandate.how.1: "1. Click “Set up direct debit”."
 portal.mandate.how.2: "2. Pennylane emails you the GoCardless signing link."
-portal.mandate.how.3: "3. Once the mandate is signed, your invoices are debited when due."
+portal.mandate.how.3: "3. Once the mandate is signed, GoCardless leaves you on a Pennylane page: close it and come back here, your mandate shows up within 15 minutes. Your invoices are then debited when due."
 portal.account.unlinked: "Your account is not linked to Pennylane yet — we are on it."
 portal.match.pending: Looking you up
 portal.match.matched: Linked

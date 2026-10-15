@@ -553,7 +553,7 @@ portal.mandate.current: Mon mandat
 portal.mandate.how: Comment ça marche ?
 portal.mandate.how.1: "1. Cliquez sur « Mettre en place le prélèvement »."
 portal.mandate.how.2: "2. Pennylane vous envoie un e-mail avec le lien de signature GoCardless."
-portal.mandate.how.3: "3. Une fois le mandat signé, vos factures sont prélevées à leur échéance."
+portal.mandate.how.3: "3. Une fois le mandat signé, GoCardless vous laisse sur une page Pennylane : fermez-la et revenez ici, votre mandat s'affiche sous 15 minutes. Vos factures sont ensuite prélevées à leur échéance."
 portal.account.unlinked: "Votre compte n'est pas encore relié à Pennylane — nous nous en occupons."
 portal.match.pending: Recherche en cours
 portal.match.matched: Relié
