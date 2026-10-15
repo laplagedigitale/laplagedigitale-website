@@ -1,4 +1,5 @@
-# Page: admin-post-new — write a new post. Starts as a draft.
+# Page: admin-post-new — start a new post: its title and its address. The
+# draft is created at once and opens in the editor (admin-post-edit.yaml).
 name: admin-post-new
 path: /administration/contenu/articles/nouveau
 sitemap: false
@@ -7,7 +8,7 @@ meta:
   favicons:
     $ref: ../favicons.yaml
   title: Nouvel article — Administration
-  description: Rédiger un nouvel article.
+  description: Commencer un nouvel article.
   noindex: true
 components:
   - type: flex
@@ -22,12 +23,10 @@ components:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
         children:
           - { type: link, content: '← Tous les articles', props: { href: /administration/contenu/articles, className: 'text-sm text-text-muted hover:text-navy' } }
-          - { type: text, element: h1, content: Nouvel article, props: { className: 'text-3xl font-bold text-navy' } }
-          # One form, since a new post is created in one request: the
-          # two-column layout is the edit page's.
           - type: card
             props:
-              className: 'p-6 max-w-3xl'
+              className: 'p-6 sm:p-8 max-w-xl'
             children:
               - type: form
                 formRef: post-new
+                props: { headingLevel: h1 }

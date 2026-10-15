@@ -22,7 +22,13 @@ fields:
     unique: true
     indexed: true
   - { id: 3, name: excerpt, label: Résumé, description: "Une ou deux phrases (160 caractères max) pour les listes et les moteurs de recherche.", type: long-text }
-  - { id: 4, name: body, label: Contenu, type: rich-text }
+  # The editor's toolbar: what the blog page renders (blog-post.yaml).
+  - id: 4
+    name: body
+    label: Contenu
+    type: rich-text
+    placeholder: 'Commencez à écrire…'
+    toolbar: [bold, italic, strike, heading, list, ordered-list, blockquote, link, image, horizontal-rule]
   - id: 5
     name: cover
     label: Image de couverture

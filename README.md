@@ -112,7 +112,13 @@ shape: one sidebar (`admin-nav`), three sections.
   `pennylane-auto-match` log. All of it is a Pennylane mirror: read-only here,
   corrected in Pennylane.
 - **Contenu** — the blog: a dashboard, the post lists (all, drafts,
-  published), the post forms.
+  published) and the editor. « Nouvel article » asks for the title and the
+  address, creates the draft and opens it in the editor
+  (`/administration/contenu/articles/:id`): a blank page — title, then the
+  rich-text body, typeset as the blog prints it, images uploaded into
+  `blog-images` — with the article's details (status, date, address,
+  summary, categories, author, cover) in a column beside it. A draft saves
+  itself as you type; a published article saves on « Mettre à jour » only.
 
 Admins see all of it. The `editor` role sees only « Contenu » and its account
 page; every other admin page refuses it.
