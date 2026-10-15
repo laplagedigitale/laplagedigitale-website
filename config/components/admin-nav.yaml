@@ -23,9 +23,14 @@
 # The light-on-navy link colours are lg-only: below lg the navigation is a
 # drawer on the theme's light panel, where they would be unreadable.
 #
-# The sidebars keep their own height (lg:flex-none) and the column scrolls
-# (lg:overflow-y-auto): a sidebar stretched to fill the column is cut to the
-# height left over, and its last groups overflow onto the link below it.
+# From lg up the column is three rows and only the middle one scrolls: the
+# header (logo, « + Nouvel article ») and the footer (« Mon Espace Membre »)
+# stay in place however long the navigation is. The column itself is clipped
+# (lg:overflow-hidden); the wrapper around the sidebars takes the height left
+# (lg:flex-1 lg:min-h-0) and scrolls (lg:overflow-y-auto). The sidebars inside
+# keep their own height (lg:flex-none): a sidebar stretched to fill its box is
+# cut to the height left over, and its last groups overflow onto what follows.
+# Below lg both wrappers are `contents`, so the top bar lays out as before.
 #
 # « Console Sovrium » (/_admin) — the built-in console: users and roles, API
 # keys, automation runs, raw tables. Admins only, like the console itself.
@@ -36,10 +41,10 @@ name: admin-nav
 type: container
 element: aside
 props:
-  className: 'flex flex-row items-center justify-between gap-4 bg-navy px-4 py-3 text-white lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:w-64 lg:flex-none lg:flex-col lg:items-stretch lg:justify-start lg:px-3 lg:py-6'
+  className: 'flex flex-row items-center justify-between gap-4 bg-navy px-4 py-3 text-white lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden lg:w-64 lg:flex-none lg:flex-col lg:items-stretch lg:justify-start lg:px-3 lg:py-6'
 children:
   - type: link
-    props: { href: /administration, className: 'flex flex-col gap-1 lg:px-3 lg:mb-4', 'aria-label': "Administration de l'association" }
+    props: { href: /administration, className: 'flex flex-col gap-1 lg:flex-none lg:px-3 lg:mb-4', 'aria-label': "Administration de l'association" }
     children:
       - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-9 w-auto self-start' } }
       - { type: text, element: span, content: Administration, props: { className: 'hidden lg:inline text-xs font-bold uppercase tracking-widest text-orange' } }
@@ -47,77 +52,90 @@ children:
     content: '+ Nouvel article'
     props:
       href: /administration/contenu/articles/nouveau
-      className: 'hidden lg:flex justify-center lg:mx-3 lg:mb-6 px-4 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+      className: 'hidden lg:flex lg:flex-none justify-center lg:mx-3 lg:mb-6 px-4 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
 
-  # Admins: the whole back office.
-  - type: sidebar
-    visibility: { roles: [admin] }
-    drawer: { below: lg, label: Menu }
+  # The navigation: the one part of the column that scrolls.
+  - type: container
+    element: div
     props:
-      className: 'max-lg:ml-auto lg:flex-none lg:text-white lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
-    groups:
-      - label: Pilotage
-        items:
-          - { label: Tableau de bord, href: /administration, icon: layout-dashboard }
-      - label: Membres
-        items:
-          - { label: Membres, href: /administration/membres, icon: users, activeMatch: prefix }
-          - { label: Inscriptions Flex, href: /administration/inscriptions-flex, icon: user-plus }
-      - label: Finances
-        items:
-          - { label: Vue d'ensemble, href: /administration/finances, icon: chart-pie }
-          - { label: Factures, href: /administration/finances/factures, icon: receipt }
-          - { label: Facturation Flex, href: /administration/finances/flex, icon: calendar-days }
-          - { label: Prélèvements, href: /administration/finances/prelevements, icon: landmark }
-          - { label: Rapprochements, href: /administration/finances/rapprochements, icon: git-compare-arrows }
-      - label: Contenu
-        items:
-          - { label: Tableau de bord, href: /administration/contenu, icon: newspaper }
-          - { label: Tous les articles, href: /administration/contenu/articles, icon: files }
-          - { label: Brouillons, href: /administration/contenu/articles/brouillons, icon: pencil-line }
-          - { label: Publiés, href: /administration/contenu/articles/publies, icon: globe }
-      - label: Compte
-        items:
-          - { label: Mon compte, href: /administration/compte, icon: user-round }
-          - { label: Console Sovrium, href: /_admin, icon: settings }
-          - { label: Voir le site, href: /, icon: external-link }
-
-  # Editors: the blog and their account.
-  - type: sidebar
-    visibility: { roles: [editor] }
-    drawer: { below: lg, label: Menu }
-    props:
-      className: 'max-lg:ml-auto lg:flex-none lg:text-white lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
-    groups:
-      - label: Contenu
-        items:
-          - { label: Tableau de bord, href: /administration/contenu, icon: layout-dashboard }
-          - { label: Tous les articles, href: /administration/contenu/articles, icon: newspaper }
-          - { label: Brouillons, href: /administration/contenu/articles/brouillons, icon: pencil-line }
-          - { label: Publiés, href: /administration/contenu/articles/publies, icon: globe }
-          - { label: Nouvel article, href: /administration/contenu/articles/nouveau, icon: square-pen }
-      - label: Compte
-        items:
-          - { label: Mon compte, href: /administration/compte, icon: user-round }
-          - { label: Voir le blog, href: /blog, icon: external-link }
-
-  # An admin who is also a coworker: the way to their own Espace Membre. Shown
-  # from lg up; on a phone the dashboard carries the same link.
-  - type: list
-    visibility: { roles: [admin] }
-    dataSource:
-      table: members
-      filter:
-        - { field: email, operator: eq, value: $currentUser.email }
-        - { field: pennylane_customer_id, operator: isNotEmpty }
-      limit: 1
-    props:
-      className: 'hidden lg:block lg:mx-3 lg:mt-4 lg:border-t lg:border-navy-700 lg:pt-4'
-    listDisplay:
-      hideWhenEmpty: true
+      className: 'max-lg:contents lg:flex-1 lg:min-h-0 lg:overflow-y-auto'
     children:
-      - type: link
-        content: Mon Espace Membre →
+      # Admins: the whole back office.
+      - type: sidebar
+        visibility: { roles: [admin] }
+        drawer: { below: lg, label: Menu }
         props:
-          href: /espace-membre
-          className: 'flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+          className: 'max-lg:ml-auto lg:flex-none lg:text-white lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
+        groups:
+          - label: Pilotage
+            items:
+              - { label: Tableau de bord, href: /administration, icon: layout-dashboard }
+              - { label: Calendrier, href: /administration/calendrier, icon: calendar-clock, activeMatch: prefix }
+          - label: Membres
+            items:
+              - { label: Membres, href: /administration/membres, icon: users, activeMatch: prefix }
+              - { label: Inscriptions Flex, href: /administration/inscriptions-flex, icon: user-plus }
+          - label: Finances
+            items:
+              - { label: Vue d'ensemble, href: /administration/finances, icon: chart-pie }
+              - { label: Factures, href: /administration/finances/factures, icon: receipt }
+              - { label: Facturation Flex, href: /administration/finances/flex, icon: calendar-days }
+              - { label: Prélèvements, href: /administration/finances/prelevements, icon: landmark }
+              - { label: Rapprochements, href: /administration/finances/rapprochements, icon: git-compare-arrows }
+          - label: Contenu
+            items:
+              - { label: Tableau de bord, href: /administration/contenu, icon: newspaper }
+              - { label: Tous les articles, href: /administration/contenu/articles, icon: files }
+              - { label: Brouillons, href: /administration/contenu/articles/brouillons, icon: pencil-line }
+              - { label: Publiés, href: /administration/contenu/articles/publies, icon: globe }
+          - label: Compte
+            items:
+              - { label: Mon compte, href: /administration/compte, icon: user-round }
+              - { label: Console Sovrium, href: /_admin, icon: settings }
+              - { label: Voir le site, href: /, icon: external-link }
+
+      # Editors: the blog and their account.
+      - type: sidebar
+        visibility: { roles: [editor] }
+        drawer: { below: lg, label: Menu }
+        props:
+          className: 'max-lg:ml-auto lg:flex-none lg:text-white lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
+        groups:
+          - label: Contenu
+            items:
+              - { label: Tableau de bord, href: /administration/contenu, icon: layout-dashboard }
+              - { label: Tous les articles, href: /administration/contenu/articles, icon: newspaper }
+              - { label: Brouillons, href: /administration/contenu/articles/brouillons, icon: pencil-line }
+              - { label: Publiés, href: /administration/contenu/articles/publies, icon: globe }
+              - { label: Nouvel article, href: /administration/contenu/articles/nouveau, icon: square-pen }
+          - label: Compte
+            items:
+              - { label: Mon compte, href: /administration/compte, icon: user-round }
+              - { label: Voir le blog, href: /blog, icon: external-link }
+
+  # The footer, pinned under the navigation from lg up; hidden below lg,
+  # where the dashboard carries the same link.
+  - type: container
+    element: div
+    props:
+      className: 'hidden lg:block lg:flex-none'
+    children:
+      # An admin who is also a coworker: the way to their own Espace Membre.
+      - type: list
+        visibility: { roles: [admin] }
+        dataSource:
+          table: members
+          filter:
+            - { field: email, operator: eq, value: $currentUser.email }
+            - { field: pennylane_customer_id, operator: isNotEmpty }
+          limit: 1
+        props:
+          className: 'lg:mx-3 lg:mt-4 lg:border-t lg:border-navy-700 lg:pt-4'
+        listDisplay:
+          hideWhenEmpty: true
+        children:
+          - type: link
+            content: Mon Espace Membre →
+            props:
+              href: /espace-membre
+              className: 'flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'

@@ -1,0 +1,75 @@
+# Automation: management-deadline-done — « Marquer comme fait » on a deadline
+# of the Calendrier de gestion (/administration/calendrier/:id).
+#
+# Stamps last_done_on with today (Europe/Paris) and closes the occurrence:
+# - a one-off deadline (`once`) is switched off (active: false);
+# - a recurring one has due_date moved forward by whole periods until it lies
+#   after today — a year, six, three or one month(s). A day the target month
+#   lacks (31 → 30 June, 29 February) falls on that month's last day, counted
+#   from the original day each time, so a 31st stays a month-end.
+#
+# notice_sent_for and dayof_sent_for are left as they are: they hold the date
+# each reminder was sent for, so the new due_date re-arms both by itself.
+#
+# Idempotent enough for a double click: `concurrency.limit: 1`, and a second
+# press moves nothing more as long as the date already lies after today.
+#
+# On demand (admin): POST /api/automations/management-deadline-done/trigger
+#   {"deadlineId": "3"}
+name: management-deadline-done
+label: Marquer une échéance comme faite
+trigger:
+  type: manual
+  label: Marquer une échéance comme faite
+  requiredRole: admin
+  inputSchema:
+    deadlineId: { type: string }
+timeout: 30000
+concurrency:
+  limit: 1
+tags: [calendrier]
+actions:
+  - name: deadline
+    type: record
+    operator: read
+    props:
+      table: management_deadlines
+      id: '{{trigger.input.deadlineId}}'
+  - name: close
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        deadline: '{{steps.deadline.record}}'
+      code: |
+        async function execute(context) {
+          const d: any = context.inputData.deadline ?? {}
+          const id = String(d.id ?? '')
+          if (!id) throw new Error('Échéance introuvable.')
+          const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+          const due = String(d.due_date ?? '').slice(0, 10)
+
+          if (d.recurrence === 'once' || !due) {
+            await context.actions.record.update({ table: 'management_deadlines', id, data: { active: false, last_done_on: today } })
+            context.log.info(`deadline ${id} (« ${d.title} ») done, switched off`)
+            return { message: 'Échéance faite et désactivée.', due_date: due }
+          }
+
+          const step = ({ yearly: 12, semiannual: 6, quarterly: 3, monthly: 1 } as Record<string, number>)[String(d.recurrence)] ?? 12
+          const [y, m, day] = due.split('-').map(Number)
+          // n periods after the original date; the day is clamped to the month's length.
+          const shifted = (n: number): string => {
+            const total = (m - 1) + n * step
+            const ty = y + Math.floor(total / 12)
+            const tm = total % 12
+            const last = new Date(Date.UTC(ty, tm + 1, 0)).getUTCDate()
+            return `${ty}-${String(tm + 1).padStart(2, '0')}-${String(Math.min(day, last)).padStart(2, '0')}`
+          }
+          let n = 1
+          let next = shifted(n)
+          while (next <= today && n < 1200) next = shifted(++n)
+
+          await context.actions.record.update({ table: 'management_deadlines', id, data: { due_date: next, last_done_on: today } })
+          context.log.info(`deadline ${id} (« ${d.title} ») done, ${due} → ${next}`)
+          return { message: `Échéance faite. Prochaine : ${next}.`, due_date: next }
+        }
