@@ -32,7 +32,10 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
+              # Read-only: a mirror of Pennylane, so no « Nouvel enregistrement »
+              # — an admin can create invoices and would otherwise get the button.
               - type: table
+                readOnly: true
                 dataSource:
                   table: invoices
                   filter:
