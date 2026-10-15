@@ -53,7 +53,7 @@ actions:
             return refuse('Une demande a déjà été envoyée il y a moins de 24 heures. Vérifiez votre boîte mail.')
           }
           // The default message is the failure one: a run whose Pennylane call fails
-          // still answers 200, and `confirm` below replaces it only on success.
+          // still answers 200, and the top-level `confirm` step replaces it only on success.
           return { ok: 'yes', message: 'La demande n’a pas pu être envoyée à Pennylane. Réessayez plus tard ou contactez-nous.', memberId: String(me.id), customerId: Number(me.pennylane_customer_id), email: me.email }
         }
   # A refusal is an expected outcome, not a failure: it stops the run as a
@@ -94,13 +94,17 @@ actions:
               props:
                 table: mandate_requests
                 data: { member: '{{steps.check.memberId}}', member_email: '{{steps.check.email}}' }
-            - name: confirm
-              type: code
-              operator: runTypescript
-              props:
-                inputData:
-                  email: '{{steps.check.email}}'
-                code: |
-                  async function execute(context) {
-                    return { message: `C’est envoyé ! Un lien pour mettre en place le prélèvement vous a été envoyé par e-mail à ${context.inputData.email}. Pensez à vérifier vos courriers indésirables.` }
-                  }
+  # Top level, not inside `send`: the trigger answers with the top-level steps'
+  # outputs merged in order, and an output produced inside a path never reaches
+  # it. Only reached once `send` completed — a refusal stopped the run, a failed
+  # Pennylane call failed it — so its `message` replaces check's failure default.
+  - name: confirm
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        email: '{{steps.check.email}}'
+      code: |
+        async function execute(context) {
+          return { message: `C’est envoyé ! Un lien pour mettre en place le prélèvement vous a été envoyé par e-mail à ${context.inputData.email}. Pensez à vérifier vos courriers indésirables.` }
+        }
