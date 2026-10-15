@@ -1,0 +1,172 @@
+# Page: admin-finances-forecast — « Prévisionnel » in the Administration's
+# Finances section: the scenarios of the treasury forecast, side by side. The
+# scenario of reference (is_baseline) is what the dashboards show; every
+# other scenario is a simulation — an extra hire, a lost subsidy — compared
+# to it (delta_vs_baseline). A row opens the scenario on its own page, the
+# one place its budgets, adjustments and dated items are edited.
+#
+# The figures are what treasury-forecast last computed (computed_at): each
+# change on a scenario recomputes it within seconds, « Recalculer » does it
+# on demand. A scenario is deleted here only, never on its page (a lone
+# `crud delete` button renders in a hidden island in 0.37), and never the
+# baseline: it is the one every other scenario is compared to.
+name: admin-finances-forecast
+path: /administration/finances/previsionnel
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Prévisionnel — Administration"
+  description: "Le prévisionnel de trésorerie de La Plage Digitale et ses scénarios."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Prévisionnel de trésorerie, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Où sera la trésorerie à la fin de l'année, et quand elle sera au plus bas. Le scénario de référence suit le réalisé Pennylane et projette le reste de l'année ; chaque autre scénario simule une décision — une embauche, une subvention en moins — et se compare à lui.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: '+ Nouveau scénario'
+                props:
+                  href: /administration/finances/previsionnel/nouveau
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+
+          # The baseline's headline figures.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Scénario de référence, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: grid
+                props:
+                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
+                children:
+                  - type: kpi
+                    label: Trésorerie fin d'année
+                    icon: flag
+                    dataSource:
+                      table: scenarios
+                      filter:
+                        - { field: is_baseline, operator: eq, value: true }
+                    kpiAggregate: { function: sum, field: year_end_cash }
+                    kpiFormat: { type: currency, options: { currency: EUR } }
+                    thresholds:
+                      - { value: -100000000, color: red }
+                      - { value: 0, color: yellow }
+                      - { value: 10000, color: green }
+                  - type: kpi
+                    label: Point bas de l'année
+                    icon: trending-down
+                    dataSource:
+                      table: scenarios
+                      filter:
+                        - { field: is_baseline, operator: eq, value: true }
+                    kpiAggregate: { function: min, field: lowest_balance }
+                    kpiFormat: { type: currency, options: { currency: EUR } }
+                    thresholds:
+                      - { value: -100000000, color: red }
+                      - { value: 0, color: yellow }
+                      - { value: 10000, color: green }
+                  - type: kpi
+                    label: Autonomie (mois)
+                    icon: hourglass
+                    dataSource:
+                      table: scenarios
+                      filter:
+                        - { field: is_baseline, operator: eq, value: true }
+                    kpiAggregate: { function: min, field: runway_months }
+                    kpiFormat: { type: number, options: { maximumFractionDigits: '1' } }
+                    thresholds:
+                      - { value: 0, color: red }
+                      - { value: 3, color: yellow }
+                      - { value: 6, color: green }
+                  - type: kpi
+                    label: Scénarios actifs
+                    icon: git-branch
+                    dataSource:
+                      table: scenarios
+                      filter:
+                        - { field: status, operator: eq, value: active }
+                    kpiAggregate: { function: count }
+
+          # Every scenario, the baseline first. A row opens it.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Les scénarios, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: "L'écart est la trésorerie de fin d'année du scénario moins celle de la référence : en vert il fait mieux, en rouge moins bien.", props: { className: 'text-sm text-text-muted max-w-2xl' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Les scénarios du prévisionnel
+                    onRowClick: { type: navigate, path: '/administration/finances/previsionnel/$record.id' }
+                    dataSource:
+                      table: scenarios
+                      sort:
+                        - { field: is_baseline, direction: desc }
+                        - { field: status, direction: asc }
+                        - { field: name, direction: asc }
+                      pagination: { pageSize: 25 }
+                      refreshMode: poll
+                      pollIntervalMs: 5000
+                    emptyMessage: "Aucun scénario pour le moment : le scénario de référence est créé par la première synchronisation Pennylane."
+                    columns:
+                      - { field: name, label: Scénario }
+                      - { field: is_baseline, label: Référence, format: check-cross }
+                      - { field: status, label: Statut }
+                      - { field: year_end_cash, label: "Fin d'année", format: currency, align: right }
+                      - field: delta_vs_baseline
+                        label: Écart vs référence
+                        format: currency
+                        align: right
+                        cellStyle:
+                          - { when: { lt: 0 }, tone: error }
+                          - { when: { gt: 0 }, tone: success }
+                      - { field: lowest_balance, label: Point bas, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: lowest_month, label: Mois du point bas, format: short-date }
+                      - { field: runway_months, label: Autonomie (mois), align: right }
+                      - { field: computed_at, label: Calculé le, format: relative-time }
+                      - type: actions
+                        actions:
+                          - label: Recalculer
+                            action:
+                              type: automation
+                              name: treasury-forecast
+                              await: true
+                              inputData:
+                                scenarioId: $record.id
+                              onSuccess:
+                                type: message
+                                toast: { variant: success, message: Prévisionnel recalculé. }
+                              onError:
+                                type: message
+                                toast: { variant: error, message: "Le prévisionnel n'a pas pu être recalculé." }
+                          - label: Supprimer
+                            variant: destructive
+                            visibleWhen: { field: is_baseline, eq: false }
+                            action:
+                              type: crud
+                              operation: delete
+                              table: scenarios
+                              confirm: true
+                              confirmMessage: "Supprimer ce scénario ? Ses budgets, ajustements et éléments datés partent avec lui. Pour le garder sans l'afficher, passez son statut à « Archivé » sur sa page."

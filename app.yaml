@@ -155,6 +155,11 @@ forms:
   - $ref: ./config/forms/post-new.yaml
   - $ref: ./config/forms/flex-signup.yaml
   - $ref: ./config/forms/deadline-new.yaml
+  # Trésorerie & prévisionnel: a new scenario, and the two dialogs of a
+  # scenario's page (an adjustment, a dated item).
+  - $ref: ./config/forms/scenario-new.yaml
+  - $ref: ./config/forms/adjustment-new.yaml
+  - $ref: ./config/forms/planned-item-new.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
@@ -190,6 +195,13 @@ pages:
   - $ref: ./config/pages/admin-finances-flex.yaml
   - $ref: ./config/pages/admin-finances-direct-debit.yaml
   - $ref: ./config/pages/admin-finances-reconciliation.yaml
+  # Trésorerie & prévisionnel: the cash position, the scenarios, a new
+  # scenario (before :scenario), one scenario, the bank transactions.
+  - $ref: ./config/pages/admin-finances-treasury.yaml
+  - $ref: ./config/pages/admin-finances-forecast.yaml
+  - $ref: ./config/pages/admin-finances-forecast-new.yaml
+  - $ref: ./config/pages/admin-finances-scenario.yaml
+  - $ref: ./config/pages/admin-finances-transactions.yaml
   - $ref: ./config/pages/admin-content.yaml
   - $ref: ./config/pages/admin-posts.yaml
   - $ref: ./config/pages/admin-posts-drafts.yaml
@@ -224,6 +236,12 @@ connections:
   # Hand-written: this app's own admin API, for the Flex invitation.
   - $ref: ./config/connections/sovrium-admin.yaml
 
+# Reusable action templates ($ref from the automations).
+actions:
+  # The forecast engine of the Trésorerie, shared by treasury-forecast, the
+  # hourly sync, treasury-scenario-init and the on-edit triggers.
+  - $ref: ./config/actions/treasury-forecast-compute.yaml
+
 automations:
   - $ref: ./config/automations/member-sign-up.yaml
   - $ref: ./config/automations/pennylane-auto-match.yaml
@@ -247,3 +265,13 @@ automations:
   # and « Marquer comme fait », which moves a deadline to its next occurrence
   - $ref: ./config/automations/management-reminders.yaml
   - $ref: ./config/automations/management-deadline-done.yaml
+  # Trésorerie & prévisionnel: the hourly Pennylane bank mirror, the engine
+  # behind « Recalculer » (manual), the three on-edit recomputes, the copy
+  # made when a scenario is created, and the one-off seed.
+  - $ref: ./config/automations/pennylane-treasury-sync.yaml
+  - $ref: ./config/automations/treasury-forecast.yaml
+  - $ref: ./config/automations/treasury-forecast-on-budget.yaml
+  - $ref: ./config/automations/treasury-forecast-on-adjustment.yaml
+  - $ref: ./config/automations/treasury-forecast-on-planned.yaml
+  - $ref: ./config/automations/treasury-scenario-init.yaml
+  - $ref: ./config/automations/treasury-seed.yaml

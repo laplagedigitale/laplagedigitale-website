@@ -1,0 +1,42 @@
+# Form: scenario-new — create a forecast scenario, placed on
+# /administration/finances/previsionnel/nouveau.
+#
+# A declared form because a page form never creates a row (same reason as
+# deadline-new). The key is required and unique on the table and a form
+# cannot derive it from the name, so the person types it as a short slug.
+# `copy_from` names the scenario whose budgets, adjustments and dated items
+# treasury-scenario-init copies into the new one. The redirect opens the
+# scenario on its own page, where everything is edited. Admin only, like the
+# table.
+id: 6
+name: scenario-new
+title: Nouveau scénario
+description: "Un scénario part d'une copie d'un scénario existant (ses budgets, ajustements et éléments datés), puis se modifie sur sa propre page. Le scénario de référence n'est jamais modifié par un scénario."
+display:
+  submitLabel: Créer le scénario
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: scenarios
+fields:
+  - { kind: table-field, column: name, label: Nom du scénario, placeholder: "Embauche en septembre", required: true }
+  - { kind: table-field, column: scenario_key, label: Identifiant, placeholder: embauche-2027, helpText: "Court et unique : lettres, chiffres et tirets.", required: true }
+  - kind: table-field
+    column: copy_from
+    label: Partir de
+    helpText: "Le scénario dont les budgets, ajustements et éléments datés sont copiés. Laissez vide pour partir du scénario de référence."
+    optionsSource:
+      table: scenarios
+      displayField: name
+      filter:
+        - { field: status, operator: eq, value: active }
+      sort:
+        - { field: is_baseline, direction: desc }
+        - { field: name, direction: asc }
+  - { kind: table-field, column: notes, label: Hypothèses, placeholder: "Ce que ce scénario suppose : embauche, nouvelle subvention, hausse de loyer…" }
+  - { kind: table-field, column: status, defaultValue: active, hidden: true }
+  - { kind: table-field, column: is_baseline, defaultValue: false, hidden: true }
+  - { kind: table-field, column: year, defaultValue: 2026, hidden: true }
+onSuccess:
+  type: redirect
+  url: /administration/finances/previsionnel/$record.id
+  delaySeconds: 0

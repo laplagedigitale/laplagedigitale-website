@@ -1,0 +1,33 @@
+# Form: planned-item-new — add a dated cash item (an expected subsidy, an
+# IS instalment, a loan repayment) to a scenario, opened in a dialog on
+# /administration/finances/previsionnel/:scenario. The scenario is prefilled
+# and locked by the page (inlinePrefill).
+#
+# A dated item lands on its month in the forecast, once or on its recurrence,
+# weighted by its certainty when the scenario counts probable income. Admin
+# only, like the table.
+id: 8
+name: planned-item-new
+title: Nouvel élément daté
+description: "Une entrée ou une sortie attendue à une date précise : une subvention, un acompte d'impôt, une échéance d'emprunt. Elle compte dans le prévisionnel du scénario, sur son mois."
+display:
+  submitLabel: Ajouter l'élément
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: planned_items
+fields:
+  - { kind: table-field, column: scenario, hidden: true }
+  - { kind: table-field, column: label, label: Libellé, placeholder: "Subvention Ville de Strasbourg 2026", required: true }
+  - { kind: table-field, column: budget_line, label: Ligne budgétaire, required: true }
+  - { kind: table-field, column: direction, label: Sens, required: true }
+  - { kind: table-field, column: amount, label: Montant TTC, helpText: "Toujours positif : le sens dit s'il entre ou s'il sort.", required: true }
+  - { kind: table-field, column: date, label: Date attendue, required: true }
+  - { kind: table-field, column: recurrence, label: Récurrence, defaultValue: once }
+  - { kind: table-field, column: until, label: "Jusqu'au", helpText: "Pour un élément récurrent : la dernière date. Vide : jusqu'à la fin de l'année." }
+  - { kind: table-field, column: certainty, label: Certitude, defaultValue: certain, helpText: "Un élément probable ou possible n'est compté que si le scénario coche « Compter les recettes probables »." }
+  - { kind: table-field, column: counterparty, label: Tiers, placeholder: "Ville de Strasbourg, DGFiP, France Active…" }
+  - { kind: table-field, column: notes, label: Notes }
+  - { kind: table-field, column: status, defaultValue: expected, hidden: true }
+onSuccess:
+  type: message
+  message: "Élément ajouté : le prévisionnel du scénario se recalcule, les chiffres se mettent à jour dans quelques secondes."

@@ -1,0 +1,31 @@
+# Form: adjustment-new — add a monthly adjustment to a scenario, opened in a
+# dialog on /administration/finances/previsionnel/:scenario. The scenario is
+# prefilled and locked by the page (inlinePrefill), so the form only asks what
+# changes: on which line, how much per month, from when to when.
+#
+# An adjustment is a delta on the line's forecast for each month of the
+# range: an expense is written positive (it adds to the outflows), a saving
+# negative. On a salary line the employer multiplier turns the gross into the
+# employer cost. Admin only, like the table.
+id: 7
+name: adjustment-new
+title: Nouvel ajustement
+description: "Un montant mensuel ajouté (ou retiré) à une ligne du prévisionnel, du mois de départ jusqu'au mois de fin — ou jusqu'à la fin de l'année."
+display:
+  submitLabel: Ajouter l'ajustement
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: budget_adjustments
+fields:
+  - { kind: table-field, column: scenario, hidden: true }
+  - { kind: table-field, column: budget_line, label: Ligne budgétaire, required: true }
+  - { kind: table-field, column: label, label: Libellé, placeholder: "Embauche d'un·e chargé·e d'animation", required: true }
+  - { kind: table-field, column: kind, label: Nature, defaultValue: other }
+  - { kind: table-field, column: monthly_amount, label: "Par mois (TTC)", helpText: "Positif pour une dépense ou une recette en plus, négatif pour une économie ou une recette en moins.", required: true }
+  - { kind: table-field, column: from_month, label: À partir du mois, helpText: "N'importe quel jour du mois : seul le mois compte.", required: true }
+  - { kind: table-field, column: to_month, label: "Jusqu'au mois", helpText: "Vide : jusqu'à la fin de l'année." }
+  - { kind: table-field, column: employer_multiplier, label: Coefficient de charges patronales, helpText: "Pour une embauche ou une augmentation, le brut est multiplié par ce coefficient : 1,42 prudent, 1,065 historique (aides déduites). Vide : le montant est pris tel quel." }
+  - { kind: table-field, column: active, defaultValue: true, hidden: true }
+onSuccess:
+  type: message
+  message: "Ajustement ajouté : le prévisionnel du scénario se recalcule, les chiffres se mettent à jour dans quelques secondes."
