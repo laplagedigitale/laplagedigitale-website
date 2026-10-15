@@ -548,6 +548,12 @@ portal.dashboard.all: All invoices →
 portal.dashboard.manage: Manage →
 portal.invoices.intro: "All your La Plage Digitale invoices, from Pennylane. Click an invoice to open its PDF: if it no longer opens, reload the page (the link stays valid for 30 minutes)."
 portal.invoices.search: Search invoices…
+portal.invoices.recipients: "Invoice recipients"
+portal.invoices.recipients.help: "Your invoices are emailed to these addresses, one per line (five at most). Your sign-in address is always one of them."
+portal.invoices.recipients.label: "Email addresses"
+portal.invoices.recipients.save: "Save the recipients"
+portal.invoices.recipients.done: "Request processed"
+portal.invoices.recipients.error: "The recipients could not be saved. Try again in a few minutes or contact us."
 portal.mandate.current: My mandate
 portal.mandate.how: How does it work?
 portal.mandate.how.1: "1. Click “Set up direct debit”."

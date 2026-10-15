@@ -66,3 +66,31 @@ components:
                       partially_cancelled: $t:portal.status.partially_cancelled
                       credit_note: $t:portal.status.credit_note
                       archived: $t:portal.status.archived
+
+          # Who receives the invoices: the Pennylane customer's emails, through
+          # update-billing-emails (the caller's own customer, never an id from
+          # the browser). The run's message lands in #billing-emails-status: a
+          # refusal still answers 200, so the outcome is told there.
+          - type: card
+            props:
+              className: 'p-4 sm:p-6 space-y-3 max-w-2xl'
+            children:
+              - { type: text, element: h2, content: $t:portal.invoices.recipients, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:portal.invoices.recipients.help, props: { className: 'text-sm text-text-muted' } }
+              - type: form
+                endpoint:
+                  url: /api/automations/update-billing-emails/trigger
+                  method: POST
+                  submitLabel: $t:portal.invoices.recipients.save
+                  onSuccess:
+                    type: toast
+                    message: $t:portal.invoices.recipients.done
+                    status: { target: billing-emails-status, message: $response.output.message }
+                  onError: { type: toast, variant: destructive, message: $t:portal.invoices.recipients.error }
+                fields:
+                  - { field: emails, control: textarea, label: $t:portal.invoices.recipients.label, defaultValue: $record.billing_emails }
+              - type: text
+                element: p
+                props:
+                  id: billing-emails-status
+                  className: 'text-sm font-medium text-navy p-4 rounded-lg bg-blue-100 empty:hidden!'

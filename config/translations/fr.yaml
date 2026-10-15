@@ -549,6 +549,12 @@ portal.dashboard.all: Toutes les factures →
 portal.dashboard.manage: Gérer →
 portal.invoices.intro: "Toutes vos factures La Plage Digitale, issues de Pennylane. Cliquez sur une facture pour ouvrir son PDF : s'il ne s'ouvre plus, rechargez la page (le lien reste valable 30 minutes)."
 portal.invoices.search: Rechercher une facture…
+portal.invoices.recipients: "Destinataires des factures"
+portal.invoices.recipients.help: "Vos factures sont envoyées par e-mail à ces adresses, une par ligne (cinq au plus). Votre adresse de connexion en fait toujours partie."
+portal.invoices.recipients.label: "Adresses e-mail"
+portal.invoices.recipients.save: "Enregistrer les destinataires"
+portal.invoices.recipients.done: "Demande traitée"
+portal.invoices.recipients.error: "Les destinataires n'ont pas pu être enregistrés. Réessayez dans quelques minutes ou contactez-nous."
 portal.mandate.current: Mon mandat
 portal.mandate.how: Comment ça marche ?
 portal.mandate.how.1: "1. Cliquez sur « Mettre en place le prélèvement »."

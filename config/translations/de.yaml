@@ -548,6 +548,12 @@ portal.dashboard.all: Alle Rechnungen →
 portal.dashboard.manage: Verwalten →
 portal.invoices.intro: "Alle Ihre Rechnungen von La Plage Digitale, aus Pennylane. Klicken Sie auf eine Rechnung, um das PDF zu öffnen: Öffnet es sich nicht mehr, laden Sie die Seite neu (der Link bleibt 30 Minuten gültig)."
 portal.invoices.search: Rechnung suchen…
+portal.invoices.recipients: "Rechnungsempfänger"
+portal.invoices.recipients.help: "Ihre Rechnungen werden an diese Adressen gesendet, eine pro Zeile (höchstens fünf). Ihre Anmeldeadresse ist immer dabei."
+portal.invoices.recipients.label: "E-Mail-Adressen"
+portal.invoices.recipients.save: "Empfänger speichern"
+portal.invoices.recipients.done: "Anfrage bearbeitet"
+portal.invoices.recipients.error: "Die Empfänger konnten nicht gespeichert werden. Versuchen Sie es in einigen Minuten erneut oder kontaktieren Sie uns."
 portal.mandate.current: Mein Mandat
 portal.mandate.how: Wie funktioniert es?
 portal.mandate.how.1: "1. Klicken Sie auf „Lastschrift einrichten“."

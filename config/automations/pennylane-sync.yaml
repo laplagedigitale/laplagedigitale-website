@@ -8,6 +8,8 @@
 #                match links it; none or several marks the row not_found for
 #                an admin to settle (set pennylane_customer_id and
 #                match_status: manual, which this step then leaves alone).
+#                It also mirrors each linked member's invoice recipients (the
+#                customer's emails) into billing_emails.
 #   2. mirror  — one filtered read per resource (customer_id in [...]) for all
 #                linked members, well inside Pennylane's 25 requests / 5 s.
 #                Every run rewrites each invoice, which keeps its 30-minute
@@ -85,6 +87,20 @@ actions:
               context.log.warn(`${m.email}: ${ids.length} Pennylane customers carry this email`)
               if (m.match_status !== 'not_found') updates.push({ email: m.email, pennylane_customer_id: '', match_status: 'not_found' })
             }
+          }
+          // Mirror who receives each linked member's invoices (the customer's
+          // emails, one per line) into billing_emails, written only on change.
+          const emailsById = new Map<string, string>()
+          for (const c of context.inputData.customers ?? []) {
+            emailsById.set(String(c.id), [...new Set<string>((c.emails ?? []).map(norm).filter(Boolean))].join('\n'))
+          }
+          for (const l of linked) {
+            const m = (context.inputData.members ?? []).find((x: any) => String(x.id) === l.id)
+            const billing = emailsById.get(l.customerId)
+            if (!m || billing === undefined || billing === String(m.billing_emails ?? '').trim()) continue
+            const u = updates.find((x) => x.email === m.email)
+            if (u) u.billing_emails = billing
+            else updates.push({ email: m.email, billing_emails: billing })
           }
           const ids = [...new Set(linked.map((l) => Number(l.customerId)).filter((n) => Number.isFinite(n) && n > 0))]
           context.log.info(`${linked.length} linked members, ${updates.length} member rows to update`)
