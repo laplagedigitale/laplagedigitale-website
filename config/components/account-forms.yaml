@@ -1,6 +1,6 @@
 # Reusable component template: account-forms — the body of an account page,
-# shared by the Espace Membre (/espace-membre/compte) and the editors' space
-# (/editor/compte): display name, e-mail address, password, sign-out.
+# shared by the Espace Membre (/espace-membre/compte) and the Administration
+# (/administration/compte): display name, e-mail address, password, sign-out.
 #
 # Both forms post to the auth routes as the signed-in caller (the session is
 # the only identity), and read the reply status only (`raw`).

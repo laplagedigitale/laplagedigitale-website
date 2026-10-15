@@ -1,38 +1,30 @@
-# Page: portal-flex — the admins' Flex desk inside the Espace Membre: every
-# check-in of every coworker, editable in place, and the sign-ups sent from
-# /flex.
+# Page: admin-flex-signups — « Inscriptions Flex », in the Administration's
+# Membres section: the first-visit sign-ups sent from /flex. The check-ins
+# themselves are billing, and live in Finances (admin-finances-flex.yaml).
 #
-# An admin bypasses row-level rules, so both tables list every row here without
-# a filter. The check-in grid is editable on purpose — this is where a wrong
-# duration is fixed (change the amount with it: 14 € a full day, 7 € a half
-# day) or a forgotten day added. A row already `invoiced` is in Pennylane:
-# correct the invoice there (credit note) before touching the row.
-#
-# A sign-up creates no account. « Valider », on a sign-up still `new`, runs
-# flex-signup-validate: it finds or creates the Pennylane customer, links the
-# members row to it (and ticks association_member when they joined the
+# An admin bypasses row-level rules, so the table lists every row without a
+# filter. A sign-up creates no account. « Valider », on a sign-up still `new`,
+# runs flex-signup-validate: it finds or creates the Pennylane customer, links
+# the members row to it (and ticks association_member when they joined the
 # association), invites the person as a coworker and sets Suivi to « Invité·e ».
 # The button awaits the run, so a refused or failed validation shows the error
 # toast; why it failed is the run's error in /_admin. « Refuser » sets the
 # sign-up to `declined` through the records API.
-#
-# The monthly invoicing runs by itself on the 1st; to preview it, trigger
-# flex-invoicing with {"dryRun": true} (see config/automations/flex-invoicing.yaml).
-name: portal-flex
-path: /espace-membre/flex
+name: admin-flex-signups
+path: /administration/inscriptions-flex
 access: { require: [admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "Flex — Espace Membre"
-  description: "Les présences et inscriptions Flex."
+  title: "Inscriptions Flex — Administration"
+  description: "Les inscriptions Flex."
   noindex: true
 components:
   - type: flex
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: espace-membre-nav
+      - component: admin-nav
 
       - type: container
         element: main
@@ -41,87 +33,14 @@ components:
         children:
           - type: container
             children:
-              - { type: text, element: h1, content: $t:admin.flex.title, props: { className: 'text-3xl font-bold text-navy' } }
-              - { type: text, element: p, content: $t:admin.flex.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
-
-          - type: grid
-            props:
-              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
-            children:
-              - type: kpi
-                label: $t:admin.flex.month
-                icon: calendar-check
-                dataSource:
-                  table: checkins
-                  filter:
-                    - { field: date, operator: gte, value: $startOfMonth }
-                kpiAggregate: { function: count }
-              - type: kpi
-                label: $t:admin.flex.due
-                icon: wallet
-                dataSource:
-                  table: checkins
-                  filter:
-                    - { field: status, operator: eq, value: to_invoice }
-                kpiAggregate: { function: sum, field: amount }
-                kpiFormat: { type: currency, options: { currency: EUR } }
-              - type: kpi
-                label: $t:admin.flex.signups.new
-                icon: user-plus
-                dataSource:
-                  table: flex_signups
-                  filter:
-                    - { field: status, operator: eq, value: new }
-                kpiAggregate: { function: count }
-                thresholds:
-                  - { value: 1, color: yellow }
+              - { type: text, element: h1, content: $t:admin.flex.signups.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: $t:admin.flex.signups.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
 
           - type: container
             element: section
             props:
               className: 'space-y-3'
             children:
-              - { type: text, element: h2, content: $t:admin.flex.checkins, props: { className: 'text-xl font-semibold text-navy' } }
-              - { type: text, element: p, content: $t:admin.flex.checkins.intro, props: { className: 'text-sm text-text-muted max-w-2xl' } }
-              - type: card
-                props:
-                  className: 'p-4 sm:p-6'
-                children:
-                  - type: table
-                    props:
-                      aria-label: $t:admin.flex.checkins
-                    dataSource:
-                      table: checkins
-                      sort:
-                        - { field: date, direction: desc }
-                      pagination: { pageSize: 50, style: numbered }
-                    search:
-                      placeholder: $t:admin.flex.search
-                    emptyMessage: $t:flex.presences.none
-                    columns:
-                      - { field: date, label: $t:flex.col.date, format: short-date }
-                      - { field: member_email, label: $t:admin.members.email }
-                      - field: duration
-                        label: $t:flex.col.duration
-                        valueLabels:
-                          full: $t:flex.duration.full
-                          half: $t:flex.duration.half
-                      - { field: amount, label: $t:flex.col.amount, format: currency, align: right }
-                      - field: status
-                        label: $t:flex.col.status
-                        valueLabels:
-                          to_invoice: $t:flex.status.to_invoice
-                          invoiced: $t:flex.status.invoiced
-                          offered: $t:flex.status.offered
-                      - { field: pennylane_invoice_id, label: $t:admin.flex.invoice }
-
-          - type: container
-            element: section
-            props:
-              className: 'space-y-3'
-            children:
-              - { type: text, element: h2, content: $t:admin.flex.signups, props: { className: 'text-xl font-semibold text-navy' } }
-              - { type: text, element: p, content: $t:admin.flex.signups.intro, props: { className: 'text-sm text-text-muted max-w-2xl' } }
               - type: card
                 props:
                   className: 'p-4 sm:p-6'

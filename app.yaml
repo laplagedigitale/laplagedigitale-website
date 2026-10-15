@@ -115,7 +115,7 @@ components:
   # The two signed-in spaces: their left columns, and the account page body
   # they share.
   - $ref: ./config/components/espace-membre-nav.yaml
-  - $ref: ./config/components/editor-nav.yaml
+  - $ref: ./config/components/admin-nav.yaml
   - $ref: ./config/components/account-forms.yaml
 
 forms:
@@ -139,17 +139,27 @@ pages:
   - $ref: ./config/pages/contact.yaml
   - $ref: ./config/pages/mentions-legales.yaml
   - $ref: ./config/pages/confidentialite.yaml
-  # The one sign-in page; it lands each role in its own space.
+  # The one sign-in page; /app lands each role in its own space.
   - $ref: ./config/pages/connexion.yaml
   - $ref: ./config/pages/app-landing.yaml
-  # Editors' space — gated, never indexed.
-  - $ref: ./config/pages/editor.yaml
-  - $ref: ./config/pages/editor-posts.yaml
-  - $ref: ./config/pages/editor-posts-drafts.yaml
-  - $ref: ./config/pages/editor-posts-published.yaml
-  - $ref: ./config/pages/editor-post-new.yaml
-  - $ref: ./config/pages/editor-post-edit.yaml
-  - $ref: ./config/pages/editor-account.yaml
+  # Administration de l'association — gated, never indexed. Admins see it all;
+  # an editor reaches « Contenu » and their account only.
+  - $ref: ./config/pages/admin.yaml
+  - $ref: ./config/pages/admin-members.yaml
+  - $ref: ./config/pages/admin-member.yaml
+  - $ref: ./config/pages/admin-flex-signups.yaml
+  - $ref: ./config/pages/admin-finances.yaml
+  - $ref: ./config/pages/admin-finances-invoices.yaml
+  - $ref: ./config/pages/admin-finances-flex.yaml
+  - $ref: ./config/pages/admin-finances-direct-debit.yaml
+  - $ref: ./config/pages/admin-finances-reconciliation.yaml
+  - $ref: ./config/pages/admin-content.yaml
+  - $ref: ./config/pages/admin-posts.yaml
+  - $ref: ./config/pages/admin-posts-drafts.yaml
+  - $ref: ./config/pages/admin-posts-published.yaml
+  - $ref: ./config/pages/admin-post-new.yaml
+  - $ref: ./config/pages/admin-post-edit.yaml
+  - $ref: ./config/pages/admin-account.yaml
   # the Espace Membre, the coworker space — gated, never indexed.
   - $ref: ./config/pages/portal.yaml
   - $ref: ./config/pages/portal-invoices.yaml
@@ -162,11 +172,6 @@ pages:
   - $ref: ./config/pages/portal-documents.yaml
   - $ref: ./config/pages/portal-partenaires.yaml
   - $ref: ./config/pages/portal-account.yaml
-  # Admins only: every member, the invitations, one member's space read-only,
-  # and every Flex check-in and sign-up.
-  - $ref: ./config/pages/portal-members.yaml
-  - $ref: ./config/pages/portal-member.yaml
-  - $ref: ./config/pages/portal-flex.yaml
 
 # Old WordPress URLs (posts lived at the root, pages had other slugs) — 301s.
 redirects:

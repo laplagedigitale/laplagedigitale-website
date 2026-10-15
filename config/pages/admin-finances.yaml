@@ -1,0 +1,162 @@
+# Page: admin-finances — « Vue d'ensemble » of the Administration's Finances
+# section: what is left to collect, what Flex will bill on the 1st, the
+# direct-debit coverage and the bank reconciliation still to check, then the
+# invoices running late.
+#
+# Every figure is a Pennylane mirror (pennylane-sync every 15 minutes,
+# pennylane-auto-match each morning): it is corrected in Pennylane, never here.
+# An admin bypasses row-level rules, so the counts cover every member.
+name: admin-finances
+path: /administration/finances
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Finances — Administration"
+  description: "Les finances de La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Finances, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Les factures des membres, la facturation Flex, les prélèvements et le rapprochement bancaire. Ces données sont recopiées de Pennylane : une correction se fait dans Pennylane.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
+            children:
+              - type: kpi
+                label: Reste à encaisser (TTC)
+                icon: wallet
+                dataSource:
+                  table: invoices
+                  filter:
+                    - { field: status, operator: in, value: [upcoming, late, partially_paid] }
+                kpiAggregate: { function: sum, field: remaining_amount }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Dont en retard (TTC)
+                icon: alarm-clock
+                dataSource:
+                  table: invoices
+                  filter:
+                    - { field: status, operator: eq, value: late }
+                kpiAggregate: { function: sum, field: remaining_amount }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Flex à facturer le 1er (HT)
+                icon: calendar-days
+                dataSource:
+                  table: checkins
+                  filter:
+                    - { field: status, operator: eq, value: to_invoice }
+                kpiAggregate: { function: sum, field: amount }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Mandats de prélèvement actifs
+                icon: landmark
+                dataSource:
+                  table: mandates
+                  filter:
+                    - { field: status, operator: eq, value: active }
+                kpiAggregate: { function: count }
+              - type: kpi
+                label: Rapprochements à vérifier
+                icon: git-compare-arrows
+                dataSource:
+                  table: payment_matches
+                  filter:
+                    - { field: status, operator: eq, value: review }
+                kpiAggregate: { function: count }
+                thresholds:
+                  - { value: 1, color: yellow }
+              - type: kpi
+                label: Rapprochements en échec
+                icon: circle-alert
+                dataSource:
+                  table: payment_matches
+                  filter:
+                    - { field: status, operator: eq, value: failed }
+                kpiAggregate: { function: count }
+                thresholds:
+                  - { value: 1, color: red }
+
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Factures en retard, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Toutes les factures →', props: { href: /administration/finances/factures, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  # Read-only; a row opens the invoice PDF.
+                  - type: table
+                    readOnly: true
+                    onRowClick: { type: navigate, path: $record.pdf_url, openInNewTab: true }
+                    dataSource:
+                      table: invoices
+                      filter:
+                        - { field: status, operator: eq, value: late }
+                      sort:
+                        - { field: deadline, direction: asc }
+                      pagination: { pageSize: 10 }
+                    emptyMessage: Aucune facture en retard.
+                    columns:
+                      - { field: invoice_number, label: N° }
+                      - { field: member_email, label: Membre }
+                      - { field: label, label: Libellé, truncate: true }
+                      - { field: deadline, label: Échéance, format: short-date }
+                      - { field: remaining_amount, label: Reste dû, format: currency, align: right }
+
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Rapprochements à vérifier, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Tous les rapprochements →', props: { href: /administration/finances/rapprochements, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    dataSource:
+                      table: payment_matches
+                      filter:
+                        - { field: status, operator: in, value: [review, failed] }
+                      sort:
+                        - { field: run_at, direction: desc }
+                      pagination: { pageSize: 10 }
+                    emptyMessage: Rien à vérifier.
+                    columns:
+                      - field: status
+                        label: Statut
+                        valueLabels: { applied: Rapproché, would_apply: À rapprocher (mode test), review: À vérifier, failed: Échec }
+                      - field: side
+                        label: Côté
+                        valueLabels: { customer: Client, supplier: Fournisseur }
+                      - { field: customer_name, label: Tiers }
+                      - { field: invoice_number, label: Facture }
+                      - { field: transaction_date, label: Opération, format: short-date }
+                      - { field: transaction_amount, label: Montant, format: currency, align: right }
+                      - { field: transaction_label, label: Libellé bancaire, truncate: true }

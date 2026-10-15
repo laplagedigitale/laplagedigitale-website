@@ -1,12 +1,12 @@
-# Page: editor-post-edit — edit one post by id.
-name: editor-post-edit
-path: /editor/posts/:id
+# Page: admin-post-edit — edit one post by id.
+name: admin-post-edit
+path: /administration/contenu/articles/:id
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: Modifier l'article — Espace rédaction
+  title: Modifier l'article — Administration
   description: Modifier un article.
   noindex: true
 dataSource: { table: posts, mode: single, param: id }
@@ -15,14 +15,14 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: editor-nav
+      - component: admin-nav
 
       - type: container
         element: main
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
         children:
-          - { type: link, content: '← Tous les articles', props: { href: /editor/articles, className: 'text-sm text-text-muted hover:text-navy' } }
+          - { type: link, content: '← Tous les articles', props: { href: /administration/contenu/articles, className: 'text-sm text-text-muted hover:text-navy' } }
           - type: flex
             props:
               className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'

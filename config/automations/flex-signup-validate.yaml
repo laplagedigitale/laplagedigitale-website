@@ -1,6 +1,6 @@
 # Automation: flex-signup-validate — the « Valider » button on each new Flex
-# sign-up in /espace-membre/flex. One press does what an admin used to do by
-# hand in three places:
+# sign-up in /administration/inscriptions-flex. One press does what an admin used
+# to do by hand in three places:
 #
 #   1. customer — the Pennylane customer whose emails include the sign-up's
 #                 e-mail is reused; none is created (company customer when the

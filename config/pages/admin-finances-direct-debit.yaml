@@ -1,0 +1,130 @@
+# Page: admin-finances-direct-debit — « Prélèvements », in the
+# Administration's Finances section: every GoCardless mandate (a Pennylane
+# mirror) and the direct-debit requests coworkers sent from
+# /espace-membre/prelevement.
+#
+# Both read-only: a mandate is changed in Pennylane / GoCardless, and a request
+# is a log request-mandate reads to refuse a second one within 24 hours. The
+# Fixe subscriptions with an active mandate are moved to direct debit by
+# pennylane-direct-debit.
+name: admin-finances-direct-debit
+path: /administration/finances/prelevements
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Prélèvements — Administration"
+  description: "Les mandats de prélèvement des membres."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Prélèvements, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Les mandats de prélèvement GoCardless des membres, recopiés de Pennylane, et les demandes envoyées depuis l'Espace Membre. Les abonnements Fixe dont le mandat est actif passent automatiquement en prélèvement.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+            children:
+              - type: kpi
+                label: Mandats actifs
+                icon: landmark
+                dataSource:
+                  table: mandates
+                  filter:
+                    - { field: status, operator: eq, value: active }
+                kpiAggregate: { function: count }
+              - type: kpi
+                label: En attente de signature
+                icon: hourglass
+                dataSource:
+                  table: mandates
+                  filter:
+                    - { field: status, operator: in, value: [pending_customer_approval, pending_submission, submitted] }
+                kpiAggregate: { function: count }
+              - type: kpi
+                label: En échec
+                icon: circle-alert
+                dataSource:
+                  table: mandates
+                  filter:
+                    - { field: status, operator: in, value: [failed, blocked, bank_disconnected] }
+                kpiAggregate: { function: count }
+                thresholds:
+                  - { value: 1, color: red }
+
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Mandats, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Mandats
+                    dataSource:
+                      table: mandates
+                      sort:
+                        - { field: signed_at, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    search:
+                      placeholder: Rechercher un membre…
+                    emptyMessage: Aucun mandat pour le moment.
+                    columns:
+                      - { field: member_email, label: Membre }
+                      - field: status
+                        label: Statut
+                        valueLabels:
+                          active: Actif
+                          pending_customer_approval: En attente
+                          pending_submission: En attente
+                          submitted: En attente
+                          failed: En échec
+                          blocked: En échec
+                          bank_disconnected: En échec
+                          cancelled: Terminé
+                          expired: Terminé
+                          consumed: Terminé
+                          replaced: Terminé
+                      - { field: bank_account, label: Compte }
+                      - { field: signed_at, label: Signé le, format: short-date }
+
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Demandes de prélèvement, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: "Chaque demande envoyée par un coworker depuis l'Espace Membre : Pennylane lui a envoyé par e-mail le lien de signature du mandat.", props: { className: 'text-sm text-text-muted max-w-2xl' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Demandes de prélèvement
+                    dataSource:
+                      table: mandate_requests
+                      sort:
+                        - { field: requested_at, direction: desc }
+                      pagination: { pageSize: 25, style: numbered }
+                    emptyMessage: Aucune demande pour le moment.
+                    columns:
+                      - { field: member_email, label: Membre }
+                      - { field: requested_at, label: Demandé le, format: datetime }

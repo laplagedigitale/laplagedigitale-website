@@ -1,0 +1,104 @@
+# Page: admin-finances-invoices — every member invoice, in the
+# Administration's Finances section.
+#
+# The invoices table is a Pennylane mirror (pennylane-sync): read-only here, a
+# row opens the invoice PDF in a new tab, as on /espace-membre/factures. An
+# admin bypasses row-level rules, so the grid lists every member's invoices
+# without a filter.
+name: admin-finances-invoices
+path: /administration/finances/factures
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Factures — Administration"
+  description: "Les factures des membres."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Factures, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Toutes les factures des membres, recopiées de Pennylane toutes les 15 minutes. Cliquez sur une facture pour ouvrir son PDF.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+            children:
+              - type: kpi
+                label: Reste à encaisser (TTC)
+                icon: wallet
+                dataSource:
+                  table: invoices
+                  filter:
+                    - { field: status, operator: in, value: [upcoming, late, partially_paid] }
+                kpiAggregate: { function: sum, field: remaining_amount }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Factures en retard
+                icon: alarm-clock
+                dataSource:
+                  table: invoices
+                  filter:
+                    - { field: status, operator: eq, value: late }
+                kpiAggregate: { function: count }
+                thresholds:
+                  - { value: 1, color: red }
+              - type: kpi
+                label: Facturé ce mois (TTC)
+                icon: receipt
+                dataSource:
+                  table: invoices
+                  filter:
+                    - { field: invoice_date, operator: gte, value: $startOfMonth }
+                kpiAggregate: { function: sum, field: amount }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: table
+                readOnly: true
+                props:
+                  aria-label: Factures
+                onRowClick: { type: navigate, path: $record.pdf_url, openInNewTab: true }
+                dataSource:
+                  table: invoices
+                  sort:
+                    - { field: invoice_date, direction: desc }
+                  pagination: { pageSize: 50, style: numbered }
+                search:
+                  placeholder: Rechercher une facture, un membre…
+                emptyMessage: Aucune facture pour le moment.
+                columns:
+                  - { field: invoice_number, label: N° }
+                  - { field: member_email, label: Membre }
+                  - { field: label, label: Libellé, truncate: true, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
+                  - { field: invoice_date, label: Date, format: short-date }
+                  - { field: deadline, label: Échéance, format: short-date }
+                  - { field: amount, label: Montant TTC, format: currency, align: right }
+                  - { field: remaining_amount, label: Reste dû, format: currency, align: right }
+                  - field: status
+                    label: Statut
+                    valueLabels:
+                      paid: Payée
+                      partially_paid: Partiellement payée
+                      upcoming: À venir
+                      late: En retard
+                      incomplete: Incomplète
+                      cancelled: Annulée
+                      partially_cancelled: Partiellement annulée
+                      credit_note: Avoir
+                      archived: Archivée

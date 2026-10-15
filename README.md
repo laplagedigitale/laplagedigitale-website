@@ -28,10 +28,10 @@ config/
     contact.yaml
     legal.yaml
     privacy.yaml
-    connexion.yaml             # the one sign-in page (coworkers and editors)
+    connexion.yaml             # the one sign-in page (coworkers, admins and editors)
     app-landing.yaml           # /app — "Mes espaces", routes each role
     portal*.yaml               # the Espace Membre, the coworker space (/espace-membre/*)
-    editor*.yaml               # the editors' space (/editor/*)
+    admin*.yaml                # the Administration de l'association (/administration/*)
   tables/                      # data the Espace Membre reads, one per file
     members.yaml
     invoices.yaml
@@ -89,7 +89,7 @@ The old `/portal` and `/login` addresses redirect.
 `nomade`, `flex`, `box`, `domiciliation`) says what the member rents.
 `pennylane-sync` derives it from the member's active Pennylane subscriptions
 (by amount, then by label), their Flex check-ins of the last 90 days and an
-accepted Flex sign-up. An admin corrects it on `/espace-membre/membres/:id`
+accepted Flex sign-up. An admin corrects it on `/administration/membres/:id`
 with source « Fixée à la main », which the sync never overwrites. Every
 coworker page binds the signed-in member's own row
 (`dataSource: { table: members, mode: single, filter: email = $currentUser.email }`)
@@ -102,10 +102,29 @@ hand (the email is enough) for an older account.
 **No code or password goes into these pages** — not the Wi-Fi password, nor a
 door, alarm, locker or mailbox code: they stay on site, at reception.
 
-The blog editors have the same shape at `/editor`: a dashboard, the post lists
-(all, drafts, published), the post forms and an account page. Both spaces share
-one sign-in, `/connexion`, which sends everyone to `/app`; that page offers the
-spaces the caller's role opens and forwards straight on when there is one. A page cannot
+The **Administration de l'association** (`/administration/*`) has the same
+shape: one sidebar (`admin-nav`), three sections.
+
+- **Membres** — the members, the invitations, one member's space read-only,
+  and the Flex sign-ups to validate.
+- **Finances** — an overview, every member invoice, the Flex check-ins to
+  invoice (editable), the GoCardless mandates and requests, and the
+  `pennylane-auto-match` log. All of it is a Pennylane mirror: read-only here,
+  corrected in Pennylane.
+- **Contenu** — the blog: a dashboard, the post lists (all, drafts,
+  published), the post forms.
+
+Admins see all of it. The `editor` role sees only « Contenu » and its account
+page; every other admin page refuses it.
+
+Both spaces share one sign-in, `/connexion`, which sends everyone to `/app`.
+That page forwards each role straight to its space: a coworker to
+`/espace-membre`, an admin to `/administration`, an editor to
+`/administration/contenu`. An admin whose `members` row is linked to Pennylane
+— a coworker too — gets « Mon Espace Membre » in the Administration's sidebar,
+and every admin gets « Administration de l'association » in the Espace Membre's.
+The old `/editor/*`, `/espace-membre/membres` and `/espace-membre/flex`
+addresses redirect. A page cannot
 call an external API while it renders, so Pennylane is **mirrored into tables**
 and the pages read those tables:
 
@@ -129,7 +148,7 @@ automations write.
 
 **Onboarding a coworker:**
 
-1. Invite them from **`/espace-membre/membres`** (admins only: « Inviter un
+1. Invite them from **`/administration/membres`** (admins only: « Inviter un
    membre ») — or from `/_admin/users` with the role **`coworker`**. The
    invitation creates the account at once, which fires `member-sign-up` and
    files their `members` row, so the sync starts before they accept.
@@ -141,13 +160,14 @@ automations write.
 3. An account switched to `coworker` *after* it was created fires nothing — add
    its `members` row by hand (the email is enough).
 
-**Members pages (admins only).** `/espace-membre/membres` lists every member
+**Members pages (admins only).** `/administration/membres` lists every member
 with their Pennylane link and the pending invitations (resend, revoke); a row
-opens `/espace-membre/membres/:id`, that member's space read-only — their
+opens `/administration/membres/:id`, that member's space read-only — their
 invoices, what is left to pay, their mandate and their Flex check-ins. No
 session is swapped and nothing can be sent on the member's behalf. The members
-table also carries the « Adhérent » box (`association_member`), and
-`/espace-membre/flex` lists every Flex check-in (editable) and sign-up.
+table also carries the « Adhérent » box (`association_member`).
+`/administration/inscriptions-flex` lists the Flex sign-ups, and
+`/administration/finances/flex` every Flex check-in (editable).
 
 Pennylane's invoice PDF link (`public_file_url`) expires 30 minutes after it is
 issued; the 15-minute sync rewrites it, so the link on screen still opens.
@@ -169,7 +189,7 @@ Notion page and an Airtable form. It now runs here:
 
 1. **Sign-up** — a newcomer fills the form on **`/flex`**; it lands in
    `flex_signups` (visitors write, only admins read). On
-   **`/espace-membre/flex`** an admin presses **« Valider »** on the sign-up,
+   **`/administration/inscriptions-flex`** an admin presses **« Valider »** on the sign-up,
    and `flex-signup-validate` does the rest in one run:
    - reuses the Pennylane customer whose emails include the sign-up's e-mail,
      or creates it (a company customer when a company or SIRET is given, an
@@ -333,9 +353,10 @@ set; on later boots it no-ops rather than duplicating or modifying an existing
 user. The startup banner confirms it with an `Admin:` line.
 
 > [!NOTE]
-> **The site stays public.** Every page except `/espace-membre/*` and `/editor/*` is
+> **The site stays public.** Every page except `/espace-membre/*` and `/administration/*` is
 > readable without a session; `/espace-membre` admits the `coworker` and `admin`
-> roles, `/editor` the `editor` and `admin` roles. `allowSignUp` is
+> roles, `/administration` the `admin` role — and the `editor` role on
+> `/administration/contenu/*` and `/administration/compte` only. `allowSignUp` is
 > `false`, so nobody can create their own account; the default is `true`, which
 > would let anyone sign up on a public site. Coworkers are invited.
 

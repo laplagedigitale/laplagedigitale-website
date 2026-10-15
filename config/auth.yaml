@@ -19,7 +19,12 @@ defaultRole: viewer
 # Everyone signs in at /connexion, which sends the session to /app, the
 # "Mes espaces" page (config/pages/app-landing.yaml).
 #
-# Blog editors land on /editor, the editors' space. They write the `posts`
+# Admins land on /administration, the Administration de l'association: the
+# members, the finances and the site content, with a link to their own
+# Espace Membre when they are a coworker too.
+#
+# Blog editors land on /administration/contenu, the Administration's
+# « Contenu » section, and see nothing else of it. They write the `posts`
 # table and nothing else — the console at /_admin stays admin-only.
 #
 # Coworkers land on /espace-membre — « Espace Membre », their own Pennylane invoices,

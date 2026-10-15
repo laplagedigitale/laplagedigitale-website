@@ -1,0 +1,112 @@
+# Reusable component template: admin-nav — the left column of the
+# Administration de l'association (/administration/*). Logo on top, a "new
+# post" call to action, then the navigation. French only, like the rest of
+# the Administration.
+#
+# Below lg the column becomes a top bar and the navigation folds into a drawer
+# behind its menu button. A template cannot take children, so each page places
+# this column itself, beside its own <main>.
+#
+# Two audiences, one shell. A sidebar group cannot be gated on its own, so the
+# navigation is declared twice, each sidebar gated on a role (and left out of
+# the HTML for the other):
+# - admin — Pilotage, Membres, Finances, Contenu, Compte;
+# - editor — Contenu and Compte only (the pages behind the other groups refuse
+#   them anyway: access is admin only).
+#
+# « Mon Espace Membre » — an admin who is also a coworker (their members row
+# is linked to a Pennylane customer) gets the way to their own Espace Membre.
+# A list bound to that one row, drawing nothing when there is none, rather
+# than a `visibility.record` gate: that would make every page bind a members
+# row, and an admin without one would get a 404.
+#
+# The entries' hrefs are literal paths: the current-entry match runs on the
+# unresolved href, so a translated one is never marked.
+name: admin-nav
+type: container
+element: aside
+props:
+  className: 'flex flex-row items-center justify-between gap-4 bg-navy px-4 py-3 text-white lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:w-64 lg:flex-none lg:flex-col lg:items-stretch lg:justify-start lg:px-3 lg:py-6'
+children:
+  - type: link
+    props: { href: /administration, className: 'flex flex-col gap-1 lg:px-3 lg:mb-4', 'aria-label': "Administration de l'association" }
+    children:
+      - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-9 w-auto self-start' } }
+      - { type: text, element: span, content: Administration, props: { className: 'hidden lg:inline text-xs font-bold uppercase tracking-widest text-orange' } }
+  - type: link
+    content: '+ Nouvel article'
+    props:
+      href: /administration/contenu/articles/nouveau
+      className: 'hidden lg:flex justify-center lg:mx-3 lg:mb-6 px-4 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+
+  # Admins: the whole back office.
+  - type: sidebar
+    visibility: { roles: [admin] }
+    drawer: { below: lg, label: Menu }
+    props:
+      className: 'lg:flex-1 text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
+    groups:
+      - label: Pilotage
+        items:
+          - { label: Tableau de bord, href: /administration, icon: layout-dashboard }
+      - label: Membres
+        items:
+          - { label: Membres, href: /administration/membres, icon: users, activeMatch: prefix }
+          - { label: Inscriptions Flex, href: /administration/inscriptions-flex, icon: user-plus }
+      - label: Finances
+        items:
+          - { label: Vue d'ensemble, href: /administration/finances, icon: chart-pie }
+          - { label: Factures, href: /administration/finances/factures, icon: receipt }
+          - { label: Facturation Flex, href: /administration/finances/flex, icon: calendar-days }
+          - { label: Prélèvements, href: /administration/finances/prelevements, icon: landmark }
+          - { label: Rapprochements, href: /administration/finances/rapprochements, icon: git-compare-arrows }
+      - label: Contenu
+        items:
+          - { label: Tableau de bord, href: /administration/contenu, icon: newspaper }
+          - { label: Tous les articles, href: /administration/contenu/articles, icon: files }
+          - { label: Brouillons, href: /administration/contenu/articles/brouillons, icon: pencil-line }
+          - { label: Publiés, href: /administration/contenu/articles/publies, icon: globe }
+      - label: Compte
+        items:
+          - { label: Mon compte, href: /administration/compte, icon: user-round }
+          - { label: Voir le site, href: /, icon: external-link }
+
+  # Editors: the blog and their account.
+  - type: sidebar
+    visibility: { roles: [editor] }
+    drawer: { below: lg, label: Menu }
+    props:
+      className: 'lg:flex-1 text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
+    groups:
+      - label: Contenu
+        items:
+          - { label: Tableau de bord, href: /administration/contenu, icon: layout-dashboard }
+          - { label: Tous les articles, href: /administration/contenu/articles, icon: newspaper }
+          - { label: Brouillons, href: /administration/contenu/articles/brouillons, icon: pencil-line }
+          - { label: Publiés, href: /administration/contenu/articles/publies, icon: globe }
+          - { label: Nouvel article, href: /administration/contenu/articles/nouveau, icon: square-pen }
+      - label: Compte
+        items:
+          - { label: Mon compte, href: /administration/compte, icon: user-round }
+          - { label: Voir le blog, href: /blog, icon: external-link }
+
+  # An admin who is also a coworker: the way to their own Espace Membre. Shown
+  # from lg up; on a phone the dashboard carries the same link.
+  - type: list
+    visibility: { roles: [admin] }
+    dataSource:
+      table: members
+      filter:
+        - { field: email, operator: eq, value: $currentUser.email }
+        - { field: pennylane_customer_id, operator: isNotEmpty }
+      limit: 1
+    props:
+      className: 'hidden lg:block lg:mx-3 lg:mt-4 lg:border-t lg:border-navy-700 lg:pt-4'
+    listDisplay:
+      hideWhenEmpty: true
+    children:
+      - type: link
+        content: Mon Espace Membre →
+        props:
+          href: /espace-membre
+          className: 'flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
