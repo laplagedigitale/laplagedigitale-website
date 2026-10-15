@@ -1,0 +1,50 @@
+# Table: bank_accounts — the association's bank accounts for the Trésorerie:
+# the Pennylane bank accounts, mirrored by pennylane-treasury-sync every hour
+# (pennylane_id `pl:<id>`, balance rewritten each run), and the accounts
+# Pennylane does not see, entered by hand (source: manual) — the Crédit
+# Agricole Livret A (`manual:livret-a`), whose balance and statement date an
+# admin keys in from the bank statement.
+#
+# `kind` and `include_in_cash` are admin-owned on a known row: the sync sets
+# them on the first sight of an account and never resends them. A `loan`
+# account is left out of the cash position; `is_reserve` marks the savings
+# that count in the total treasury but sit outside the Pennylane closing
+# balance. Admin only, like the other back-office tables.
+id: 11
+name: bank_accounts
+aiAccess:
+  description: "Bank accounts of the association: the Pennylane accounts (balance synced hourly) and the manual ones such as the Livret A (balance keyed in from the statement)."
+  operations: [read, list]
+fields:
+  - { id: 1, name: pennylane_id, label: Clé, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: name, label: Compte, type: single-line-text, required: true }
+  - id: 3
+    name: source
+    label: Source
+    type: single-select
+    default: pennylane
+    options:
+      - { value: pennylane, label: Pennylane, color: '#3b82f6' }
+      - { value: manual, label: Saisi à la main, color: '#f59e0b' }
+  - id: 4
+    name: kind
+    label: Type
+    type: single-select
+    default: current
+    options:
+      - { value: current, label: Compte courant, color: '#3b82f6' }
+      - { value: savings, label: Épargne, color: '#10b981' }
+      - { value: loan, label: Prêt, color: '#94a3b8' }
+      - { value: other, label: Autre, color: '#94a3b8' }
+  - { id: 5, name: currency, label: Devise, type: single-line-text, default: EUR }
+  - { id: 6, name: balance, label: Solde, type: currency, currency: EUR, precision: 2 }
+  - { id: 7, name: balance_date, label: Solde au, type: date }
+  - { id: 8, name: include_in_cash, label: Compte dans la trésorerie, type: checkbox, default: true }
+  - { id: 9, name: is_reserve, label: Réserve (hors Pennylane), type: checkbox, default: false }
+  - { id: 10, name: notes, label: Notes, type: long-text }
+  - { id: 11, name: synced_at, label: Synchronisé le, type: datetime }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

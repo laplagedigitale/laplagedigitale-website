@@ -1,0 +1,84 @@
+# Table: planned_items — the dated cash items the accountant lists every
+# month and a statistical projection cannot see: an IS instalment, a loan
+# repayment, a subsidy expected on a date, an insurance indemnity. Manual
+# rows (source: manual) are entered on a scenario's page (or for every
+# scenario when `scenario` is empty); the sync writes the auto rows for the
+# open Pennylane invoices (item_key inv:c:<id> / inv:s:<id>, due at the
+# deadline) and marks them `done` once paid. A `once` item counts in its
+# month, a recurring one from `date` to `until`. Prudence: an `out` item
+# always counts; an `in` one counts when `certain`, when `probable` only if
+# the scenario ticks include_probable_income, never when `possible`.
+#
+# `deadline` is an optional link to the Calendrier de gestion row that
+# reminds about the same obligation — a link, not a merge: the calendar
+# carries dates and reminders, this table carries amounts.
+id: 18
+name: planned_items
+aiAccess:
+  description: "Dated cash items of the plan: tax instalments, loan schedule, expected subsidies, open Pennylane invoices, with certainty and status."
+  operations: [read, list]
+fields:
+  - { id: 1, name: item_key, label: Clé, type: single-line-text, indexed: true }
+  - id: 2
+    name: source
+    label: Source
+    type: single-select
+    default: manual
+    options:
+      - { value: manual, label: Saisi à la main, color: '#f59e0b' }
+      - { value: pennylane_invoice, label: Facture Pennylane ouverte, color: '#3b82f6' }
+  - { id: 3, name: label, label: Libellé, type: single-line-text, required: true }
+  - { id: 4, name: budget_line, label: Ligne budgétaire, type: relationship, relatedTable: budget_lines, relationType: many-to-one, displayField: label, onDelete: cascade, required: true }
+  - { id: 5, name: line_code, label: Code ligne, type: single-line-text, indexed: true }
+  - id: 6
+    name: direction
+    label: Sens
+    type: single-select
+    required: true
+    options:
+      - { value: in, label: Encaissement, color: '#10b981' }
+      - { value: out, label: Décaissement, color: '#ef4444' }
+  - { id: 7, name: amount, label: Montant TTC, type: currency, currency: EUR, precision: 2, required: true }
+  - { id: 8, name: date, label: Date, type: date, required: true, indexed: true }
+  - { id: 9, name: month, label: Mois, type: date, indexed: true }
+  - { id: 10, name: year, label: Année, type: integer, indexed: true }
+  - id: 11
+    name: recurrence
+    label: Récurrence
+    type: single-select
+    default: once
+    options:
+      - { value: once, label: Une fois, color: '#94a3b8' }
+      - { value: monthly, label: Chaque mois, color: '#f59e0b' }
+      - { value: quarterly, label: Chaque trimestre, color: '#14b8a6' }
+      - { value: yearly, label: Chaque année, color: '#3b82f6' }
+  - { id: 12, name: until, label: "Jusqu'au", type: date }
+  - id: 13
+    name: certainty
+    label: Certitude
+    type: single-select
+    default: certain
+    options:
+      - { value: certain, label: Certain, color: '#10b981' }
+      - { value: probable, label: Probable, color: '#f59e0b' }
+      - { value: possible, label: Possible, color: '#94a3b8' }
+  - id: 14
+    name: status
+    label: Statut
+    type: single-select
+    default: expected
+    options:
+      - { value: expected, label: Attendu, color: '#f59e0b' }
+      - { value: done, label: Reçu / payé, color: '#10b981' }
+      - { value: dismissed, label: Écarté, color: '#94a3b8' }
+  - { id: 15, name: scenario, label: "Scénario (vide : tous)", type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: cascade }
+  - { id: 16, name: scenario_key, label: Clé du scénario, type: single-line-text, indexed: true }
+  - { id: 17, name: counterparty, label: Tiers, type: single-line-text }
+  - { id: 18, name: pennylane_ref, label: Référence Pennylane, type: single-line-text }
+  - { id: 19, name: deadline, label: Échéance du calendrier, type: relationship, relatedTable: management_deadlines, relationType: many-to-one, displayField: title, onDelete: set-null }
+  - { id: 20, name: notes, label: Notes, type: long-text }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

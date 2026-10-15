@@ -80,6 +80,23 @@ env:
     default: ""
     secret: false
 
+  # Trésorerie & prévisionnel (pennylane-treasury-sync, treasury-forecast)
+  - key: PENNYLANE_COMPANY_ID
+    description: Pennylane company id, used to build the link that opens a transaction in Pennylane from the Transactions page
+    required: false
+    default: '21901400'
+    secret: false
+  - key: TREASURY_SYNC_SINCE_DAYS
+    description: How many days back pennylane-treasury-sync re-reads the bank transactions on each hourly run (a one-off backfill passes `since` in the trigger body)
+    required: false
+    default: '120'
+    secret: false
+  - key: TREASURY_COMFORT_THRESHOLD
+    description: Cash balance (EUR) under which the forecast flags a scenario's low point as « tendu »
+    required: false
+    default: '10000'
+    secret: false
+
 design:
   $ref: ./config/design.yaml
 
@@ -106,6 +123,20 @@ tables:
   - $ref: ./config/tables/payment-matches.yaml
   # The Calendrier de gestion: recurring deadlines and their reminders.
   - $ref: ./config/tables/management-deadlines.yaml
+  # Trésorerie & prévisionnel: the Pennylane bank mirror (accounts,
+  # transactions), the chart of lines and the category mapping, the
+  # scenarios with their budgets, adjustments and dated items, and the two
+  # computed tables the pages read. Admin only, all of them.
+  - $ref: ./config/tables/bank-accounts.yaml
+  - $ref: ./config/tables/transactions.yaml
+  - $ref: ./config/tables/budget-lines.yaml
+  - $ref: ./config/tables/category-mappings.yaml
+  - $ref: ./config/tables/scenarios.yaml
+  - $ref: ./config/tables/budget-entries.yaml
+  - $ref: ./config/tables/budget-adjustments.yaml
+  - $ref: ./config/tables/planned-items.yaml
+  - $ref: ./config/tables/forecast-months.yaml
+  - $ref: ./config/tables/forecast-balances.yaml
 
 buckets:
   $ref: ./config/buckets.yaml

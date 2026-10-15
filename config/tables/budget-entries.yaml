@@ -1,0 +1,70 @@
+# Table: budget_entries — the budget grid of a scenario, in the sheet's shape:
+# one row per scenario × budget line, twelve month columns (m01…m12, TTC),
+# edited in place on /administration/finances/previsionnel/:scenario. An empty
+# cell means « pas de budget : garder la projection » ; a filled one replaces
+# the projection for that month (the adjustments and dated items still add).
+# On the baseline the grid is « le budget voté » and feeds `variance`.
+#
+# treasury-scenario-init creates the rows of a new scenario by copying its
+# model's; treasury-forecast-on-budget recomputes the scenario when a month
+# cell changes. `scenario_key`, `is_baseline`, `line_*` and `group` are text
+# copies for filters and sorting (a filter cannot traverse a relationship).
+id: 16
+name: budget_entries
+aiAccess:
+  description: "Budget grid of each cash-plan scenario: one row per budget line with twelve monthly amounts (TTC)."
+  operations: [read, list]
+fields:
+  - { id: 1, name: entry_key, label: Clé, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: scenario, label: Scénario, type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: cascade, required: true }
+  - { id: 3, name: scenario_key, label: Clé du scénario, type: single-line-text, indexed: true }
+  - { id: 4, name: is_baseline, label: Référence, type: checkbox, default: false }
+  - { id: 5, name: year, label: Exercice, type: integer, indexed: true }
+  - { id: 6, name: budget_line, label: Ligne budgétaire, type: relationship, relatedTable: budget_lines, relationType: many-to-one, displayField: label, onDelete: cascade, required: true }
+  - { id: 7, name: line_code, label: Code ligne, type: single-line-text, indexed: true }
+  - { id: 8, name: line_label, label: Poste, type: single-line-text }
+  - id: 9
+    name: line_kind
+    label: Sens
+    type: single-select
+    options:
+      - { value: income, label: Recette, color: '#10b981' }
+      - { value: expense, label: Dépense, color: '#ef4444' }
+      - { value: transfer, label: Virement interne, color: '#94a3b8' }
+      - { value: tax, label: TVA, color: '#8b5cf6' }
+  - id: 10
+    name: cash_group
+    label: Groupe
+    type: single-select
+    options:
+      - { value: activite, label: "70 — Ventes (activité)", color: '#10b981' }
+      - { value: subventions, label: "74 — Subventions", color: '#14b8a6' }
+      - { value: autres_recettes, label: "75/77 — Autres recettes", color: '#6ee7b7' }
+      - { value: achats, label: "60 — Achats", color: '#f59e0b' }
+      - { value: locaux, label: "61 — Locaux et services extérieurs", color: '#fb923c' }
+      - { value: fonctionnement, label: "62 — Autres services extérieurs", color: '#fbbf24' }
+      - { value: impots_tva, label: "63 / TVA — Impôts et taxes", color: '#8b5cf6' }
+      - { value: personnel, label: "64 — Personnel", color: '#ef4444' }
+      - { value: financement, label: "16 — Emprunt", color: '#64748b' }
+      - { value: transferts, label: "Virements internes", color: '#94a3b8' }
+  - { id: 11, name: line_order, label: Ordre, type: integer }
+  - { id: 12, name: m01, label: Janvier, type: currency, currency: EUR, precision: 2 }
+  - { id: 13, name: m02, label: Février, type: currency, currency: EUR, precision: 2 }
+  - { id: 14, name: m03, label: Mars, type: currency, currency: EUR, precision: 2 }
+  - { id: 15, name: m04, label: Avril, type: currency, currency: EUR, precision: 2 }
+  - { id: 16, name: m05, label: Mai, type: currency, currency: EUR, precision: 2 }
+  - { id: 17, name: m06, label: Juin, type: currency, currency: EUR, precision: 2 }
+  - { id: 18, name: m07, label: Juillet, type: currency, currency: EUR, precision: 2 }
+  - { id: 19, name: m08, label: Août, type: currency, currency: EUR, precision: 2 }
+  - { id: 20, name: m09, label: Septembre, type: currency, currency: EUR, precision: 2 }
+  - { id: 21, name: m10, label: Octobre, type: currency, currency: EUR, precision: 2 }
+  - { id: 22, name: m11, label: Novembre, type: currency, currency: EUR, precision: 2 }
+  - { id: 23, name: m12, label: Décembre, type: currency, currency: EUR, precision: 2 }
+  - { id: 24, name: notes, label: Notes, type: long-text }
+indexes:
+  - { name: idx_budget_entries_scenario_order, fields: [scenario_key, line_order] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

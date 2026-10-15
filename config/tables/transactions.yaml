@@ -1,0 +1,88 @@
+# Table: transactions — the bank transactions mirrored from Pennylane by
+# pennylane-treasury-sync (one row per Pennylane transaction, matchField
+# pennylane_id), enriched with what the Trésorerie needs:
+#
+# - the budget line it lands on (`budget_line`, with its text copies
+#   `line_code` / `line_kind` because a filter cannot traverse a relationship),
+#   and how it got there (`mapping_source`); an admin who picks the line by
+#   hand ticks `manual_line_override` and the sync keeps it;
+# - the accountant's monthly questions as flags: `justified` (a debit that
+#   needs a receipt has one), `matched` (allocated to an invoice —
+#   |outstanding_balance| < 0,01, the rule pennylane-auto-match uses),
+#   `needs_attention` + `attention_reason` for the « Points comptables » tabs;
+# - `amount_in` / `amount_out`, positive, because a KPI sums but cannot abs().
+#
+# Transfers between the association's own accounts carry
+# `is_internal_transfer` (a `transfer` line). A row gone from Pennylane inside
+# the sync window is flagged `missing_in_pennylane`; an archived one keeps
+# `archived_at`. Both are left out of the forecast. Admin only.
+id: 12
+name: transactions
+aiAccess:
+  description: "Bank transactions mirrored from Pennylane with their budget line, receipt/allocation flags and the accountant's attention reasons."
+  operations: [read, list]
+fields:
+  - { id: 1, name: pennylane_id, label: Id Pennylane, type: single-line-text, required: true, unique: true, indexed: true }
+  - { id: 2, name: date, label: Date, type: date, required: true, indexed: true }
+  - { id: 3, name: month, label: Mois, type: date, indexed: true }
+  - { id: 4, name: year, label: Année, type: integer, indexed: true }
+  - { id: 5, name: amount, label: Montant, type: currency, currency: EUR, precision: 2 }
+  - { id: 6, name: amount_in, label: Encaissement, type: currency, currency: EUR, precision: 2 }
+  - { id: 7, name: amount_out, label: Décaissement, type: currency, currency: EUR, precision: 2 }
+  - { id: 8, name: label, label: Libellé bancaire, type: long-text }
+  - { id: 9, name: account, label: Compte, type: relationship, relatedTable: bank_accounts, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 10, name: pennylane_bank_account_id, label: Compte (id Pennylane), type: single-line-text, indexed: true }
+  - { id: 11, name: pennylane_category_id, label: Catégorie (id), type: single-line-text, indexed: true }
+  - { id: 12, name: pennylane_category_label, label: Catégorie Pennylane, type: single-line-text }
+  - { id: 13, name: pennylane_category_group, label: Famille de catégorie, type: single-line-text }
+  - { id: 14, name: budget_line, label: Ligne budgétaire, type: relationship, relatedTable: budget_lines, relationType: many-to-one, displayField: label, onDelete: set-null }
+  - { id: 15, name: line_code, label: Code ligne, type: single-line-text, indexed: true }
+  - id: 16
+    name: line_kind
+    label: Sens
+    type: single-select
+    options:
+      - { value: income, label: Recette, color: '#10b981' }
+      - { value: expense, label: Dépense, color: '#ef4444' }
+      - { value: transfer, label: Virement interne, color: '#94a3b8' }
+      - { value: tax, label: TVA, color: '#8b5cf6' }
+  - id: 17
+    name: mapping_source
+    label: Affectation
+    type: single-select
+    options:
+      - { value: pennylane_category, label: Catégorie Pennylane, color: '#3b82f6' }
+      - { value: label_rule, label: Règle sur le libellé, color: '#14b8a6' }
+      - { value: catch_all, label: Non catégorisé, color: '#f59e0b' }
+      - { value: manual, label: Choisie à la main, color: '#8b5cf6' }
+  - { id: 18, name: is_internal_transfer, label: Virement interne, type: checkbox, default: false }
+  - { id: 19, name: attachment_required, label: Justificatif attendu, type: checkbox }
+  - { id: 20, name: outstanding_balance, label: Reste à affecter, type: currency, currency: EUR, precision: 2 }
+  - { id: 21, name: matched, label: Lettrée, type: checkbox }
+  - { id: 22, name: has_invoice, label: Facture attachée, type: checkbox }
+  - { id: 23, name: justified, label: Justifiée, type: checkbox }
+  - { id: 24, name: needs_attention, label: À traiter, type: checkbox, indexed: true }
+  - id: 25
+    name: attention_reason
+    label: Point comptable
+    type: single-select
+    options:
+      - { value: uncategorised, label: Sans catégorie, color: '#f59e0b' }
+      - { value: unjustified_expense, label: Débit sans facture, color: '#ef4444' }
+      - { value: unallocated_customer_payment, label: Encaissement non lettré, color: '#8b5cf6' }
+      - { value: catch_all, label: Ligne par défaut, color: '#94a3b8' }
+  - { id: 26, name: customer_id, label: Client (id Pennylane), type: single-line-text }
+  - { id: 27, name: supplier_id, label: Fournisseur (id Pennylane), type: single-line-text }
+  - { id: 28, name: archived_at, label: Archivée le, type: datetime }
+  - { id: 29, name: missing_in_pennylane, label: Disparue de Pennylane, type: checkbox, default: false }
+  - { id: 30, name: pennylane_url, label: Ouvrir dans Pennylane, type: url }
+  - { id: 31, name: manual_line_override, label: Ligne choisie à la main, type: checkbox, default: false }
+  - { id: 32, name: synced_at, label: Synchronisée le, type: datetime }
+indexes:
+  - { name: idx_transactions_month_line, fields: [month, line_code] }
+  - { name: idx_transactions_attention, fields: [needs_attention, date] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]
