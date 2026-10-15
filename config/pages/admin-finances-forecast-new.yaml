@@ -1,0 +1,37 @@
+# Page: admin-finances-forecast-new — create a forecast scenario. The declared
+# form scenario-new creates the row and opens it on its own page;
+# treasury-scenario-init then copies the model's budgets, adjustments and
+# dated items into it and computes it.
+#
+# Declared before admin-finances-scenario in app.yaml, so « nouveau » is this
+# page and never read as an :id.
+name: admin-finances-forecast-new
+path: /administration/finances/previsionnel/nouveau
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Nouveau scénario — Administration"
+  description: "Créer un scénario du prévisionnel de trésorerie."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - { type: link, content: '← Prévisionnel', props: { href: /administration/finances/previsionnel, className: 'text-sm text-text-muted hover:text-navy' } }
+          - type: card
+            props:
+              className: 'p-6 sm:p-8 max-w-2xl'
+            children:
+              - type: form
+                formRef: scenario-new
+                props: { headingLevel: h1 }

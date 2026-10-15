@@ -1,0 +1,90 @@
+# Table: forecast_months — computed by treasury-forecast-compute, never
+# edited: one row per scenario × budget line × month of the plan year. A past
+# month carries the Pennylane actual (status: actual); the current and future
+# months carry the projection, the dated items, the adjustments, the budget
+# and the resulting `forecast` (status: forecast). `variance` is actual −
+# budget on a past month that had a budget. `amount_ht` is the P&L lens.
+# Every recompute rewrites the rows by `key`; the text copies of the line
+# and scenario let the pages filter and sort without a relationship.
+id: 19
+name: forecast_months
+aiAccess:
+  description: "Computed cash plan: one row per scenario, budget line and month with actual, projection, planned, adjustments, budget, forecast and variance."
+  operations: [read, list]
+fields:
+  - { id: 1, name: row_key, label: Clé, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: scenario, label: Scénario, type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: cascade }
+  - { id: 3, name: scenario_key, label: Clé du scénario, type: single-line-text, indexed: true }
+  - { id: 4, name: is_baseline, label: Référence, type: checkbox, default: false }
+  - { id: 5, name: year, label: Exercice, type: integer, indexed: true }
+  - { id: 6, name: month, label: Mois, type: date, indexed: true }
+  - { id: 7, name: month_index, label: "N° du mois", type: integer }
+  - id: 8
+    name: status
+    label: Statut
+    type: single-select
+    options:
+      - { value: actual, label: Réalisé, color: '#6290bc' }
+      - { value: forecast, label: Prévu, color: '#f08137' }
+  - { id: 9, name: budget_line, label: Ligne budgétaire, type: relationship, relatedTable: budget_lines, relationType: many-to-one, displayField: label, onDelete: cascade }
+  - { id: 10, name: line_code, label: Code ligne, type: single-line-text, indexed: true }
+  - { id: 11, name: line_label, label: Poste, type: single-line-text }
+  - id: 12
+    name: line_kind
+    label: Sens
+    type: single-select
+    options:
+      - { value: income, label: Recette, color: '#10b981' }
+      - { value: expense, label: Dépense, color: '#ef4444' }
+      - { value: transfer, label: Virement interne, color: '#94a3b8' }
+      - { value: tax, label: TVA, color: '#8b5cf6' }
+  - id: 13
+    name: cash_group
+    label: Groupe
+    type: single-select
+    options:
+      - { value: activite, label: "70 — Ventes (activité)", color: '#10b981' }
+      - { value: subventions, label: "74 — Subventions", color: '#14b8a6' }
+      - { value: autres_recettes, label: "75/77 — Autres recettes", color: '#6ee7b7' }
+      - { value: achats, label: "60 — Achats", color: '#f59e0b' }
+      - { value: locaux, label: "61 — Locaux et services extérieurs", color: '#fb923c' }
+      - { value: fonctionnement, label: "62 — Autres services extérieurs", color: '#fbbf24' }
+      - { value: impots_tva, label: "63 / TVA — Impôts et taxes", color: '#8b5cf6' }
+      - { value: personnel, label: "64 — Personnel", color: '#ef4444' }
+      - { value: financement, label: "16 — Emprunt", color: '#64748b' }
+      - { value: transferts, label: "Virements internes", color: '#94a3b8' }
+  - { id: 14, name: pcg_account, label: Compte PCG, type: single-line-text }
+  - id: 15
+    name: pnl_group
+    label: Groupe (compte de résultat)
+    type: single-select
+    options:
+      - { value: produits_exploitation, label: "Produits d'exploitation", color: '#10b981' }
+      - { value: subventions, label: "Subventions d'exploitation", color: '#14b8a6' }
+      - { value: autres_produits, label: Autres produits, color: '#6ee7b7' }
+      - { value: achats, label: Achats, color: '#f59e0b' }
+      - { value: services_exterieurs, label: Services extérieurs, color: '#fb923c' }
+      - { value: autres_services, label: Autres services extérieurs, color: '#fbbf24' }
+      - { value: impots, label: Impôts et taxes, color: '#8b5cf6' }
+      - { value: personnel, label: Charges de personnel, color: '#ef4444' }
+      - { value: financier, label: Charges financières, color: '#64748b' }
+      - { value: hors_resultat, label: Hors compte de résultat, color: '#94a3b8' }
+  - { id: 16, name: line_order, label: Ordre, type: integer }
+  - { id: 17, name: is_dated, label: Datée, type: checkbox, default: false }
+  - { id: 18, name: actual, label: Réalisé, type: currency, currency: EUR, precision: 2 }
+  - { id: 19, name: projection, label: Projection, type: currency, currency: EUR, precision: 2 }
+  - { id: 20, name: planned, label: Éléments datés, type: currency, currency: EUR, precision: 2 }
+  - { id: 21, name: adjustments, label: Ajustements, type: currency, currency: EUR, precision: 2 }
+  - { id: 22, name: budget, label: Budget, type: currency, currency: EUR, precision: 2 }
+  - { id: 23, name: forecast, label: Prévu, type: currency, currency: EUR, precision: 2 }
+  - { id: 24, name: variance, label: Écart, type: currency, currency: EUR, precision: 2 }
+  - { id: 25, name: amount_ht, label: Montant HT, type: currency, currency: EUR, precision: 2 }
+  - { id: 26, name: computed_at, label: Calculé le, type: datetime }
+indexes:
+  - { name: idx_forecast_months_scenario_month, fields: [scenario_key, year, month] }
+  - { name: idx_forecast_months_line_month, fields: [line_code, month] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

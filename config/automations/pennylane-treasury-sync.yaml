@@ -1,0 +1,378 @@
+# Automation: pennylane-treasury-sync — every hour, mirrors what the
+# Trésorerie reads from Pennylane, then recomputes the plan:
+#
+#   1. bank accounts — one bank_accounts row per Pennylane account
+#      (`pl:<id>`), balance rewritten; a manual account (the Livret A) is
+#      never touched, nor an admin's `kind` / `include_in_cash` on a known row.
+#   2. categories — one category_mappings row per Pennylane category
+#      (`cat:<id>`, label, family, direction), so an admin maps each to a
+#      budget line once; the mapping itself is never overwritten.
+#   3. transactions — the window's transactions (TREASURY_SYNC_SINCE_DAYS, or
+#      `since` from the trigger body for a backfill), each resolved to a budget
+#      line: the Pennylane category's mapping first, then the manual label
+#      rules by priority, then the catch-all line of its sign. A row an admin
+#      re-filed (manual_line_override) keeps its line. The accountant's
+#      monthly questions become flags: a debit that needs a receipt and is
+#      not allocated, a receipt with nothing to allocate it to, a transaction
+#      without category, one left on the catch-all line.
+#   4. dated items — the open customer and supplier invoices as planned_items
+#      (`inv:c:<id>` / `inv:s:<id>`) at their due date; an invoice no longer
+#      open is marked done. These rows start no recompute of their own (the
+#      on-planned trigger keeps to manual rows): the engine runs once below.
+#
+# On demand, with the admin sign-in of CLAUDE.md « Run it on demand »:
+#   POST /api/automations/pennylane-treasury-sync/trigger
+#     {"since": "2025-01-01"}   backfill (the trailing-12 baseline needs N-1)
+#     {"dryRun": "true"}        reads and logs, writes nothing
+#
+# Transactions are read 50 per page: with their categories a page stays under
+# the 64 KiB a connection step reads. Every step is top-level (README quirks).
+name: pennylane-treasury-sync
+trigger:
+  type: cron
+  expression: '7 * * * *'
+  timezone: Europe/Paris
+timeout: 600000
+concurrency:
+  limit: 1
+actions:
+  - name: plan
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        since: '{{trigger.data.body.since}}'
+        dryRun: '{{trigger.data.body.dryRun}}'
+      code: |
+        async function execute(context) {
+          const inp: any = context.inputData ?? {}
+          const dryRun = String(inp.dryRun ?? '').toLowerCase() === 'true'
+          const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+          const days = Number(context.env.TREASURY_SYNC_SINCE_DAYS ?? 120) || 120
+          const asked = String(inp.since ?? '').trim()
+          const since = /^\d{4}-\d{2}-\d{2}$/.test(asked) ? asked : new Date(Date.parse(today) - days * 86400000).toISOString().slice(0, 10)
+          const invSince = new Date(Date.parse(since) - 365 * 86400000).toISOString().slice(0, 10)
+          context.log.info(`fenêtre : transactions depuis ${since}, factures depuis ${invSince}${dryRun ? ' — DRY RUN' : ''}`)
+          return {
+            today, since, dryRun: dryRun ? 'yes' : 'no',
+            txFilter: JSON.stringify([{ field: 'date', operator: 'gteq', value: since }]),
+            invFilter: JSON.stringify([{ field: 'date', operator: 'gteq', value: invSince }]),
+          }
+        }
+  - name: accounts
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-bank-accounts
+      params: { limit: 100 }
+      paginate: all
+  - name: groups
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-category-groups
+      params: { limit: 100 }
+      paginate: all
+  - name: categories
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-categories
+      params: { limit: 100 }
+      paginate: all
+  - name: transactions
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-transactions
+      params: { filter: '{{steps.plan.txFilter}}', limit: 50 }
+      paginate: all
+  - name: customerInvoices
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-customer-invoices
+      params: { filter: '{{steps.plan.invFilter}}', limit: 100 }
+      paginate: all
+  - name: supplierInvoices
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-supplier-invoices
+      params: { filter: '{{steps.plan.invFilter}}', limit: 100 }
+      paginate: all
+  - name: lines
+    type: record
+    operator: list
+    props: { table: budget_lines, limit: 500 }
+  - name: mappings
+    type: record
+    operator: list
+    props: { table: category_mappings, limit: 5000 }
+  - name: knownAccounts
+    type: record
+    operator: list
+    props: { table: bank_accounts, limit: 200 }
+  - name: existing
+    type: record
+    operator: list
+    props:
+      table: transactions
+      filter:
+        conditions:
+          - { field: date, operator: greaterThanOrEqual, value: '{{steps.plan.since}}' }
+      limit: 10000
+  - name: knownPlanned
+    type: record
+    operator: list
+    props:
+      table: planned_items
+      filter:
+        conditions:
+          - { field: source, operator: equals, value: pennylane_invoice }
+      limit: 5000
+  - name: map
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 240000
+      inputData:
+        plan: '{{steps.plan}}'
+        accounts: '{{steps.accounts.data}}'
+        groups: '{{steps.groups.data}}'
+        categories: '{{steps.categories.data}}'
+        transactions: '{{steps.transactions.data}}'
+        customerInvoices: '{{steps.customerInvoices.data}}'
+        supplierInvoices: '{{steps.supplierInvoices.data}}'
+        lines: '{{steps.lines.records}}'
+        mappings: '{{steps.mappings.records}}'
+        knownAccounts: '{{steps.knownAccounts.records}}'
+        existing: '{{steps.existing.records}}'
+        knownPlanned: '{{steps.knownPlanned.records}}'
+      code: |
+        async function execute(context) {
+          const inp: any = context.inputData ?? {}
+          const plan: any = inp.plan ?? {}
+          const dryRun = plan.dryRun === 'yes'
+          const today = String(plan.today ?? new Date().toISOString().slice(0, 10))
+          const nowIso = new Date().toISOString()
+          const companyId = String(context.env.PENNYLANE_COMPANY_ID ?? '21901400')
+          const arr = (v: unknown): any[] => (Array.isArray(v) ? v : [])
+          const num = (v: unknown) => (v === null || v === undefined || v === '' ? 0 : Number(v) || 0)
+          const r2 = (n: number) => Math.round(n * 100) / 100
+          const isTrue = (v: unknown) => v === true || v === 'true' || v === 1 || v === '1'
+          const accounts = arr(inp.accounts), groups = arr(inp.groups), categories = arr(inp.categories), txns = arr(inp.transactions)
+          const lines = arr(inp.lines).filter((l: any) => l.active !== false && l.active !== 'false')
+          const mappings = arr(inp.mappings), known = arr(inp.knownAccounts), existing = arr(inp.existing), knownPlanned = arr(inp.knownPlanned)
+
+          // 1. Bank accounts: balance and name every run; kind / include_in_cash only on first sight.
+          const knownByKey = new Map<string, any>(known.map((a: any) => [String(a.pennylane_id), a]))
+          const accountRows: any[] = accounts.map((a: any) => {
+            const key = `pl:${a.id}`
+            const row: any = { pennylane_id: key, name: String(a.name ?? key), source: 'pennylane', currency: String(a.currency ?? 'EUR'), balance: r2(num(a.balance)), balance_date: today, synced_at: nowIso }
+            if (!knownByKey.has(key)) {
+              const n = String(a.name ?? '')
+              row.kind = /livret|épargne|epargne|savings/i.test(n) ? 'savings' : /prêt|pret|loan|dailly|emprunt/i.test(n) ? 'loan' : 'current'
+              // A savings account (the Livret A) is tracked by hand: Pennylane's copy is partial.
+              row.include_in_cash = row.kind === 'current'
+              row.is_reserve = false
+            }
+            return row
+          })
+
+          // 2. Categories: one mapping row per Pennylane category, the admin's budget_line never resent.
+          const groupById = new Map<string, any>(groups.map((g: any) => [String(g.id), g]))
+          const mappingByKey = new Map<string, any>(mappings.map((m: any) => [String(m.mapping_key), m]))
+          const mappingRows: any[] = categories.map((c: any) => ({
+            mapping_key: `cat:${c.id}`, source: 'pennylane', match_type: 'category_id', pattern: String(c.id), direction: 'any',
+            pennylane_category_label: String(c.label ?? ''), pennylane_category_group: String(groupById.get(String(c.category_group?.id))?.label ?? ''),
+            pennylane_direction: c.direction === 'cash_in' || c.direction === 'cash_out' ? c.direction : null, last_seen_at: nowIso,
+          }))
+          for (const g of groups) context.log.info(`famille de catégories Pennylane : ${g.label} (id ${g.id})`)
+          const catById = new Map<string, any>(categories.map((c: any) => [String(c.id), c]))
+
+          // 3. Transactions → budget line.
+          const lineById = new Map<string, any>(lines.map((l: any) => [String(l.id), l]))
+          const catchAll = (sign: 'in' | 'out') => lines.find((l: any) => isTrue(l.is_catch_all) && (sign === 'in' ? l.kind === 'income' : l.kind === 'expense'))
+          const rules = mappings
+            .filter((m: any) => m.source === 'manual' && m.active !== false && m.active !== 'false' && m.budget_line)
+            .sort((a: any, b: any) => num(a.priority ?? 100) - num(b.priority ?? 100))
+            .map((m: any) => {
+              let re: RegExp | null = null
+              if (m.match_type !== 'category_id') { try { re = new RegExp(String(m.pattern), 'i') } catch (e) { context.log.warn(`règle ${m.mapping_key} : motif invalide`) } }
+              return { ...m, re }
+            })
+          const hits = new Map<string, number>()
+          const existingById = new Map<string, any>(existing.map((e: any) => [String(e.pennylane_id), e]))
+          // Internal transfers by pairing: the same amount, opposite signs, two accounts, three days apart at most.
+          // Both legs on cash accounts → a transfer between Pennylane accounts (nets to zero); one leg on a
+          // savings or excluded account → a movement to or from the reserve (the Livret A).
+          const cashOf = new Map<string, boolean>()
+          for (const a of known) cashOf.set(String(a.pennylane_id), isTrue(a.include_in_cash) && a.kind !== 'loan')
+          for (const r of accountRows) if (!cashOf.has(r.pennylane_id)) cashOf.set(r.pennylane_id, r.include_in_cash === true)
+          const isCashAccount = (bankId: unknown) => cashOf.get(`pl:${bankId}`) === true
+          const byAbs = new Map<string, any[]>()
+          for (const t of txns) { const k = Math.abs(num(t.amount)).toFixed(2); byAbs.set(k, [...(byAbs.get(k) ?? []), t]) }
+          const pairKind = new Map<string, 'transfer_internal' | 'transfer_livret'>()
+          for (const group of byAbs.values()) {
+            if (group.length < 2) continue
+            const sorted = [...group].sort((a: any, b: any) => String(a.date).localeCompare(String(b.date)))
+            for (const a of sorted) {
+              if (pairKind.has(String(a.id))) continue
+              for (const b of sorted) {
+                if (a === b || pairKind.has(String(b.id))) continue
+                if (num(a.amount) !== -num(b.amount) || String(a.bank_account?.id) === String(b.bank_account?.id)) continue
+                if (Math.abs(Date.parse(String(a.date)) - Date.parse(String(b.date))) > 3 * 86400000) continue
+                const kind = isCashAccount(a.bank_account?.id) && isCashAccount(b.bank_account?.id) ? 'transfer_internal' : 'transfer_livret'
+                pairKind.set(String(a.id), kind); pairKind.set(String(b.id), kind)
+                break
+              }
+            }
+          }
+          const transferLine = (code: string) => lines.find((l: any) => String(l.code) === code)
+          const resolve = (t: any, prev: any) => {
+            const cats = arr(t.categories)
+            if (prev && isTrue(prev.manual_line_override) && prev.budget_line) return { line: lineById.get(String(prev.budget_line)), source: 'manual', internal: false }
+            const paired = pairKind.get(String(t.id))
+            if (paired && transferLine(paired)) return { line: transferLine(paired), source: 'label_rule', internal: true }
+            for (const c of cats) {
+              const m = mappingByKey.get(`cat:${c.id}`)
+              if (m?.budget_line && lineById.has(String(m.budget_line))) return { line: lineById.get(String(m.budget_line)), source: 'pennylane_category', internal: isTrue(m.is_internal_transfer) }
+            }
+            const amt = num(t.amount)
+            for (const r of rules) {
+              if ((r.direction === 'in' && amt < 0) || (r.direction === 'out' && amt > 0)) continue
+              let ok = false
+              if (r.match_type === 'category_id') ok = cats.some((c: any) => String(c.id) === String(r.pattern))
+              else if (r.match_type === 'category_label') ok = !!r.re && cats.some((c: any) => r.re.test(String(catById.get(String(c.id))?.label ?? c.label ?? '')))
+              else if (r.match_type === 'label') ok = !!r.re && r.re.test(String(t.label ?? ''))
+              if (ok && lineById.has(String(r.budget_line))) { hits.set(String(r.mapping_key), (hits.get(String(r.mapping_key)) ?? 0) + 1); return { line: lineById.get(String(r.budget_line)), source: 'label_rule', internal: isTrue(r.is_internal_transfer) } }
+            }
+            return { line: catchAll(amt < 0 ? 'out' : 'in'), source: 'catch_all', internal: false }
+          }
+          const rows: any[] = []
+          const seen = new Set<string>()
+          let attention = 0
+          for (const t of txns) {
+            const id = String(t.id)
+            seen.add(id)
+            const prev = existingById.get(id)
+            const { line, source, internal } = resolve(t, prev)
+            const amt = num(t.amount)
+            const cats = arr(t.categories)
+            const cat = cats[0]
+            const outstanding = num(t.outstanding_balance)
+            const matched = Math.abs(outstanding) < 0.01
+            const attachmentRequired = isTrue(t.attachment_required)
+            const isInternal = internal || line?.kind === 'transfer'
+            const hasInvoice = !!(t.customer?.id || t.supplier?.id) || matched
+            const justified = matched || !attachmentRequired
+            const reason = isInternal ? null
+              : amt < 0 && attachmentRequired && !matched ? 'unjustified_expense'
+              : amt > 0 && !matched && !t.customer?.id ? 'unallocated_customer_payment'
+              : !cat ? 'uncategorised'
+              : source === 'catch_all' ? 'catch_all'
+              : null
+            if (reason) attention++
+            const date = String(t.date ?? '').slice(0, 10)
+            rows.push({
+              pennylane_id: id, date, month: `${date.slice(0, 7)}-01`, year: Number(date.slice(0, 4)) || null,
+              amount: r2(amt), amount_in: r2(Math.max(amt, 0)), amount_out: r2(Math.max(-amt, 0)), label: String(t.label ?? ''),
+              ...(knownByKey.has(`pl:${t.bank_account?.id}`) ? { account: String(knownByKey.get(`pl:${t.bank_account?.id}`).id) } : {}),
+              pennylane_bank_account_id: String(t.bank_account?.id ?? ''),
+              pennylane_category_id: cat ? String(cat.id) : '', pennylane_category_label: cat ? String(catById.get(String(cat.id))?.label ?? cat.label ?? '') : '',
+              pennylane_category_group: cat ? String(groupById.get(String(catById.get(String(cat.id))?.category_group?.id ?? cat.category_group?.id))?.label ?? '') : '',
+              ...(line ? { budget_line: String(line.id), line_code: String(line.code), line_kind: line.kind } : { line_code: '', line_kind: null }),
+              mapping_source: source, is_internal_transfer: isInternal, attachment_required: attachmentRequired, outstanding_balance: r2(outstanding),
+              matched, has_invoice: hasInvoice, justified, needs_attention: !!reason, attention_reason: reason,
+              customer_id: t.customer?.id ? String(t.customer.id) : '', supplier_id: t.supplier?.id ? String(t.supplier.id) : '',
+              archived_at: t.archived_at ?? null, missing_in_pennylane: false,
+              // TODO: confirm the web path once from a transaction link in the Pennylane UI.
+              pennylane_url: `https://app.pennylane.com/companies/${companyId}/bank_transactions?transaction_id=${id}`,
+              synced_at: nowIso,
+            })
+          }
+          for (const e of existing) if (!seen.has(String(e.pennylane_id)) && !isTrue(e.missing_in_pennylane)) rows.push({ pennylane_id: String(e.pennylane_id), missing_in_pennylane: true, synced_at: nowIso })
+          const mappingHits: any[] = mappings.filter((m: any) => m.source === 'manual').map((m: any) => ({ mapping_key: m.mapping_key, hit_count: hits.get(String(m.mapping_key)) ?? 0 }))
+
+          // 4. Open invoices as dated items; the ones no longer open are done.
+          const saleLine = lines.find((l: any) => String(l.code) === '70_ca')
+          const supplierLine = catchAll('out')
+          const closedStatus = new Set(['paid', 'cancelled', 'partially_cancelled', 'credit_note', 'archived'])
+          const plannedRows: any[] = []
+          const openKeys = new Set<string>()
+          for (const i of arr(inp.customerInvoices)) {
+            const remaining = num(i.remaining_amount_with_tax)
+            if (i.draft || isTrue(i.paid) || closedStatus.has(String(i.status)) || remaining <= 0.01 || !saleLine) continue
+            const key = `inv:c:${i.id}`
+            openKeys.add(key)
+            const date = String(i.deadline ?? i.date ?? '').slice(0, 10)
+            if (!date) continue
+            plannedRows.push({ item_key: key, source: 'pennylane_invoice', label: `Facture client ${i.invoice_number ?? i.id}${i.label ? ' — ' + String(i.label).slice(0, 60) : ''}`, budget_line: String(saleLine.id), line_code: String(saleLine.code), direction: 'in', amount: r2(remaining), date, month: `${date.slice(0, 7)}-01`, year: Number(date.slice(0, 4)), recurrence: 'once', certainty: 'probable', status: 'expected', pennylane_ref: String(i.invoice_number ?? i.id) })
+          }
+          for (const i of arr(inp.supplierInvoices)) {
+            const remaining = -num(i.remaining_amount_with_tax)
+            if (i.archived_at || isTrue(i.paid) || remaining <= 0.01 || String(i.currency ?? 'EUR') !== 'EUR' || !supplierLine) continue
+            const key = `inv:s:${i.id}`
+            openKeys.add(key)
+            const date = String(i.deadline ?? i.date ?? '').slice(0, 10)
+            if (!date) continue
+            plannedRows.push({ item_key: key, source: 'pennylane_invoice', label: `Facture fournisseur ${i.invoice_number ?? i.id}${i.label ? ' — ' + String(i.label).slice(0, 60) : ''}`, budget_line: String(supplierLine.id), line_code: String(supplierLine.code), direction: 'out', amount: r2(remaining), date, month: `${date.slice(0, 7)}-01`, year: Number(date.slice(0, 4)), recurrence: 'once', certainty: 'certain', status: 'expected', pennylane_ref: String(i.invoice_number ?? i.id) })
+          }
+          for (const p of knownPlanned) if (p.item_key && !openKeys.has(String(p.item_key)) && p.status === 'expected') plannedRows.push({ item_key: String(p.item_key), status: 'done' })
+
+          const summary = { accounts: accountRows.length, categories: mappingRows.length, transactions: rows.length, attention, catchAll: rows.filter((r: any) => r.mapping_source === 'catch_all').length, internal: rows.filter((r: any) => r.is_internal_transfer).length, openInvoices: openKeys.size }
+          context.log.info(JSON.stringify(summary))
+          if (dryRun) return { accounts: [], mappings: [], mappingHits: [], transactions: [], planned: [], summary, dryRun: 'true' }
+          return { accounts: accountRows, mappings: mappingRows, mappingHits, transactions: rows, planned: plannedRows, summary, dryRun: 'false' }
+        }
+  - name: saveAccounts
+    type: record
+    operator: batchUpsert
+    props:
+      table: bank_accounts
+      items: '{{steps.map.accounts}}'
+      matchField: pennylane_id
+      continueOnItemError: true
+  - name: saveMappings
+    type: record
+    operator: batchUpsert
+    props:
+      table: category_mappings
+      items: '{{steps.map.mappings}}'
+      matchField: mapping_key
+      continueOnItemError: true
+  - name: saveMappingHits
+    type: record
+    operator: batchUpsert
+    props:
+      table: category_mappings
+      items: '{{steps.map.mappingHits}}'
+      matchField: mapping_key
+      continueOnItemError: true
+  - name: saveTransactions
+    type: record
+    operator: batchUpsert
+    props:
+      table: transactions
+      items: '{{steps.map.transactions}}'
+      matchField: pennylane_id
+      continueOnItemError: true
+  - name: savePlanned
+    type: record
+    operator: batchUpsert
+    props:
+      table: planned_items
+      items: '{{steps.map.planned}}'
+      matchField: item_key
+      continueOnItemError: true
+  - name: forecast
+    $ref: treasury-forecast-compute
+    $vars:
+      dryRun: '{{steps.map.dryRun}}'

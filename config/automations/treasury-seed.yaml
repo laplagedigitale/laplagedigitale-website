@@ -1,0 +1,149 @@
+# Automation: treasury-seed — the one-off seed of the Trésorerie, run once
+# after the first deploy (and again, harmlessly, after a change here):
+#
+#   POST /api/automations/treasury-seed/trigger {"dryRun": "true"}   then without
+#
+# It upserts the chart of lines (budget_lines, by code) and the manual mapping
+# rules (category_mappings, by key — the old spreadsheet script's CATEGORY_MAP
+# as regexes on the Pennylane category label or the bank label), and creates
+# when absent — never overwriting an admin's figures — the baseline scenario,
+# the Livret A account and a few dated items (IS instalments, the Eurométropole
+# subsidy, the « Provision pour TF »). The Pennylane categories themselves
+# arrive with the first pennylane-treasury-sync run; an admin then fills their
+# budget line in /_admin (view « Catégories Pennylane sans ligne »).
+name: treasury-seed
+label: Initialiser la Trésorerie (lignes, règles, scénario de référence)
+trigger:
+  type: manual
+  label: Initialiser la Trésorerie
+  requiredRole: admin
+  inputSchema:
+    dryRun: { type: string }
+timeout: 300000
+concurrency:
+  limit: 1
+actions:
+  - name: seed
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 120000
+      inputData:
+        dryRun: '{{trigger.input.dryRun}}'
+      code: |
+        async function execute(context) {
+          const dryRun = String(context.inputData?.dryRun ?? '').toLowerCase() === 'true'
+          const list = async (table: string, filter?: any): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, ...(filter ? { filter } : {}), limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          // code, label, kind, cash_group, pcg, pnl_group, vat, deductible, projection, prudence, catchAll, dated
+          const L = (code: string, label: string, kind: string, cash_group: string, pcg_account: string, pnl_group: string, vat_rate: number, vat_deductible: boolean, projection_method: string, prudence: string, is_catch_all = false, is_dated = false) =>
+            ({ code, label, kind, cash_group, pcg_account, pnl_group, vat_rate, vat_deductible, projection_method, prudence, is_catch_all, is_dated, active: true })
+          const lines: any[] = [
+            L('70_ca', "Chiffre d'affaires (abonnements, bureaux, salles, domiciliation)", 'income', 'activite', '706', 'produits_exploitation', 20, false, 'blend', 'prudent'),
+            L('756_cotisations', 'Cotisations des membres', 'income', 'autres_recettes', '756', 'autres_produits', 0, false, 'shift_year', 'prudent'),
+            L('74_subventions', "Subventions d'exploitation", 'income', 'subventions', '74', 'subventions', 0, false, 'shift_year', 'prudent'),
+            L('77_indemnites', 'Indemnités et produits exceptionnels', 'income', 'autres_recettes', '77', 'autres_produits', 0, false, 'none', 'prudent', false, true),
+            L('75_autres', 'Autres recettes (non catégorisées)', 'income', 'autres_recettes', '758', 'autres_produits', 0, false, 'zero', 'prudent', true),
+            L('604_sous_traitance', "Sous-traitance et prestations (Alsace Digitale, animation)", 'expense', 'achats', '604', 'achats', 20, true, 'blend', 'certain'),
+            L('605_mobilier', 'Mobilier et petit matériel', 'expense', 'achats', '605', 'achats', 20, true, 'blend', 'certain'),
+            L('6061_energie', 'Eau, électricité, internet', 'expense', 'achats', '6061', 'achats', 20, true, 'blend', 'certain'),
+            L('6063_fournitures_entretien', "Fournitures d'entretien et consommables", 'expense', 'achats', '6063', 'achats', 20, true, 'blend', 'certain'),
+            L('6064_admin_logiciels', 'Fournitures administratives et logiciels', 'expense', 'achats', '6064', 'achats', 20, true, 'blend', 'certain'),
+            L('613_loyer', 'Loyer (3F Grand Est)', 'expense', 'locaux', '613', 'services_exterieurs', 0, false, 'blend', 'certain'),
+            L('614_charges_locatives', 'Charges locatives et appels de charges', 'expense', 'locaux', '614', 'services_exterieurs', 0, false, 'blend', 'certain'),
+            L('615_entretien_nettoyage', 'Entretien, nettoyage, travaux', 'expense', 'locaux', '615', 'services_exterieurs', 20, true, 'blend', 'certain'),
+            L('616_assurances', 'Assurances', 'expense', 'locaux', '616', 'services_exterieurs', 0, false, 'blend', 'certain'),
+            L('622_honoraires', 'Honoraires (comptabilité, commissaire aux comptes)', 'expense', 'fonctionnement', '622', 'autres_services', 20, true, 'blend', 'certain'),
+            L('627_frais_bancaires', 'Frais bancaires', 'expense', 'fonctionnement', '627', 'autres_services', 0, false, 'trailing12', 'certain'),
+            L('628_divers', 'Divers (non catégorisé)', 'expense', 'fonctionnement', '628', 'autres_services', 0, false, 'trailing12', 'certain', true),
+            L('631_impots_taxes', 'Impôts et taxes (IS, taxe sur les salaires, CFE)', 'expense', 'impots_tva', '631', 'impots', 0, false, 'none', 'certain', false, true),
+            L('641_remuneration', 'Rémunération du personnel', 'expense', 'personnel', '641', 'personnel', 0, false, 'trailing12', 'certain'),
+            L('645_charges_sociales', 'Charges sociales (URSSAF, retraite, prévoyance, médecine du travail)', 'expense', 'personnel', '645', 'personnel', 0, false, 'trailing12', 'certain'),
+            L('648_tickets_restaurant', 'Tickets restaurant et autres charges de personnel', 'expense', 'personnel', '648', 'personnel', 0, false, 'trailing12', 'certain'),
+            L('tva', 'TVA à payer (le 24 du mois suivant)', 'tax', 'impots_tva', '44571', 'hors_resultat', 0, false, 'vat_estimate', 'certain'),
+            L('164_emprunt', "Remboursement d'emprunt", 'expense', 'financement', '164', 'hors_resultat', 0, false, 'none', 'certain', false, true),
+            L('transfer_livret', 'Virements vers / depuis le Livret A', 'transfer', 'transferts', '58', 'hors_resultat', 0, false, 'none', 'certain'),
+            L('transfer_internal', 'Virements entre comptes Pennylane', 'transfer', 'transferts', '58', 'hors_resultat', 0, false, 'none', 'certain'),
+          ]
+          lines.forEach((l, i) => { l.line_order = (i + 1) * 10 })
+
+          // Manual rules: category-label regexes first (priority 10-50), bank-label regexes after (60-90), internal transfers before everything (1).
+          const R = (key: string, match_type: string, pattern: string, code: string, priority: number, direction = 'any', is_internal_transfer = false, notes = '') =>
+            ({ mapping_key: `label:${key}`, source: 'manual', match_type, pattern, direction, priority, active: true, is_internal_transfer, notes, _code: code })
+          const rules: any[] = [
+            R('livret-a', 'label', '^VIREMENT EMIS WEB ASSOC\\.? LA PLAGE DIGI|^VIREMENT EN VOTRE FAVEUR DE ASSOC\\.? LA PLAGE DIGITALE$|Vir COMPTE COURANT A LIVRET A|VIR CPTE COURANT A LIVRET A|Vir LIVRET A A COMPTE COURANT|Retrait fonds transfert compte courant', 'transfer_livret', 1, 'any', true, "Allers-retours avec le Livret A : les virements que le compte courant émet vers (ou reçoit de) l'association elle-même, et les libellés du Livret A"),
+            R('virement-interne', 'label', '^VIREMENT EMIS VIR INST vers La Plage Digitale', 'transfer_internal', 2, 'out', true, "Virements vers un autre compte de l'association (un virement dont les deux côtés sont dans Pennylane est reconnu sans règle, par appariement)"),
+            R('cat-ventes', 'category_label', '^Mise à disposition de bureau|^Mise à disposition FIXES|^Services d.hébergement|^Domiciliation|^Héberger des (réunions|manifestations)|^Mise à disposition de salle|^Ev[eè]nement port|^Restauration', '70_ca', 10, 'in'),
+            R('cat-cotisations', 'category_label', '^Cotisations?$|HelloAsso', '756_cotisations', 10, 'in'),
+            R('cat-subventions', 'category_label', '^Subvention|Provision pour TF', '74_subventions', 10, 'in'),
+            R('cat-sous-traitance', 'category_label', '^Sous-traitance|^Gérer et animer des tiers-lieux', '604_sous_traitance', 20, 'out'),
+            R('cat-energie', 'category_label', '^Eau, electricit|^Eau, électricit', '6061_energie', 20, 'out'),
+            R('cat-entretien-fournitures', 'category_label', "^Fournitures d'entretien", '6063_fournitures_entretien', 20, 'out'),
+            R('cat-logiciels', 'category_label', '^Logiciels|^Consommables|^Fournitures administratives', '6064_admin_logiciels', 20, 'out'),
+            R('cat-mobilier', 'category_label', '^Mobiliers?', '605_mobilier', 20, 'out'),
+            R('cat-nettoyage-travaux', 'category_label', '^Entretien, nettoyage|^Travaux', '615_entretien_nettoyage', 20, 'out'),
+            R('cat-assurances', 'category_label', "^Primes? d'assurances?", '616_assurances', 20, 'out'),
+            R('cat-comptabilite', 'category_label', '^Comptabilit', '622_honoraires', 20, 'out'),
+            R('cat-frais-bancaires', 'category_label', '^Frais bancaires', '627_frais_bancaires', 20, 'out'),
+            R('cat-impots', 'category_label', '^Imp[oô]ts? ?& ?taxes', '631_impots_taxes', 20, 'out'),
+            R('cat-remuneration', 'category_label', '^Rémunération du personnel', '641_remuneration', 20, 'out'),
+            R('cat-charges-personnel', 'category_label', '^Charges de personnel|^Co[uû]t du personnel', '645_charges_sociales', 20, 'out'),
+            R('cat-tickets-restaurant', 'category_label', '^Tickets? Restaurant', '648_tickets_restaurant', 20, 'out'),
+            R('cat-pret', 'category_label', '^Prêt de (trésorerie|travaux)', '164_emprunt', 20, 'out'),
+            R('lbl-3f', 'label', '3F Grand Est|IMMO 3F|3F GE', '613_loyer', 60, 'out'),
+            R('lbl-es-energies', 'label', 'ES Energies|ES ÉNERGIES|ENERGIES STRASBOURG', '6061_energie', 60, 'out'),
+            R('lbl-alsace-proprete', 'label', 'ALSACE PROPRETE', '615_entretien_nettoyage', 60, 'out'),
+            R('lbl-mc-perspectives', 'label', 'MC PERSPECTIVES', '622_honoraires', 60, 'out'),
+            R('lbl-dgfip-tva', 'label', 'DGFIP.*TVA|TVA.*DGFIP|IMPOT TVA', 'tva', 60, 'out'),
+            R('lbl-dgfip-is', 'label', 'DGFIP|DIRECTION GENERALE DES FINANCES|SIE STRASBOURG', '631_impots_taxes', 61, 'out'),
+            R('lbl-sie-remboursement', 'label', 'SIE STRASBOURG|DGFIP', '74_subventions', 61, 'in', false, 'Un remboursement ou dégrèvement reçu du Trésor'),
+            R('lbl-salaire', 'label', 'vers MATHIEU|MAPPS Remuneration|MAPPS REMUNERATION|SOLDE TOUT COMPTE|SALAIRE', '641_remuneration', 60, 'out'),
+            R('lbl-charges-sociales', 'label', 'URSSAF|AG2R|AXA FRANCE VIE|MEDECINE DU TRAVAIL|AST 67|AST67|MALAKOFF|HUMANIS', '645_charges_sociales', 60, 'out'),
+            R('lbl-swile', 'label', 'Swile|SWILE', '648_tickets_restaurant', 60, 'out'),
+            R('lbl-emprunt', 'label', 'france active|FRANCE ACTIVE|REMBOURSEMENT DE PRET|ECHEANCE PRET|ADOC METIS', '164_emprunt', 60, 'out'),
+            R('lbl-helloasso', 'label', 'HelloAsso|HELLOASSO', '756_cotisations', 60, 'in'),
+            R('lbl-subvention', 'label', 'SUBVENTION|EUROMETROPOLE|VILLE DE STRASBOURG|REGION GRAND EST|FONCTIONNEMENT 2026', '74_subventions', 62, 'in'),
+            R('lbl-indemnite', 'label', 'GENERALI|Sinistre|INDEMNIT', '77_indemnites', 62, 'in'),
+            R('lbl-frais-bancaires', 'label', 'COTISATION CARTE|FRAIS BANCAIRES|COMMISSION|SWAN - Card transaction|Card transaction in foreign currency', '627_frais_bancaires', 70, 'out'),
+            R('lbl-assurances', 'label', 'MAIF|GENERALI IARD|AXA ASSURANCE|HISCOX', '616_assurances', 70, 'out'),
+            R('lbl-energie-fournisseurs', 'label', 'FREE MOBILE|FREE TELECOM|ORANGE|BOUYGUES|SFR', '6061_energie', 70, 'out'),
+            R('lbl-logiciels', 'label', 'NOTION LABS|GOOGLE|CLAUDE AI|ANTHROPIC|OVH|SCALINGO|PENNYLANE|SOVRIUM|ADOBE|CANVA|SLACK', '6064_admin_logiciels', 70, 'out'),
+            R('lbl-fournitures', 'label', 'AMAZON|BEE VRAC|DISTRICALL|SCHROLL|METRO|LEROY MERLIN|BRICO|IKEA|ACTION', '6063_fournitures_entretien', 75, 'out'),
+            R('lbl-ventes', 'label', 'Facture F20|FACTURE F20|LOYER|ABONNEMENT|DOMICILIATION|COWORKING', '70_ca', 80, 'in'),
+          ]
+          const stats: Record<string, number> = {}
+          const written = (k: string, n: number) => { stats[k] = (stats[k] ?? 0) + n }
+
+          if (!dryRun) await context.actions.record.batchUpsert({ table: 'budget_lines', items: lines, matchField: 'code', continueOnItemError: true })
+          written('budget_lines', lines.length)
+          const lineByCode = new Map<string, any>((await list('budget_lines')).map((l: any) => [String(l.code), l]))
+          const ruleRows = rules.map((r: any) => { const { _code, ...rest } = r; const line = lineByCode.get(_code); return { ...rest, line_code: _code, ...(line ? { budget_line: String(line.id) } : {}) } })
+          if (!dryRun) await context.actions.record.batchUpsert({ table: 'category_mappings', items: ruleRows, matchField: 'mapping_key', continueOnItemError: true })
+          written('category_mappings', ruleRows.length)
+
+          // Created only when absent: the admin's later edits survive a re-run.
+          const scenarios = await list('scenarios')
+          if (!scenarios.some((s: any) => String(s.scenario_key) === 'baseline')) {
+            if (!dryRun) await context.actions.record.create({ table: 'scenarios', data: { scenario_key: 'baseline', name: 'Scénario de référence', year: 2026, is_baseline: true, status: 'active', weight_recent: 0.33, income_haircut_pct: 0, include_probable_income: false, notes: "Le prévisionnel tiré de Pennylane : réalisé des mois passés, projection des mois à venir. Ses budgets sont le budget voté." } })
+            written('scenarios', 1)
+          }
+          const accounts = await list('bank_accounts')
+          if (!accounts.some((a: any) => String(a.pennylane_id) === 'manual:livret-a')) {
+            if (!dryRun) await context.actions.record.create({ table: 'bank_accounts', data: { pennylane_id: 'manual:livret-a', name: 'Livret A (Crédit Agricole)', source: 'manual', kind: 'savings', currency: 'EUR', balance: 30691.66, balance_date: '2026-06-24', include_in_cash: true, is_reserve: true, notes: "Compte hors Pennylane : mettre le solde et sa date à jour depuis le relevé." } })
+            written('bank_accounts', 1)
+          }
+          const planned = await list('planned_items', { conditions: [{ field: 'source', operator: 'equals', value: 'manual' }] })
+          const P = (label: string, code: string, direction: string, amount: number, date: string, recurrence: string, certainty: string, counterparty: string, notes: string, until?: string) =>
+            ({ source: 'manual', label, budget_line: String(lineByCode.get(code)?.id ?? ''), line_code: code, direction, amount, date, month: `${date.slice(0, 7)}-01`, year: Number(date.slice(0, 4)), recurrence, until: until ?? null, certainty, status: 'expected', counterparty, notes })
+          const seeds = [
+            P("Acompte d'IS", '631_impots_taxes', 'out', 1223, '2026-03-15', 'quarterly', 'certain', 'DGFIP', "Acomptes trimestriels (15/03, 15/06, 15/09, 15/12) — montant de l'acompte du 15/09/2026 ; à ajuster après la liquidation."),
+            P('Subvention de fonctionnement Eurométropole', '74_subventions', 'in', 9000, '2026-09-17', 'yearly', 'probable', 'Eurométropole de Strasbourg', 'Reçue le 17/09/2026 ; attendue chaque année sous réserve de la décision.'),
+            P('Provision pour TF (Alsace Digitale)', '74_subventions', 'in', 8000, '2026-12-15', 'once', 'probable', 'Alsace Digitale', 'Date et montant à confirmer.'),
+          ].filter((p) => p.budget_line && !planned.some((e: any) => e.label === p.label))
+          if (seeds.length > 0 && !dryRun) await context.actions.record.batchCreate({ table: 'planned_items', items: seeds, continueOnItemError: true })
+          written('planned_items', seeds.length)
+          context.log.info(`${dryRun ? 'DRY RUN — ' : ''}${JSON.stringify(stats)}`)
+          return { ...stats, dryRun }
+        }

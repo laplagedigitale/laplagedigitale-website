@@ -1,0 +1,63 @@
+# Table: scenarios — the baseline (key `baseline`, is_baseline, seeded) and
+# the named scenarios an admin creates on /administration/finances/previsionnel
+# to simulate a decision: a hire, a budget for the director, a raise. A new row
+# starts treasury-scenario-init, which copies the budgets, adjustments and
+# dated items of `copy_from` (the baseline by default) and computes it.
+#
+# The top fields are the scenario's own assumptions; everything from
+# `computed_at` down is written by treasury-forecast-compute (batchUpsert on
+# `key`) so the pages read year-end cash, the low point, the runway and the
+# gap to the baseline from one row — a KPI cannot subtract two aggregates.
+# `check_delta` is the accountant-style net check: Σ |Pennylane net − lines
+# net| over the past months, 0 when every transaction landed on one line.
+id: 15
+name: scenarios
+aiAccess:
+  description: "Cash-plan scenarios: the baseline and the simulations, their assumptions and the computed year-end cash, low point, runway and gap to the baseline."
+  operations: [read, list]
+fields:
+  - { id: 1, name: scenario_key, label: Clé, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: name, label: Scénario, type: single-line-text, required: true }
+  - { id: 3, name: year, label: Exercice, type: integer, required: true, default: 2026 }
+  - { id: 4, name: is_baseline, label: Référence, type: checkbox, default: false }
+  - id: 5
+    name: status
+    label: Statut
+    type: single-select
+    default: active
+    options:
+      - { value: active, label: Actif, color: '#10b981' }
+      - { value: archived, label: Archivé, color: '#94a3b8' }
+  - { id: 6, name: copy_from, label: Modèle copié, type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 7, name: notes, label: Hypothèses, type: long-text }
+  - { id: 8, name: weight_recent, label: "Poids de l'année en cours", type: decimal, precision: 2, default: 0.33 }
+  - { id: 9, name: income_haircut_pct, label: "Décote sur les produits projetés (%)", type: decimal, precision: 1, default: 0 }
+  - { id: 10, name: include_probable_income, label: Compter les recettes probables, type: checkbox, default: false }
+  - { id: 11, name: computed_at, label: Calculé le, type: datetime }
+  - { id: 12, name: opening_cash, label: "Trésorerie au 1er janvier", type: currency, currency: EUR, precision: 2 }
+  - { id: 13, name: current_cash, label: "Trésorerie bancaire (Pennylane)", type: currency, currency: EUR, precision: 2 }
+  - { id: 14, name: reserve, label: Réserve (Livret A), type: currency, currency: EUR, precision: 2 }
+  - { id: 15, name: year_end_cash, label: "Trésorerie fin d'année", type: currency, currency: EUR, precision: 2 }
+  - { id: 16, name: year_end_cash_with_reserve, label: "Fin d'année avec réserve", type: currency, currency: EUR, precision: 2 }
+  - { id: 17, name: lowest_balance, label: Point bas, type: currency, currency: EUR, precision: 2 }
+  - { id: 18, name: lowest_month, label: Mois du point bas, type: date }
+  - { id: 19, name: runway_months, label: Autonomie (mois), type: decimal, precision: 1 }
+  - { id: 20, name: year_income, label: "Encaissements de l'année", type: currency, currency: EUR, precision: 2 }
+  - { id: 21, name: year_expense, label: "Décaissements de l'année", type: currency, currency: EUR, precision: 2 }
+  - { id: 22, name: year_result, label: "Recettes − dépenses", type: currency, currency: EUR, precision: 2 }
+  - { id: 23, name: delta_vs_baseline, label: Écart vs référence, type: currency, currency: EUR, precision: 2 }
+  - id: 24
+    name: comfort
+    label: Confort
+    type: single-select
+    options:
+      - { value: ok, label: Confortable, color: '#10b981' }
+      - { value: tight, label: Tendu, color: '#f59e0b' }
+      - { value: negative, label: Négatif, color: '#ef4444' }
+  - { id: 25, name: check_delta, label: Écart de contrôle, type: currency, currency: EUR, precision: 2 }
+  - { id: 26, name: created_at, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

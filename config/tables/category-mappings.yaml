@@ -1,0 +1,74 @@
+# Table: category_mappings — how a Pennylane transaction finds its budget
+# line. Pennylane first: pennylane-treasury-sync keeps one `source: pennylane`
+# row per Pennylane category (`mapping_key` cat:<id>, label, family,
+# direction, last_seen_at) and an admin fills its `budget_line`; the view
+# mappings_a_completer lists the ones still empty. Then the manual rules
+# (`source: manual`, seeded from the old script's CATEGORY_MAP): a regex on
+# the category label or on the bank label, by priority (lower wins), with an
+# optional direction. The sync never overwrites a `budget_line`, and stamps
+# `hit_count` so a dead rule shows. Admin only.
+id: 14
+name: category_mappings
+aiAccess:
+  description: "Mapping of Pennylane categories and bank-label patterns to budget lines, with the Pennylane categories seen by the sync."
+  operations: [read, list]
+fields:
+  - { id: 1, name: mapping_key, label: Clé, type: single-line-text, required: true, unique: true }
+  - id: 2
+    name: source
+    label: Source
+    type: single-select
+    default: manual
+    options:
+      - { value: pennylane, label: Catégorie Pennylane, color: '#3b82f6' }
+      - { value: manual, label: Règle manuelle, color: '#f59e0b' }
+  - id: 3
+    name: match_type
+    label: Critère
+    type: single-select
+    required: true
+    options:
+      - { value: category_id, label: Id de catégorie, color: '#3b82f6' }
+      - { value: category_label, label: Libellé de catégorie (regex), color: '#14b8a6' }
+      - { value: label, label: Libellé bancaire (regex), color: '#8b5cf6' }
+  - { id: 4, name: pattern, label: Motif, type: single-line-text, required: true }
+  - id: 5
+    name: direction
+    label: Sens
+    type: single-select
+    default: any
+    options:
+      - { value: any, label: Indifférent, color: '#94a3b8' }
+      - { value: in, label: Encaissement, color: '#10b981' }
+      - { value: out, label: Décaissement, color: '#ef4444' }
+  - { id: 6, name: budget_line, label: Ligne budgétaire, type: relationship, relatedTable: budget_lines, relationType: many-to-one, displayField: label, onDelete: set-null }
+  - { id: 7, name: line_code, label: Code ligne, type: single-line-text }
+  - { id: 8, name: pennylane_category_label, label: Catégorie Pennylane, type: single-line-text }
+  - { id: 9, name: pennylane_category_group, label: Famille, type: single-line-text }
+  - id: 10
+    name: pennylane_direction
+    label: Sens (Pennylane)
+    type: single-select
+    options:
+      - { value: cash_in, label: Encaissement, color: '#10b981' }
+      - { value: cash_out, label: Décaissement, color: '#ef4444' }
+  - { id: 11, name: is_internal_transfer, label: Virement interne, type: checkbox, default: false }
+  - { id: 12, name: priority, label: Priorité, type: integer, default: 100 }
+  - { id: 13, name: active, label: Active, type: checkbox, default: true }
+  - { id: 14, name: last_seen_at, label: Vue le, type: datetime }
+  - { id: 15, name: hit_count, label: Transactions affectées, type: integer }
+  - { id: 16, name: notes, label: Notes, type: long-text }
+views:
+  - id: mappings_a_completer
+    name: Catégories Pennylane sans ligne
+    filters:
+      and:
+        - { field: source, operator: equals, value: pennylane }
+        - { field: budget_line, operator: isEmpty }
+    sorts:
+      - { field: pennylane_category_label, direction: asc }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

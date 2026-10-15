@@ -1,0 +1,247 @@
+# Page: admin-finances-treasury — « Trésorerie » in the Administration's
+# Finances section: where the money is today. The total across the accounts
+# counted in the cash position, the bank accounts one by one (the Pennylane
+# ones synced every hour, the Livret A keyed in by hand), the month's inflows
+# and outflows, the baseline forecast of the balance, and the bookkeeping
+# points the accountant asks about — debits without an invoice, transactions
+# without a category, customer payments not matched to an invoice.
+#
+# Every figure is a mirror written by pennylane-treasury-sync (hourly) and
+# treasury-forecast: a transaction is corrected in Pennylane, never here. The
+# three « Points comptables » open the Transactions page on the matching tab.
+name: admin-finances-treasury
+path: /administration/finances/tresorerie
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Trésorerie — Administration"
+  description: "La trésorerie de La Plage Digitale : les comptes, le mois en cours et les points comptables à traiter."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Trésorerie, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Où en est l'argent de l'association : les comptes, ce qui est entré et sorti ce mois-ci, et ce que le prévisionnel de référence annonce. Les soldes et les opérations viennent de Pennylane (mis à jour toutes les heures), sauf le Livret A, saisi à la main.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: 'Voir le prévisionnel →'
+                props:
+                  href: /administration/finances/previsionnel
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+
+          # The position: what counts as cash, what sits on the current
+          # accounts, and the month so far (internal transfers left out).
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
+            children:
+              - type: kpi
+                label: Trésorerie totale
+                icon: piggy-bank
+                dataSource:
+                  table: bank_accounts
+                  filter:
+                    - { field: include_in_cash, operator: eq, value: true }
+                kpiAggregate: { function: sum, field: balance }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Comptes courants (Pennylane)
+                icon: landmark
+                dataSource:
+                  table: bank_accounts
+                  filter:
+                    - { field: include_in_cash, operator: eq, value: true }
+                    - { field: source, operator: eq, value: pennylane }
+                kpiAggregate: { function: sum, field: balance }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Encaissements du mois
+                icon: arrow-down-to-line
+                dataSource:
+                  table: transactions
+                  filter:
+                    - { field: date, operator: gte, value: $startOfMonth }
+                    - { field: is_internal_transfer, operator: eq, value: false }
+                kpiAggregate: { function: sum, field: amount_in }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+                sparkline: { field: amount_in, groupBy: date, interval: day, days: 30 }
+              - type: kpi
+                label: Décaissements du mois
+                icon: arrow-up-from-line
+                dataSource:
+                  table: transactions
+                  filter:
+                    - { field: date, operator: gte, value: $startOfMonth }
+                    - { field: is_internal_transfer, operator: eq, value: false }
+                kpiAggregate: { function: sum, field: amount_out }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+                sparkline: { field: amount_out, groupBy: date, interval: day, days: 30 }
+
+          # One card per account. A manual account says so, with its statement date.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Les comptes, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: list
+                dataSource:
+                  table: bank_accounts
+                  sort:
+                    - { field: include_in_cash, direction: desc }
+                    - { field: kind, direction: asc }
+                    - { field: name, direction: asc }
+                  limit: 12
+                listDisplay:
+                  emptyMessage: "Aucun compte pour le moment : la synchronisation Pennylane les crée à son premier passage."
+                props:
+                  className: 'list-none p-0 m-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'
+                children:
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-5 space-y-3'
+                    children:
+                      - type: flex
+                        props: { className: 'flex items-start justify-between gap-3' }
+                        children:
+                          - { type: record-field, props: { field: name, className: 'font-semibold text-navy' } }
+                          - { type: record-field, props: { field: kind } }
+                      - { type: record-field, format: currency, props: { field: balance, className: 'block text-2xl font-bold text-navy' } }
+                      - type: flex
+                        props: { className: 'flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-muted' }
+                        children:
+                          - { type: text, element: span, content: Solde au }
+                          - { type: record-field, format: short-date, props: { field: balance_date } }
+                      - { type: text, element: p, content: "Solde saisi à la main depuis le relevé : à mettre à jour dans la console Sovrium (table bank_accounts).", visibility: { record: { field: source, eq: manual } }, props: { className: 'text-xs text-navy p-2 rounded-lg bg-orange-100' } }
+                      - { type: text, element: p, content: "Hors trésorerie : ce compte n'entre pas dans le total.", visibility: { record: { field: include_in_cash, eq: false } }, props: { className: 'text-xs text-text-muted' } }
+                      - { type: record-field, props: { field: notes, className: 'text-xs text-text-muted whitespace-pre-line' } }
+
+          # The baseline's balance, month by month.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Trésorerie prévisionnelle, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Voir le prévisionnel →', props: { href: /administration/finances/previsionnel, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: p, content: "Le solde bancaire prévu à la fin de chaque mois selon le scénario de référence. En bleu le solde Pennylane, en orange la trésorerie totale avec la réserve du Livret A.", props: { className: 'text-sm text-text-muted' } }
+                  - type: chart
+                    chartType: line
+                    props:
+                      aria-label: Solde de trésorerie prévu par mois (scénario de référence)
+                    dataSource:
+                      table: forecast_balances
+                      filter:
+                        - { field: is_baseline, operator: eq, value: true }
+                      sort:
+                        - { field: month, direction: asc }
+                      limit: 12
+                    xAxis: { field: month, label: Mois, format: date }
+                    yAxis: { field: closing, label: Solde, format: currency, gridLines: true }
+                    series:
+                      - { field: closing, label: Solde de fin de mois, color: blue }
+                      - { field: total_with_reserve, label: Avec la réserve, color: orange }
+                    legend: { position: bottom, visible: true }
+                    emptyMessage: "Pas encore de prévisionnel : lancez « Recalculer le prévisionnel » sur le scénario de référence."
+
+          # What the accountant asks about, counted, then the latest debits.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Points comptables, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Toutes les transactions →', props: { href: /administration/finances/transactions, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - { type: text, element: p, content: "Ce que le cabinet comptable demande chaque mois : une facture pour chaque débit, une catégorie pour chaque opération, et un lettrage pour chaque encaissement. Tout se corrige dans Pennylane.", props: { className: 'text-sm text-text-muted max-w-2xl' } }
+              - type: grid
+                props:
+                  className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+                children:
+                  - type: kpi
+                    label: Débits sans justificatif
+                    icon: file-question
+                    dataSource:
+                      table: transactions
+                      filter:
+                        - { field: needs_attention, operator: eq, value: true }
+                        - { field: attention_reason, operator: eq, value: unjustified_expense }
+                    kpiAggregate: { function: count }
+                    thresholds:
+                      - { value: 1, color: yellow }
+                  - type: kpi
+                    label: Sans catégorie
+                    icon: tags
+                    dataSource:
+                      table: transactions
+                      filter:
+                        - { field: needs_attention, operator: eq, value: true }
+                        - { field: attention_reason, operator: in, value: [uncategorised, catch_all] }
+                    kpiAggregate: { function: count }
+                    thresholds:
+                      - { value: 1, color: yellow }
+                  - type: kpi
+                    label: Encaissements non lettrés
+                    icon: link-2-off
+                    dataSource:
+                      table: transactions
+                      filter:
+                        - { field: needs_attention, operator: eq, value: true }
+                        - { field: attention_reason, operator: eq, value: unallocated_customer_payment }
+                    kpiAggregate: { function: count }
+                    thresholds:
+                      - { value: 1, color: yellow }
+              - type: flex
+                props: { className: 'flex flex-wrap gap-x-6 gap-y-2 text-sm' }
+                children:
+                  - { type: link, content: 'Débits sans justificatif →', props: { href: '/administration/finances/transactions?onglet=justificatifs', className: 'font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: 'Sans catégorie →', props: { href: '/administration/finances/transactions?onglet=categories', className: 'font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: 'Encaissements non lettrés →', props: { href: '/administration/finances/transactions?onglet=lettrage', className: 'font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: h3, content: Derniers débits sans justificatif, props: { className: 'text-base font-semibold text-navy' } }
+                  # Read-only; a row opens the transaction in Pennylane.
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Les dix derniers débits sans justificatif
+                    onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
+                    dataSource:
+                      table: transactions
+                      filter:
+                        - { field: needs_attention, operator: eq, value: true }
+                        - { field: attention_reason, operator: eq, value: unjustified_expense }
+                      sort:
+                        - { field: date, direction: desc }
+                      limit: 10
+                    emptyMessage: Aucun débit sans justificatif.
+                    columns:
+                      - { field: date, label: Date, format: short-date }
+                      - { field: label, label: Libellé bancaire, truncate: true }
+                      - { field: account, label: Compte }
+                      - { field: pennylane_category_label, label: Catégorie Pennylane }
+                      - { field: amount, label: Montant, format: currency, align: right }

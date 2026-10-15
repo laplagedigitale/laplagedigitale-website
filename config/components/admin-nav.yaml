@@ -73,6 +73,9 @@ children:
           - label: Finances
             items:
               - { label: Vue d'ensemble, href: /administration/finances, icon: chart-pie }
+              - { label: Trésorerie, href: /administration/finances/tresorerie, icon: piggy-bank }
+              - { label: Prévisionnel, href: /administration/finances/previsionnel, icon: chart-line, activeMatch: prefix }
+              - { label: Transactions, href: /administration/finances/transactions, icon: arrow-left-right }
               - { label: Factures, href: /administration/finances/factures, icon: receipt }
               - { label: Facturation Flex, href: /administration/finances/flex, icon: calendar-days }
               - { label: Prélèvements, href: /administration/finances/prelevements, icon: landmark }

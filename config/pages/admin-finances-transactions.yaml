@@ -1,0 +1,192 @@
+# Page: admin-finances-transactions — « Transactions » in the Administration's
+# Finances section: the bank transactions mirrored from Pennylane by
+# pennylane-treasury-sync (hourly), with the budget line each one was mapped
+# to, on five tabs — all of them, then one per bookkeeping point the
+# accountant asks about. Each tab has an address (?onglet=…), which the
+# Trésorerie page and the dashboards link to.
+#
+# Read-only: a transaction is justified, categorised and matched in
+# Pennylane, which a row click opens in a new tab. The mapping to a budget
+# line is the sync's (category-mappings), re-applied on every run.
+name: admin-finances-transactions
+path: /administration/finances/transactions
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: toutes
+    enum: [toutes, justificatifs, categories, lettrage, internes]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Transactions — Administration"
+  description: "Les opérations bancaires de La Plage Digitale et les points comptables à traiter."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Transactions, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Les opérations bancaires telles que Pennylane les voit, mises à jour toutes les heures, et la ligne du prévisionnel où chacune est rangée. Un clic ouvre l'opération dans Pennylane : c'est là qu'on joint la facture, choisit la catégorie ou lettre l'encaissement.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: tabs
+            defaultTab: $query.onglet
+            panels:
+              - { id: toutes, label: Toutes }
+              - { id: justificatifs, label: Sans justificatif, description: Débits sans facture }
+              - { id: categories, label: Sans catégorie, description: À ranger dans Pennylane }
+              - { id: lettrage, label: Non lettrées, description: Encaissements sans facture }
+              - { id: internes, label: Virements internes, description: Hors recettes et dépenses }
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Toutes les transactions
+                    onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
+                    dataSource:
+                      table: transactions
+                      sort:
+                        - { field: date, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    toolbar: { search: true, filters: true, export: true }
+                    emptyMessage: "Aucune transaction pour le moment : la synchronisation Pennylane les recopie à son premier passage."
+                    columns:
+                      - { field: date, label: Date, format: short-date }
+                      - { field: label, label: Libellé bancaire, truncate: true }
+                      - { field: account, label: Compte }
+                      - { field: pennylane_category_label, label: Catégorie Pennylane }
+                      - { field: budget_line, label: Ligne }
+                      - { field: amount, label: Montant, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: justified, label: Justifiée, format: check-cross }
+                      - { field: matched, label: Lettrée, format: check-cross }
+                      - { field: is_internal_transfer, label: Interne, format: check-cross }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: p, content: "Les débits pour lesquels Pennylane attend une facture et n'en a pas. Joignez-la dans Pennylane : la ligne disparaît à la synchronisation suivante.", props: { className: 'text-sm text-text-muted' } }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Débits sans justificatif
+                    onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
+                    dataSource:
+                      table: transactions
+                      filter:
+                        - { field: attention_reason, operator: eq, value: unjustified_expense }
+                      sort:
+                        - { field: date, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    toolbar: { search: true, export: true }
+                    emptyMessage: Aucun débit sans justificatif.
+                    columns:
+                      - { field: date, label: Date, format: short-date }
+                      - { field: label, label: Libellé bancaire, truncate: true }
+                      - { field: account, label: Compte }
+                      - { field: pennylane_category_label, label: Catégorie Pennylane }
+                      - { field: budget_line, label: Ligne }
+                      - { field: amount, label: Montant, format: currency, align: right }
+                      - { field: justified, label: Justifiée, format: check-cross }
+                      - { field: matched, label: Lettrée, format: check-cross }
+                      - { field: is_internal_transfer, label: Interne, format: check-cross }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: p, content: "Les opérations sans catégorie Pennylane, et celles qu'aucune règle ne range : elles tombent sur la ligne par défaut du prévisionnel. Choisissez la catégorie dans Pennylane.", props: { className: 'text-sm text-text-muted' } }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Transactions sans catégorie
+                    onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
+                    dataSource:
+                      table: transactions
+                      filter:
+                        - { field: attention_reason, operator: in, value: [uncategorised, catch_all] }
+                      sort:
+                        - { field: date, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    toolbar: { search: true, export: true }
+                    emptyMessage: Toutes les opérations ont une catégorie.
+                    columns:
+                      - { field: date, label: Date, format: short-date }
+                      - { field: label, label: Libellé bancaire, truncate: true }
+                      - { field: account, label: Compte }
+                      - { field: pennylane_category_label, label: Catégorie Pennylane }
+                      - { field: budget_line, label: Ligne }
+                      - { field: attention_reason, label: Point comptable }
+                      - { field: amount, label: Montant, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: justified, label: Justifiée, format: check-cross }
+                      - { field: matched, label: Lettrée, format: check-cross }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: p, content: "Les encaissements de clients qu'aucune facture ne solde encore. Le rapprochement automatique du matin en lettre la plupart ; le reste se lettre dans Pennylane.", props: { className: 'text-sm text-text-muted' } }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Encaissements non lettrés
+                    onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
+                    dataSource:
+                      table: transactions
+                      filter:
+                        - { field: attention_reason, operator: eq, value: unallocated_customer_payment }
+                      sort:
+                        - { field: date, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    toolbar: { search: true, export: true }
+                    emptyMessage: Tous les encaissements sont lettrés.
+                    columns:
+                      - { field: date, label: Date, format: short-date }
+                      - { field: label, label: Libellé bancaire, truncate: true }
+                      - { field: account, label: Compte }
+                      - { field: pennylane_category_label, label: Catégorie Pennylane }
+                      - { field: budget_line, label: Ligne }
+                      - { field: amount, label: Montant, format: currency, align: right }
+                      - { field: outstanding_balance, label: Reste à affecter, format: currency, align: right }
+                      - { field: matched, label: Lettrée, format: check-cross }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: p, content: "Les mouvements entre les comptes de l'association — vers le Livret A et retour. Ils ne sont ni des recettes ni des dépenses et ne comptent pas dans le prévisionnel.", props: { className: 'text-sm text-text-muted' } }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Virements internes
+                    onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
+                    dataSource:
+                      table: transactions
+                      filter:
+                        - { field: is_internal_transfer, operator: eq, value: true }
+                      sort:
+                        - { field: date, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    toolbar: { search: true, export: true }
+                    emptyMessage: Aucun virement interne.
+                    columns:
+                      - { field: date, label: Date, format: short-date }
+                      - { field: label, label: Libellé bancaire, truncate: true }
+                      - { field: account, label: Compte }
+                      - { field: pennylane_category_label, label: Catégorie Pennylane }
+                      - { field: budget_line, label: Ligne }
+                      - { field: amount, label: Montant, format: currency, align: right }

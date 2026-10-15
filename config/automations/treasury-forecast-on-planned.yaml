@@ -1,0 +1,22 @@
+# Automation: treasury-forecast-on-planned — a dated item entered by hand was
+# added, edited or deleted: recompute its scenario (every active scenario
+# when the item applies to all). The condition keeps the auto rows the sync
+# writes for open Pennylane invoices from starting a run each: the sync
+# recomputes once at its end.
+name: treasury-forecast-on-planned
+trigger:
+  type: record
+  table: planned_items
+  events: [create, update, delete]
+  condition:
+    conditions:
+      - { field: '{{trigger.data.record.source}}', operator: equals, value: manual }
+timeout: 360000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: treasury-forecast-compute
+    $vars:
+      scenarioId: '{{trigger.data.record.scenario}}'
+      changedAt: '{{trigger.data.record.updated_at}}'

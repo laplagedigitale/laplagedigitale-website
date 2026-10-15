@@ -1,0 +1,95 @@
+# Table: budget_lines — the chart of lines of the plan de trésorerie, seeded by
+# treasury-seed and editable by an admin. One row per line, carrying both
+# lenses the accountant asked to keep apart (« Catégories analytiques »,
+# 2024-11-25): `group` is the cash view (« Catégorie de trésorerie »,
+# encaissements / décaissements TTC), `pcg_account` + `pnl_group` the P&L view
+# (« Type de dépense », compte de résultat HT).
+#
+# `projection_method` says how treasury-forecast fills a future month:
+# `blend` (0,33 × moyenne de l'année en cours + 0,67 × moyenne des 12 derniers
+# mois), `trailing12`, `shift_year` (le même mois l'an dernier — subventions,
+# cotisations), `vat_estimate` (la TVA du mois précédent, payée le 24),
+# `zero`, `none` (une ligne datée : seuls les éléments datés et les budgets
+# la remplissent). `prudence` applies the accountant's rule: a `certain` line
+# is projected at its highest average, a `prudent` one at its lowest.
+# `is_catch_all` marks the two lines every unmapped transaction falls into.
+id: 13
+name: budget_lines
+aiAccess:
+  description: "Lines of the cash plan (plan de trésorerie): code, label, cash group, P&L account, VAT and projection method."
+  operations: [read, list]
+fields:
+  - { id: 1, name: code, label: Code, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: label, label: Ligne, type: single-line-text, required: true }
+  - id: 3
+    name: kind
+    label: Sens
+    type: single-select
+    required: true
+    options:
+      - { value: income, label: Recette, color: '#10b981' }
+      - { value: expense, label: Dépense, color: '#ef4444' }
+      - { value: transfer, label: Virement interne, color: '#94a3b8' }
+      - { value: tax, label: TVA, color: '#8b5cf6' }
+  - id: 4
+    name: cash_group
+    label: Groupe (trésorerie)
+    type: single-select
+    options:
+      - { value: activite, label: "70 — Ventes (activité)", color: '#10b981' }
+      - { value: subventions, label: "74 — Subventions", color: '#14b8a6' }
+      - { value: autres_recettes, label: "75/77 — Autres recettes", color: '#6ee7b7' }
+      - { value: achats, label: "60 — Achats", color: '#f59e0b' }
+      - { value: locaux, label: "61 — Locaux et services extérieurs", color: '#fb923c' }
+      - { value: fonctionnement, label: "62 — Autres services extérieurs", color: '#fbbf24' }
+      - { value: impots_tva, label: "63 / TVA — Impôts et taxes", color: '#8b5cf6' }
+      - { value: personnel, label: "64 — Personnel", color: '#ef4444' }
+      - { value: financement, label: "16 — Emprunt", color: '#64748b' }
+      - { value: transferts, label: "Virements internes", color: '#94a3b8' }
+  - { id: 5, name: pcg_account, label: Compte PCG, type: single-line-text }
+  - id: 6
+    name: pnl_group
+    label: Groupe (compte de résultat)
+    type: single-select
+    options:
+      - { value: produits_exploitation, label: "Produits d'exploitation", color: '#10b981' }
+      - { value: subventions, label: "Subventions d'exploitation", color: '#14b8a6' }
+      - { value: autres_produits, label: Autres produits, color: '#6ee7b7' }
+      - { value: achats, label: Achats, color: '#f59e0b' }
+      - { value: services_exterieurs, label: Services extérieurs, color: '#fb923c' }
+      - { value: autres_services, label: Autres services extérieurs, color: '#fbbf24' }
+      - { value: impots, label: Impôts et taxes, color: '#8b5cf6' }
+      - { value: personnel, label: Charges de personnel, color: '#ef4444' }
+      - { value: financier, label: Charges financières, color: '#64748b' }
+      - { value: hors_resultat, label: Hors compte de résultat, color: '#94a3b8' }
+  - { id: 7, name: vat_rate, label: "TVA (%)", type: decimal, precision: 2, default: 0 }
+  - { id: 8, name: vat_deductible, label: TVA déductible, type: checkbox, default: false }
+  - id: 9
+    name: projection_method
+    label: Projection
+    type: single-select
+    default: blend
+    options:
+      - { value: blend, label: "Mixte (année en cours + 12 mois)", color: '#3b82f6' }
+      - { value: trailing12, label: Moyenne 12 mois, color: '#60a5fa' }
+      - { value: shift_year, label: "Même mois l'an dernier", color: '#14b8a6' }
+      - { value: vat_estimate, label: TVA estimée, color: '#8b5cf6' }
+      - { value: zero, label: Zéro, color: '#94a3b8' }
+      - { value: none, label: "Datée (éléments datés et budgets seulement)", color: '#f59e0b' }
+  - id: 10
+    name: prudence
+    label: Prudence
+    type: single-select
+    options:
+      - { value: certain, label: "Certaine (charge : au plus haut)", color: '#ef4444' }
+      - { value: prudent, label: "Prudente (produit : au plus bas)", color: '#10b981' }
+  - { id: 11, name: is_catch_all, label: Ligne par défaut, type: checkbox, default: false }
+  - { id: 12, name: is_dated, label: Datée, type: checkbox, default: false }
+  - { id: 13, name: line_order, label: Ordre, type: integer }
+  - { id: 14, name: active, label: Active, type: checkbox, default: true }
+  - { id: 15, name: notes, label: Notes, type: long-text }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

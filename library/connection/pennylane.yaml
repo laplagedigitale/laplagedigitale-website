@@ -693,3 +693,60 @@ operations:
         in: body
         type: integer
         required: true
+  - name: get-bank-accounts
+    method: GET
+    path: /bank_accounts
+    summary: List bank accounts
+    params:
+      cursor:
+        in: query
+        type: string
+      limit:
+        in: query
+        type: integer
+      sort:
+        in: query
+        type: string
+    pagination:
+      style: cursor
+      cursorParam: cursor
+      cursorPath: next_cursor
+      itemsPath: items
+  - name: get-categories
+    method: GET
+    path: /categories
+    summary: List categories
+    params:
+      cursor:
+        in: query
+        type: string
+      limit:
+        in: query
+        type: integer
+      filter:
+        in: query
+        type: string
+      sort:
+        in: query
+        type: string
+    pagination:
+      style: cursor
+      cursorParam: cursor
+      cursorPath: next_cursor
+      itemsPath: items
+  - name: get-category-groups
+    method: GET
+    path: /category_groups
+    summary: List category groups
+    params:
+      cursor:
+        in: query
+        type: string
+      limit:
+        in: query
+        type: integer
+    pagination:
+      style: cursor
+      cursorParam: cursor
+      cursorPath: next_cursor
+      itemsPath: items

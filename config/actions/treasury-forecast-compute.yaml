@@ -1,0 +1,301 @@
+# Action template: treasury-forecast-compute — the forecast engine, one code
+# step shared by every automation that recomputes the plan de trésorerie:
+# treasury-forecast (the « Recalculer » button and the trigger endpoint), the
+# hourly pennylane-treasury-sync, treasury-scenario-init and the three
+# on-edit triggers (a budget cell, an adjustment, a dated item).
+#
+# For every active scenario (or the one in $scenarioId) it rebuilds the plan
+# year month by month: a past month is the Pennylane actual per budget line;
+# the current and future months are the line's projection (blend of the
+# year-to-date and trailing-12-month averages, or the same month last year,
+# or an estimate of the VAT due), plus the dated items, plus the scenario's
+# adjustments, overridden by the budget cell when one is typed. Prudence
+# follows the accountant: a charge is projected at its highest average, a
+# product at its lowest, less the scenario's haircut; a probable receipt
+# counts only when the scenario says so. The balances then roll forward from
+# the opening balance (today's Pennylane balance less the year's net flows),
+# the Livret A reserve sits beside them, and the scenario row receives its
+# year-end cash, low point, runway and gap to the baseline — so a KPI reads
+# each figure from one row.
+#
+# It writes forecast_months, forecast_balances and the scenarios' computed
+# fields with batch upserts. Nothing watches the two computed tables, and the
+# only automation on scenarios watches its creates, so these writes start no
+# run. $changedAt (the edited row's updated_at) debounces a burst of edits: a
+# scenario computed after that instant is skipped.
+#
+# Every past month carries check_delta = Pennylane net − lines net, which
+# must read 0: a difference means a transaction on an excluded account, an
+# archived one, or a line that no longer exists. $dryRun logs and writes
+# nothing; $purge first deletes the scenario's computed rows (a line was
+# renamed or removed).
+name: treasury-forecast-compute
+variables:
+  scenarioId: ''
+  dryRun: 'false'
+  purge: 'false'
+  changedAt: ''
+action:
+  type: code
+  operator: runTypescript
+  props:
+    timeout: 300000
+    inputData:
+      scenarioId: '$scenarioId'
+      dryRun: '$dryRun'
+      purge: '$purge'
+      changedAt: '$changedAt'
+    code: |
+      async function execute(context) {
+        const TZ = 'Europe/Paris'
+        const inp: any = context.inputData ?? {}
+        const dryRun = String(inp.dryRun ?? '').toLowerCase() === 'true'
+        const purge = String(inp.purge ?? '').toLowerCase() === 'true'
+        const onlyId = String(inp.scenarioId ?? '').trim()
+        const changedAt = String(inp.changedAt ?? '').trim()
+        const comfort = Number(context.env.TREASURY_COMFORT_THRESHOLD ?? 10000) || 10000
+        const now = new Date()
+        const nowIso = now.toISOString()
+        const today = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now)
+        const r2 = (n: number) => Math.round((Number(n) || 0) * 100) / 100
+        const num = (v: unknown) => (v === null || v === undefined || v === '' ? 0 : Number(v) || 0)
+        const has = (v: unknown) => !(v === null || v === undefined || v === '')
+        const pad = (n: number) => String(n).padStart(2, '0')
+        const ym = (d: unknown) => String(d ?? '').slice(0, 7)
+        const firstOf = (y: number, m: number) => `${y}-${pad(m)}-01`
+        const addMonths = (k: string, n: number) => {
+          const [y, m] = k.split('-').map(Number)
+          const t = (m - 1) + n
+          return `${y + Math.floor(t / 12)}-${pad(((t % 12) + 12) % 12 + 1)}`
+        }
+        const monthDiff = (a: string, b: string) => {
+          const [ya, ma] = a.split('-').map(Number)
+          const [yb, mb] = b.split('-').map(Number)
+          return (yb - ya) * 12 + (mb - ma)
+        }
+        const list = async (table: string, filter?: any): Promise<any[]> => {
+          const res: any = await context.actions.record.list({ table, ...(filter ? { filter } : {}), limit: 10000 })
+          return (res?.records ?? []) as any[]
+        }
+        const chunks = (items: any[], size: number) => {
+          const out: any[][] = []
+          for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size))
+          return out
+        }
+
+        // 1. Scenarios: the active ones, or the one asked for; skip those computed after the edit (debounce).
+        const allScenarios = await list('scenarios', { conditions: [{ field: 'status', operator: 'equals', value: 'active' }] })
+        const baselineRow = allScenarios.find((s: any) => s.is_baseline === true || s.is_baseline === 'true')
+        let scenarios = allScenarios.filter((s: any) => !onlyId || String(s.id) === onlyId)
+        if (changedAt) {
+          const edited = Date.parse(changedAt)
+          scenarios = scenarios.filter((s: any) => !(has(s.computed_at) && Number.isFinite(edited) && Date.parse(String(s.computed_at)) > edited))
+        }
+        if (scenarios.length === 0) {
+          context.log.info(onlyId ? `scénario ${onlyId} : rien à recalculer (déjà calculé après la modification, ou inactif)` : 'aucun scénario actif')
+          return { computed: [], skipped: true }
+        }
+
+        // 2. Lines, accounts, transactions, items, budgets.
+        const lines = (await list('budget_lines')).filter((l: any) => l.active !== false && l.active !== 'false').sort((a: any, b: any) => num(a.line_order) - num(b.line_order))
+        const lineByCode = new Map<string, any>(lines.map((l: any) => [String(l.code), l]))
+        const accounts = await list('bank_accounts')
+        const isTrue = (v: unknown) => v === true || v === 'true' || v === 1 || v === '1'
+        const cashAccounts = accounts.filter((a: any) => a.source === 'pennylane' && isTrue(a.include_in_cash) && a.kind !== 'loan')
+        const cashIds = new Set<string>(cashAccounts.map((a: any) => String(a.pennylane_id ?? '').replace(/^pl:/, '')))
+        const currentCash = cashAccounts.reduce((s: number, a: any) => s + num(a.balance), 0)
+        const reserve = accounts.filter((a: any) => isTrue(a.is_reserve) && isTrue(a.include_in_cash) && a.source !== 'pennylane').reduce((s: number, a: any) => s + num(a.balance), 0)
+
+        const years = scenarios.map((s: any) => num(s.year) || Number(today.slice(0, 4)))
+        const minYear = Math.min(...years) - 1
+        const txns = (await list('transactions', { conditions: [{ field: 'year', operator: 'greaterThanOrEqual', value: minYear }] }))
+          .filter((t: any) => !has(t.archived_at) && !isTrue(t.missing_in_pennylane) && cashIds.has(String(t.pennylane_bank_account_id ?? '')))
+        const planned = (await list('planned_items', { conditions: [{ field: 'status', operator: 'equals', value: 'expected' }] }))
+        const entries = await list('budget_entries')
+        const adjustments = (await list('budget_adjustments')).filter((a: any) => a.active !== false && a.active !== 'false')
+
+        // 3. Actuals per line and month (positive per the line's sense), Pennylane net per month.
+        const byLM = new Map<string, number>()
+        const netByM = new Map<string, number>()
+        for (const t of txns) {
+          const k = ym(t.date)
+          const amt = num(t.amount)
+          netByM.set(k, (netByM.get(k) ?? 0) + amt)
+          const line = lineByCode.get(String(t.line_code ?? ''))
+          if (!line) continue
+          const v = line.kind === 'income' ? amt : -amt
+          byLM.set(`${line.code}|${k}`, (byLM.get(`${line.code}|${k}`) ?? 0) + v)
+        }
+        const actual = (code: string, k: string) => byLM.get(`${code}|${k}`) ?? 0
+        const occursIn = (p: any, k: string) => {
+          const start = ym(p.date)
+          if (!start || k < start) return false
+          const rec = String(p.recurrence ?? 'once')
+          if (rec === 'once') return k === start
+          if (has(p.until) && k > ym(p.until)) return false
+          const step = rec === 'monthly' ? 1 : rec === 'quarterly' ? 3 : 12
+          return monthDiff(start, k) % step === 0
+        }
+
+        const results: Record<string, any> = {}
+        for (const sc of scenarios) {
+          const Y = num(sc.year) || Number(today.slice(0, 4))
+          const todayY = Number(today.slice(0, 4))
+          const cur = todayY === Y ? Number(today.slice(5, 7)) : todayY > Y ? 13 : 0
+          const w = has(sc.weight_recent) ? num(sc.weight_recent) : 0.33
+          const haircut = 1 - num(sc.income_haircut_pct) / 100
+          const probable = isTrue(sc.include_probable_income)
+          const anchor = `${Y}-${pad(Math.min(Math.max(cur, 1), 12))}`
+          const t12 = (code: string) => { let s = 0; for (let i = 1; i <= 12; i++) s += actual(code, addMonths(anchor, -i)); return s / 12 }
+          const ytd = (code: string): number | null => { if (cur <= 1) return null; let s = 0; for (let m = 1; m < Math.min(cur, 13); m++) s += actual(code, firstOf(Y, m).slice(0, 7)); return s / (Math.min(cur, 13) - 1) }
+          const cells = new Map<string, number>()
+          const cellOrActual = (code: string, k: string) => cells.has(`${code}|${k}`) ? (cells.get(`${code}|${k}`) ?? 0) : actual(code, k)
+          const project = (line: any, m: number): number => {
+            const k = firstOf(Y, m).slice(0, 7)
+            const method = String(line.projection_method ?? 'blend')
+            if (method === 'none' || method === 'zero') return 0
+            if (method === 'shift_year') return Math.max(0, actual(line.code, `${Y - 1}-${pad(m)}`))
+            if (method === 'vat_estimate') {
+              // The VAT of the previous month, debited this month (the 24th): collected on the VAT lines less deductible on the flagged charges.
+              const prev = addMonths(k, -1)
+              let col = 0, ded = 0
+              for (const l of lines) {
+                const r = num(l.vat_rate) / 100
+                if (r <= 0) continue
+                const base = cellOrActual(String(l.code), prev)
+                if (l.kind === 'income') col += base * r / (1 + r)
+                else if (l.kind === 'expense' && isTrue(l.vat_deductible)) ded += base * r / (1 + r)
+              }
+              return Math.max(0, col - ded)
+            }
+            const a = t12(line.code)
+            const y = ytd(line.code)
+            const blend = method === 'trailing12' ? a : y === null ? a : w * y + (1 - w) * a
+            const rule = String(line.prudence ?? (line.kind === 'income' ? 'prudent' : 'certain'))
+            // Prudence: a charge at its highest average, a product at its lowest, less the haircut.
+            if (rule === 'prudent') return Math.max(0, Math.min(blend, a) * haircut)
+            return Math.max(0, Math.max(blend, a))
+          }
+          const entryOf = (code: string) => entries.find((e: any) => String(e.scenario) === String(sc.id) && String(e.line_code) === code && num(e.year) === Y)
+          const adjOf = (code: string, k: string) => {
+            let sum = 0
+            for (const x of adjustments) {
+              if (String(x.scenario) !== String(sc.id)) continue
+              const from = ym(x.from_month)
+              if (!from || k < from) continue
+              if (has(x.to_month) && k > ym(x.to_month)) continue
+              if (String(x.line_code) === code) sum += num(x.monthly_amount)
+              // A hire or a raise on the pay line brings its employer charges on the social-charges line.
+              if (code === '645_charges_sociales' && String(x.line_code) === '641_remuneration' && (x.kind === 'hire' || x.kind === 'raise')) {
+                const mult = has(x.employer_multiplier) ? num(x.employer_multiplier) : 1.42
+                sum += num(x.monthly_amount) * (mult - 1)
+              }
+            }
+            return sum
+          }
+          const plannedOf = (code: string, k: string) => planned
+            .filter((p: any) => String(p.line_code) === code && (!has(p.scenario) || String(p.scenario) === String(sc.id)) && occursIn(p, k))
+            .filter((p: any) => p.direction === 'out' || p.certainty === 'certain' || (p.certainty === 'probable' && probable))
+            .reduce((s: number, p: any) => s + num(p.amount), 0)
+
+          // Opening balance: today's Pennylane balance less the net flows since 1 January of the plan year.
+          let sinceJan = 0
+          for (const [k, v] of netByM.entries()) if (k >= `${Y}-01` && k <= ym(today)) sinceJan += v
+          const opening = currentCash - sinceJan
+          let closing = opening
+          let lowest = Infinity
+          let lowestMonth = ''
+          const monthRows: any[] = []
+          const balanceRows: any[] = []
+          for (let m = 1; m <= 12; m++) {
+            const k = firstOf(Y, m).slice(0, 7)
+            const isActual = m < cur
+            let inc = 0, exp = 0, trOut = 0, vat = 0, incA = 0, expA = 0
+            for (const line of lines) {
+              const code = String(line.code)
+              const a = actual(code, k)
+              const proj = isActual ? 0 : project(line, m)
+              const entry = entryOf(code)
+              const cell = entry ? entry[`m${pad(m)}`] : undefined
+              const budget: number | null = has(cell) ? num(cell) : null
+              const adj = isActual ? 0 : adjOf(code, k)
+              const pl = isActual ? 0 : plannedOf(code, k)
+              const base = budget !== null ? budget : proj
+              const forecast = isActual ? a : m === cur ? Math.max(a, base) + adj + pl : base + adj + pl
+              cells.set(`${code}|${k}`, forecast)
+              const r = num(line.vat_rate) / 100
+              const ht = r > 0 && (line.kind === 'income' || isTrue(line.vat_deductible)) ? forecast / (1 + r) : forecast
+              monthRows.push({
+                row_key: `${sc.scenario_key}:${Y}:${code}:${pad(m)}`, scenario: String(sc.id), scenario_key: String(sc.scenario_key), is_baseline: isTrue(sc.is_baseline),
+                year: Y, month: firstOf(Y, m), month_index: m, status: isActual ? 'actual' : 'forecast',
+                budget_line: String(line.id), line_code: code, line_label: String(line.label ?? code), line_kind: line.kind, cash_group: line.cash_group ?? null,
+                pcg_account: line.pcg_account ?? '', pnl_group: line.pnl_group ?? null, line_order: num(line.line_order), is_dated: isTrue(line.is_dated),
+                actual: r2(a), projection: r2(proj), planned: r2(pl), adjustments: r2(adj), budget: budget === null ? null : r2(budget), forecast: r2(forecast),
+                variance: isActual && budget !== null ? r2(a - budget) : null, amount_ht: r2(ht), computed_at: nowIso,
+              })
+              if (line.kind === 'income') { inc += forecast; incA += a }
+              else if (line.kind === 'expense') { exp += forecast; expA += a }
+              else if (line.kind === 'tax') { vat += forecast; exp += forecast; expA += a }
+              else if (line.kind === 'transfer') trOut += forecast   // paired legs net to zero; a leg to the Livret A (or unpaired) is cash that left
+            }
+            const net = inc - exp - trOut
+            const o = closing
+            closing = o + net
+            const plNet = isActual ? (netByM.get(k) ?? 0) : null
+            if (m >= cur && closing < lowest) { lowest = closing; lowestMonth = firstOf(Y, m) }
+            balanceRows.push({
+              row_key: `${sc.scenario_key}:${Y}:${pad(m)}`, scenario: String(sc.id), scenario_key: String(sc.scenario_key), is_baseline: isTrue(sc.is_baseline),
+              year: Y, month: firstOf(Y, m), month_index: m, status: isActual ? 'actual' : 'forecast',
+              income_actual: r2(isActual ? inc : incA), income_forecast: r2(isActual ? 0 : inc), expense_actual: r2(isActual ? exp : expA), expense_forecast: r2(isActual ? 0 : exp),
+              transfers_out: r2(trOut), vat_due: r2(vat), net: r2(net), opening: r2(o), closing: r2(closing), reserve: r2(reserve), total_with_reserve: r2(closing + reserve),
+              pennylane_net: plNet === null ? null : r2(plNet), lines_net: isActual ? r2(net) : null, check_delta: plNet === null ? null : r2(plNet - net),
+              runway_months: null, computed_at: nowIso,
+            })
+            if (plNet !== null && Math.abs(plNet - net) > 1) context.log.warn(`${sc.scenario_key} ${k} : net Pennylane ${r2(plNet)} ≠ net des lignes ${r2(net)} (écart ${r2(plNet - net)} €)`)
+          }
+          if (!Number.isFinite(lowest)) { lowest = closing; lowestMonth = firstOf(Y, 12) }
+          // Runway: today's bank balance over the average outflow of the next six months.
+          const next6 = balanceRows.filter((b: any) => b.month_index >= Math.max(cur, 1) && b.month_index < Math.max(cur, 1) + 6)
+          const window = next6.length > 0 ? next6 : balanceRows
+          const avgOut = window.reduce((s: number, b: any) => s + num(b.expense_forecast) + num(b.expense_actual) + num(b.transfers_out), 0) / Math.max(1, window.length)
+          const runway = avgOut > 0 ? r2(currentCash / avgOut) : null
+          for (const b of balanceRows) b.runway_months = runway
+          const checkDelta = balanceRows.reduce((s: number, b: any) => s + Math.abs(num(b.check_delta)), 0)
+          if (checkDelta > 1) context.log.warn(`${sc.scenario_key} : Σ |net Pennylane − net des lignes| = ${r2(checkDelta)} € sur les mois passés`)
+          const yearIncome = balanceRows.reduce((s: number, b: any) => s + num(b.income_actual) + num(b.income_forecast), 0)
+          const yearExpense = balanceRows.reduce((s: number, b: any) => s + num(b.expense_actual) + num(b.expense_forecast) + num(b.transfers_out), 0)
+          results[String(sc.scenario_key)] = {
+            monthRows, balanceRows,
+            kpi: {
+              scenario_key: String(sc.scenario_key), computed_at: nowIso, opening_cash: r2(opening), current_cash: r2(currentCash), reserve: r2(reserve),
+              year_end_cash: r2(closing), year_end_cash_with_reserve: r2(closing + reserve), lowest_balance: r2(lowest), lowest_month: lowestMonth || null,
+              runway_months: runway, year_income: r2(yearIncome), year_expense: r2(yearExpense), year_result: r2(yearIncome - yearExpense),
+              comfort: lowest < 0 ? 'negative' : lowest < comfort ? 'tight' : 'ok', check_delta: r2(checkDelta), delta_vs_baseline: null as number | null,
+            },
+          }
+        }
+
+        // 4. Gap to the baseline — the one just computed, or the stored figure of the baseline row.
+        const baseKey = baselineRow ? String(baselineRow.scenario_key) : ''
+        const baseYearEnd = results[baseKey]?.kpi?.year_end_cash ?? (baselineRow && has(baselineRow.year_end_cash) ? num(baselineRow.year_end_cash) : null)
+        for (const k of Object.keys(results)) results[k].kpi.delta_vs_baseline = baseYearEnd === null ? null : r2(results[k].kpi.year_end_cash - baseYearEnd)
+
+        const summary = Object.fromEntries(Object.entries(results).map(([k, v]: [string, any]) => [k, v.kpi]))
+        if (dryRun) {
+          context.log.info(`DRY RUN — ${JSON.stringify(summary)}`)
+          return { computed: Object.keys(results), dryRun: true, kpis: summary }
+        }
+
+        // 5. Write: batch upserts only (nothing watches the computed tables; a scenarios update matches no create trigger).
+        for (const [k, v] of Object.entries(results) as [string, any][]) {
+          if (purge) {
+            await context.actions.record.batchDelete({ table: 'forecast_months', filter: { conditions: [{ field: 'scenario_key', operator: 'equals', value: k }] }, limit: 5000 })
+            await context.actions.record.batchDelete({ table: 'forecast_balances', filter: { conditions: [{ field: 'scenario_key', operator: 'equals', value: k }] }, limit: 500 })
+          }
+          for (const part of chunks(v.monthRows, 200)) await context.actions.record.batchUpsert({ table: 'forecast_months', items: part, matchField: 'row_key', continueOnItemError: true })
+          await context.actions.record.batchUpsert({ table: 'forecast_balances', items: v.balanceRows, matchField: 'row_key', continueOnItemError: true })
+          await context.actions.record.batchUpsert({ table: 'scenarios', items: [v.kpi], matchField: 'scenario_key' })
+          context.log.info(`${k} : ${v.monthRows.length} lignes-mois, fin d'année ${v.kpi.year_end_cash} €, point bas ${v.kpi.lowest_balance} € (${v.kpi.lowest_month}), autonomie ${v.kpi.runway_months} mois`)
+        }
+        return { computed: Object.keys(results), kpis: summary }
+      }

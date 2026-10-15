@@ -1,0 +1,41 @@
+# Table: budget_adjustments — « appliquer à tous les mois restants » : a
+# monthly amount added to (or taken from) one budget line of a scenario, from
+# one month to another (to_month empty = jusqu'à la fin de l'année). A hire in
+# September, a monthly budget for the director, a raise. For a `hire` or
+# `raise` on the pay line (641), treasury-forecast-compute also adds
+# monthly_amount × (employer_multiplier − 1) on the social-charges line (645)
+# — 1,42 is the old script's prudent multiplier, 1,065 its historical one.
+# Untick `active` to neutralise an adjustment without losing it.
+id: 17
+name: budget_adjustments
+aiAccess:
+  description: "Monthly adjustments of a cash-plan scenario over a range of months: hires, raises, budgets, savings."
+  operations: [read, list]
+fields:
+  - { id: 1, name: scenario, label: Scénario, type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: cascade, required: true }
+  - { id: 2, name: scenario_key, label: Clé du scénario, type: single-line-text, indexed: true }
+  - { id: 3, name: budget_line, label: Ligne budgétaire, type: relationship, relatedTable: budget_lines, relationType: many-to-one, displayField: label, onDelete: cascade, required: true }
+  - { id: 4, name: line_code, label: Code ligne, type: single-line-text }
+  - { id: 5, name: label, label: Libellé, type: single-line-text, required: true }
+  - id: 6
+    name: kind
+    label: Nature
+    type: single-select
+    default: other
+    options:
+      - { value: hire, label: Embauche, color: '#ef4444' }
+      - { value: raise, label: Augmentation, color: '#f59e0b' }
+      - { value: budget, label: Budget, color: '#3b82f6' }
+      - { value: saving, label: Économie, color: '#10b981' }
+      - { value: other, label: Autre, color: '#94a3b8' }
+  - { id: 7, name: monthly_amount, label: "Par mois (TTC)", type: currency, currency: EUR, precision: 2, required: true }
+  - { id: 8, name: from_month, label: Du, type: date, required: true }
+  - { id: 9, name: to_month, label: "Au (vide : fin d'année)", type: date }
+  - { id: 10, name: employer_multiplier, label: Coefficient de charges patronales, type: decimal, precision: 3 }
+  - { id: 11, name: active, label: Actif, type: checkbox, default: true }
+  - { id: 12, name: notes, label: Notes, type: long-text }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

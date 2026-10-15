@@ -1,0 +1,50 @@
+# Table: forecast_balances — computed by treasury-forecast-compute, never
+# edited: one row per scenario × month, the plan de trésorerie's bottom
+# rows. The charts bind these rows: a chart with several series needs one row
+# per month with one numeric column per series, so the actual and forecast
+# halves sit in separate columns (the other half is 0) and stack into one bar
+# per month, blue then orange. `check_delta` = Pennylane net − lines net on a
+# past month; 0 when every transaction landed on exactly one line.
+id: 20
+name: forecast_balances
+aiAccess:
+  description: "Computed monthly cash plan per scenario: income and expense (actual vs forecast), VAT due, net, opening and closing balance, reserve and total treasury."
+  operations: [read, list]
+fields:
+  - { id: 1, name: row_key, label: Clé, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: scenario, label: Scénario, type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: cascade }
+  - { id: 3, name: scenario_key, label: Clé du scénario, type: single-line-text, indexed: true }
+  - { id: 4, name: is_baseline, label: Référence, type: checkbox, default: false }
+  - { id: 5, name: year, label: Exercice, type: integer, indexed: true }
+  - { id: 6, name: month, label: Mois, type: date, indexed: true }
+  - { id: 7, name: month_index, label: "N° du mois", type: integer }
+  - id: 8
+    name: status
+    label: Statut
+    type: single-select
+    options:
+      - { value: actual, label: Réalisé, color: '#6290bc' }
+      - { value: forecast, label: Prévu, color: '#f08137' }
+  - { id: 9, name: income_actual, label: Encaissements réalisés, type: currency, currency: EUR, precision: 2 }
+  - { id: 10, name: income_forecast, label: Encaissements prévus, type: currency, currency: EUR, precision: 2 }
+  - { id: 11, name: expense_actual, label: Décaissements réalisés, type: currency, currency: EUR, precision: 2 }
+  - { id: 12, name: expense_forecast, label: Décaissements prévus, type: currency, currency: EUR, precision: 2 }
+  - { id: 13, name: transfers_out, label: Virements vers la réserve, type: currency, currency: EUR, precision: 2 }
+  - { id: 14, name: vat_due, label: TVA à payer, type: currency, currency: EUR, precision: 2 }
+  - { id: 15, name: net, label: "Recettes − dépenses", type: currency, currency: EUR, precision: 2 }
+  - { id: 16, name: opening, label: Solde de début, type: currency, currency: EUR, precision: 2 }
+  - { id: 17, name: closing, label: Solde de fin, type: currency, currency: EUR, precision: 2 }
+  - { id: 18, name: reserve, label: Réserve (Livret A), type: currency, currency: EUR, precision: 2 }
+  - { id: 19, name: total_with_reserve, label: Trésorerie totale, type: currency, currency: EUR, precision: 2 }
+  - { id: 20, name: pennylane_net, label: Net Pennylane, type: currency, currency: EUR, precision: 2 }
+  - { id: 21, name: lines_net, label: Net des lignes, type: currency, currency: EUR, precision: 2 }
+  - { id: 22, name: check_delta, label: Écart de contrôle, type: currency, currency: EUR, precision: 2 }
+  - { id: 23, name: runway_months, label: Autonomie (mois), type: decimal, precision: 1 }
+  - { id: 24, name: computed_at, label: Calculé le, type: datetime }
+indexes:
+  - { name: idx_forecast_balances_scenario_month, fields: [scenario_key, month] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

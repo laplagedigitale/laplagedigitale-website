@@ -1,0 +1,32 @@
+# Automation: treasury-forecast — « Recalculer le prévisionnel ». The manual
+# run of the forecast engine (config/actions/treasury-forecast-compute.yaml):
+# the button on /administration/finances/previsionnel and on a scenario's
+# page (inputData scenarioId), or the trigger endpoint:
+#
+#   POST /api/automations/treasury-forecast/trigger
+#     {"scenarioId": "3"}             one scenario (omit it for every active one)
+#     {"dryRun": "true"}              logs the figures, writes nothing
+#     {"purge": "true"}               deletes the scenario's computed rows first
+#
+# Same sign-in as the other admin triggers (see CLAUDE.md « Run it on
+# demand »). The hourly sync and the on-edit triggers call the same template.
+name: treasury-forecast
+label: Recalculer le prévisionnel
+trigger:
+  type: manual
+  label: Recalculer le prévisionnel
+  requiredRole: admin
+  inputSchema:
+    scenarioId: { type: string }
+    dryRun: { type: string }
+    purge: { type: string }
+timeout: 360000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: treasury-forecast-compute
+    $vars:
+      scenarioId: '{{trigger.input.scenarioId}}'
+      dryRun: '{{trigger.input.dryRun}}'
+      purge: '{{trigger.input.purge}}'

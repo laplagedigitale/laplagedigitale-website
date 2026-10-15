@@ -148,7 +148,7 @@ components:
                   - { type: link, content: 'Voir les finances →', props: { href: /administration/finances, className: 'text-sm font-semibold text-blue hover:text-navy' } }
               - type: grid
                 props:
-                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
+                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
                 children:
                   - type: kpi
                     label: Reste à encaisser (TTC)
@@ -188,6 +188,29 @@ components:
                     kpiAggregate: { function: count }
                     thresholds:
                       - { value: 1, color: yellow }
+                  - type: kpi
+                    label: Trésorerie totale
+                    icon: piggy-bank
+                    dataSource:
+                      table: bank_accounts
+                      filter:
+                        - { field: include_in_cash, operator: eq, value: true }
+                    kpiAggregate: { function: sum, field: balance }
+                    kpiFormat: { type: currency, options: { currency: EUR } }
+                  # The baseline scenario's runway, as treasury-forecast last computed it.
+                  - type: kpi
+                    label: Autonomie (mois)
+                    icon: hourglass
+                    dataSource:
+                      table: scenarios
+                      filter:
+                        - { field: is_baseline, operator: eq, value: true }
+                    kpiAggregate: { function: min, field: runway_months }
+                    kpiFormat: { type: number, options: { maximumFractionDigits: '1' } }
+                    thresholds:
+                      - { value: 0, color: red }
+                      - { value: 3, color: yellow }
+                      - { value: 6, color: green }
 
           # Contenu
           - type: container

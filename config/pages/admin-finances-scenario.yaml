@@ -1,0 +1,582 @@
+# Page: admin-finances-scenario — one scenario of the treasury forecast: its
+# headline figures, the year month by month (bars for the in and out flows,
+# a line for the balance), the twelve-row cash plan, the budgets typed in a
+# wide grid (one row per budget line, one column per month), the monthly
+# adjustments and the dated items, the detail per line, and the scenario's
+# own settings.
+#
+# Everything a scenario owns is edited here, and each save fires its record
+# trigger (treasury-forecast-on-budget / -on-adjustment / -on-planned), which
+# recomputes the scenario within seconds; « Recalculer le prévisionnel » does
+# it on demand. An automation button cannot reload the page in 0.37
+# (CLAUDE.md), so every data component polls every five seconds and the KPIs,
+# charts and tables refresh on their own once the run has written.
+#
+# The baseline (is_baseline) is what the dashboards show and what every other
+# scenario is compared to, so it is kept as the sync computes it: its budget
+# grid is read-only, it takes no adjustment, and its settings are its name
+# and notes only. Dated items (a subsidy, a loan instalment) are real-world
+# facts and stay allowed on it. A scenario is deleted from the list on
+# /administration/finances/previsionnel, never here.
+#
+# A new adjustment or dated item is a declared form (a page form never creates
+# a row) in a dialog, the scenario prefilled and locked from the page record.
+name: admin-finances-scenario
+path: /administration/finances/previsionnel/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Scénario — Administration"
+  description: "Un scénario du prévisionnel de trésorerie."
+  noindex: true
+dataSource: { table: scenarios, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Prévisionnel', props: { href: /administration/finances/previsionnel, className: 'text-sm text-text-muted hover:text-navy' } }
+
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: $record.name, props: { className: 'text-3xl font-bold text-navy' } }
+                  - type: flex
+                    props:
+                      className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                    children:
+                      - { type: text, element: span, content: Scénario de référence, visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide text-navy bg-orange' } }
+                      - { type: record-field, props: { field: status } }
+                      - { type: record-field, props: { field: comfort } }
+                      - { type: text, element: span, content: 'Calculé' }
+                      - { type: record-field, format: relative-time, props: { field: computed_at } }
+                  - { type: text, element: p, content: "Le scénario de référence suit le réalisé Pennylane : ses budgets se lisent mais ne se modifient pas, et il ne prend pas d'ajustement. Pour simuler une décision, créez un scénario à partir de lui.", visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap gap-3'
+                children:
+                  - type: button
+                    content: Recalculer le prévisionnel
+                    props:
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                    action:
+                      type: automation
+                      name: treasury-forecast
+                      await: true
+                      inputData:
+                        scenarioId: $param.id
+                      onSuccess:
+                        type: message
+                        toast: { variant: success, message: "Prévisionnel recalculé : les chiffres se mettent à jour dans quelques secondes." }
+                      onError:
+                        type: message
+                        toast: { variant: error, message: "Le prévisionnel n'a pas pu être recalculé." }
+                  - type: button
+                    content: Ajouter un ajustement
+                    visibility: { record: { field: is_baseline, eq: false } }
+                    props:
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                      interactions:
+                        click:
+                          modal: new-adjustment
+                  - type: button
+                    content: Ajouter un élément daté
+                    props:
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-background transition-colors'
+                      interactions:
+                        click:
+                          modal: new-planned-item
+
+          # The scenario's own figures, read from its row.
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
+            children:
+              - type: kpi
+                label: Trésorerie fin d'année
+                icon: flag
+                dataSource:
+                  table: scenarios
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                  refreshMode: poll
+                  pollIntervalMs: 5000
+                kpiAggregate: { function: sum, field: year_end_cash }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+                thresholds:
+                  - { value: -100000000, color: red }
+                  - { value: 0, color: yellow }
+                  - { value: 10000, color: green }
+              - type: kpi
+                label: Écart vs référence
+                icon: git-compare-arrows
+                dataSource:
+                  table: scenarios
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                  refreshMode: poll
+                  pollIntervalMs: 5000
+                kpiAggregate: { function: sum, field: delta_vs_baseline }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+                thresholds:
+                  - { value: -100000000, color: red }
+                  - { value: 0, color: gray }
+                  - { value: 1, color: green }
+              - type: kpi
+                label: Point bas de l'année
+                icon: trending-down
+                dataSource:
+                  table: scenarios
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                  refreshMode: poll
+                  pollIntervalMs: 5000
+                kpiAggregate: { function: min, field: lowest_balance }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+                thresholds:
+                  - { value: -100000000, color: red }
+                  - { value: 0, color: yellow }
+                  - { value: 10000, color: green }
+              - type: kpi
+                label: Autonomie (mois)
+                icon: hourglass
+                dataSource:
+                  table: scenarios
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                  refreshMode: poll
+                  pollIntervalMs: 5000
+                kpiAggregate: { function: min, field: runway_months }
+                kpiFormat: { type: number, options: { maximumFractionDigits: '1' } }
+                thresholds:
+                  - { value: 0, color: red }
+                  - { value: 3, color: yellow }
+                  - { value: 6, color: green }
+
+          # The year in two charts: the flows, then the balance.
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-2 gap-6'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: h2, content: Encaissements et décaissements, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: "Par mois, ce qui entre et ce qui sort. En bleu le réalisé, en orange le prévu.", props: { className: 'text-sm text-text-muted' } }
+                  - type: chart
+                    chartType: bar
+                    props:
+                      aria-label: Encaissements et décaissements par mois, réalisés et prévus
+                    dataSource:
+                      table: forecast_balances
+                      filter:
+                        - { field: scenario, operator: eq, value: $param.id }
+                      sort:
+                        - { field: month, direction: asc }
+                      limit: 12
+                      refreshMode: poll
+                      pollIntervalMs: 5000
+                    xAxis: { field: month, label: Mois, format: date }
+                    yAxis: { field: income_actual, label: Montant, format: currency, gridLines: true }
+                    series:
+                      - { field: income_actual, label: Encaissements réalisés, color: blue, stack: in }
+                      - { field: income_forecast, label: Encaissements prévus, color: orange, stack: in }
+                      - { field: expense_actual, label: Décaissements réalisés, color: navy, stack: out }
+                      - { field: expense_forecast, label: Décaissements prévus, color: orange-300, stack: out }
+                    legend: { position: bottom, visible: true }
+                    emptyMessage: "Pas encore de prévisionnel : lancez « Recalculer le prévisionnel »."
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: h2, content: Solde de trésorerie, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: "Le solde bancaire à la fin de chaque mois. En bleu le solde Pennylane, en orange la trésorerie totale avec la réserve du Livret A.", props: { className: 'text-sm text-text-muted' } }
+                  - type: chart
+                    chartType: line
+                    props:
+                      aria-label: Solde de trésorerie prévu par mois
+                    dataSource:
+                      table: forecast_balances
+                      filter:
+                        - { field: scenario, operator: eq, value: $param.id }
+                      sort:
+                        - { field: month, direction: asc }
+                      limit: 12
+                      refreshMode: poll
+                      pollIntervalMs: 5000
+                    xAxis: { field: month, label: Mois, format: date }
+                    yAxis: { field: closing, label: Solde, format: currency, gridLines: true }
+                    series:
+                      - { field: closing, label: Solde de fin de mois, color: blue }
+                      - { field: total_with_reserve, label: Avec la réserve, color: orange }
+                    legend: { position: bottom, visible: true }
+                    emptyMessage: "Pas encore de prévisionnel : lancez « Recalculer le prévisionnel »."
+
+          # The cash plan: twelve rows, one per month.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Plan de trésorerie, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: "Un mois « réalisé » reprend les opérations Pennylane ; un mois « prévu » ajoute la projection, les budgets, les ajustements et les éléments datés. L'écart de contrôle compare le net Pennylane à la somme des lignes : il doit rester à zéro sur les mois réalisés.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    rowHeight: short
+                    props:
+                      aria-label: Plan de trésorerie, mois par mois
+                    dataSource:
+                      table: forecast_balances
+                      filter:
+                        - { field: scenario, operator: eq, value: $param.id }
+                      sort:
+                        - { field: month, direction: asc }
+                      limit: 12
+                      refreshMode: poll
+                      pollIntervalMs: 5000
+                    emptyMessage: "Pas encore de prévisionnel : lancez « Recalculer le prévisionnel »."
+                    columns:
+                      - { field: month, label: Mois, format: short-date, frozen: true }
+                      - { field: status, label: Statut }
+                      - { field: opening, label: Solde de début, format: currency, align: right }
+                      - { field: income_actual, label: Encaissements réalisés, format: currency, align: right }
+                      - { field: income_forecast, label: Encaissements prévus, format: currency, align: right }
+                      - { field: expense_actual, label: Décaissements réalisés, format: currency, align: right }
+                      - { field: expense_forecast, label: Décaissements prévus, format: currency, align: right }
+                      - { field: vat_due, label: TVA à payer, format: currency, align: right }
+                      - { field: net, label: Net du mois, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: closing, label: Solde de fin, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: total_with_reserve, label: Avec la réserve, format: currency, align: right }
+                      - { field: check_delta, label: Écart de contrôle, format: currency, align: right }
+                    summary:
+                      - { field: income_actual, function: sum, label: Encaissements réalisés }
+                      - { field: income_forecast, function: sum, label: Encaissements prévus }
+                      - { field: expense_actual, function: sum, label: Décaissements réalisés }
+                      - { field: expense_forecast, function: sum, label: Décaissements prévus }
+                      - { field: vat_due, function: sum, label: TVA }
+                      - { field: net, function: sum, label: Net de l'année }
+
+          # The budgets: one row per budget line, one column per month.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Budgets du scénario, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: "Un montant TTC par ligne et par mois ; une case vide laisse la projection automatique de la ligne. Tapez dans une case, puis tirez sa poignée vers la droite pour remplir l'année. Chaque case enregistrée recalcule le scénario.", visibility: { record: { field: is_baseline, eq: false } }, props: { className: 'text-sm text-text-muted max-w-3xl' } }
+              - { type: text, element: p, content: "Les budgets du scénario de référence, en lecture seule : ils servent de point de départ aux autres scénarios.", visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'text-sm text-text-muted max-w-3xl' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  # Editable on a simulation…
+                  - type: table
+                    visibility: { record: { field: is_baseline, eq: false } }
+                    rowHeight: short
+                    props:
+                      aria-label: Budgets du scénario, par ligne et par mois
+                    dataSource:
+                      table: budget_entries
+                      filter:
+                        - { field: scenario, operator: eq, value: $param.id }
+                      sort:
+                        - { field: line_order, direction: asc }
+                      pagination: { pageSize: 100 }
+                      refreshMode: poll
+                      pollIntervalMs: 5000
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                    emptyMessage: "Aucune ligne de budget : le scénario est en cours d'initialisation, ou le plan de lignes est vide."
+                    columns:
+                      - { field: cash_group, label: Groupe, editable: false }
+                      - { field: line_label, label: Poste, editable: false, frozen: true }
+                      - { field: m01, label: Janv., format: currency, align: right, editable: true }
+                      - { field: m02, label: Févr., format: currency, align: right, editable: true }
+                      - { field: m03, label: Mars, format: currency, align: right, editable: true }
+                      - { field: m04, label: Avr., format: currency, align: right, editable: true }
+                      - { field: m05, label: Mai, format: currency, align: right, editable: true }
+                      - { field: m06, label: Juin, format: currency, align: right, editable: true }
+                      - { field: m07, label: Juil., format: currency, align: right, editable: true }
+                      - { field: m08, label: Août, format: currency, align: right, editable: true }
+                      - { field: m09, label: Sept., format: currency, align: right, editable: true }
+                      - { field: m10, label: Oct., format: currency, align: right, editable: true }
+                      - { field: m11, label: Nov., format: currency, align: right, editable: true }
+                      - { field: m12, label: Déc., format: currency, align: right, editable: true }
+                  # …read-only on the baseline.
+                  - type: table
+                    visibility: { record: { field: is_baseline, eq: true } }
+                    readOnly: true
+                    rowHeight: short
+                    props:
+                      aria-label: Budgets du scénario de référence, par ligne et par mois
+                    dataSource:
+                      table: budget_entries
+                      filter:
+                        - { field: scenario, operator: eq, value: $param.id }
+                      sort:
+                        - { field: line_order, direction: asc }
+                      pagination: { pageSize: 100 }
+                      refreshMode: poll
+                      pollIntervalMs: 5000
+                    emptyMessage: "Aucune ligne de budget : la synchronisation Pennylane les crée à son premier passage."
+                    columns:
+                      - { field: cash_group, label: Groupe }
+                      - { field: line_label, label: Poste, frozen: true }
+                      - { field: m01, label: Janv., format: currency, align: right }
+                      - { field: m02, label: Févr., format: currency, align: right }
+                      - { field: m03, label: Mars, format: currency, align: right }
+                      - { field: m04, label: Avr., format: currency, align: right }
+                      - { field: m05, label: Mai, format: currency, align: right }
+                      - { field: m06, label: Juin, format: currency, align: right }
+                      - { field: m07, label: Juil., format: currency, align: right }
+                      - { field: m08, label: Août, format: currency, align: right }
+                      - { field: m09, label: Sept., format: currency, align: right }
+                      - { field: m10, label: Oct., format: currency, align: right }
+                      - { field: m11, label: Nov., format: currency, align: right }
+                      - { field: m12, label: Déc., format: currency, align: right }
+
+          # The adjustments (simulations only) and the dated items.
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 2xl:grid-cols-2 gap-6 items-start'
+            children:
+              - type: container
+                element: section
+                visibility: { record: { field: is_baseline, eq: false } }
+                props: { className: 'space-y-3' }
+                children:
+                  - type: flex
+                    props: { className: 'flex items-center justify-between gap-4' }
+                    children:
+                      - { type: text, element: h2, content: Ajustements, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: button
+                        content: '+ Ajustement'
+                        props:
+                          className: 'text-sm font-semibold text-blue hover:text-navy'
+                          interactions:
+                            click:
+                              modal: new-adjustment
+                  - { type: text, element: p, content: "Un montant par mois ajouté à une ligne, du mois de départ au mois de fin : une embauche, une augmentation, un budget en plus ou une économie. Décochez « Actif » pour le mettre de côté sans le supprimer.", props: { className: 'text-sm text-text-muted' } }
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6'
+                    children:
+                      - type: table
+                        rowHeight: short
+                        props:
+                          aria-label: Ajustements du scénario
+                        dataSource:
+                          table: budget_adjustments
+                          filter:
+                            - { field: scenario, operator: eq, value: $param.id }
+                          sort:
+                            - { field: from_month, direction: asc }
+                          pagination: { pageSize: 50 }
+                          refreshMode: poll
+                          pollIntervalMs: 5000
+                        autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                        emptyMessage: "Aucun ajustement : ajoutez le premier avec « Ajouter un ajustement »."
+                        columns:
+                          - { field: label, label: Libellé }
+                          - { field: budget_line, label: Ligne }
+                          - { field: kind, label: Nature }
+                          - { field: monthly_amount, label: Par mois, format: currency, align: right }
+                          - { field: from_month, label: Du, format: short-date }
+                          - { field: to_month, label: Au, format: short-date }
+                          - { field: employer_multiplier, label: Coeff. charges, align: right }
+                          - { field: active, label: Actif }
+                          - type: actions
+                            actions:
+                              - label: Supprimer
+                                variant: destructive
+                                action:
+                                  type: crud
+                                  operation: delete
+                                  table: budget_adjustments
+                                  confirm: true
+                                  confirmMessage: "Supprimer cet ajustement ? Le scénario est recalculé sans lui."
+
+              - type: container
+                element: section
+                props: { className: 'space-y-3' }
+                children:
+                  - type: flex
+                    props: { className: 'flex items-center justify-between gap-4' }
+                    children:
+                      - { type: text, element: h2, content: Éléments datés, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: button
+                        content: '+ Élément daté'
+                        props:
+                          className: 'text-sm font-semibold text-blue hover:text-navy'
+                          interactions:
+                            click:
+                              modal: new-planned-item
+                  - { type: text, element: p, content: "Une entrée ou une sortie attendue à une date : une subvention, un acompte d'impôt, une échéance d'emprunt. Passez-la « Reçu / payé » quand l'opération est en banque, ou « Écarté » si elle ne viendra pas.", props: { className: 'text-sm text-text-muted' } }
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6'
+                    children:
+                      - type: table
+                        rowHeight: short
+                        props:
+                          aria-label: Éléments datés du scénario
+                        dataSource:
+                          table: planned_items
+                          filter:
+                            - { field: scenario, operator: eq, value: $param.id }
+                          sort:
+                            - { field: date, direction: asc }
+                          pagination: { pageSize: 50 }
+                          refreshMode: poll
+                          pollIntervalMs: 5000
+                        autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                        emptyMessage: "Aucun élément daté : ajoutez le premier avec « Ajouter un élément daté »."
+                        columns:
+                          - { field: date, label: Date, format: short-date }
+                          - { field: label, label: Libellé }
+                          - { field: budget_line, label: Ligne }
+                          - { field: direction, label: Sens }
+                          - { field: amount, label: Montant, format: currency, align: right }
+                          - { field: recurrence, label: Récurrence }
+                          - { field: until, label: "Jusqu'au", format: short-date }
+                          - { field: certainty, label: Certitude }
+                          - { field: status, label: Statut }
+                          - { field: counterparty, label: Tiers }
+                          - type: actions
+                            actions:
+                              - label: Supprimer
+                                variant: destructive
+                                action:
+                                  type: crud
+                                  operation: delete
+                                  table: planned_items
+                                  confirm: true
+                                  confirmMessage: "Supprimer cet élément ? Le scénario est recalculé sans lui. Pour le garder sans le compter, passez-le « Écarté »."
+
+          # Every line, every month.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Détail par ligne, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: "Chaque ligne du prévisionnel, mois par mois : le réalisé Pennylane, le prévu (projection, budget, ajustements et éléments datés) et l'écart entre les deux. Cherchez une ligne ou un mois, filtrez, exportez.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    rowHeight: short
+                    props:
+                      aria-label: Détail du prévisionnel par ligne et par mois
+                    dataSource:
+                      table: forecast_months
+                      filter:
+                        - { field: scenario, operator: eq, value: $param.id }
+                      sort:
+                        - { field: line_order, direction: asc }
+                        - { field: month, direction: asc }
+                      pagination: { pageSize: 100, style: numbered }
+                      refreshMode: poll
+                      pollIntervalMs: 5000
+                    toolbar: { search: true, filters: true, export: true }
+                    emptyMessage: "Pas encore de détail : lancez « Recalculer le prévisionnel »."
+                    columns:
+                      - { field: cash_group, label: Groupe }
+                      - { field: line_label, label: Poste, frozen: true }
+                      - { field: month, label: Mois, format: short-date }
+                      - { field: status, label: Statut }
+                      - { field: is_dated, label: Datée, format: check-cross }
+                      - { field: actual, label: Réalisé, format: currency, align: right }
+                      - { field: projection, label: Projection, format: currency, align: right }
+                      - { field: budget, label: Budget, format: currency, align: right }
+                      - { field: adjustments, label: Ajustements, format: currency, align: right }
+                      - { field: planned, label: Éléments datés, format: currency, align: right }
+                      - { field: forecast, label: Prévu, format: currency, align: right }
+                      - { field: variance, label: Écart, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }, { when: { gt: 0 }, tone: success }] }
+                    summary:
+                      - { field: actual, function: sum, label: Réalisé }
+                      - { field: forecast, function: sum, label: Prévu }
+                      - { field: budget, function: sum, label: Budget }
+
+          # The scenario itself: name, hypotheses and the projection settings.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Le scénario, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 max-w-3xl'
+                children:
+                  # A simulation: everything, saved field by field.
+                  - type: form
+                    visibility: { record: { field: is_baseline, eq: false } }
+                    dataSource: { table: scenarios, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: scenarios
+                    fields:
+                      - { field: name }
+                      - { field: notes, control: textarea, description: "Ce que ce scénario suppose, pour s'en souvenir dans six mois." }
+                      - { field: status, description: "Un scénario archivé reste consultable mais ne compte plus parmi les scénarios actifs." }
+                      - { field: weight_recent, description: "Part de l'année en cours dans la projection « mixte » d'une ligne (le reste vient des douze derniers mois). 0,33 par défaut." }
+                      - { field: income_haircut_pct, description: "Décote appliquée aux produits projetés, en pourcentage : 10 retire 10 % des recettes prévues, par prudence." }
+                      - { field: include_probable_income, description: "Compte aussi les éléments datés « probables » et « possibles » ; sinon seuls les « certains » entrent dans le prévisionnel." }
+                  # The baseline: its name and notes only.
+                  - type: form
+                    visibility: { record: { field: is_baseline, eq: true } }
+                    dataSource: { table: scenarios, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: scenarios
+                    fields:
+                      - { field: name }
+                      - { field: notes, control: textarea, description: "Les hypothèses du scénario de référence : ce qu'il faut savoir pour lire ses chiffres." }
+
+  # The two dialogs: a declared form each, the scenario prefilled and locked.
+  - type: dialog
+    props:
+      id: new-adjustment
+      title: Nouvel ajustement
+      description: "Un montant mensuel ajouté à une ligne de ce scénario, du mois de départ au mois de fin."
+    children:
+      - type: form
+        formRef: adjustment-new
+        showHeader: false
+        inlinePrefill:
+          prefill: { scenario: $record.id }
+          lockPrefill: true
+
+  - type: dialog
+    props:
+      id: new-planned-item
+      title: Nouvel élément daté
+      description: "Une entrée ou une sortie attendue à une date, comptée dans ce scénario."
+    children:
+      - type: form
+        formRef: planned-item-new
+        showHeader: false
+        inlinePrefill:
+          prefill: { scenario: $record.id }
+          lockPrefill: true

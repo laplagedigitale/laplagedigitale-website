@@ -110,7 +110,10 @@ shape: one sidebar (`admin-nav`), three sections.
 - **Finances** — an overview, every member invoice, the Flex check-ins to
   invoice (editable), the Compte Pro direct-debit mandates and requests, and the
   `pennylane-auto-match` log. All of it is a Pennylane mirror: read-only here,
-  corrected in Pennylane.
+  corrected in Pennylane. Plus the **Trésorerie & prévisionnel** (below): the
+  cash position, the year's plan de trésorerie by scenario — the one place
+  where an admin types figures — and the bank transactions with the
+  accountant's monthly questions.
 - **Contenu** — the blog: a dashboard, the post lists (all, drafts,
   published) and the editor. « Nouvel article » asks for the title and the
   address, creates the draft and opens it in the editor
@@ -147,6 +150,11 @@ and the pages read those tables:
 | `flex-invoicing`          | 1st of month 06:00   | creates one Pennylane invoice per linked member for last month's Flex days, marks them `invoiced`, mails the treasurer |
 | `management-reminders`    | daily 09:00          | reminds the Calendrier de gestion's deadlines in Slack (N days before, then on the day), mentioning the owner, and creates the Notion card when asked |
 | `management-deadline-done`| « Marquer comme fait » | moves a deadline to its next occurrence (or switches a one-off off) |
+| `pennylane-treasury-sync` | hourly (:07)         | mirrors the Pennylane bank accounts, categories and transactions (each filed on a budget line, with the accountant's attention flags) and the open invoices as dated items, then recomputes the plan |
+| `treasury-forecast`       | « Recalculer le prévisionnel » | runs the forecast engine (`config/actions/treasury-forecast-compute.yaml`) for one scenario or all |
+| `treasury-forecast-on-*`  | a budget cell, an adjustment, a dated item edited | recompute that scenario (debounced by the engine) |
+| `treasury-scenario-init`  | a scenario created   | copies the model's budgets, adjustments and dated items onto it, then computes it |
+| `treasury-seed`           | one-off, by hand     | loads the chart of lines, the mapping rules, the baseline scenario, the Livret A and the first dated items |
 
 **Isolation is the tables' job, not the page's.** Every portal table has a
 row-level rule matching the row's email to the signed-in user's email, so the
@@ -273,6 +281,62 @@ POST /api/automations/management-reminders/trigger
 `DEADLINES_APPLY=false` makes every run a dry run. The Slack bot must be in the
 channel.
 
+## Trésorerie & prévisionnel
+
+Three admin pages under **Finances** replace the « Trésorerie - La Plage
+Digitale » spreadsheet and the script that filled it:
+
+- **Trésorerie** (`/administration/finances/tresorerie`) — the balance of each
+  bank account (the Pennylane ones synced hourly, the Crédit Agricole Livret A
+  keyed in by hand with its statement date), the month's cash in and out, the
+  baseline balance curve, and the « Points comptables » the accountant lists
+  every month: debits without a supplier invoice, uncategorised transactions,
+  receipts not allocated to an invoice.
+- **Prévisionnel** (`/administration/finances/previsionnel`) — the scenarios:
+  the baseline (what Pennylane says, projected to year end) and the simulations
+  an admin creates (« Embauche en septembre », « Budget directeur »…). A
+  scenario's page shows its year-end cash, low point, runway and gap to the
+  baseline, the monthly plan (réalisé in blue, prévu in orange), the detail per
+  budget line, and three things to edit: the **budget grid** (one row per line,
+  twelve month cells — a filled cell replaces the projection), the
+  **adjustments** (a monthly amount from one month to another; a hire or a
+  raise on the pay line adds its employer charges) and the **dated items** (an
+  IS instalment, a loan repayment, a subsidy expected on a date). Every edit
+  recomputes the scenario within seconds; « Recalculer le prévisionnel » does
+  it on demand.
+- **Transactions** (`/administration/finances/transactions`) — the mirrored
+  bank transactions, one tab per accountant question; a row opens the
+  transaction in Pennylane, where it is corrected.
+
+How a month is computed (`config/actions/treasury-forecast-compute.yaml`): a
+past month is the Pennylane actual per budget line; a coming month is the
+line's projection — a blend of the year-to-date and trailing-12-month averages,
+the same month last year for subsidies and cotisations, an estimate of the VAT
+due (paid the 24th) — read prudently (a charge at its highest average, a
+product at its lowest, less the scenario's haircut; a probable receipt only when
+the scenario says so), plus the dated items and adjustments, overridden by a
+budget cell. Balances roll from today's Pennylane balance less the year's net
+flows; the Livret A sits beside them as a reserve. Every past month carries
+`check_delta` = Pennylane net − lines net, which must read 0.
+
+A transaction finds its line through `category_mappings`: the Pennylane
+category first (one row per category, created by the sync — an admin fills its
+line once, view « Catégories Pennylane sans ligne » in `/_admin`), then the
+manual rules (regex on the category or bank label), then the catch-all line of
+its sign. A row re-filed by hand (`manual_line_override`) keeps its line.
+
+First run, after deploy (admin session, see the curl in `CLAUDE.md`):
+
+```bash
+POST /api/automations/treasury-seed/trigger            {"dryRun": "true"}  then  {}
+POST /api/automations/pennylane-treasury-sync/trigger  {"since": "2025-01-01"}
+POST /api/automations/treasury-forecast/trigger        {"dryRun": "true"}
+```
+
+The backfill gives the trailing-12 baseline its year N-1; the sync's log names
+the Pennylane category families and ids. Then fill the lines of the Pennylane
+categories, run the sync again, and the forecast follows.
+
 ## Payment matching
 
 `pennylane-auto-match` runs every morning at 06:30 (Europe/Paris), before
@@ -359,7 +423,12 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`PENNYLANE_API_TOKEN`** — a Pennylane *company* API token with **read and
   write** access (Settings › Connectivity › Developers). Write access is what
   lets the portal send a mandate request and `pennylane-auto-match` match
-  payments to invoices. The app refuses to boot without it.
+  payments to invoices. The app refuses to boot without it. The Trésorerie
+  also needs the token to carry the **`bank_accounts:readonly`** and
+  **`categories:readonly`** scopes (Pennylane answers `403 … requires scope
+  "bank_accounts:all bank_accounts:readonly"` otherwise, and
+  `pennylane-treasury-sync` stops at its first step): check them on the
+  token before the first sync, and add them if the token predates the tool.
 - **`AUTOMATCH_APPLY`** — optional, default `true`. `false` turns the payment
   matching into a dry run.
 - **`AUTOMATCH_SUPPLIER_APPLY`** — optional, default `false`: the supplier side
@@ -387,6 +456,13 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`TREASURER_EMAIL`** — optional, default `tresorerie@laplagedigitale.fr`:
   where the payment-matching, direct-debit and Flex invoicing summaries go
   (needs the `SMTP_*` variables).
+- **`PENNYLANE_COMPANY_ID`** — optional, default `21901400`: builds the link
+  that opens a transaction in Pennylane from the Transactions page.
+- **`TREASURY_SYNC_SINCE_DAYS`** — optional, default `120`: how far back
+  `pennylane-treasury-sync` re-reads the bank transactions each hour (a
+  backfill passes `since` in the trigger body instead).
+- **`TREASURY_COMFORT_THRESHOLD`** — optional, default `10000`: the balance
+  under which a scenario's low point reads « tendu ».
 
 Two more variables seed the first administrator:
 

@@ -6,6 +6,11 @@
 # Every figure is a Pennylane mirror (pennylane-sync every 15 minutes,
 # pennylane-auto-match each morning): it is corrected in Pennylane, never here.
 # An admin bypasses row-level rules, so the counts cover every member.
+#
+# The cash position and the forecast come from the Trésorerie tables
+# (pennylane-treasury-sync every hour, treasury-forecast on each change):
+# the two KPIs and the chart here are the baseline's, the detail is on
+# /administration/finances/tresorerie and /administration/finances/previsionnel.
 name: admin-finances
 path: /administration/finances
 sitemap: false
@@ -31,12 +36,31 @@ components:
           - type: container
             children:
               - { type: text, element: h1, content: Finances, props: { className: 'text-3xl font-bold text-navy' } }
-              - { type: text, element: p, content: "Les factures des membres, la facturation Flex, les prélèvements et le rapprochement bancaire. Ces données sont recopiées de Pennylane : une correction se fait dans Pennylane.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - { type: text, element: p, content: "Les factures des membres, la facturation Flex, les prélèvements et le rapprochement bancaire, puis la trésorerie et son prévisionnel. Ces données sont recopiées de Pennylane : une correction se fait dans Pennylane.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
 
           - type: grid
             props:
               className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
             children:
+              - type: kpi
+                label: Trésorerie totale
+                icon: piggy-bank
+                dataSource:
+                  table: bank_accounts
+                  filter:
+                    - { field: include_in_cash, operator: eq, value: true }
+                kpiAggregate: { function: sum, field: balance }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Points comptables à traiter
+                icon: file-question
+                dataSource:
+                  table: transactions
+                  filter:
+                    - { field: needs_attention, operator: eq, value: true }
+                kpiAggregate: { function: count }
+                thresholds:
+                  - { value: 1, color: yellow }
               - type: kpi
                 label: Reste à encaisser (TTC)
                 icon: wallet
@@ -92,6 +116,40 @@ components:
                 kpiAggregate: { function: count }
                 thresholds:
                   - { value: 1, color: red }
+
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Trésorerie prévisionnelle, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Voir le prévisionnel →', props: { href: /administration/finances/previsionnel, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: p, content: "Le solde bancaire prévu à la fin de chaque mois selon le scénario de référence, et la trésorerie totale avec la réserve du Livret A. En bleu le solde Pennylane, en orange le total avec la réserve.", props: { className: 'text-sm text-text-muted' } }
+                  # The baseline's twelve months, denormalised on the rows.
+                  - type: chart
+                    chartType: line
+                    props:
+                      aria-label: Solde de trésorerie prévu par mois (scénario de référence)
+                    dataSource:
+                      table: forecast_balances
+                      filter:
+                        - { field: is_baseline, operator: eq, value: true }
+                      sort:
+                        - { field: month, direction: asc }
+                      limit: 12
+                    xAxis: { field: month, label: Mois, format: date }
+                    yAxis: { field: closing, label: Solde, format: currency, gridLines: true }
+                    series:
+                      - { field: closing, label: Solde de fin de mois, color: blue }
+                      - { field: total_with_reserve, label: Avec la réserve, color: orange }
+                    legend: { position: bottom, visible: true }
+                    emptyMessage: "Pas encore de prévisionnel : lancez « Recalculer le prévisionnel » sur le scénario de référence."
 
           - type: container
             element: section
