@@ -29,7 +29,9 @@ fields:
   - { id: 5, name: signed_at, type: datetime }
   - { id: 7, name: pennylane_status, type: single-line-text }
   # The signed mandate's PDF; empty while the mandate is still a request.
-  - { id: 8, name: pdf_url, type: url }
+  # long-text, not url: a url field is VARCHAR(255) on PostgreSQL in 0.37, and
+  # Pennylane's signed S3 links run to 2 000+ characters (refused as too long).
+  - { id: 8, name: pdf_url, type: long-text }
 permissions:
   read: [coworker, admin]
   create: [admin]

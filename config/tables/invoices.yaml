@@ -35,7 +35,9 @@ fields:
       - { value: credit_note, label: $t:portal.status.credit_note, color: '#94a3b8' }
       - { value: archived, label: $t:portal.status.archived, color: '#94a3b8' }
   - { id: 10, name: paid, type: checkbox }
-  - { id: 11, name: pdf_url, type: url }
+  # long-text, not url: a url field is VARCHAR(255) on PostgreSQL in 0.37, and
+  # Pennylane's signed S3 links run to 2 000+ characters (refused as too long).
+  - { id: 11, name: pdf_url, type: long-text }
 permissions:
   read: [coworker, admin]
   create: [admin]
