@@ -1,6 +1,6 @@
 # Table: budget_entries — the budget grid of a scenario, in the sheet's shape:
 # one row per scenario × budget line, twelve month columns (m01…m12, TTC),
-# edited in place on /administration/finances/previsionnel/:scenario. An empty
+# edited in place on /administration/finances/previsionnel/:id. An empty
 # cell means « pas de budget : garder la projection » ; a filled one replaces
 # the projection for that month (the adjustments and dated items still add).
 # On the baseline the grid is « le budget voté » and feeds `variance`.

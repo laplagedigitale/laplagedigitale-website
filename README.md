@@ -423,7 +423,12 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`PENNYLANE_API_TOKEN`** — a Pennylane *company* API token with **read and
   write** access (Settings › Connectivity › Developers). Write access is what
   lets the portal send a mandate request and `pennylane-auto-match` match
-  payments to invoices. The app refuses to boot without it.
+  payments to invoices. The app refuses to boot without it. The Trésorerie
+  also needs the token to carry the **`bank_accounts:readonly`** and
+  **`categories:readonly`** scopes (Pennylane answers `403 … requires scope
+  "bank_accounts:all bank_accounts:readonly"` otherwise, and
+  `pennylane-treasury-sync` stops at its first step): check them on the
+  token before the first sync, and add them if the token predates the tool.
 - **`AUTOMATCH_APPLY`** — optional, default `true`. `false` turns the payment
   matching into a dry run.
 - **`AUTOMATCH_SUPPLIER_APPLY`** — optional, default `false`: the supplier side
