@@ -1,20 +1,20 @@
-# Page: editor-posts-drafts — the posts still in draft.
-name: editor-posts-drafts
-path: /editor/articles/brouillons
+# Page: admin-posts-published — the posts live on /blog.
+name: admin-posts-published
+path: /administration/contenu/articles/publies
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "Brouillons — Espace rédaction"
-  description: "Les brouillons du blog."
+  title: "Publiés — Administration"
+  description: "Les articles publiés du blog."
   noindex: true
 components:
   - type: flex
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: editor-nav
+      - component: admin-nav
 
       - type: container
         element: main
@@ -27,12 +27,12 @@ components:
             children:
               - type: container
                 children:
-                  - { type: text, element: h1, content: "Brouillons", props: { className: 'text-3xl font-bold text-navy' } }
-                  - { type: text, element: p, content: "Les articles pas encore publiés.", props: { className: 'text-text-muted mt-1' } }
+                  - { type: text, element: h1, content: "Publiés", props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Les articles en ligne sur /blog.", props: { className: 'text-text-muted mt-1' } }
               - type: link
                 content: '+ Nouvel article'
                 props:
-                  href: /editor/posts/new
+                  href: /administration/contenu/articles/nouveau
                   className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
 
           - type: card
@@ -43,7 +43,7 @@ components:
                 dataSource:
                   table: posts
                   filter:
-                    - { field: status, operator: eq, value: draft }
+                    - { field: status, operator: eq, value: published }
                   sort:
                     - { field: updated_at, direction: desc }
                   pagination: { pageSize: 25, style: numbered }
@@ -70,4 +70,4 @@ components:
                           table: posts
                           confirm: true
                           confirmMessage: "Supprimer cet article ? Il pourra être restauré par un administrateur."
-                onRowClick: { type: navigate, path: '/editor/posts/$record.id' }
+                onRowClick: { type: navigate, path: '/administration/contenu/articles/$record.id' }

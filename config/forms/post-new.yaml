@@ -1,8 +1,8 @@
-# Form: post-new — write a new post, placed on /editor/posts/new.
+# Form: post-new — write a new post, placed on /administration/contenu/articles/nouveau.
 #
 # A declared form because 0.37 moved `fieldGroups` and the upload controls
 # (`accept`, `dropZone`) off the page `form`. It also answers on
-# /forms/post-new, hence the same gate as the editors' space.
+# /forms/post-new, hence the same gate as the « Contenu » section of the Administration.
 id: 2
 name: post-new
 title: Nouvel article
@@ -23,4 +23,4 @@ fields:
   - { kind: table-field, column: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
 onSuccess:
   type: redirect
-  url: /editor/articles
+  url: /administration/contenu/articles

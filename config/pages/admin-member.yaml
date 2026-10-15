@@ -1,4 +1,4 @@
-# Page: portal-member — one member's space as an admin sees it, read-only: their
+# Page: admin-member — one member's space as an admin sees it, read-only: their
 # Pennylane link, what is left to pay, their invoices, their mandate and their
 # Flex check-ins.
 #
@@ -9,14 +9,14 @@
 # another member's rows; a coworker never reaches it (access is admin only).
 # Only the formules card writes (the member row); no mandate request is sent
 # on the member's behalf.
-name: portal-member
-path: /espace-membre/membres/:id
+name: admin-member
+path: /administration/membres/:id
 sitemap: false
 access: { require: [admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "Membre — Espace Membre"
+  title: "Membre — Administration"
   description: "L'espace d'un membre, vu par un administrateur."
   noindex: true
 dataSource: { table: members, mode: single, param: id }
@@ -25,14 +25,14 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: espace-membre-nav
+      - component: admin-nav
 
       - type: container
         element: main
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
-          - { type: link, content: $t:admin.member.back, props: { href: /espace-membre/membres, className: 'text-sm text-text-muted hover:text-navy' } }
+          - { type: link, content: $t:admin.member.back, props: { href: /administration/membres, className: 'text-sm text-text-muted hover:text-navy' } }
           - type: container
             children:
               - { type: text, element: h1, content: $record.name, props: { className: 'text-3xl font-bold text-navy' } }
@@ -183,7 +183,7 @@ components:
                               - { type: text, element: p, content: $t:portal.mandate.since, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
                               - { type: record-field, format: short-date, props: { field: signed_at, className: 'mt-1 text-navy' } }
 
-          # Flex days, read-only here — corrections are made in /espace-membre/flex.
+          # Flex days, read-only here — corrections are made in /administration/finances/flex.
           - type: card
             props:
               className: 'p-4 sm:p-6 space-y-4'

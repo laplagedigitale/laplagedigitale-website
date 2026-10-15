@@ -61,14 +61,15 @@ children:
       - label: $t:member.nav.flex
         items:
           - { label: $t:portal.nav.presences, href: /espace-membre/presences, icon: calendar-check, activeMatch: prefix }
-  # Admins only — left out of the HTML for everyone else. Shown from lg up; on
-  # a phone the dashboard's admin link reaches the same page.
+  # Admins only — left out of the HTML for everyone else: the way back to the
+  # Administration (/administration), where an admin lands after sign-in. The
+  # members, Flex and finance pages live there now. Shown from lg up; on a
+  # phone the dashboard's admin link reaches the same page.
   - type: sidebar
     visibility: { roles: [admin] }
     props:
-      className: 'hidden lg:block lg:border-t lg:border-border lg:pt-4 [&_a[aria-current=page]]:bg-surface [&_a[aria-current=page]]:font-semibold [&_a[aria-current=page]]:text-navy [&_a[aria-current=page]]:shadow-sm'
+      className: 'hidden lg:block lg:border-t lg:border-border lg:pt-4'
     groups:
       - label: $t:admin.nav.group
         items:
-          - { label: $t:admin.nav.members, href: /espace-membre/membres, icon: users, activeMatch: prefix }
-          - { label: $t:admin.nav.flex, href: /espace-membre/flex, icon: calendar-days, activeMatch: prefix }
+          - { label: $t:admin.nav.backoffice, href: /administration, icon: building-2 }

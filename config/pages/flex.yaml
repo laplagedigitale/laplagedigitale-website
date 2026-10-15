@@ -3,7 +3,7 @@
 #
 # Flow: a newcomer signs up here (config/forms/flex-signup.yaml → flex_signups);
 # an admin creates their Pennylane customer and invites them as a coworker from
-# /espace-membre/membres; from then on they check in from the Espace Membre
+# /administration/membres; from then on they check in from the Espace Membre
 # (/espace-membre/presences) each time they come, and get one invoice a month
 # (flex-invoicing).
 #

@@ -613,7 +613,7 @@ portal.status.partially_cancelled: Teilweise storniert
 portal.status.credit_note: Gutschrift
 portal.status.archived: Archiviert
 
-# ── Account ── /espace-membre/compte and /editor/compte (the account-forms template).
+# ── Account ── /espace-membre/compte and /administration/compte (the account-forms template).
 account.title: Mein Konto
 account.signedInAs: "[Angemeldet als $session.email]"
 account.profile: Profil
@@ -641,7 +641,7 @@ account.logout: Abmelden
 
 # ── Sign-in ── /connexion, shared by coworkers and editors.
 auth.kicker: Mitgliederbereich
-auth.pitch: "Der Mitgliederbereich für Coworker, der Redaktionsbereich für den Blog: ein Konto, eine Tür."
+auth.pitch: "Der Mitgliederbereich für Coworker, die Verwaltung für den Verein: ein Konto, eine Tür."
 auth.title: Anmelden
 auth.subtitle: "Ihr Konto wird vom Team von La Plage Digitale eröffnet. Noch kein Konto? Schreiben Sie uns."
 auth.submit: Anmelden
@@ -652,14 +652,15 @@ spaces.title: Meine Bereiche
 spaces.member: "Ihr Tarif, Rechnungen, Räume, Leitfaden und das Leben bei La Plage."
 spaces.editor: Redaktionsbereich
 spaces.editor.desc: Blogartikel schreiben und veröffentlichen.
+spaces.admin: "Vereinsverwaltung"
+spaces.admin.desc: "Die Inhalte der Website, die Mitglieder und die Finanzen von La Plage Digitale."
 spaces.none: "Ihr Konto öffnet noch keinen Bereich. Bitte wenden Sie sich an das Team von La Plage Digitale."
-# Mitgliederbereich — the admins' members pages (/espace-membre/membres)
+# The Administration (/administration/*): its members and Flex pages, and the way in from the Mitgliederbereich
 admin.nav.group: Verwaltung
-admin.nav.members: Mitglieder
-admin.nav.flex: "Flex"
+admin.nav.backoffice: "Vereinsverwaltung"
+admin.backoffice.cta: "Vereinsverwaltung →"
 admin.members.title: Mitglieder
 admin.members.intro: "Die Coworker-Konten und ihre Verknüpfung mit Pennylane. Klicken Sie auf ein Mitglied, um seinen Bereich zu sehen — Rechnungen und Lastschrift, nur lesend."
-admin.members.cta: Mitglieder verwalten →
 admin.members.invite: Mitglied einladen
 admin.members.invite.title: Mitglied einladen
 admin.members.invite.desc: "Es erhält eine E-Mail mit einem Link zum Festlegen des Passworts, 7 Tage gültig. Es erscheint sofort in der Mitgliederliste, und seine Pennylane-Rechnungen werden innerhalb von 15 Minuten synchronisiert — schon bevor es annimmt."
@@ -791,8 +792,8 @@ flex.col.date: "Datum"
 flex.col.duration: "Dauer"
 flex.col.amount: "Betrag netto"
 flex.col.status: "Status"
-admin.flex.title: "Flex"
-admin.flex.intro: "Alle Flex-Anwesenheiten und die auf /flex eingegangenen Anmeldungen. Anwesenheiten „Abzurechnen“ werden am 1. des Monats automatisch in Pennylane abgerechnet."
+admin.flex.title: "Flex-Abrechnung"
+admin.flex.intro: "Alle Flex-Anwesenheiten. Anwesenheiten „Abzurechnen“ werden am 1. des Monats automatisch in Pennylane abgerechnet."
 admin.flex.month: "Anwesenheiten diesen Monat"
 admin.flex.due: "Abzurechnen (netto)"
 admin.flex.signups.new: "Offene Anmeldungen"
@@ -801,6 +802,7 @@ admin.flex.checkins.intro: "Direkt bearbeitbar: Dauer und Betrag zusammen änder
 admin.flex.search: "Anwesenheit suchen…"
 admin.flex.invoice: "Pennylane-Rechnung"
 admin.flex.signups: "Anmeldungen"
+admin.flex.signups.title: "Flex-Anmeldungen"
 admin.flex.signups.intro: "„Bestätigen“ legt den Kunden in Pennylane an (oder übernimmt den, der diese E-Mail-Adresse schon trägt), verknüpft ihn mit dem Mitglied, kreuzt bei Bedarf „Vereinsmitglied“ an und schickt die Einladung in den Mitgliederbereich. „Ablehnen“ schließt die Anmeldung ab."
 admin.flex.signups.none: "Noch keine Anmeldungen."
 admin.flex.signups.date: "Eingegangen am"

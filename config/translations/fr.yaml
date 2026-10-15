@@ -614,7 +614,7 @@ portal.status.partially_cancelled: Partiellement annulée
 portal.status.credit_note: Avoir
 portal.status.archived: Archivée
 
-# ── Account ── /espace-membre/compte and /editor/compte (the account-forms template).
+# ── Account ── /espace-membre/compte and /administration/compte (the account-forms template).
 account.title: Mon compte
 account.signedInAs: "[Connecté en tant que $session.email]"
 account.profile: Profil
@@ -642,7 +642,7 @@ account.logout: Se déconnecter
 
 # ── Sign-in ── /connexion, shared by coworkers and editors.
 auth.kicker: Espace membres
-auth.pitch: "L'Espace Membre pour les coworkers, l'espace rédaction pour le blog : un seul compte, une seule porte."
+auth.pitch: "L'Espace Membre pour les coworkers, l'administration pour l'association : un seul compte, une seule porte."
 auth.title: Connexion
 auth.subtitle: "Votre compte est ouvert par l'équipe de La Plage Digitale. Pas encore de compte ? Écrivez-nous."
 auth.submit: Se connecter
@@ -653,14 +653,15 @@ spaces.title: Mes espaces
 spaces.member: "Votre formule, vos factures, les salles, le guide pratique et la vie de La Plage."
 spaces.editor: Espace rédaction
 spaces.editor.desc: Écrire et publier les articles du blog.
+spaces.admin: "Administration de l'association"
+spaces.admin.desc: "Le contenu du site, les membres et les finances de La Plage Digitale."
 spaces.none: "Votre compte n'ouvre encore aucun espace. Contactez l'équipe de La Plage Digitale."
-# Espace Membre — the admins' members pages (/espace-membre/membres)
+# The Administration (/administration/*): its members and Flex pages, and the way in from the Espace Membre
 admin.nav.group: Administration
-admin.nav.members: Membres
-admin.nav.flex: "Flex"
+admin.nav.backoffice: "Administration de l'association"
+admin.backoffice.cta: "Administration de l'association →"
 admin.members.title: Membres
 admin.members.intro: "Les comptes coworkers et leur lien avec Pennylane. Cliquez sur un membre pour voir son espace : ses factures et son prélèvement, en lecture seule."
-admin.members.cta: Gérer les membres →
 admin.members.invite: Inviter un membre
 admin.members.invite.title: Inviter un membre
 admin.members.invite.desc: "Il reçoit un e-mail avec un lien pour choisir son mot de passe, valable 7 jours. Il apparaît tout de suite dans la liste des membres, et ses factures Pennylane sont synchronisées dans les 15 minutes, avant même qu'il accepte."
@@ -792,8 +793,8 @@ flex.col.date: "Date"
 flex.col.duration: "Durée"
 flex.col.amount: "Montant HT"
 flex.col.status: "Statut"
-admin.flex.title: "Flex"
-admin.flex.intro: "Toutes les présences Flex et les inscriptions reçues sur /flex. Les présences « À facturer » sont facturées automatiquement le 1er du mois dans Pennylane."
+admin.flex.title: "Facturation Flex"
+admin.flex.intro: "Toutes les présences Flex. Les présences « À facturer » sont facturées automatiquement le 1er du mois dans Pennylane."
 admin.flex.month: "Présences ce mois"
 admin.flex.due: "À facturer (HT)"
 admin.flex.signups.new: "Inscriptions à traiter"
@@ -802,6 +803,7 @@ admin.flex.checkins.intro: "Modifiable directement : corrigez la durée et le mo
 admin.flex.search: "Rechercher une présence…"
 admin.flex.invoice: "Facture Pennylane"
 admin.flex.signups: "Inscriptions"
+admin.flex.signups.title: "Inscriptions Flex"
 admin.flex.signups.intro: "« Valider » crée le client dans Pennylane (ou reprend celui qui porte déjà cet e-mail), le relie au membre, coche « Adhérent » si la personne adhère et lui envoie son invitation à l’Espace Membre. « Refuser » classe l’inscription sans suite."
 admin.flex.signups.none: "Aucune inscription pour le moment."
 admin.flex.signups.date: "Reçue le"

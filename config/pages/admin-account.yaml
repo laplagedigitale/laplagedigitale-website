@@ -1,13 +1,13 @@
-# Page: editor-account — the editor's own account: display name, password,
+# Page: admin-account — the editor or admin's own account: display name, password,
 # sign-out (the shared account-forms template).
-name: editor-account
-path: /editor/compte
+name: admin-account
+path: /administration/compte
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: Mon compte — Espace rédaction
+  title: Mon compte — Administration
   description: Votre compte.
   noindex: true
 components:
@@ -15,7 +15,7 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: editor-nav
+      - component: admin-nav
 
       - type: container
         element: main

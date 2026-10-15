@@ -4,7 +4,7 @@
 # Declared like `contact`: flex_signups is write-only for visitors (create:
 # all, no read), and only a declared form draws its fields for a reader who may
 # not read the table back. Nothing is created but the row: an admin presses
-# « Valider » on /espace-membre/flex, and flex-signup-validate creates the
+# « Valider » on /administration/inscriptions-flex, and flex-signup-validate creates the
 # Pennylane customer and invites the person as a coworker.
 #
 # The address is asked in parts (street, postal code, city, country) because

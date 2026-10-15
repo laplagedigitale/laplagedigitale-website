@@ -1,10 +1,10 @@
-# Page: portal-members — the admins' list of members inside the Espace Membre:
+# Page: admin-members — the Administration's list of members:
 # every coworker with their Pennylane link, the invitations still waiting, and
 # the dialog that invites a new one.
 #
 # An admin bypasses row-level rules, so the members table lists every row here
-# without a filter. A row opens /espace-membre/membres/:id, the member's space
-# seen read-only (portal-member.yaml).
+# without a filter. A row opens /administration/membres/:id, the member's space
+# seen read-only (admin-member.yaml).
 #
 # Inviting posts to the built-in /api/auth/admin/invite-user with the role
 # fixed to coworker: the invitee chooses their password from the email link.
@@ -12,13 +12,13 @@
 # members row exists at once and pennylane-sync links it within 15 minutes,
 # before the invitee has accepted. The link opens the built-in
 # /accept-invitation, since no page declares `invitation`.
-name: portal-members
-path: /espace-membre/membres
+name: admin-members
+path: /administration/membres
 access: { require: [admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "Membres — Espace Membre"
+  title: "Membres — Administration"
   description: "Les membres de La Plage Digitale."
   noindex: true
 components:
@@ -26,7 +26,7 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: espace-membre-nav
+      - component: admin-nav
 
       - type: container
         element: main
@@ -65,7 +65,7 @@ components:
                 emptyMessage: $t:admin.members.none
                 onRowClick:
                   type: navigate
-                  path: /espace-membre/membres/$record.id
+                  path: /administration/membres/$record.id
                 columns:
                   - { field: name, label: $t:admin.members.name }
                   - { field: email, label: $t:admin.members.email }

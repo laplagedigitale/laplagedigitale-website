@@ -6,7 +6,7 @@
 # has createUser, assignRole, banUser and unbanUser, but no invitation. A
 # created user gets a generated password nobody receives; the invitation —
 # the e-mail with the link where the person picks their own password, the
-# one the « Inviter un membre » dialog sends (portal-members.yaml) — is only
+# one the « Inviter un membre » dialog sends (admin-members.yaml) — is only
 # reachable as POST /api/auth/admin/invite-user. So the automation calls that
 # endpoint, through BASE_URL, with an admin's API key.
 #

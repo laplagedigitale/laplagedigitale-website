@@ -1,0 +1,181 @@
+# Page: admin — the dashboard of the Administration de l'association, where an
+# admin lands after sign-in (/app): what is waiting in each section — members,
+# finances, content — and the way into it.
+#
+# An admin bypasses row-level rules, so every count covers every member. The
+# « Mon Espace Membre » card is the sidebar's link for a phone (the sidebar's
+# one is hidden below lg): drawn only when the admin's own members row is
+# linked to Pennylane, i.e. they are a coworker too.
+name: admin
+path: /administration
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Tableau de bord — Administration"
+  description: "L'administration de l'association La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-10'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: "Bonjour[, $session.name]", props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "L'administration de l'association : les membres, les finances et le contenu du site.", props: { className: 'text-text-muted mt-1' } }
+
+          - type: list
+            dataSource:
+              table: members
+              filter:
+                - { field: email, operator: eq, value: $currentUser.email }
+                - { field: pennylane_customer_id, operator: isNotEmpty }
+              limit: 1
+            props:
+              className: 'lg:hidden'
+            listDisplay:
+              hideWhenEmpty: true
+            children:
+              - type: link
+                content: Mon Espace Membre →
+                props:
+                  href: /espace-membre
+                  className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+
+          # Membres
+          - type: container
+            element: section
+            props: { className: 'space-y-4' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Membres, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Gérer les membres →', props: { href: /administration/membres, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - type: grid
+                props:
+                  className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+                children:
+                  - type: kpi
+                    label: Membres
+                    icon: users
+                    dataSource: { table: members }
+                    kpiAggregate: { function: count }
+                  - type: kpi
+                    label: Non reliés à Pennylane
+                    icon: unlink
+                    dataSource:
+                      table: members
+                      filter:
+                        - { field: match_status, operator: in, value: [pending, not_found] }
+                    kpiAggregate: { function: count }
+                    thresholds:
+                      - { value: 1, color: yellow }
+                  - type: kpi
+                    label: Inscriptions Flex à traiter
+                    icon: user-plus
+                    dataSource:
+                      table: flex_signups
+                      filter:
+                        - { field: status, operator: eq, value: new }
+                    kpiAggregate: { function: count }
+                    thresholds:
+                      - { value: 1, color: yellow }
+
+          # Finances
+          - type: container
+            element: section
+            props: { className: 'space-y-4' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Finances, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Voir les finances →', props: { href: /administration/finances, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - type: grid
+                props:
+                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
+                children:
+                  - type: kpi
+                    label: Reste à encaisser (TTC)
+                    icon: wallet
+                    dataSource:
+                      table: invoices
+                      filter:
+                        - { field: status, operator: in, value: [upcoming, late, partially_paid] }
+                    kpiAggregate: { function: sum, field: remaining_amount }
+                    kpiFormat: { type: currency, options: { currency: EUR } }
+                  - type: kpi
+                    label: Factures en retard
+                    icon: alarm-clock
+                    dataSource:
+                      table: invoices
+                      filter:
+                        - { field: status, operator: eq, value: late }
+                    kpiAggregate: { function: count }
+                    thresholds:
+                      - { value: 1, color: red }
+                  - type: kpi
+                    label: Flex à facturer (HT)
+                    icon: calendar-days
+                    dataSource:
+                      table: checkins
+                      filter:
+                        - { field: status, operator: eq, value: to_invoice }
+                    kpiAggregate: { function: sum, field: amount }
+                    kpiFormat: { type: currency, options: { currency: EUR } }
+                  - type: kpi
+                    label: Rapprochements à vérifier
+                    icon: git-compare-arrows
+                    dataSource:
+                      table: payment_matches
+                      filter:
+                        - { field: status, operator: in, value: [review, failed] }
+                    kpiAggregate: { function: count }
+                    thresholds:
+                      - { value: 1, color: yellow }
+
+          # Contenu
+          - type: container
+            element: section
+            props: { className: 'space-y-4' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Contenu du site, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Gérer le blog →', props: { href: /administration/contenu, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - type: grid
+                props:
+                  className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+                children:
+                  - type: kpi
+                    label: Articles publiés
+                    icon: globe
+                    dataSource:
+                      table: posts
+                      filter:
+                        - { field: status, operator: eq, value: published }
+                    kpiAggregate: { function: count }
+                  - type: kpi
+                    label: Brouillons
+                    icon: pencil-line
+                    dataSource:
+                      table: posts
+                      filter:
+                        - { field: status, operator: eq, value: draft }
+                    kpiAggregate: { function: count }
+                  - type: kpi
+                    label: Demandes de contact
+                    icon: mail
+                    dataSource: { table: leads }
+                    kpiAggregate: { function: count }

@@ -1,0 +1,103 @@
+# Page: admin-finances-reconciliation — « Rapprochements », in the
+# Administration's Finances section: the log of pennylane-auto-match, one row
+# per (invoice, bank transaction) pair it applied, failed to apply, or left to
+# check by hand — customer and supplier side.
+#
+# Read-only: a pair is matched (or unmatched) in Pennylane; the next morning's
+# run updates its row. The table is admin only (it names clients, amounts and
+# bank labels).
+name: admin-finances-reconciliation
+path: /administration/finances/rapprochements
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Rapprochements — Administration"
+  description: "Le rapprochement bancaire automatique."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Rapprochements, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Chaque matin, les factures clients et fournisseurs sont rapprochées des opérations bancaires dans Pennylane. Les paires « À vérifier » sont à rapprocher à la main dans Pennylane ; une paire « Échec » n'a pas pu être enregistrée.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+            children:
+              - type: kpi
+                label: À vérifier
+                icon: search-check
+                dataSource:
+                  table: payment_matches
+                  filter:
+                    - { field: status, operator: eq, value: review }
+                kpiAggregate: { function: count }
+                thresholds:
+                  - { value: 1, color: yellow }
+              - type: kpi
+                label: En échec
+                icon: circle-alert
+                dataSource:
+                  table: payment_matches
+                  filter:
+                    - { field: status, operator: eq, value: failed }
+                kpiAggregate: { function: count }
+                thresholds:
+                  - { value: 1, color: red }
+              - type: kpi
+                label: Rapprochés ce mois
+                icon: circle-check
+                dataSource:
+                  table: payment_matches
+                  filter:
+                    - { field: status, operator: eq, value: applied }
+                    - { field: run_at, operator: gte, value: $startOfMonth }
+                kpiAggregate: { function: count }
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: table
+                readOnly: true
+                props:
+                  aria-label: Rapprochements
+                dataSource:
+                  table: payment_matches
+                  sort:
+                    - { field: run_at, direction: desc }
+                  pagination: { pageSize: 50, style: numbered }
+                search:
+                  placeholder: Rechercher un tiers, une facture, un libellé…
+                emptyMessage: Aucun rapprochement pour le moment.
+                columns:
+                  - { field: run_at, label: Vu le, format: short-date }
+                  - field: status
+                    label: Statut
+                    valueLabels: { applied: Rapproché, would_apply: À rapprocher (mode test), review: À vérifier, failed: Échec }
+                  - field: side
+                    label: Côté
+                    valueLabels: { customer: Client, supplier: Fournisseur }
+                  - { field: customer_name, label: Tiers }
+                  - { field: invoice_number, label: Facture }
+                  - { field: invoice_remaining, label: Reste dû, format: currency, align: right }
+                  - { field: transaction_date, label: Opération, format: short-date }
+                  - { field: transaction_amount, label: Montant, format: currency, align: right }
+                  - { field: transaction_label, label: Libellé bancaire, truncate: true }
+                  - field: reason
+                    label: Critère
+                    valueLabels: { ref_exact: N° de facture, ref_sequence: N° de séquence, amount_name_date: Montant + client + date }
+                  - { field: error, label: Erreur, truncate: true }

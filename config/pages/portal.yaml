@@ -52,13 +52,13 @@ components:
                   - { type: text, element: span, content: $t:formule.domiciliation, visibility: { record: { field: formules, contains: domiciliation } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-sand text-navy' } }
               - { type: text, element: p, content: $t:member.home.formule.none, visibility: { record: { field: formules, isEmpty: true } }, props: { className: 'text-sm text-navy mt-3 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
 
-          # Admins only: the way into the members pages on every screen size
-          # (the sidebar's admin group is hidden below lg).
+          # Admins only: the way back to the Administration on every screen
+          # size (the sidebar's admin group is hidden below lg).
           - type: link
             visibility: { roles: [admin] }
-            content: $t:admin.members.cta
+            content: $t:admin.backoffice.cta
             props:
-              href: /espace-membre/membres
+              href: /administration
               className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
 
           # Account link — shown only while the coworker's Pennylane customer

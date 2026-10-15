@@ -1,12 +1,12 @@
-# Page: editor-post-new — write a new post. Starts as a draft.
-name: editor-post-new
-path: /editor/posts/new
+# Page: admin-post-new — write a new post. Starts as a draft.
+name: admin-post-new
+path: /administration/contenu/articles/nouveau
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: Nouvel article — Espace rédaction
+  title: Nouvel article — Administration
   description: Rédiger un nouvel article.
   noindex: true
 components:
@@ -14,14 +14,14 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: editor-nav
+      - component: admin-nav
 
       - type: container
         element: main
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
         children:
-          - { type: link, content: '← Tous les articles', props: { href: /editor/articles, className: 'text-sm text-text-muted hover:text-navy' } }
+          - { type: link, content: '← Tous les articles', props: { href: /administration/contenu/articles, className: 'text-sm text-text-muted hover:text-navy' } }
           - { type: text, element: h1, content: Nouvel article, props: { className: 'text-3xl font-bold text-navy' } }
           # One form, since a new post is created in one request: the
           # two-column layout is the edit page's.

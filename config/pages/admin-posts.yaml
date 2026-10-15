@@ -1,12 +1,12 @@
-# Page: editor-posts — every blog post, drafts and published, newest edit first.
-name: editor-posts
-path: /editor/articles
+# Page: admin-posts — every blog post, drafts and published, newest edit first.
+name: admin-posts
+path: /administration/contenu/articles
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "Articles — Espace rédaction"
+  title: "Articles — Administration"
   description: "Tous les articles du blog."
   noindex: true
 components:
@@ -14,7 +14,7 @@ components:
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: editor-nav
+      - component: admin-nav
 
       - type: container
         element: main
@@ -32,7 +32,7 @@ components:
               - type: link
                 content: '+ Nouvel article'
                 props:
-                  href: /editor/posts/new
+                  href: /administration/contenu/articles/nouveau
                   className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
 
           - type: card
@@ -68,4 +68,4 @@ components:
                           table: posts
                           confirm: true
                           confirmMessage: "Supprimer cet article ? Il pourra être restauré par un administrateur."
-                onRowClick: { type: navigate, path: '/editor/posts/$record.id' }
+                onRowClick: { type: navigate, path: '/administration/contenu/articles/$record.id' }

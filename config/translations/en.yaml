@@ -613,7 +613,7 @@ portal.status.partially_cancelled: Partially cancelled
 portal.status.credit_note: Credit note
 portal.status.archived: Archived
 
-# ── Account ── /espace-membre/compte and /editor/compte (the account-forms template).
+# ── Account ── /espace-membre/compte and /administration/compte (the account-forms template).
 account.title: My account
 account.signedInAs: "[Signed in as $session.email]"
 account.profile: Profile
@@ -641,7 +641,7 @@ account.logout: Sign out
 
 # ── Sign-in ── /connexion, shared by coworkers and editors.
 auth.kicker: Members' area
-auth.pitch: "The member area for coworkers, the editors' space for the blog: one account, one door."
+auth.pitch: "The member area for coworkers, the administration for the association: one account, one door."
 auth.title: Sign in
 auth.subtitle: "Your account is opened by the La Plage Digitale team. No account yet? Write to us."
 auth.submit: Sign in
@@ -652,14 +652,15 @@ spaces.title: My spaces
 spaces.member: "Your plan, invoices, rooms, practical guide and life at La Plage."
 spaces.editor: Editors' space
 spaces.editor.desc: Write and publish the blog posts.
+spaces.admin: "Association administration"
+spaces.admin.desc: "The website content, the members and the finances of La Plage Digitale."
 spaces.none: "Your account does not open any space yet. Please contact the La Plage Digitale team."
-# Member Area — the admins' members pages (/espace-membre/membres)
+# The Administration (/administration/*): its members and Flex pages, and the way in from the Member Area
 admin.nav.group: Administration
-admin.nav.members: Members
-admin.nav.flex: "Flex"
+admin.nav.backoffice: "Association administration"
+admin.backoffice.cta: "Association administration →"
 admin.members.title: Members
 admin.members.intro: "Coworker accounts and their link to Pennylane. Click a member to see their space — invoices and direct debit — read-only."
-admin.members.cta: Manage members →
 admin.members.invite: Invite a member
 admin.members.invite.title: Invite a member
 admin.members.invite.desc: "They get an email with a link to choose their password, valid for 7 days. They appear in the members list straight away, and their Pennylane invoices sync within 15 minutes — even before they accept."
@@ -791,8 +792,8 @@ flex.col.date: "Date"
 flex.col.duration: "Duration"
 flex.col.amount: "Amount excl. VAT"
 flex.col.status: "Status"
-admin.flex.title: "Flex"
-admin.flex.intro: "Every Flex check-in and the sign-ups received on /flex. Check-ins \"To invoice\" are invoiced automatically in Pennylane on the 1st of the month."
+admin.flex.title: "Flex billing"
+admin.flex.intro: "Every Flex check-in. Check-ins \"To invoice\" are invoiced automatically in Pennylane on the 1st of the month."
 admin.flex.month: "Check-ins this month"
 admin.flex.due: "To invoice (excl. VAT)"
 admin.flex.signups.new: "Sign-ups to handle"
@@ -801,6 +802,7 @@ admin.flex.checkins.intro: "Editable in place: change the duration and the amoun
 admin.flex.search: "Search check-ins…"
 admin.flex.invoice: "Pennylane invoice"
 admin.flex.signups: "Sign-ups"
+admin.flex.signups.title: "Flex sign-ups"
 admin.flex.signups.intro: "\"Validate\" creates the customer in Pennylane (or reuses the one already carrying this email), links it to the member, ticks \"Association member\" if they joined, and sends them their Espace Membre invitation. \"Decline\" closes the sign-up."
 admin.flex.signups.none: "No sign-ups yet."
 admin.flex.signups.date: "Received"

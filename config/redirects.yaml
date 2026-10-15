@@ -936,3 +936,15 @@
 - { from: "/2012/04/18/carry-that-weight/", to: "/blog/carry-that-weight" }
 - { from: "/2012/03/31/liquipel-clear-coating", to: "/blog/liquipel-clear-coating" }
 - { from: "/2012/03/31/liquipel-clear-coating/", to: "/blog/liquipel-clear-coating" }
+
+# The editors' space and the admin pages of the Espace Membre moved into the
+# Administration de l'association (/administration). The :id pages were only
+# linked from inside the app, so they have no rule.
+- { from: "/editor", to: "/administration/contenu" }
+- { from: "/editor/articles", to: "/administration/contenu/articles" }
+- { from: "/editor/articles/brouillons", to: "/administration/contenu/articles/brouillons" }
+- { from: "/editor/articles/publies", to: "/administration/contenu/articles/publies" }
+- { from: "/editor/posts/new", to: "/administration/contenu/articles/nouveau" }
+- { from: "/editor/compte", to: "/administration/compte" }
+- { from: "/espace-membre/membres", to: "/administration/membres" }
+- { from: "/espace-membre/flex", to: "/administration/inscriptions-flex" }

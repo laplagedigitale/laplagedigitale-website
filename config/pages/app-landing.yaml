@@ -1,8 +1,12 @@
 # Page: app-landing — /app, where /connexion sends every session: « Mes
-# espaces », one card per signed-in space the caller's role opens. A card the
-# role does not open is left out of the HTML (visibility), so a coworker or an
-# editor is given exactly one, and the inline script forwards them to it
-# straight away; an admin, who opens both, chooses.
+# espaces », one card per role, each left out of the HTML for the other roles
+# (visibility). Every role is given exactly one, and the inline script
+# forwards them to it straight away:
+# - coworker → the Espace Membre (/espace-membre);
+# - admin → the Administration de l'association (/administration), whose
+#   sidebar links to their own Espace Membre when they are a coworker too;
+# - editor → the Administration's « Contenu » section (/administration/contenu).
+# A viewer, or a member, is given none and reads spaces.none.
 name: app-landing
 path: /app
 sitemap: false
@@ -35,14 +39,20 @@ components:
               className: 'grid grid-cols-1 sm:grid-cols-2 gap-4'
             children:
               - type: link
-                visibility: { roles: [coworker, admin] }
+                visibility: { roles: [coworker] }
                 props: { href: $t:href.portal, data-space: espace-membre, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
                 children:
                   - { type: text, element: p, content: $t:nav.portal, props: { className: 'text-xl font-bold text-navy' } }
                   - { type: text, element: p, content: $t:spaces.member, props: { className: 'text-sm text-text-muted mt-1' } }
               - type: link
-                visibility: { roles: [editor, admin] }
-                props: { href: /editor, data-space: editor, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-magenta hover:shadow-md transition' }
+                visibility: { roles: [admin] }
+                props: { href: /administration, data-space: administration, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
+                children:
+                  - { type: text, element: p, content: $t:spaces.admin, props: { className: 'text-xl font-bold text-navy' } }
+                  - { type: text, element: p, content: $t:spaces.admin.desc, props: { className: 'text-sm text-text-muted mt-1' } }
+              - type: link
+                visibility: { roles: [editor] }
+                props: { href: /administration/contenu, data-space: editor, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-magenta hover:shadow-md transition' }
                 children:
                   - { type: text, element: p, content: $t:spaces.editor, props: { className: 'text-xl font-bold text-navy' } }
                   - { type: text, element: p, content: $t:spaces.editor.desc, props: { className: 'text-sm text-text-muted mt-1' } }

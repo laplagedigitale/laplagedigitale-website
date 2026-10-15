@@ -3,7 +3,7 @@
 #
 # Write-only for visitors, like `leads`: anyone may submit, nobody but admins
 # reads. A submission creates no account. An admin reviews it in
-# /espace-membre/flex and presses « Valider », which runs flex-signup-validate:
+# /administration/inscriptions-flex and presses « Valider », which runs flex-signup-validate:
 # it finds or creates the Pennylane customer, links the members row to it,
 # invites the person as a coworker, then sets `status` to `invited` and keeps
 # the customer id here. « Refuser » sets `declined`.

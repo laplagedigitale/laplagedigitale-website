@@ -1,21 +1,22 @@
-# Page: editor — the blog editors' dashboard: counts, then the drafts in
-# progress. Gated to editors and admins; everyone else is sent to /connexion.
-name: editor
-path: /editor
+# Page: admin-content — « Contenu », the blog's dashboard in the Administration:
+# counts, then the drafts in progress. Gated to editors and admins (an editor
+# lands here from /app); everyone else is sent to /connexion.
+name: admin-content
+path: /administration/contenu
 sitemap: false
 access: { require: [editor, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: "Tableau de bord — Espace rédaction"
-  description: "Espace rédaction du blog."
+  title: "Contenu — Administration"
+  description: "Le blog, dans l'administration de La Plage Digitale."
   noindex: true
 components:
   - type: flex
     props:
       className: 'min-h-screen flex flex-col lg:flex-row bg-background'
     children:
-      - component: editor-nav
+      - component: admin-nav
 
       - type: container
         element: main
@@ -33,7 +34,7 @@ components:
               - type: link
                 content: '+ Nouvel article'
                 props:
-                  href: /editor/posts/new
+                  href: /administration/contenu/articles/nouveau
                   className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
 
           - type: grid
@@ -66,7 +67,7 @@ components:
             props: { className: 'flex items-center justify-between gap-4' }
             children:
               - { type: text, element: h2, content: Derniers brouillons, props: { className: 'text-xl font-semibold text-navy' } }
-              - { type: link, content: 'Tous les brouillons →', props: { href: /editor/articles/brouillons, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - { type: link, content: 'Tous les brouillons →', props: { href: /administration/contenu/articles/brouillons, className: 'text-sm font-semibold text-blue hover:text-navy' } }
           - type: card
             props:
               className: 'p-4 sm:p-6'
@@ -90,13 +91,13 @@ components:
                     label: Catégories
                     valueLabels: { actualites: Actualités, evenements: Événements, newsletter: Newsletter, coding-club: Coding Club, edgefest: EdgeFest }
                   - { field: updated_at, label: Modifié, format: short-date }
-                onRowClick: { type: navigate, path: '/editor/posts/$record.id' }
+                onRowClick: { type: navigate, path: '/administration/contenu/articles/$record.id' }
 
           - type: flex
             props: { className: 'flex items-center justify-between gap-4' }
             children:
               - { type: text, element: h2, content: Derniers articles publiés, props: { className: 'text-xl font-semibold text-navy' } }
-              - { type: link, content: 'Tous les articles publiés →', props: { href: /editor/articles/publies, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - { type: link, content: 'Tous les articles publiés →', props: { href: /administration/contenu/articles/publies, className: 'text-sm font-semibold text-blue hover:text-navy' } }
           - type: card
             props:
               className: 'p-4 sm:p-6'
@@ -120,4 +121,4 @@ components:
                     label: Catégories
                     valueLabels: { actualites: Actualités, evenements: Événements, newsletter: Newsletter, coding-club: Coding Club, edgefest: EdgeFest }
                   - { field: updated_at, label: Modifié, format: short-date }
-                onRowClick: { type: navigate, path: '/editor/posts/$record.id' }
+                onRowClick: { type: navigate, path: '/administration/contenu/articles/$record.id' }

@@ -1,7 +1,7 @@
 # Table: posts — the blog ("Actualités").
 #
 # Seeded from the WordPress archive (seed/posts.yaml) and edited afterwards by
-# the `editor` role from the /editor front office. Public pages only ever list
+# the `editor` role from the Administration (/administration/contenu). Public pages only ever list
 # rows whose status is `published`; the permission block below is about who
 # may *write*, not who may see a draft.
 id: 1

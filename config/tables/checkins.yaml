@@ -16,7 +16,7 @@
 #     `to_invoice` and writes the invoice id back, so a row carrying one is
 #     never billed again.
 #
-# An admin corrects any row in /espace-membre/flex (or /_admin): change the
+# An admin corrects any row in /administration/finances/flex (or /_admin): change the
 # duration and the amount together, or delete a mistaken check-in.
 id: 8
 name: checkins
