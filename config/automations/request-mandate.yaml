@@ -1,9 +1,14 @@
 # Automation: request-mandate — the portal's "set up direct debit" button.
 # Pennylane mails the coworker the link to sign a Compte Pro SEPA mandate.
 #
-# A run started by hand reads and writes as the person who started it, so the
-# member read below is the caller's own row (row-level rule on email): the
-# Pennylane customer id never comes from the browser. Refused when the account
+# A run started by hand reads and writes as the person who started it, and
+# every read below is filtered on the address the button sends (`email`, the
+# signed-in user's). The filter is what keeps an admin to their own rows: the
+# row-level rules on email let an admin read every member, mandate and
+# request, so unfiltered reads took the first member, refused on anyone's
+# active mandate and on anyone's request of the last 24 hours. For a coworker
+# the rules still apply: naming another address reads no member row and is
+# refused. The Pennylane customer id never comes from the browser. Refused when the account
 # is not linked yet, when a mandate is already active or pending, or when a
 # request was sent in the last 24 hours. Every outcome returns `message`, which
 # the portal button shows inline.
@@ -12,20 +17,35 @@ trigger:
   type: manual
   label: Request a direct-debit mandate
   requiredRole: coworker
+  inputSchema:
+    email: { type: string }
 actions:
   - name: me
     type: record
     operator: list
-    props: { table: members, limit: 1 }
+    props:
+      table: members
+      filter:
+        conditions:
+          - { field: email, operator: equals, value: '{{trigger.input.email}}' }
+      limit: 1
   - name: mandates
     type: record
     operator: list
-    props: { table: mandates, limit: 50 }
+    props:
+      table: mandates
+      filter:
+        conditions:
+          - { field: member_email, operator: equals, value: '{{trigger.input.email}}' }
+      limit: 50
   - name: lastRequest
     type: record
     operator: list
     props:
       table: mandate_requests
+      filter:
+        conditions:
+          - { field: member_email, operator: equals, value: '{{trigger.input.email}}' }
       sort: [{ field: requested_at, direction: desc }]
       limit: 1
   - name: check
@@ -36,10 +56,15 @@ actions:
         me: '{{steps.me.records}}'
         mandates: '{{steps.mandates.records}}'
         lastRequest: '{{steps.lastRequest.records}}'
+        email: '{{trigger.input.email}}'
       code: |
         async function execute(context) {
           const refuse = (message) => ({ ok: 'no', message, memberId: '', customerId: 0, email: '' })
           const me = (context.inputData.me ?? [])[0]
+          // An empty address would match nothing anyway; say so plainly.
+          if (!String(context.inputData.email ?? '').trim()) {
+            return refuse('La demande n’a pas pu être identifiée. Rechargez la page et réessayez.')
+          }
           if (!me || !me.pennylane_customer_id) {
             return refuse('Votre compte n’est pas encore relié à Pennylane. Contactez l’équipe de La Plage Digitale.')
           }
