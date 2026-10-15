@@ -131,5 +131,5 @@ actions:
     props:
       code: |
         async function execute(context) {
-          return { message: `C’est envoyé ! Pennylane vous a envoyé par e-mail, à l’adresse de vos factures, un lien vers sa page sécurisée : saisissez votre IBAN et signez le mandat. Pensez à vérifier vos courriers indésirables. Une fois le mandat signé, revenez ici : il s’affiche sous 15 minutes.` }
+          return { message: `C’est envoyé ! Pennylane vous a envoyé par e-mail, à l’adresse de vos factures, un lien vers sa page sécurisée : saisissez votre IBAN et signez le mandat. Pensez à vérifier vos courriers indésirables. Une fois le mandat signé, revenez ici et cliquez sur « Vérifier mon mandat ».` }
         }

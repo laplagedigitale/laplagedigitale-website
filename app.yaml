@@ -198,6 +198,9 @@ automations:
   - $ref: ./config/automations/pennylane-auto-match.yaml
   - $ref: ./config/automations/pennylane-sync.yaml
   - $ref: ./config/automations/request-mandate.yaml
+  # « Vérifier mon mandat »: the button, and the system-side write it calls.
+  - $ref: ./config/automations/verify-mandate.yaml
+  - $ref: ./config/automations/verify-mandate-apply.yaml
   # The invoice recipients a coworker sets on /espace-membre/factures.
   - $ref: ./config/automations/update-billing-emails.yaml
   # Moves a member's rows to their new address once they confirmed it.

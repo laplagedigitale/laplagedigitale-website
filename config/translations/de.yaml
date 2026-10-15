@@ -569,7 +569,7 @@ portal.mandate.current: Mein Mandat
 portal.mandate.how: Wie funktioniert es?
 portal.mandate.how.1: "1. Klicken Sie auf „Lastschrift einrichten“."
 portal.mandate.how.2: "2. Pennylane sendet Ihnen an Ihre Rechnungsadresse eine E-Mail mit einem Link zu seiner sicheren Seite: Geben Sie Ihre IBAN ein und unterzeichnen Sie das Mandat."
-portal.mandate.how.3: "3. Kehren Sie hierher zurück: Ihr Mandat erscheint innerhalb von 15 Minuten. Ihre Rechnungen werden dann frühestens 14 Tage nach Fälligkeit auf das Konto des Vereins eingezogen."
+portal.mandate.how.3: "3. Kehren Sie hierher zurück und klicken Sie auf „Mein Mandat prüfen“: Es erscheint sofort (sonst innerhalb von 15 Minuten). Ihre Rechnungen werden dann frühestens 14 Tage nach Fälligkeit auf das Konto des Vereins eingezogen."
 portal.account.unlinked: "Ihr Konto ist noch nicht mit Pennylane verknüpft — wir kümmern uns darum."
 portal.match.pending: Wird gesucht
 portal.match.matched: Verknüpft
@@ -589,6 +589,9 @@ portal.mandate.since: Seit
 portal.mandate.cta: Lastschrift einrichten
 portal.mandate.done: Anfrage bearbeitet
 portal.mandate.error: "Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es in einigen Minuten erneut oder kontaktieren Sie uns."
+portal.mandate.verify: Mein Mandat prüfen
+portal.mandate.verify.done: Mandat geprüft
+portal.mandate.verify.error: "Das Mandat konnte nicht geprüft werden. Bitte versuchen Sie es in einigen Minuten erneut."
 portal.mandate.active: Aktiv
 portal.mandate.pending: Wird geprüft
 portal.mandate.failed: Fehlgeschlagen

@@ -1,0 +1,98 @@
+# Automation: verify-mandate — the portal's « Vérifier mon mandat » button.
+# Re-reads the coworker's Compte Pro mandate from Pennylane at once, so a
+# mandate signed a minute ago shows without waiting for pennylane-sync's next
+# 15-minute run. Pennylane has no webhook for mandates, hence a button.
+#
+# A run started by hand reads and writes as the person who started it, and a
+# coworker may not write `mandates` (an admin-only mirror). So this run only
+# finds who is asking — the member row filtered on the address the button
+# sends, under the row-level rules, as request-mandate does — and hands the
+# write to verify-mandate-apply, whose automation-call run writes as the
+# system. The Pennylane customer id never comes from the browser. Every
+# outcome returns `message`, which the portal button shows inline.
+name: verify-mandate
+trigger:
+  type: manual
+  label: Refresh my direct-debit mandate from Pennylane
+  requiredRole: coworker
+  inputSchema:
+    email: { type: string }
+actions:
+  - name: me
+    type: record
+    operator: list
+    props:
+      table: members
+      filter:
+        conditions:
+          - { field: email, operator: equals, value: '{{trigger.input.email}}' }
+      limit: 1
+  - name: check
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        me: '{{steps.me.records}}'
+        email: '{{trigger.input.email}}'
+      code: |
+        async function execute(context) {
+          const refuse = (message: string) => ({ ok: 'no', message, customerId: '' })
+          const me = (context.inputData.me ?? [])[0]
+          if (!String(context.inputData.email ?? '').trim()) {
+            return refuse('La demande n’a pas pu être identifiée. Rechargez la page et réessayez.')
+          }
+          if (!me || !me.pennylane_customer_id) {
+            return refuse('Votre compte n’est pas encore relié à Pennylane. Contactez l’équipe de La Plage Digitale.')
+          }
+          // The default message is the failure one: the top-level `confirm`
+          // step replaces it only once the refresh completed.
+          return { ok: 'yes', message: 'Pennylane n’a pas pu être interrogé. Réessayez dans quelques minutes.', customerId: String(me.pennylane_customer_id) }
+        }
+  - name: route
+    type: path
+    operator: branch
+    props:
+      mode: first-match
+      paths:
+        - name: refused
+          condition:
+            conditions:
+              - { field: '{{steps.check.ok}}', operator: equals, value: 'no' }
+          actions:
+            - name: refuse
+              type: flow
+              operator: stop
+              props:
+                status: success
+                message: '{{steps.check.message}}'
+                output: { message: '{{steps.check.message}}' }
+        # A branch needs two paths; the linked case goes on to the top-level call.
+        - name: linked
+          actions:
+            - name: proceed
+              type: code
+              operator: runTypescript
+              props:
+                code: |
+                  async function execute(context) {
+                    return {}
+                  }
+  # Top level, not inside a path: the trigger answers with the top-level steps'
+  # outputs merged in order, and an output produced inside a path never reaches it.
+  - name: apply
+    type: automation
+    operator: call
+    props:
+      name: verify-mandate-apply
+      inputData: { customerId: '{{steps.check.customerId}}' }
+      mode: sync
+  - name: confirm
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        message: '{{steps.apply.result.message}}'
+      code: |
+        async function execute(context) {
+          return { message: String(context.inputData.message ?? '') }
+        }

@@ -570,7 +570,7 @@ portal.mandate.current: Mon mandat
 portal.mandate.how: Comment ça marche ?
 portal.mandate.how.1: "1. Cliquez sur « Mettre en place le prélèvement »."
 portal.mandate.how.2: "2. Pennylane vous envoie un e-mail, à l'adresse de vos factures, avec un lien vers sa page sécurisée : saisissez votre IBAN et signez le mandat."
-portal.mandate.how.3: "3. Revenez ici : votre mandat s'affiche sous 15 minutes. Vos factures sont ensuite prélevées sur le compte de l'association, au plus tôt 14 jours après leur échéance."
+portal.mandate.how.3: "3. Revenez ici et cliquez sur « Vérifier mon mandat » : il s'affiche aussitôt (sinon sous 15 minutes). Vos factures sont ensuite prélevées sur le compte de l'association, au plus tôt 14 jours après leur échéance."
 portal.account.unlinked: "Votre compte n'est pas encore relié à Pennylane — nous nous en occupons."
 portal.match.pending: Recherche en cours
 portal.match.matched: Relié
@@ -590,6 +590,9 @@ portal.mandate.since: Depuis le
 portal.mandate.cta: Mettre en place le prélèvement
 portal.mandate.done: Demande traitée
 portal.mandate.error: "La demande n'a pas pu être envoyée. Réessayez dans quelques minutes ou contactez-nous."
+portal.mandate.verify: Vérifier mon mandat
+portal.mandate.verify.done: Mandat vérifié
+portal.mandate.verify.error: "Le mandat n'a pas pu être vérifié. Réessayez dans quelques minutes."
 portal.mandate.active: Actif
 portal.mandate.pending: En cours de validation
 portal.mandate.failed: En échec
