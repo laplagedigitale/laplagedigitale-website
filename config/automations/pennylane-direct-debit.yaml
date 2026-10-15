@@ -154,4 +154,4 @@ actions:
               props:
                 to: $env.TREASURER_EMAIL
                 subject: '{{steps.switch.subject}}'
-                body: '{{steps.switch.body}}'
+                body: '{{{safeHtml steps.switch.body}}}'
