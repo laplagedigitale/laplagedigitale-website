@@ -67,24 +67,40 @@ components:
                             children:
                               - { type: text, element: p, content: $t:portal.mandate.since, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
                               - { type: record-field, format: short-date, props: { field: signed_at, className: 'mt-1 text-navy' } }
-                  - type: button
-                    content: $t:portal.mandate.cta
+                  # A list, not the bare button: `$record.email` in a fetch body is
+                  # filled from a list item's row, never from the page binding or
+                  # `$currentUser` (both are sent as written in 0.37).
+                  - type: list
+                    dataSource:
+                      table: members
+                      filter:
+                        - { field: email, operator: eq, value: $currentUser.email }
+                      limit: 1
                     props:
-                      className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
-                    # Calls the manual trigger directly so the run's own message —
-                    # sent, or why it was refused — is shown in #mandate-status.
-                    action:
-                      type: fetch
-                      method: POST
-                      url: /api/automations/request-mandate/trigger
-                      body: {}
-                      onSuccess:
-                        type: toast
-                        message: $t:portal.mandate.done
-                        status: { target: mandate-status, message: $response.output.message }
-                      onError:
-                        type: toast
-                        message: $t:portal.mandate.error
+                      className: 'list-none p-0 m-0'
+                    children:
+                      - type: button
+                        content: $t:portal.mandate.cta
+                        props:
+                          className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                        # Calls the manual trigger directly so the run's own message —
+                        # sent, or why it was refused — is shown in #mandate-status.
+                        action:
+                          type: fetch
+                          method: POST
+                          url: /api/automations/request-mandate/trigger
+                          # The member row's address (the list below binds it to the
+                          # signed-in user): the run's three reads filter on it, which
+                          # keeps an admin to their own rows. Row-level rules still
+                          # apply, so a coworker naming another address is refused.
+                          body: { email: $record.email }
+                          onSuccess:
+                            type: toast
+                            message: $t:portal.mandate.done
+                            status: { target: mandate-status, message: $response.output.message }
+                          onError:
+                            type: toast
+                            message: $t:portal.mandate.error
                   # The run's own message: link sent by email, refused, or failed. The
                   # toast cannot carry it (only `status` reads $response), and a
                   # failed run still answers 200, so the outcome is told here.
