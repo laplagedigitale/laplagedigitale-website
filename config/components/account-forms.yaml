@@ -1,6 +1,6 @@
 # Reusable component template: account-forms — the body of an account page,
 # shared by the Espace Membre (/espace-membre/compte) and the editors' space
-# (/editor/compte): display name, password, sign-out.
+# (/editor/compte): display name, e-mail address, password, sign-out.
 #
 # Both forms post to the auth routes as the signed-in caller (the session is
 # the only identity), and read the reply status only (`raw`).
@@ -27,6 +27,30 @@ children:
         fields:
           - { field: name, control: text, label: $t:account.name, defaultValue: $session.name }
 
+  # The sign-in address. Better Auth mails a confirmation link to the new
+  # address and switches the account only once it is followed; member-email-sync
+  # then moves the Espace Membre (members row, invoices, mandate, check-ins,
+  # Pennylane recipients) to it.
+  - type: card
+    props:
+      className: 'p-6 space-y-4'
+    children:
+      - { type: text, element: h2, content: $t:account.email, props: { className: 'text-xl font-semibold text-navy' } }
+      - { type: text, element: p, content: $t:account.email.intro, props: { className: 'text-sm text-text-muted' } }
+      # No callbackURL: an endpoint form shows every field (`hidden` is not
+      # honoured in 0.37), so the confirmation link lands on the home page,
+      # signed in.
+      - type: form
+        endpoint:
+          url: /api/auth/change-email
+          method: POST
+          responseEnvelope: raw
+          submitLabel: $t:account.email.submit
+          onSuccess: { type: toast, variant: success, message: $t:account.email.sent, duration: 10000 }
+          onError: { type: toast, variant: destructive, message: $t:account.email.error }
+        fields:
+          - { field: newEmail, control: email, label: $t:account.email.new, required: true }
+
   - type: card
     props:
       className: 'p-6 space-y-4'
@@ -47,7 +71,7 @@ children:
 
   - type: card
     props:
-      className: 'p-6 space-y-4 xl:col-span-2'
+      className: 'p-6 space-y-4'
     children:
       - { type: text, element: h2, content: $t:account.session, props: { className: 'text-xl font-semibold text-navy' } }
       - { type: text, element: p, content: $t:account.session.intro, props: { className: 'text-sm text-text-muted' } }

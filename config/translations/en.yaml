@@ -610,6 +610,12 @@ account.name: Display name
 account.save: Save
 account.profile.saved: Name saved.
 account.error: "Saving failed. Please try again."
+account.email: "Email address"
+account.email.intro: "Your sign-in address, which your invoices are also sent to. A confirmation link is sent to the new address: the change takes effect when you follow it."
+account.email.new: "New email address"
+account.email.submit: "Change address"
+account.email.sent: "Confirmation link sent to the new address. Open it to confirm the change."
+account.email.error: "The address could not be changed. Check it and try again."
 account.password: Password
 account.password.current: Current password
 account.password.new: New password

@@ -611,6 +611,12 @@ account.name: Nom affiché
 account.save: Enregistrer
 account.profile.saved: Nom enregistré.
 account.error: "L'enregistrement a échoué. Réessayez."
+account.email: "Adresse e-mail"
+account.email.intro: "Votre adresse de connexion, à laquelle vos factures sont aussi envoyées. Un lien de confirmation est envoyé à la nouvelle adresse : le changement prend effet quand vous le suivez."
+account.email.new: "Nouvelle adresse e-mail"
+account.email.submit: "Changer d'adresse"
+account.email.sent: "Lien de confirmation envoyé à la nouvelle adresse. Ouvrez-le pour valider le changement."
+account.email.error: "L'adresse n'a pas pu être changée. Vérifiez-la et réessayez."
 account.password: Mot de passe
 account.password.current: Mot de passe actuel
 account.password.new: Nouveau mot de passe

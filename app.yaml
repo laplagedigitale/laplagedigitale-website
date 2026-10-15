@@ -189,6 +189,8 @@ automations:
   - $ref: ./config/automations/request-mandate.yaml
   # The invoice recipients a coworker sets on /espace-membre/factures.
   - $ref: ./config/automations/update-billing-emails.yaml
+  # Moves a member's rows to their new address once they confirmed it.
+  - $ref: ./config/automations/member-email-sync.yaml
   # Fixe subscriptions with an active mandate → GoCardless direct debit
   - $ref: ./config/automations/pennylane-direct-debit.yaml
   # Flex: one row per member per day, then the monthly Pennylane invoice

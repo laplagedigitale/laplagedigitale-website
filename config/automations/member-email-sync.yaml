@@ -1,0 +1,102 @@
+# Automation: member-email-sync — moves a member to their new address once
+# they confirmed it. A coworker changes their e-mail on /espace-membre/compte
+# (POST /api/auth/change-email); the account takes the new address when the
+# link mailed to it is followed. No event says "email changed", and the whole
+# Espace Membre is keyed on the address (members.email, then member_email on
+# every portal row), so without this the coworker would land on a 404.
+#
+# It listens to emailVerified (the link followed) and signIn (a safety net),
+# finds the members row by user_id — the account id, which does not change —
+# and, when the row still holds another address, rewrites:
+#   - members.email,
+#   - member_email on invoices, mandates, checkins and mandate_requests (the
+#     row-level rules read it; the sync would redo the first two within 15
+#     minutes, the last two never),
+#   - the Pennylane customer's emails: the new address replaces the old one,
+#     so the next invoice goes there and the customer still matches.
+# A row found by e-mail with no user_id yet gets it, so later changes follow.
+# Nothing else is ever written: a run with nothing to move is a no-op.
+name: member-email-sync
+trigger:
+  type: auth
+  events: [emailVerified, signIn]
+timeout: 60000
+concurrency:
+  limit: 1
+actions:
+  - name: members
+    type: record
+    operator: list
+    props: { table: members, limit: 1000 }
+  - name: sync
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 45000
+      inputData:
+        user: '{{trigger.data.user}}'
+        members: '{{steps.members.records}}'
+      code: |
+        async function execute(context) {
+          const norm = (s: unknown) => String(s ?? '').trim().toLowerCase()
+          const user: any = context.inputData.user ?? {}
+          const userId = String(user.id ?? '')
+          const email = norm(user.email)
+          if (!userId || !email) return { moved: false, reason: 'no user on the event' }
+          const members: any[] = context.inputData.members ?? []
+
+          const byId = members.find((m) => String(m.user_id ?? '') === userId)
+          if (!byId) {
+            const byEmail = members.find((m) => norm(m.email) === email)
+            if (byEmail && !byEmail.user_id) {
+              await context.actions.record.update({ table: 'members', id: String(byEmail.id), data: { user_id: userId } })
+              context.log.info(`${email}: user_id recorded`)
+              return { moved: false, reason: 'user_id recorded' }
+            }
+            return { moved: false, reason: 'no members row for this account' }
+          }
+          const from = norm(byId.email)
+          if (from === email) return { moved: false, reason: 'address unchanged' }
+          if (members.some((m) => m !== byId && norm(m.email) === email)) {
+            // Two rows would carry the same address: leave it to an admin.
+            throw new Error(`${from} → ${email}: another members row already holds ${email}; nothing moved`)
+          }
+
+          await context.actions.record.update({ table: 'members', id: String(byId.id), data: { email } })
+          const moved: Record<string, number> = {}
+          for (const table of ['invoices', 'mandates', 'checkins', 'mandate_requests']) {
+            const r: any = await context.actions.record.update({
+              table,
+              filter: { conditions: [{ field: 'member_email', operator: 'equals', value: from }] },
+              data: { member_email: email },
+            })
+            moved[table] = Number(r?.updated ?? 0)
+          }
+          context.log.info(`${from} → ${email}: members row and ${JSON.stringify(moved)} moved`)
+
+          // Pennylane: the new address takes the old one's place among the
+          // invoice recipients. A failure here is logged, not thrown — the
+          // portal is already consistent, and an admin can fix Pennylane.
+          let pennylane = 'not linked'
+          const customerId = Number(byId.pennylane_customer_id)
+          if (Number.isFinite(customerId) && customerId > 0) {
+            try {
+              const got: any = await context.actions.connection.call({ connection: 'pennylane', operation: 'get-customer', params: { id: customerId } })
+              const customer: any = got?.data ?? {}
+              const type = String(customer.customer_type ?? '')
+              if (type !== 'company' && type !== 'individual') throw new Error(`unknown customer_type « ${type} »`)
+              const emails = [...new Set([email, ...((customer.emails ?? []) as unknown[]).map(norm).filter((e) => e && e !== from)])]
+              await context.actions.connection.call({
+                connection: 'pennylane',
+                operation: type === 'company' ? 'put-company-customer' : 'put-individual-customer',
+                params: { id: String(customerId), emails },
+              })
+              await context.actions.record.update({ table: 'members', id: String(byId.id), data: { billing_emails: emails.join('\n') } })
+              pennylane = `emails set to ${emails.join(', ')}`
+            } catch (error) {
+              pennylane = `failed: ${String((error as any)?.message ?? error)}`
+              context.log.error(`${email}: Pennylane customer ${customerId} not updated — ${pennylane}`)
+            }
+          }
+          return { moved: true, from, to: email, rows: moved, pennylane }
+        }
