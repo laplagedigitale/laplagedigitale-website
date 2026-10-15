@@ -547,7 +547,7 @@ portal.dashboard.paid: Factures réglées
 portal.dashboard.latest: Dernières factures
 portal.dashboard.all: Toutes les factures →
 portal.dashboard.manage: Gérer →
-portal.invoices.intro: "Toutes vos factures La Plage Digitale, issues de Pennylane. Le lien PDF reste valable 30 minutes : rechargez la page s'il a expiré."
+portal.invoices.intro: "Toutes vos factures La Plage Digitale, issues de Pennylane. Cliquez sur une facture pour ouvrir son PDF : s'il ne s'ouvre plus, rechargez la page (le lien reste valable 30 minutes)."
 portal.invoices.search: Rechercher une facture…
 portal.mandate.current: Mon mandat
 portal.mandate.how: Comment ça marche ?
@@ -587,7 +587,6 @@ portal.invoices.deadline: Échéance
 portal.invoices.amount: Montant TTC
 portal.invoices.remaining: Reste à payer
 portal.invoices.status: Statut
-portal.invoices.pdf: PDF
 portal.status.paid: Payée
 portal.status.partially_paid: Partiellement payée
 portal.status.upcoming: À payer

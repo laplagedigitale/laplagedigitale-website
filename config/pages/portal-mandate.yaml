@@ -37,32 +37,38 @@ components:
                   className: 'xl:col-span-2 p-6 space-y-4'
                 children:
                   - { type: text, element: h2, content: $t:portal.mandate.current, props: { className: 'text-xl font-semibold text-navy' } }
-                  - type: table
-                    props: { id: mandate-list }
+                  # One mandate per coworker: the latest one, drawn as facts, not
+                  # as a one-row table. record-field draws the status as its
+                  # option's coloured chip, with the translated label.
+                  - type: list
                     dataSource:
                       table: mandates
                       filter:
                         - { field: member_email, operator: eq, value: $currentUser.email }
                       sort:
                         - { field: signed_at, direction: desc }
-                    emptyMessage: $t:portal.mandate.none
-                    columns:
-                      - field: status
-                        label: $t:portal.invoices.status
-                        valueLabels:
-                          active: $t:portal.mandate.active
-                          pending_customer_approval: $t:portal.mandate.pending
-                          pending_submission: $t:portal.mandate.pending
-                          submitted: $t:portal.mandate.pending
-                          failed: $t:portal.mandate.failed
-                          blocked: $t:portal.mandate.failed
-                          bank_disconnected: $t:portal.mandate.failed
-                          cancelled: $t:portal.mandate.ended
-                          expired: $t:portal.mandate.ended
-                          consumed: $t:portal.mandate.ended
-                          replaced: $t:portal.mandate.ended
-                      - { field: bank_account, label: $t:portal.mandate.account }
-                      - { field: signed_at, label: $t:portal.mandate.since, format: short-date }
+                      limit: 1
+                    listDisplay:
+                      emptyMessage: $t:portal.mandate.none
+                    props:
+                      className: 'list-none p-0 m-0'
+                    children:
+                      - type: grid
+                        props:
+                          className: 'grid grid-cols-1 sm:grid-cols-3 gap-4 rounded-lg border border-border p-4'
+                        children:
+                          - type: container
+                            children:
+                              - { type: text, element: p, content: $t:portal.invoices.status, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, props: { field: status, className: 'mt-1' } }
+                          - type: container
+                            children:
+                              - { type: text, element: p, content: $t:portal.mandate.account, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, props: { field: bank_account, className: 'mt-1 font-mono text-navy' } }
+                          - type: container
+                            children:
+                              - { type: text, element: p, content: $t:portal.mandate.since, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, format: short-date, props: { field: signed_at, className: 'mt-1 text-navy' } }
                   - type: button
                     content: $t:portal.mandate.cta
                     props:
@@ -78,7 +84,6 @@ components:
                         type: toast
                         message: $t:portal.mandate.done
                         status: { target: mandate-status, message: $response.output.message }
-                        refetch: mandate-list
                       onError:
                         type: toast
                         message: $t:portal.mandate.error

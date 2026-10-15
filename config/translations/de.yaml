@@ -546,7 +546,7 @@ portal.dashboard.paid: Bezahlte Rechnungen
 portal.dashboard.latest: Letzte Rechnungen
 portal.dashboard.all: Alle Rechnungen →
 portal.dashboard.manage: Verwalten →
-portal.invoices.intro: "Alle Ihre Rechnungen von La Plage Digitale, aus Pennylane. Ein PDF-Link bleibt 30 Minuten gültig: Laden Sie die Seite neu, wenn er abgelaufen ist."
+portal.invoices.intro: "Alle Ihre Rechnungen von La Plage Digitale, aus Pennylane. Klicken Sie auf eine Rechnung, um das PDF zu öffnen: Öffnet es sich nicht mehr, laden Sie die Seite neu (der Link bleibt 30 Minuten gültig)."
 portal.invoices.search: Rechnung suchen…
 portal.mandate.current: Mein Mandat
 portal.mandate.how: Wie funktioniert es?
@@ -586,7 +586,6 @@ portal.invoices.deadline: Fällig am
 portal.invoices.amount: Betrag inkl. MwSt.
 portal.invoices.remaining: Offener Betrag
 portal.invoices.status: Status
-portal.invoices.pdf: PDF
 portal.status.paid: Bezahlt
 portal.status.partially_paid: Teilweise bezahlt
 portal.status.upcoming: Offen

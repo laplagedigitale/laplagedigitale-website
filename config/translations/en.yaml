@@ -546,7 +546,7 @@ portal.dashboard.paid: Paid invoices
 portal.dashboard.latest: Latest invoices
 portal.dashboard.all: All invoices →
 portal.dashboard.manage: Manage →
-portal.invoices.intro: "All your La Plage Digitale invoices, from Pennylane. A PDF link stays valid for 30 minutes: reload the page if it has expired."
+portal.invoices.intro: "All your La Plage Digitale invoices, from Pennylane. Click an invoice to open its PDF: if it no longer opens, reload the page (the link stays valid for 30 minutes)."
 portal.invoices.search: Search invoices…
 portal.mandate.current: My mandate
 portal.mandate.how: How does it work?
@@ -586,7 +586,6 @@ portal.invoices.deadline: Due date
 portal.invoices.amount: Amount incl. VAT
 portal.invoices.remaining: Left to pay
 portal.invoices.status: Status
-portal.invoices.pdf: PDF
 portal.status.paid: Paid
 portal.status.partially_paid: Partially paid
 portal.status.upcoming: Due
