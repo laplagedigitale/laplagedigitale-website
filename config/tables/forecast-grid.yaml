@@ -1,0 +1,66 @@
+# Table: forecast_grid — computed by treasury-forecast-compute, never edited:
+# the plan de trésorerie as the « Trésorerie - La Plage Digitale » spreadsheet
+# laid it out. One row per scenario × grid row, in the sheet's order
+# (sort_order): RECETTES, each group's postes then its total, TOTAL RECETTES;
+# DÉPENSES, same; then the soldes — Livret A transfers, recettes − dépenses du
+# mois, solde de début, solde de fin, trésorerie totale with the reserve, and
+# the control gap with Pennylane. One column per month (m01…m12): the
+# Pennylane actual for a closed month, the forecast for the current and coming
+# ones — scenarios.period_label says where the line falls.
+#
+# A table cannot pivot forecast_months (one row per poste × month), so the
+# engine writes this pivot, as it writes forecast_balances for the charts.
+# Rows of a scenario that a recompute no longer produces (a line with nothing
+# all year) are deleted by computed_at.
+id: 21
+name: forecast_grid
+aiAccess:
+  description: "Computed cash plan in the spreadsheet's layout: one row per poste, group total, section total or balance, with twelve monthly amounts (actual for closed months, forecast after) and the year totals."
+  operations: [read, list]
+fields:
+  - { id: 1, name: row_key, label: Clé, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: scenario, label: Scénario, type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: cascade }
+  - { id: 3, name: scenario_key, label: Clé du scénario, type: single-line-text, indexed: true }
+  - { id: 4, name: is_baseline, label: Référence, type: checkbox, default: false }
+  - { id: 5, name: year, label: Exercice, type: integer, indexed: true }
+  - { id: 6, name: sort_order, label: Ordre, type: integer, indexed: true }
+  - id: 7
+    name: row_type
+    label: Type de ligne
+    type: single-select
+    options:
+      - { value: section, label: Section, color: '#273a61' }
+      - { value: line, label: Poste, color: '#e4e6eb' }
+      - { value: group_total, label: Sous-total, color: '#b5cce4' }
+      - { value: section_total, label: Total, color: '#6290bc' }
+      - { value: balance, label: Solde, color: '#f9c296' }
+      - { value: check, label: Contrôle, color: '#e4e6eb' }
+  - { id: 8, name: label, label: Poste, type: single-line-text }
+  - { id: 9, name: line_code, label: Code ligne, type: single-line-text }
+  - { id: 10, name: cash_group, label: Groupe, type: single-line-text }
+  - { id: 11, name: pcg_account, label: Compte PCG, type: single-line-text }
+  - { id: 12, name: m01, label: Janvier, type: currency, currency: EUR, precision: 2 }
+  - { id: 13, name: m02, label: Février, type: currency, currency: EUR, precision: 2 }
+  - { id: 14, name: m03, label: Mars, type: currency, currency: EUR, precision: 2 }
+  - { id: 15, name: m04, label: Avril, type: currency, currency: EUR, precision: 2 }
+  - { id: 16, name: m05, label: Mai, type: currency, currency: EUR, precision: 2 }
+  - { id: 17, name: m06, label: Juin, type: currency, currency: EUR, precision: 2 }
+  - { id: 18, name: m07, label: Juillet, type: currency, currency: EUR, precision: 2 }
+  - { id: 19, name: m08, label: Août, type: currency, currency: EUR, precision: 2 }
+  - { id: 20, name: m09, label: Septembre, type: currency, currency: EUR, precision: 2 }
+  - { id: 21, name: m10, label: Octobre, type: currency, currency: EUR, precision: 2 }
+  - { id: 22, name: m11, label: Novembre, type: currency, currency: EUR, precision: 2 }
+  - { id: 23, name: m12, label: Décembre, type: currency, currency: EUR, precision: 2 }
+  - { id: 24, name: total, label: Total, type: currency, currency: EUR, precision: 2 }
+  - { id: 25, name: total_actual, label: dont réalisé, type: currency, currency: EUR, precision: 2 }
+  - { id: 26, name: total_forecast, label: dont prévu, type: currency, currency: EUR, precision: 2 }
+  - { id: 27, name: budget_total, label: Budget, type: currency, currency: EUR, precision: 2 }
+  - { id: 28, name: variance, label: Écart, type: currency, currency: EUR, precision: 2 }
+  - { id: 29, name: computed_at, label: Calculé le, type: datetime, indexed: true }
+indexes:
+  - { name: idx_forecast_grid_scenario_order, fields: [scenario_key, sort_order] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

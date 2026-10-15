@@ -56,6 +56,8 @@ fields:
       - { value: negative, label: Négatif, color: '#ef4444' }
   - { id: 25, name: check_delta, label: Écart de contrôle, type: currency, currency: EUR, precision: 2 }
   - { id: 26, name: created_at, type: created-at }
+  - { id: 27, name: actual_through, label: Réalisé jusqu'au, type: date }
+  - { id: 28, name: period_label, label: Période, type: single-line-text }
 permissions:
   read: [admin]
   create: [admin]
