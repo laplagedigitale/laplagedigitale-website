@@ -1,0 +1,20 @@
+# Automation: treasury-forecast-on-budget — a month cell of a scenario's
+# budget grid was edited: recompute that scenario. One run per saved cell
+# (each PATCH of the grid is one record update); the engine's debounce turns
+# the runs queued behind the first into no-ops, and concurrency serialises
+# them. Writes nothing on budget_entries itself.
+name: treasury-forecast-on-budget
+trigger:
+  type: record
+  table: budget_entries
+  events: [update]
+  watchFields: [m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12]
+timeout: 360000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: treasury-forecast-compute
+    $vars:
+      scenarioId: '{{trigger.data.record.scenario}}'
+      changedAt: '{{trigger.data.record.updated_at}}'

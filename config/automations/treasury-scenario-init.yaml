@@ -1,0 +1,84 @@
+# Automation: treasury-scenario-init — a scenario was created (the form on
+# /administration/finances/previsionnel/nouveau): copy the budget grid, the
+# adjustments and the scenario-bound dated items of its model (copy_from,
+# else the baseline) onto the new row, one empty grid row for any line the
+# model lacks, then compute it. The baseline itself is seeded by
+# treasury-seed and never initialised here.
+#
+# The copies are batch writes on three other tables: each copied adjustment
+# or dated item starts its own on-edit run, which the engine's debounce turns
+# into a no-op. This automation writes scenarios only through the engine's
+# batch upsert (an update), which the create trigger does not match.
+name: treasury-scenario-init
+trigger:
+  type: record
+  table: scenarios
+  events: [create]
+timeout: 360000
+concurrency:
+  limit: 1
+actions:
+  - name: copy
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 120000
+      inputData:
+        scenarioId: '{{trigger.data.record.id}}'
+        scenarioKey: '{{trigger.data.record.scenario_key}}'
+        year: '{{trigger.data.record.year}}'
+        isBaseline: '{{trigger.data.record.is_baseline}}'
+        copyFrom: '{{trigger.data.record.copy_from}}'
+      code: |
+        async function execute(context) {
+          const inp: any = context.inputData ?? {}
+          const id = String(inp.scenarioId ?? '')
+          const key = String(inp.scenarioKey ?? '')
+          const year = Number(inp.year) || new Date().getFullYear()
+          if (String(inp.isBaseline) === 'true' || !id || !key) {
+            context.log.info('scénario de référence ou incomplet : rien à copier')
+            return { copied: 0, compute: 'no' }
+          }
+          const list = async (table: string, filter?: any): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, ...(filter ? { filter } : {}), limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          let modelId = String(inp.copyFrom ?? '').trim()
+          if (!modelId) {
+            const baseline = (await list('scenarios', { conditions: [{ field: 'is_baseline', operator: 'equals', value: true }] }))[0]
+            modelId = baseline ? String(baseline.id) : ''
+          }
+          const lines = (await list('budget_lines')).filter((l: any) => l.active !== false && l.active !== 'false')
+          const modelEntries = modelId ? await list('budget_entries', { conditions: [{ field: 'scenario', operator: 'equals', value: modelId }] }) : []
+          const modelAdjustments = modelId ? await list('budget_adjustments', { conditions: [{ field: 'scenario', operator: 'equals', value: modelId }] }) : []
+          const modelPlanned = modelId ? await list('planned_items', { conditions: [{ field: 'scenario', operator: 'equals', value: modelId }] }) : []
+          const months = ['m01', 'm02', 'm03', 'm04', 'm05', 'm06', 'm07', 'm08', 'm09', 'm10', 'm11', 'm12']
+          const entries: any[] = []
+          for (const l of lines) {
+            const src = modelEntries.find((e: any) => String(e.budget_line) === String(l.id))
+            const row: any = {
+              entry_key: `${key}:${year}:${l.code}`, scenario: id, scenario_key: key, is_baseline: false, year,
+              budget_line: String(l.id), line_code: String(l.code), line_label: String(l.label ?? l.code), line_kind: l.kind, cash_group: l.cash_group ?? null, line_order: Number(l.line_order) || 0,
+            }
+            for (const m of months) row[m] = src && src[m] !== undefined && src[m] !== '' ? src[m] : null
+            entries.push(row)
+          }
+          if (entries.length > 0) await context.actions.record.batchUpsert({ table: 'budget_entries', items: entries, matchField: 'entry_key', continueOnItemError: true })
+          const adjustments = modelAdjustments.map((a: any) => ({
+            scenario: id, scenario_key: key, budget_line: String(a.budget_line), line_code: a.line_code ?? '', label: a.label, kind: a.kind ?? 'other',
+            monthly_amount: a.monthly_amount, from_month: a.from_month, to_month: a.to_month ?? null, employer_multiplier: a.employer_multiplier ?? null, active: a.active !== false && a.active !== 'false', notes: a.notes ?? '',
+          }))
+          if (adjustments.length > 0) await context.actions.record.batchCreate({ table: 'budget_adjustments', items: adjustments, continueOnItemError: true })
+          const plannedRows = modelPlanned.filter((p: any) => p.source === 'manual' || !p.source).map((p: any) => ({
+            source: 'manual', label: p.label, budget_line: String(p.budget_line), line_code: p.line_code ?? '', direction: p.direction, amount: p.amount, date: p.date,
+            month: p.month ?? null, year: p.year ?? null, recurrence: p.recurrence ?? 'once', until: p.until ?? null, certainty: p.certainty ?? 'certain', status: p.status ?? 'expected',
+            scenario: id, scenario_key: key, counterparty: p.counterparty ?? '', notes: p.notes ?? '',
+          }))
+          if (plannedRows.length > 0) await context.actions.record.batchCreate({ table: 'planned_items', items: plannedRows, continueOnItemError: true })
+          context.log.info(`${key} : ${entries.length} lignes de budget, ${adjustments.length} ajustements, ${plannedRows.length} éléments datés copiés depuis ${modelId || 'rien'}`)
+          return { copied: entries.length, compute: 'yes' }
+        }
+  - name: compute
+    $ref: treasury-forecast-compute
+    $vars:
+      scenarioId: '{{trigger.data.record.id}}'

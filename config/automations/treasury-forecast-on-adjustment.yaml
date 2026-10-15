@@ -1,0 +1,18 @@
+# Automation: treasury-forecast-on-adjustment — an adjustment of a scenario
+# was added, edited or deleted: recompute that scenario. The rows copied by
+# treasury-scenario-init start one run each; the engine's debounce makes all
+# but the first a no-op.
+name: treasury-forecast-on-adjustment
+trigger:
+  type: record
+  table: budget_adjustments
+  events: [create, update, delete]
+timeout: 360000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: treasury-forecast-compute
+    $vars:
+      scenarioId: '{{trigger.data.record.scenario}}'
+      changedAt: '{{trigger.data.record.updated_at}}'
