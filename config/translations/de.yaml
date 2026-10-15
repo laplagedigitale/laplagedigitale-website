@@ -315,7 +315,7 @@ legal.host.title: "Hosting-Anbieter"
 legal.host.p1: "Scalingo SAS, vereinfachte Aktiengesellschaft (SAS) mit einem Kapital von 35.291,90 €, SIRET 808 665 483 00034 · 13 rue Jacques Peirotes, 67000 Straßburg, Frankreich · https://scalingo.com"
 legal.host.p2: "Die Website und ihre Daten werden innerhalb der Europäischen Union gehostet."
 legal.build.title: "Konzeption und Umsetzung"
-legal.build.p1: "Die Website wurde mit Sovrium (https://sovrium.com) erstellt, einer konfigurationsgesteuerten Anwendungsplattform. Texte und Fotos: La Plage Digitale, sofern nicht anders angegeben."
+legal.build.p1: "Die Website wurde mit Sovrium (https://sovrium.com) erstellt, einer konfigurationsgesteuerten Anwendungsplattform. Texte und Fotos: La Plage Digitale, sofern nicht anders angegeben. Fotos der Räumlichkeiten: Naïs Massing."
 legal.ip.title: "Urheberrecht"
 legal.ip.p1: "Sämtliche Inhalte dieser Website – Texte, Fotos, Illustrationen, Logos und visuelle Identität – sind Eigentum von La Plage Digitale oder werden mit Genehmigung der Rechteinhaber verwendet. Sie sind durch das französische Gesetzbuch über geistiges Eigentum geschützt."
 legal.ip.p2: "Jede Vervielfältigung, Wiedergabe, Änderung oder Bearbeitung dieser Inhalte, ganz oder teilweise und gleich in welcher Form, ist ohne vorherige schriftliche Zustimmung von La Plage Digitale untersagt und stellt eine Verletzung im Sinne der Artikel L.335-2 ff. des französischen Gesetzbuchs über geistiges Eigentum dar. Namen, Logos und Marken der genannten Unternehmen und Partner gehören ihren jeweiligen Inhabern."
@@ -408,17 +408,17 @@ pricing.room.requin.name: Raum Requin 🦈
 pricing.room.requin.cap: Bis zu 8 Pers.
 pricing.room.requin.size: 16 m²
 pricing.room.requin.price: 98 €
-pricing.room.requin.alt: Der Raum Requin, ein Besprechungsraum für 8 Personen
+pricing.room.requin.alt: "Der Raum Requin: langer Stehtisch, bunte Hocker und Bildschirm am Fenster"
 pricing.room.baleine.name: Raum Baleine 🐳
 pricing.room.baleine.cap: Bis zu 16 Pers.
 pricing.room.baleine.size: 36 m²
 pricing.room.baleine.price: 120 €
-pricing.room.baleine.alt: Der Raum Baleine, ein großer Besprechungsraum für 16 Personen
+pricing.room.baleine.alt: "Der Raum Baleine: langer Holztisch, hellblaue Sessel, Whiteboard und Bildschirm"
 pricing.room.narval.name: Raum Narval 🐋
 pricing.room.narval.cap: Bis zu 60 Pers.
 pricing.room.narval.size: 82 m²
 pricing.room.narval.price: 253 €
-pricing.room.narval.alt: Der Raum Narval, ein Konferenzraum für bis zu 60 Personen
+pricing.room.narval.alt: "Der Raum Narval: großer heller Raum mit Fensterfront zur Straße, Tischen und großem Bildschirm"
 pricing.dom.eyebrow: Geschäftsadresse
 pricing.dom.title: Ihre Geschäftsadresse in Straßburg
 pricing.dom.text: "Melden Sie den Sitz Ihres Unternehmens in der 13 rue Jacques Peirotes an – ganz ohne Schreibtisch in unserem Coworking-Space."
@@ -477,7 +477,7 @@ space.meta.description: "3 Boxen, 52 feste Arbeitsplätze, 30 Flex-Plätze und 4
 space.eyebrow: Der Raum
 space.title: Coworking-Space und verfügbare Büros
 space.lead: "Über 600 m² im Herzen von Straßburg: abgeschlossene Büros, feste Arbeitsplätze, flexible Plätze und Räume für Besprechungen."
-space.hero.alt: "Ansichten des Open Space von La Plage Digitale: Schreibtische, sichtbare Balken und Glasdach"
+space.hero.alt: "Ansichten von La Plage Digitale: der Open Space unter Betondecke und Oberlichtern sowie die Lounge am Empfang"
 space.offers.eyebrow: Was Sie erwartet
 space.offers.title: Ein Platz für jede Arbeitsweise
 space.box.title: Boxen für Start-ups
@@ -501,7 +501,7 @@ space.how.flex.cta: Zu den Neuigkeiten →
 space.how.rooms.title: Ein Besprechungsraum
 space.how.rooms.text: "Sie interessieren sich für einen unserer Besprechungsräume? Kontaktieren Sie uns oder kommen Sie vorbei, um die Verfügbarkeit zu erfragen."
 space.how.rooms.cta: Kontakt aufnehmen
-space.how.rooms.alt: "Die Besprechungsräume von La Plage Digitale: großer Tisch, Bildschirm und bunte Stühle"
+space.how.rooms.alt: "Die Besprechungsräume Requin, Baleine und Narval von La Plage Digitale"
 space.cta.title: Bereit, Ihren Laptop aufzuklappen?
 space.cta.text: Entdecken Sie unsere Angebote oder besuchen Sie uns – wir zeigen Ihnen gerne alles.
 space.cta.pricing: Unsere Angebote
