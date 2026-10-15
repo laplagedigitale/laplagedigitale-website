@@ -20,6 +20,13 @@
 # than a `visibility.record` gate: that would make every page bind a members
 # row, and an admin without one would get a 404.
 #
+# The sidebars keep their own height (lg:flex-none) and the column scrolls
+# (lg:overflow-y-auto): a sidebar stretched to fill the column is cut to the
+# height left over, and its last groups overflow onto the link below it.
+#
+# « Console Sovrium » (/_admin) — the built-in console: users and roles, API
+# keys, automation runs, raw tables. Admins only, like the console itself.
+#
 # The entries' hrefs are literal paths: the current-entry match runs on the
 # unresolved href, so a translated one is never marked.
 name: admin-nav
@@ -44,7 +51,7 @@ children:
     visibility: { roles: [admin] }
     drawer: { below: lg, label: Menu }
     props:
-      className: 'lg:flex-1 text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
+      className: 'lg:flex-none text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
     groups:
       - label: Pilotage
         items:
@@ -69,6 +76,7 @@ children:
       - label: Compte
         items:
           - { label: Mon compte, href: /administration/compte, icon: user-round }
+          - { label: Console Sovrium, href: /_admin, icon: settings }
           - { label: Voir le site, href: /, icon: external-link }
 
   # Editors: the blog and their account.
@@ -76,7 +84,7 @@ children:
     visibility: { roles: [editor] }
     drawer: { below: lg, label: Menu }
     props:
-      className: 'lg:flex-1 text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
+      className: 'lg:flex-none text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
     groups:
       - label: Contenu
         items:
