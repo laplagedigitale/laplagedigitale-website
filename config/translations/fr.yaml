@@ -316,7 +316,7 @@ legal.host.title: "Hébergeur"
 legal.host.p1: "Scalingo SAS, société par actions simplifiée au capital de 35 291,90 €, SIRET 808 665 483 00034 · 13 rue Jacques Peirotes, 67000 Strasbourg, France · https://scalingo.com"
 legal.host.p2: "Le site et ses données sont hébergés au sein de l’Union européenne."
 legal.build.title: "Conception et réalisation"
-legal.build.p1: "Le site est construit avec Sovrium (https://sovrium.com), une plateforme applicative pilotée par configuration. Textes et photographies : La Plage Digitale, sauf mention contraire."
+legal.build.p1: "Le site est construit avec Sovrium (https://sovrium.com), une plateforme applicative pilotée par configuration. Textes et photographies : La Plage Digitale, sauf mention contraire. Photographies des locaux : Naïs Massing."
 legal.ip.title: "Propriété intellectuelle"
 legal.ip.p1: "L’ensemble des éléments du site — textes, photographies, illustrations, logos et identité visuelle — est la propriété de La Plage Digitale ou est utilisé avec l’autorisation de ses titulaires. Ces éléments sont protégés par le Code de la propriété intellectuelle."
 legal.ip.p2: "Toute reproduction, représentation, modification ou adaptation de tout ou partie de ces éléments, par quelque procédé que ce soit, sans l’autorisation écrite préalable de La Plage Digitale est interdite et constitue une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle. Les noms, logos et marques des entreprises et partenaires cités appartiennent à leurs titulaires respectifs."
@@ -409,17 +409,17 @@ pricing.room.requin.name: Salle Requin 🦈
 pricing.room.requin.cap: Jusqu'à 8 pers.
 pricing.room.requin.size: 16 m²
 pricing.room.requin.price: 98 €
-pricing.room.requin.alt: La salle Requin, salle de réunion pour 8 personnes
+pricing.room.requin.alt: "La salle Requin : grande table haute, tabourets colorés et écran devant la fenêtre"
 pricing.room.baleine.name: Salle Baleine 🐳
 pricing.room.baleine.cap: Jusqu'à 16 pers.
 pricing.room.baleine.size: 36 m²
 pricing.room.baleine.price: 120 €
-pricing.room.baleine.alt: La salle Baleine, grande salle de réunion pour 16 personnes
+pricing.room.baleine.alt: "La salle Baleine : longue table en bois, fauteuils bleu clair, tableau blanc et écran"
 pricing.room.narval.name: Salle Narval 🐋
 pricing.room.narval.cap: Jusqu'à 60 pers.
 pricing.room.narval.size: 82 m²
 pricing.room.narval.price: 253 €
-pricing.room.narval.alt: La salle Narval, espace de conférence pouvant accueillir 60 personnes
+pricing.room.narval.alt: "La salle Narval : grand espace lumineux aux baies vitrées sur rue, tables et grand écran"
 pricing.dom.eyebrow: Domiciliation
 pricing.dom.title: Domiciliez votre entreprise à Strasbourg
 pricing.dom.text: "Installez le siège de votre entreprise au 13 rue Jacques Peirotes, sans même louer de bureau dans notre espace de coworking."
@@ -478,7 +478,7 @@ space.meta.description: "3 Box, 52 bureaux fixes, 30 places flex et 4 salles de 
 space.eyebrow: L'espace
 space.title: Espace coworking et bureaux disponibles
 space.lead: "Plus de 600 m² au cœur de Strasbourg : des bureaux fermés, des postes fixes, des places à la demande et des salles pour se réunir."
-space.hero.alt: "Vues de l'open space de La Plage Digitale : bureaux, poutres apparentes et verrière"
+space.hero.alt: "Vues de La Plage Digitale : l'open space sous la charpente en béton et ses verrières, et le salon d'accueil"
 space.offers.eyebrow: Ce qui vous attend
 space.offers.title: Une place pour chaque façon de travailler
 space.box.title: Box pour les startups
@@ -502,7 +502,7 @@ space.how.flex.cta: Voir les actualités →
 space.how.rooms.title: Une salle de réunion
 space.how.rooms.text: "Une de nos salles de réunion vous intéresse ? Contactez-nous ou passez nous voir pour connaître les disponibilités."
 space.how.rooms.cta: Nous contacter
-space.how.rooms.alt: "Les salles de réunion de La Plage Digitale : grande table, écran et chaises colorées"
+space.how.rooms.alt: "Les salles de réunion Requin, Baleine et Narval de La Plage Digitale"
 space.cta.title: Prêt(e) à poser votre ordinateur ?
 space.cta.text: Découvrez nos formules ou venez visiter l'espace, nous vous ferons faire le tour.
 space.cta.pricing: Voir les formules

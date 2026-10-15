@@ -10,7 +10,7 @@ meta:
   description: $t:companies.meta.description
   openGraph:
     type: website
-    image: /images/pages/espace-cowork/espace-coworking.webp
+    image: /images/pages/espace-cowork/open-space.webp
 components:
   - component: site-header
 

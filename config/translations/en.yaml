@@ -315,7 +315,7 @@ legal.host.title: "Hosting provider"
 legal.host.p1: "Scalingo SAS, a simplified joint-stock company with share capital of €35,291.90, SIRET 808 665 483 00034 · 13 rue Jacques Peirotes, 67000 Strasbourg, France · https://scalingo.com"
 legal.host.p2: "The website and its data are hosted within the European Union."
 legal.build.title: "Design and build"
-legal.build.p1: "The website is built with Sovrium (https://sovrium.com), a configuration-driven application platform. Text and photographs: La Plage Digitale, unless otherwise stated."
+legal.build.p1: "The website is built with Sovrium (https://sovrium.com), a configuration-driven application platform. Text and photographs: La Plage Digitale, unless otherwise stated. Photographs of the premises: Naïs Massing."
 legal.ip.title: "Intellectual property"
 legal.ip.p1: "All content on this website — text, photographs, illustrations, logos and visual identity — is the property of La Plage Digitale or is used with the permission of its owners, and is protected by the French Intellectual Property Code."
 legal.ip.p2: "Any reproduction, representation, modification or adaptation of all or part of this content, by any means whatsoever, without the prior written consent of La Plage Digitale is prohibited and constitutes infringement under Articles L.335-2 et seq. of the French Intellectual Property Code. The names, logos and trademarks of the companies and partners mentioned belong to their respective owners."
@@ -408,17 +408,17 @@ pricing.room.requin.name: The Requin room 🦈
 pricing.room.requin.cap: Up to 8 people
 pricing.room.requin.size: 16 m²
 pricing.room.requin.price: €98
-pricing.room.requin.alt: The Requin room, a meeting room for 8 people
+pricing.room.requin.alt: "The Requin room: a long high table, colourful stools and a screen by the window"
 pricing.room.baleine.name: The Baleine room 🐳
 pricing.room.baleine.cap: Up to 16 people
 pricing.room.baleine.size: 36 m²
 pricing.room.baleine.price: €120
-pricing.room.baleine.alt: The Baleine room, a large meeting room for 16 people
+pricing.room.baleine.alt: "The Baleine room: a long wooden table, light-blue armchairs, a whiteboard and a screen"
 pricing.room.narval.name: The Narval room 🐋
 pricing.room.narval.cap: Up to 60 people
 pricing.room.narval.size: 82 m²
 pricing.room.narval.price: €253
-pricing.room.narval.alt: The Narval room, a conference space for up to 60 people
+pricing.room.narval.alt: "The Narval room: a large bright space with street-facing windows, tables and a big screen"
 pricing.dom.eyebrow: Business address
 pricing.dom.title: Register your business in Strasbourg
 pricing.dom.text: "Use 13 rue Jacques Peirotes as your company's registered address — no need to rent a desk in our coworking space."
@@ -477,7 +477,7 @@ space.meta.description: "3 private Boxes, 52 fixed desks, 30 flex places and 4 m
 space.eyebrow: The space
 space.title: Coworking space and available offices
 space.lead: "Over 600 m² in the heart of Strasbourg: private offices, fixed desks, drop-in places and rooms to meet in."
-space.hero.alt: "Views of La Plage Digitale's open-plan space: desks, exposed beams and glass roof"
+space.hero.alt: "Views of La Plage Digitale: the open space under its concrete frame and skylights, and the entrance lounge"
 space.offers.eyebrow: What's on offer
 space.offers.title: A place for every way of working
 space.box.title: Boxes for start-ups
@@ -501,7 +501,7 @@ space.how.flex.cta: See the news →
 space.how.rooms.title: A meeting room
 space.how.rooms.text: "Interested in one of our meeting rooms? Get in touch or drop by to check availability."
 space.how.rooms.cta: Contact us
-space.how.rooms.alt: "La Plage Digitale's meeting rooms: large table, screen and colourful chairs"
+space.how.rooms.alt: "La Plage Digitale's Requin, Baleine and Narval meeting rooms"
 space.cta.title: Ready to set up your laptop?
 space.cta.text: Browse our plans or come and visit — we'll be happy to show you around.
 space.cta.pricing: See our plans
