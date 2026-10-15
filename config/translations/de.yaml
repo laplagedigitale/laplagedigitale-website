@@ -546,13 +546,19 @@ portal.dashboard.paid: Bezahlte Rechnungen
 portal.dashboard.latest: Letzte Rechnungen
 portal.dashboard.all: Alle Rechnungen →
 portal.dashboard.manage: Verwalten →
-portal.invoices.intro: "Alle Ihre Rechnungen von La Plage Digitale, aus Pennylane. Ein PDF-Link bleibt 30 Minuten gültig: Laden Sie die Seite neu, wenn er abgelaufen ist."
+portal.invoices.intro: "Alle Ihre Rechnungen von La Plage Digitale, aus Pennylane. Klicken Sie auf eine Rechnung, um das PDF zu öffnen: Öffnet es sich nicht mehr, laden Sie die Seite neu (der Link bleibt 30 Minuten gültig)."
 portal.invoices.search: Rechnung suchen…
+portal.invoices.recipients: "Rechnungsempfänger"
+portal.invoices.recipients.help: "Ihre Rechnungen werden an diese Adressen gesendet, eine pro Zeile (höchstens fünf). Ihre Anmeldeadresse ist immer dabei."
+portal.invoices.recipients.label: "E-Mail-Adressen"
+portal.invoices.recipients.save: "Empfänger speichern"
+portal.invoices.recipients.done: "Anfrage bearbeitet"
+portal.invoices.recipients.error: "Die Empfänger konnten nicht gespeichert werden. Versuchen Sie es in einigen Minuten erneut oder kontaktieren Sie uns."
 portal.mandate.current: Mein Mandat
 portal.mandate.how: Wie funktioniert es?
 portal.mandate.how.1: "1. Klicken Sie auf „Lastschrift einrichten“."
 portal.mandate.how.2: "2. Pennylane sendet Ihnen eine E-Mail mit dem GoCardless-Unterschriftslink."
-portal.mandate.how.3: "3. Sobald das Mandat unterschrieben ist, werden Ihre Rechnungen bei Fälligkeit eingezogen."
+portal.mandate.how.3: "3. Nach der Unterzeichnung lässt GoCardless Sie auf einer Pennylane-Seite: Schließen Sie sie und kehren Sie hierher zurück, Ihr Mandat erscheint innerhalb von 15 Minuten. Ihre Rechnungen werden dann bei Fälligkeit eingezogen."
 portal.account.unlinked: "Ihr Konto ist noch nicht mit Pennylane verknüpft — wir kümmern uns darum."
 portal.match.pending: Wird gesucht
 portal.match.matched: Verknüpft
@@ -586,7 +592,6 @@ portal.invoices.deadline: Fällig am
 portal.invoices.amount: Betrag inkl. MwSt.
 portal.invoices.remaining: Offener Betrag
 portal.invoices.status: Status
-portal.invoices.pdf: PDF
 portal.status.paid: Bezahlt
 portal.status.partially_paid: Teilweise bezahlt
 portal.status.upcoming: Offen
@@ -605,6 +610,12 @@ account.name: Anzeigename
 account.save: Speichern
 account.profile.saved: Name gespeichert.
 account.error: "Speichern fehlgeschlagen. Bitte erneut versuchen."
+account.email: "E-Mail-Adresse"
+account.email.intro: "Ihre Anmeldeadresse, an die auch Ihre Rechnungen gesendet werden. Ein Bestätigungslink wird an die neue Adresse gesendet: Die Änderung wird wirksam, sobald Sie ihm folgen."
+account.email.new: "Neue E-Mail-Adresse"
+account.email.submit: "Adresse ändern"
+account.email.sent: "Bestätigungslink an die neue Adresse gesendet. Öffnen Sie ihn, um die Änderung zu bestätigen."
+account.email.error: "Die Adresse konnte nicht geändert werden. Prüfen Sie sie und versuchen Sie es erneut."
 account.password: Passwort
 account.password.current: Aktuelles Passwort
 account.password.new: Neues Passwort

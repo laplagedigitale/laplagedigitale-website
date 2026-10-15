@@ -38,6 +38,7 @@ actions:
                 data:
                   email: '{{trigger.data.user.email}}'
                   name: '{{trigger.data.user.name}}'
+                  user_id: '{{trigger.data.user.id}}'
         - name: other
           actions:
             - name: skip

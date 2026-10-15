@@ -124,10 +124,12 @@ components:
                       sort:
                         - { field: invoice_date, direction: desc }
                       pagination: { pageSize: 25, style: numbered }
+                    # A row opens the invoice PDF, as on the coworker's own page.
+                    onRowClick: { type: navigate, path: $record.pdf_url, openInNewTab: true }
                     emptyMessage: $t:portal.invoices.none
                     columns:
                       - { field: invoice_number, label: $t:portal.invoices.number }
-                      - { field: label, label: $t:portal.invoices.label }
+                      - { field: label, label: $t:portal.invoices.label, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
                       - { field: invoice_date, label: $t:portal.invoices.date, format: short-date }
                       - { field: deadline, label: $t:portal.invoices.deadline, format: short-date }
                       - { field: amount, label: $t:portal.invoices.amount, format: currency, align: right }
@@ -144,39 +146,42 @@ components:
                           partially_cancelled: $t:portal.status.partially_cancelled
                           credit_note: $t:portal.status.credit_note
                           archived: $t:portal.status.archived
-                      - { field: pdf_url, label: $t:portal.invoices.pdf }
 
               - type: card
                 props:
                   className: 'p-4 sm:p-6 space-y-4'
                 children:
                   - { type: text, element: h2, content: $t:portal.mandate.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - type: table
-                    readOnly: true
+                  # One mandate per member: the latest, as on the coworker's page.
+                  - type: list
                     dataSource:
                       table: mandates
                       filter:
                         - { field: member, operator: eq, value: $param.id }
                       sort:
                         - { field: signed_at, direction: desc }
-                    emptyMessage: $t:portal.mandate.none
-                    columns:
-                      - field: status
-                        label: $t:portal.invoices.status
-                        valueLabels:
-                          active: $t:portal.mandate.active
-                          pending_customer_approval: $t:portal.mandate.pending
-                          pending_submission: $t:portal.mandate.pending
-                          submitted: $t:portal.mandate.pending
-                          failed: $t:portal.mandate.failed
-                          blocked: $t:portal.mandate.failed
-                          bank_disconnected: $t:portal.mandate.failed
-                          cancelled: $t:portal.mandate.ended
-                          expired: $t:portal.mandate.ended
-                          consumed: $t:portal.mandate.ended
-                          replaced: $t:portal.mandate.ended
-                      - { field: bank_account, label: $t:portal.mandate.account }
-                      - { field: signed_at, label: $t:portal.mandate.since, format: short-date }
+                      limit: 1
+                    listDisplay:
+                      emptyMessage: $t:portal.mandate.none
+                    props:
+                      className: 'list-none p-0 m-0'
+                    children:
+                      - type: container
+                        props:
+                          className: 'space-y-3 rounded-lg border border-border p-4'
+                        children:
+                          - type: container
+                            children:
+                              - { type: text, element: p, content: $t:portal.invoices.status, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, props: { field: status, className: 'mt-1' } }
+                          - type: container
+                            children:
+                              - { type: text, element: p, content: $t:portal.mandate.account, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, props: { field: bank_account, className: 'mt-1 font-mono text-navy' } }
+                          - type: container
+                            children:
+                              - { type: text, element: p, content: $t:portal.mandate.since, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, format: short-date, props: { field: signed_at, className: 'mt-1 text-navy' } }
 
           # Flex days, read-only here — corrections are made in /espace-membre/flex.
           - type: card

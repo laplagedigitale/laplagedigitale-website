@@ -114,6 +114,8 @@ and the pages read those tables:
 | `member-sign-up`          | account created      | files a `members` row for a `coworker` or `admin` account            |
 | `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, mirrors every linked member's invoices and GoCardless mandates, and derives each member's formules (Fixe, Nomade, Flex, Box, Domiciliation) from their subscriptions and check-ins |
 | `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
+| `update-billing-emails`   | the recipients form on Factures | writes the addresses a coworker's invoices go to into their Pennylane customer (`emails`), then `members.billing_emails` |
+| `member-email-sync`       | e-mail confirmed, sign-in | when a coworker confirmed a new sign-in address, moves their `members` row, every `member_email` copy and their Pennylane recipients to it (followed by `members.user_id`) |
 | `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active GoCardless mandate from manual transfer to direct debit, and mails the treasurer what changed |
 | `flex-check-in`           | a Flex check-in      | dates the new `checkins` row, keeps one row per member per day (a full day replaces the half day) and stamps its amount HT |
 | `flex-signup-validate`    | « Valider » on a sign-up | finds or creates the Pennylane customer, links the member to it, invites them as a coworker |
@@ -300,6 +302,11 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`FLEX_INVOICING_APPLY`** — optional, default `true`. `false` turns the
   monthly Flex invoicing into a dry run (nothing created in Pennylane, no
   check-in marked).
+- **`MANDATE_MAIL_CUSTOM`** — optional, default `false`. `true` makes
+  `request-mandate` send its own subject and body, with the link back to the
+  Espace Membre (GoCardless ends on a Pennylane page and the API takes no
+  return URL). Pennylane does not document whether a custom body keeps the
+  signing link: send one test request to your own address before turning it on.
 - **`INVITE_API_KEY`** — an API key minted in `/_admin` (API keys) by an
   **admin** account. `flex-signup-validate` sends the coworker invitation
   through the app's own admin endpoint with it, at `BASE_URL`: Sovrium 0.37's

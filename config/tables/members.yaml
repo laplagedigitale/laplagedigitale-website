@@ -53,10 +53,21 @@ fields:
     options:
       - { value: auto, label: $t:formule.source.auto, color: '#94a3b8' }
       - { value: manual, label: $t:formule.source.manual, color: '#10b981' }
+  # Who receives the member's invoices: the Pennylane customer's `emails`, one
+  # address per line. The coworker edits it on /espace-membre/factures through
+  # update-billing-emails, which writes Pennylane first and then this field;
+  # pennylane-sync mirrors it back, so a change made in Pennylane shows too.
+  - { id: 8, name: billing_emails, type: long-text }
+  # The account's id: the one key that survives an e-mail change. Set by
+  # member-sign-up, backfilled by pennylane-sync; member-email-sync follows it
+  # to move the row (and every member_email copy) to the new address.
+  - { id: 9, name: user_id, type: single-line-text, indexed: true }
 permissions:
   read: [coworker, admin]
   create: [admin]
-  update: [admin]
+  # A coworker updates their own row (row-level rule below), and only
+  # billing_emails: every other field is write: [admin].
+  update: [coworker, admin]
   delete: [admin]
   # Replaces the built-in field defaults, which would hide `email` from a
   # low-level role. Writes stay admin-only through create/update above.
@@ -68,8 +79,15 @@ permissions:
     - { field: association_member, read: [coworker, admin], write: [admin] }
     - { field: formules, read: [coworker, admin], write: [admin] }
     - { field: formule_source, read: [coworker, admin], write: [admin] }
+    - { field: billing_emails, read: [coworker, admin], write: [coworker, admin] }
+    - { field: user_id, read: [admin], write: [admin] }
 rowLevelPermissions:
   read:
+    when:
+      field: email
+      operator: eq
+      value: { kind: currentUser, path: { kind: scalar, name: email } }
+  write:
     when:
       field: email
       operator: eq

@@ -1,0 +1,73 @@
+# Automation: update-billing-emails — the « Destinataires des factures » form
+# on /espace-membre/factures. A coworker lists the addresses their invoices are
+# sent to; this run writes them to their Pennylane customer (`emails`, which
+# Pennylane sends invoices to) and then to members.billing_emails.
+#
+# A run started by hand reads and writes as the person who started it, so the
+# member read below is the caller's own row (row-level rule on email), and the
+# Pennylane customer id never comes from the browser. The login email is always
+# kept in the list: pennylane-sync and flex-signup-validate find a member's
+# customer by it. Refused when the account is not linked yet, when an address
+# is not one, or past 5 addresses. Every outcome returns `message`, which the
+# form shows inline.
+#
+# On demand: POST /api/automations/update-billing-emails/trigger with
+# {"emails": "a@x.fr\nb@y.fr"} (newlines, commas or semicolons).
+name: update-billing-emails
+trigger:
+  type: manual
+  label: Update the invoice recipients
+  requiredRole: coworker
+  inputSchema:
+    emails: { type: string }
+timeout: 60000
+actions:
+  - name: me
+    type: record
+    operator: list
+    props: { table: members, limit: 1 }
+  - name: update
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 45000
+      inputData:
+        me: '{{steps.me.records}}'
+        emails: '{{trigger.input.emails}}'
+      code: |
+        async function execute(context) {
+          const norm = (s: unknown) => String(s ?? '').trim().toLowerCase()
+          const me: any = (context.inputData.me ?? [])[0]
+          if (!me || !me.pennylane_customer_id) {
+            return { ok: 'no', message: 'Votre compte n’est pas encore relié à Pennylane. Contactez l’équipe de La Plage Digitale.' }
+          }
+          const login = norm(me.email)
+          const typed = String(context.inputData.emails ?? '').split(/[\s,;]+/).map(norm).filter(Boolean)
+          const bad = typed.filter((e) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))
+          if (bad.length > 0) {
+            return { ok: 'no', message: `Adresse invalide : ${bad.join(', ')}. Rien n’a été modifié.` }
+          }
+          const emails = [...new Set([login, ...typed])]
+          if (emails.length > 5) {
+            return { ok: 'no', message: 'Cinq adresses au plus, la vôtre comprise. Rien n’a été modifié.' }
+          }
+
+          const id = Number(me.pennylane_customer_id)
+          try {
+            const got: any = await context.actions.connection.call({ connection: 'pennylane', operation: 'get-customer', params: { id } })
+            const customer: any = got?.data ?? {}
+            const type = String(customer.customer_type ?? '')
+            if (type !== 'company' && type !== 'individual') throw new Error(`customer ${id}: unknown customer_type « ${type} »`)
+            await context.actions.connection.call({
+              connection: 'pennylane',
+              operation: type === 'company' ? 'put-company-customer' : 'put-individual-customer',
+              params: { id: String(id), emails },
+            })
+          } catch (error) {
+            context.log.error(`${login}: Pennylane refused the recipients update — ${String((error as any)?.message ?? error)}`)
+            return { ok: 'no', message: 'Pennylane n’a pas pu être mis à jour. Réessayez plus tard ou contactez-nous.' }
+          }
+          await context.actions.record.update({ table: 'members', id: String(me.id), data: { billing_emails: emails.join('\n') } })
+          context.log.info(`${login}: invoice recipients set to ${emails.join(', ')}`)
+          return { ok: 'yes', message: `C’est enregistré : vos prochaines factures seront envoyées à ${emails.join(', ')}.` }
+        }

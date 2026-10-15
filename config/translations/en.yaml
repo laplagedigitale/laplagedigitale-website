@@ -546,13 +546,19 @@ portal.dashboard.paid: Paid invoices
 portal.dashboard.latest: Latest invoices
 portal.dashboard.all: All invoices →
 portal.dashboard.manage: Manage →
-portal.invoices.intro: "All your La Plage Digitale invoices, from Pennylane. A PDF link stays valid for 30 minutes: reload the page if it has expired."
+portal.invoices.intro: "All your La Plage Digitale invoices, from Pennylane. Click an invoice to open its PDF: if it no longer opens, reload the page (the link stays valid for 30 minutes)."
 portal.invoices.search: Search invoices…
+portal.invoices.recipients: "Invoice recipients"
+portal.invoices.recipients.help: "Your invoices are emailed to these addresses, one per line (five at most). Your sign-in address is always one of them."
+portal.invoices.recipients.label: "Email addresses"
+portal.invoices.recipients.save: "Save the recipients"
+portal.invoices.recipients.done: "Request processed"
+portal.invoices.recipients.error: "The recipients could not be saved. Try again in a few minutes or contact us."
 portal.mandate.current: My mandate
 portal.mandate.how: How does it work?
 portal.mandate.how.1: "1. Click “Set up direct debit”."
 portal.mandate.how.2: "2. Pennylane emails you the GoCardless signing link."
-portal.mandate.how.3: "3. Once the mandate is signed, your invoices are debited when due."
+portal.mandate.how.3: "3. Once the mandate is signed, GoCardless leaves you on a Pennylane page: close it and come back here, your mandate shows up within 15 minutes. Your invoices are then debited when due."
 portal.account.unlinked: "Your account is not linked to Pennylane yet — we are on it."
 portal.match.pending: Looking you up
 portal.match.matched: Linked
@@ -586,7 +592,6 @@ portal.invoices.deadline: Due date
 portal.invoices.amount: Amount incl. VAT
 portal.invoices.remaining: Left to pay
 portal.invoices.status: Status
-portal.invoices.pdf: PDF
 portal.status.paid: Paid
 portal.status.partially_paid: Partially paid
 portal.status.upcoming: Due
@@ -605,6 +610,12 @@ account.name: Display name
 account.save: Save
 account.profile.saved: Name saved.
 account.error: "Saving failed. Please try again."
+account.email: "Email address"
+account.email.intro: "Your sign-in address, which your invoices are also sent to. A confirmation link is sent to the new address: the change takes effect when you follow it."
+account.email.new: "New email address"
+account.email.submit: "Change address"
+account.email.sent: "Confirmation link sent to the new address. Open it to confirm the change."
+account.email.error: "The address could not be changed. Check it and try again."
 account.password: Password
 account.password.current: Current password
 account.password.new: New password

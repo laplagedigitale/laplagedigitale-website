@@ -201,7 +201,11 @@ components:
                     children:
                       - { type: text, element: h2, content: $t:portal.dashboard.latest, props: { className: 'text-xl font-semibold text-navy' } }
                       - { type: link, content: $t:portal.dashboard.all, props: { href: $t:href.portal.invoices, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                  # Read-only (no « Nouvel enregistrement » for an admin either); a
+                  # row opens the invoice PDF, as on /espace-membre/factures.
                   - type: table
+                    readOnly: true
+                    onRowClick: { type: navigate, path: $record.pdf_url, openInNewTab: true }
                     dataSource:
                       table: invoices
                       filter:
@@ -211,7 +215,7 @@ components:
                       pagination: { pageSize: 5 }
                     emptyMessage: $t:portal.invoices.none
                     columns:
-                      - { field: label, label: $t:portal.invoices.label }
+                      - { field: label, label: $t:portal.invoices.label, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
                       - { field: invoice_date, label: $t:portal.invoices.date, format: short-date }
                       - { field: amount, label: $t:portal.invoices.amount, format: currency, align: right }
                       - field: status
@@ -236,31 +240,32 @@ components:
                     children:
                       - { type: text, element: h2, content: $t:portal.mandate.title, props: { className: 'text-xl font-semibold text-navy' } }
                       - { type: link, content: $t:portal.dashboard.manage, props: { href: $t:href.portal.mandate, className: 'text-sm font-semibold text-blue hover:text-navy' } }
-                  - type: table
+                  # One mandate per coworker: its status and account, as a card.
+                  - type: list
                     dataSource:
                       table: mandates
                       filter:
                         - { field: member_email, operator: eq, value: $currentUser.email }
                       sort:
                         - { field: signed_at, direction: desc }
-                      pagination: { pageSize: 1 }
-                    emptyMessage: $t:portal.mandate.none
-                    columns:
-                      - field: status
-                        label: $t:portal.invoices.status
-                        valueLabels:
-                          active: $t:portal.mandate.active
-                          pending_customer_approval: $t:portal.mandate.pending
-                          pending_submission: $t:portal.mandate.pending
-                          submitted: $t:portal.mandate.pending
-                          failed: $t:portal.mandate.failed
-                          blocked: $t:portal.mandate.failed
-                          bank_disconnected: $t:portal.mandate.failed
-                          cancelled: $t:portal.mandate.ended
-                          expired: $t:portal.mandate.ended
-                          consumed: $t:portal.mandate.ended
-                          replaced: $t:portal.mandate.ended
-                      - { field: bank_account, label: $t:portal.mandate.account }
+                      limit: 1
+                    listDisplay:
+                      emptyMessage: $t:portal.mandate.none
+                    props:
+                      className: 'list-none p-0 m-0'
+                    children:
+                      - type: container
+                        props:
+                          className: 'space-y-3 rounded-lg border border-border p-4'
+                        children:
+                          - type: container
+                            children:
+                              - { type: text, element: p, content: $t:portal.invoices.status, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, props: { field: status, className: 'mt-1' } }
+                          - type: container
+                            children:
+                              - { type: text, element: p, content: $t:portal.mandate.account, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, props: { field: bank_account, className: 'mt-1 font-mono text-navy' } }
 
           # First steps, for everyone.
           - type: card

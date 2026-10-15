@@ -32,7 +32,10 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
+              # Read-only: a mirror of Pennylane, so no « Nouvel enregistrement »
+              # — an admin can create invoices and would otherwise get the button.
               - type: table
+                readOnly: true
                 dataSource:
                   table: invoices
                   filter:
@@ -40,12 +43,16 @@ components:
                   sort:
                     - { field: invoice_date, direction: desc }
                   pagination: { pageSize: 25, style: numbered }
+                # The whole row opens the invoice PDF: a cell cannot carry its own
+                # link, so the label is styled as one. pdf_url is refreshed by
+                # every sync, so it still opens (it expires 30 min after issue).
+                onRowClick: { type: navigate, path: $record.pdf_url, openInNewTab: true }
                 search:
                   placeholder: $t:portal.invoices.search
                 emptyMessage: $t:portal.invoices.none
                 columns:
                   - { field: invoice_number, label: $t:portal.invoices.number }
-                  - { field: label, label: $t:portal.invoices.label }
+                  - { field: label, label: $t:portal.invoices.label, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
                   - { field: invoice_date, label: $t:portal.invoices.date, format: short-date }
                   - { field: deadline, label: $t:portal.invoices.deadline, format: short-date }
                   - { field: amount, label: $t:portal.invoices.amount, format: currency, align: right }
@@ -62,4 +69,31 @@ components:
                       partially_cancelled: $t:portal.status.partially_cancelled
                       credit_note: $t:portal.status.credit_note
                       archived: $t:portal.status.archived
-                  - { field: pdf_url, label: $t:portal.invoices.pdf }
+
+          # Who receives the invoices: the Pennylane customer's emails, through
+          # update-billing-emails (the caller's own customer, never an id from
+          # the browser). The run's message lands in #billing-emails-status: a
+          # refusal still answers 200, so the outcome is told there.
+          - type: card
+            props:
+              className: 'p-4 sm:p-6 space-y-3 max-w-2xl'
+            children:
+              - { type: text, element: h2, content: $t:portal.invoices.recipients, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: $t:portal.invoices.recipients.help, props: { className: 'text-sm text-text-muted' } }
+              - type: form
+                endpoint:
+                  url: /api/automations/update-billing-emails/trigger
+                  method: POST
+                  submitLabel: $t:portal.invoices.recipients.save
+                  onSuccess:
+                    type: toast
+                    message: $t:portal.invoices.recipients.done
+                    status: { target: billing-emails-status, message: $response.output.message }
+                  onError: { type: toast, variant: destructive, message: $t:portal.invoices.recipients.error }
+                fields:
+                  - { field: emails, control: textarea, label: $t:portal.invoices.recipients.label, defaultValue: $record.billing_emails }
+              - type: text
+                element: p
+                props:
+                  id: billing-emails-status
+                  className: 'text-sm font-medium text-navy p-4 rounded-lg bg-blue-100 empty:hidden!'

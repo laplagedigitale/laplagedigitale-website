@@ -1,5 +1,6 @@
 # Connection: sovrium-admin — this app's own admin API, called by
-# flex-signup-validate to send a coworker invitation.
+# flex-signup-validate to send a coworker invitation, and by pennylane-sync to
+# read the account ids members.user_id holds.
 #
 # Why a connection to ourselves: in Sovrium 0.37 the automation `auth` family
 # has createUser, assignRole, banUser and unbanUser, but no invitation. A
@@ -38,6 +39,9 @@ operations:
         in: query
         type: string
       limit:
+        in: query
+        type: integer
+      page:
         in: query
         type: integer
   # Creates the account with the given role and mails the single-use link.
