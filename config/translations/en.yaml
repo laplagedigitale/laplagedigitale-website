@@ -336,6 +336,7 @@ href.pricing.nomade: /en/les-formules#nomade
 href.pricing.flex: "/en/flex"
 href.pricing.reunion: /en/les-formules#reunion
 href.pricing.domiciliation: /en/les-formules#domiciliation
+href.pricing.parrainage: /en/les-formules#parrainage
 pricing.meta.title: Our coworking plans in Strasbourg
 pricing.meta.description: "Fixed €275 excl. VAT/month, Nomad €175 excl. VAT/month, Flex €14 excl. VAT/day, meeting rooms from €87 for 4 hours, and a business address in Strasbourg."
 pricing.eyebrow: Our plans
@@ -426,6 +427,16 @@ pricing.dom.price: "€40 excl. VAT / month"
 pricing.dom.priceNote: "Our published rate — get in touch for the details."
 pricing.dom.offer: "Every newly registered company gets 30% off its first 3 months."
 pricing.dom.cta: Request a quote
+pricing.referral.eyebrow: Referral
+pricing.referral.title: "Bring someone along, and you both win"
+pricing.referral.text: "Already a coworker at La Plage Digitale, and someone you know is looking for a desk? Refer them: they get a discount when they join, and you get a thank-you."
+pricing.referral.referee.title: For the person you refer
+pricing.referral.referee.amount: "€50 off the first 3 months"
+pricing.referral.referee.text: "€50 off their first 3 months at La Plage Digitale."
+pricing.referral.referrer.title: For you, the referrer
+pricing.referral.referrer.amount: "A month off, or a gift"
+pricing.referral.referrer.text: "Your choice: one month's discount, or a gift of equal value (chocolates, a potted plant, a gift card…)."
+pricing.referral.note: "Give your referrer's name when you sign up. Referral programme voted by the board of La Plage Digitale."
 pricing.cta.title: A question, or fancy a visit?
 pricing.cta.text: "Call us, email us or drop by Monday to Friday between 9 am and 5 pm — we'll show you around."
 pricing.cta.contact: Contact us
@@ -874,6 +885,9 @@ member.formule.box.note: "Floor area, number of desks and meeting-room access: t
 member.formule.dom.price: "€40 excl. VAT / month"
 member.formule.dom.mail: "Mail is collected on Mondays, Wednesdays and Fridays. Forwarding is available at extra cost."
 member.formule.none.title: "Plan coming soon"
+member.formule.referral.title: "Refer someone"
+member.formule.referral.text: "Someone you know is looking for a desk? If they join La Plage, they get €50 off their first 3 months, and you get your choice of a month's discount or a gift of equal value (chocolates, a potted plant, a gift card…). They just give your name when they sign up."
+member.formule.referral.cta: "See the referral offer"
 member.formule.change.title: "Change plan or leave"
 member.formule.change.text: "Switch plans, add a desk or end your contract: write to us and we will reply within a few working days."
 member.formule.change.cta: "Write to La Plage"

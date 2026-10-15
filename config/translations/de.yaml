@@ -336,6 +336,7 @@ href.pricing.nomade: /de/les-formules#nomade
 href.pricing.flex: "/de/flex"
 href.pricing.reunion: /de/les-formules#reunion
 href.pricing.domiciliation: /de/les-formules#domiciliation
+href.pricing.parrainage: /de/les-formules#parrainage
 pricing.meta.title: Unsere Coworking-Angebote in Straßburg
 pricing.meta.description: "Fix 275 € zzgl. MwSt./Monat, Nomade 175 €/Monat, Flex 14 €/Tag, Besprechungsräume ab 87 € für 4 Std. und Geschäftsadresse in Straßburg."
 pricing.eyebrow: Unsere Angebote
@@ -426,6 +427,16 @@ pricing.dom.price: "40 € netto / Monat"
 pricing.dom.priceNote: "Unser veröffentlichter Preis – sprechen Sie uns für Details an."
 pricing.dom.offer: "Für jedes neu angemeldete Unternehmen gibt es 30 % Rabatt auf die ersten 3 Monate."
 pricing.dom.cta: Angebot anfragen
+pricing.referral.eyebrow: Empfehlung
+pricing.referral.title: "Bringen Sie jemanden mit – Sie gewinnen beide"
+pricing.referral.text: "Sie arbeiten bereits bei La Plage Digitale und jemand aus Ihrem Umfeld sucht einen Arbeitsplatz? Empfehlen Sie uns weiter: Die Person erhält beim Einstieg einen Rabatt, und Sie bekommen ein Dankeschön."
+pricing.referral.referee.title: Für die empfohlene Person
+pricing.referral.referee.amount: "−50 € auf die ersten 3 Monate"
+pricing.referral.referee.text: "50 € Rabatt auf die ersten 3 Monate bei La Plage Digitale."
+pricing.referral.referrer.title: Für Sie als Empfehlende·n
+pricing.referral.referrer.amount: "Ein Monat Rabatt oder ein Geschenk"
+pricing.referral.referrer.text: "Nach Wahl: ein Monat Rabatt oder ein Geschenk im gleichen Wert (Schokolade, Topfpflanze, Geschenkkarte…)."
+pricing.referral.note: "Nennen Sie bei der Anmeldung den Namen der Person, die Sie empfohlen hat. Empfehlungsprogramm, beschlossen vom Vorstand von La Plage Digitale."
 pricing.cta.title: Fragen oder Lust auf eine Besichtigung?
 pricing.cta.text: "Rufen Sie an, schreiben Sie uns oder kommen Sie montags bis freitags zwischen 9 und 17 Uhr vorbei – wir zeigen Ihnen den Raum."
 pricing.cta.contact: Kontakt aufnehmen
@@ -874,6 +885,9 @@ member.formule.box.note: "Fläche, Anzahl der Plätze und Zugang zu den Besprech
 member.formule.dom.price: "40 € netto / Monat"
 member.formule.dom.mail: "Die Post wird montags, mittwochs und freitags geleert. Weiterleitung ist gegen Aufpreis möglich."
 member.formule.none.title: "Tarif folgt"
+member.formule.referral.title: "Empfehlen Sie uns weiter"
+member.formule.referral.text: "Jemand aus Ihrem Umfeld sucht einen Arbeitsplatz? Wenn die Person zu La Plage kommt, erhält sie 50 € Rabatt auf die ersten 3 Monate, und Sie wählen zwischen einem Monat Rabatt und einem Geschenk im gleichen Wert (Schokolade, Topfpflanze, Geschenkkarte…). Sie muss bei der Anmeldung nur Ihren Namen nennen."
+member.formule.referral.cta: "Zum Empfehlungsangebot"
 member.formule.change.title: "Tarif wechseln oder kündigen"
 member.formule.change.text: "Tarif wechseln, einen Platz hinzufügen oder den Vertrag beenden: Schreiben Sie uns, wir antworten innerhalb weniger Werktage."
 member.formule.change.cta: "La Plage schreiben"

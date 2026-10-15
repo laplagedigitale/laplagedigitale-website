@@ -138,6 +138,13 @@ components:
               - { type: text, element: p, content: $t:member.formule.dom.mail, props: { className: 'text-sm text-text-muted' } }
 
           - type: card
+            props: { className: 'p-5 sm:p-6 space-y-3' }
+            children:
+              - { type: flex, props: { className: 'flex items-center gap-3' }, children: [{ type: icon, props: { name: gift, size: 22, className: 'text-magenta shrink-0' } }, { type: text, element: h2, content: $t:member.formule.referral.title, props: { className: 'text-xl font-semibold text-navy' } }] }
+              - { type: text, element: p, content: $t:member.formule.referral.text, props: { className: 'text-sm text-navy' } }
+              - { type: link, content: $t:member.formule.referral.cta, props: { href: $t:href.pricing.parrainage, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
+
+          - type: card
             props: { className: 'p-5 sm:p-6 space-y-3 bg-blue-100' }
             children:
               - { type: text, element: h2, content: $t:member.formule.change.title, props: { className: 'text-xl font-semibold text-navy' } }

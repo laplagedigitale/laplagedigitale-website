@@ -337,6 +337,7 @@ href.pricing.nomade: /les-formules#nomade
 href.pricing.flex: "/flex"
 href.pricing.reunion: /les-formules#reunion
 href.pricing.domiciliation: /les-formules#domiciliation
+href.pricing.parrainage: /les-formules#parrainage
 pricing.meta.title: Nos formules de coworking à Strasbourg
 pricing.meta.description: "Fixe 275 € HT/mois, Nomade 175 € HT/mois, Flex 14 € HT/jour, salles de réunion dès 87 € HT les 4 h et domiciliation au cœur de Strasbourg."
 pricing.eyebrow: Nos formules
@@ -427,6 +428,16 @@ pricing.dom.price: "40 € HT / mois"
 pricing.dom.priceNote: "Tarif affiché par La Plage Digitale ; contactez-nous pour les détails."
 pricing.dom.offer: "Pour toute nouvelle entreprise domiciliée, 30 % de réduction sur les 3 premiers mois."
 pricing.dom.cta: Demander un devis
+pricing.referral.eyebrow: Parrainage
+pricing.referral.title: "Faites venir quelqu'un, vous y gagnez tous les deux"
+pricing.referral.text: "Vous êtes coworker à La Plage Digitale et une personne de votre entourage cherche un bureau ? Parrainez-la : elle profite d'une réduction à son arrivée, et vous êtes remercié·e."
+pricing.referral.referee.title: Pour la personne parrainée
+pricing.referral.referee.amount: "−50 € sur les 3 premiers mois"
+pricing.referral.referee.text: "50 € de réduction sur ses 3 premiers mois à La Plage Digitale."
+pricing.referral.referrer.title: Pour le parrain ou la marraine
+pricing.referral.referrer.amount: "Un mois offert, ou un cadeau"
+pricing.referral.referrer.text: "Au choix : un mois de réduction, ou un cadeau d'une valeur équivalente (chocolats, plante en pot, carte cadeau…)."
+pricing.referral.note: "Indiquez le nom de votre parrain ou marraine à votre inscription. Programme de parrainage voté par le conseil d'administration de La Plage Digitale."
 pricing.cta.title: Une question, une envie de visiter ?
 pricing.cta.text: "Appelez-nous, écrivez-nous ou passez du lundi au vendredi entre 9h et 17h : nous vous ferons découvrir l'espace."
 pricing.cta.contact: Nous contacter
@@ -875,6 +886,9 @@ member.formule.box.note: "Surface, nombre de postes et accès aux salles de réu
 member.formule.dom.price: "40 € HT / mois"
 member.formule.dom.mail: "Le courrier est relevé les lundis, mercredis et vendredis. La réexpédition est possible, avec un supplément."
 member.formule.none.title: "Formule à venir"
+member.formule.referral.title: "Parrainez quelqu'un"
+member.formule.referral.text: "Une personne de votre entourage cherche un bureau ? Si elle s'installe à La Plage, elle a 50 € de réduction sur ses 3 premiers mois, et vous recevez au choix un mois de réduction ou un cadeau d'une valeur équivalente (chocolats, plante en pot, carte cadeau…). Elle n'a qu'à donner votre nom à son inscription."
+member.formule.referral.cta: "Voir l'offre de parrainage"
 member.formule.change.title: "Changer de formule ou partir"
 member.formule.change.text: "Passer d'une formule à une autre, ajouter un poste, mettre fin à votre contrat : écrivez-nous, nous vous répondons sous quelques jours ouvrés."
 member.formule.change.cta: "Écrire à La Plage"
