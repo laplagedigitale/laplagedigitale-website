@@ -18,8 +18,9 @@
 # year-end cash, low point, runway and gap to the baseline — so a KPI reads
 # each figure from one row.
 #
-# It writes forecast_months, forecast_balances and the scenarios' computed
-# fields with batch upserts. Nothing watches the two computed tables, and the
+# It writes forecast_months, forecast_balances, forecast_grid (the
+# spreadsheet-shaped pivot: postes × months, group and section totals, soldes)
+# and the scenarios' computed fields with batch upserts. Nothing watches the two computed tables, and the
 # only automation on scenarios watches its creates, so these writes start no
 # run. $changedAt (the edited row's updated_at) debounces a burst of edits: a
 # scenario computed after that instant is skipped.
@@ -264,13 +265,91 @@ action:
           if (checkDelta > 1) context.log.warn(`${sc.scenario_key} : Σ |net Pennylane − net des lignes| = ${r2(checkDelta)} € sur les mois passés`)
           const yearIncome = balanceRows.reduce((s: number, b: any) => s + num(b.income_actual) + num(b.income_forecast), 0)
           const yearExpense = balanceRows.reduce((s: number, b: any) => s + num(b.expense_actual) + num(b.expense_forecast) + num(b.transfers_out), 0)
+          // The spreadsheet layout: one row per poste, one column per month, groups and sections totalled.
+          const MONTHS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+          const GROUPS: [string, string][] = [
+            ['activite', '70 — Ventes (activité)'], ['subventions', '74 — Subventions'], ['autres_recettes', '75/77 — Autres recettes'],
+            ['achats', '60 — Achats'], ['locaux', '61 — Locaux et services extérieurs'], ['fonctionnement', '62 — Autres services extérieurs'],
+            ['impots_tva', '63 / TVA — Impôts et taxes'], ['personnel', '64 — Personnel'], ['financement', '16 — Emprunt'],
+          ]
+          const INCOME_GROUPS = new Set(['activite', 'subventions', 'autres_recettes'])
+          const gridRows: any[] = []
+          let sortOrder = 0
+          const emptyMonths = () => Object.fromEntries(Array.from({ length: 12 }, (_, i) => [`m${pad(i + 1)}`, null as number | null]))
+          const push = (row_type: string, label: string, values: (number | null)[] | null, extra: any = {}) => {
+            sortOrder += 10
+            const months: any = emptyMonths()
+            if (values) values.forEach((v, i) => { months[`m${pad(i + 1)}`] = v === null ? null : r2(v) })
+            gridRows.push({
+              row_key: `${sc.scenario_key}:${Y}:${String(sortOrder).padStart(4, '0')}`, scenario: String(sc.id), scenario_key: String(sc.scenario_key), is_baseline: isTrue(sc.is_baseline),
+              year: Y, sort_order: sortOrder, row_type, label, line_code: '', cash_group: '', pcg_account: '', ...months,
+              total: null, total_actual: null, total_forecast: null, budget_total: null, variance: null, computed_at: nowIso, ...extra,
+            })
+          }
+          const sumOf = (rows: any[], key: string) => rows.reduce((t: number, r: any) => t + num(r[key]), 0)
+          // Per poste: the twelve monthly figures and the year totals, from the rows computed above.
+          const posts = lines.filter((l: any) => l.kind !== 'transfer').map((l: any) => {
+            const rows = monthRows.filter((r: any) => r.line_code === String(l.code)).sort((a: any, b: any) => a.month_index - b.month_index)
+            const values = Array.from({ length: 12 }, (_, i) => num(rows.find((r: any) => r.month_index === i + 1)?.forecast))
+            const hasBudget = rows.some((r: any) => r.budget !== null)
+            const hasVariance = rows.some((r: any) => r.variance !== null)
+            return {
+              line: l, values,
+              total: values.reduce((t, v) => t + v, 0),
+              total_actual: sumOf(rows.filter((r: any) => r.status === 'actual'), 'actual'),
+              total_forecast: sumOf(rows.filter((r: any) => r.status !== 'actual'), 'forecast'),
+              budget_total: hasBudget ? sumOf(rows.filter((r: any) => r.budget !== null), 'budget') : null,
+              variance: hasVariance ? sumOf(rows.filter((r: any) => r.variance !== null), 'variance') : null,
+            }
+          }).filter((p: any) => isTrue(p.line.is_catch_all) || p.values.some((v: number) => Math.abs(v) > 0.004) || p.budget_total !== null)
+          const totals = (list: any[]) => ({
+            values: Array.from({ length: 12 }, (_, i) => list.reduce((t: number, p: any) => t + p.values[i], 0)),
+            total: sumOf(list, 'total'), total_actual: sumOf(list, 'total_actual'), total_forecast: sumOf(list, 'total_forecast'),
+            budget_total: list.some((p: any) => p.budget_total !== null) ? list.reduce((t: number, p: any) => t + num(p.budget_total), 0) : null,
+            variance: list.some((p: any) => p.variance !== null) ? list.reduce((t: number, p: any) => t + num(p.variance), 0) : null,
+          })
+          const yearCols = (t: any) => ({ total: r2(t.total), total_actual: r2(t.total_actual), total_forecast: r2(t.total_forecast), budget_total: t.budget_total === null ? null : r2(t.budget_total), variance: t.variance === null ? null : r2(t.variance) })
+          for (const [section, income] of [['RECETTES', true], ['DÉPENSES', false]] as [string, boolean][]) {
+            push('section', section, null)
+            const sectionPosts: any[] = []
+            for (const [group, groupLabel] of GROUPS) {
+              if (INCOME_GROUPS.has(group) !== income) continue
+              const groupPosts = posts.filter((p: any) => String(p.line.cash_group) === group && (p.line.kind === 'income') === income)
+              if (groupPosts.length === 0) continue
+              for (const p of groupPosts) push('line', `· ${p.line.label}`, p.values, { line_code: String(p.line.code), cash_group: group, pcg_account: String(p.line.pcg_account ?? ''), ...yearCols(p) })
+              const t = totals(groupPosts)
+              push('group_total', `Total ${groupLabel}`, t.values, { cash_group: group, ...yearCols(t) })
+              sectionPosts.push(...groupPosts)
+            }
+            // A poste whose group is not in the list still counts in its section's total.
+            const strays = posts.filter((p: any) => (p.line.kind === 'income') === income && !GROUPS.some(([g]) => g === String(p.line.cash_group)))
+            for (const p of strays) push('line', `· ${p.line.label}`, p.values, { line_code: String(p.line.code), pcg_account: String(p.line.pcg_account ?? ''), ...yearCols(p) })
+            const t = totals([...sectionPosts, ...strays])
+            push('section_total', income ? 'TOTAL RECETTES' : 'TOTAL DÉPENSES', t.values, yearCols(t))
+          }
+          push('section', 'SOLDES', null)
+          const byMonth = (key: string) => Array.from({ length: 12 }, (_, i) => num(balanceRows[i]?.[key]))
+          const transfers = byMonth('transfers_out')
+          if (transfers.some((v) => Math.abs(v) > 0.004)) push('balance', 'Virements vers / depuis le Livret A', transfers, { total: r2(transfers.reduce((t, v) => t + v, 0)) })
+          const net = byMonth('net')
+          push('balance', 'Recettes − Dépenses du mois', net, { total: r2(net.reduce((t, v) => t + v, 0)) })
+          push('balance', 'Solde de début du mois', byMonth('opening'), { total: r2(num(balanceRows[0]?.opening)) })
+          push('balance', 'Solde de fin du mois', byMonth('closing'), { total: r2(num(balanceRows[11]?.closing)) })
+          push('balance', 'Trésorerie totale (avec le Livret A)', byMonth('total_with_reserve'), { total: r2(num(balanceRows[11]?.total_with_reserve)) })
+          const checks = Array.from({ length: 12 }, (_, i) => balanceRows[i]?.check_delta === null || balanceRows[i]?.check_delta === undefined ? null : num(balanceRows[i].check_delta))
+          push('check', 'Écart de contrôle avec Pennylane (doit valoir 0)', checks, { total: r2(checks.reduce((t: number, v) => t + Math.abs(num(v)), 0)) })
+          const lastActual = Math.min(Math.max(cur, 1), 13) - 1
+          const periodLabel = lastActual <= 0 ? "Tous les mois sont prévus : aucun mois clos de l'exercice"
+            : lastActual >= 12 ? "Toute l'année est réalisée"
+            : `Réalisé ${lastActual === 1 ? 'en janvier' : `de janvier à ${MONTHS[lastActual - 1]}`} · prévu ${lastActual === 11 ? 'en décembre' : `${/^[aeiouyéèêàâîôû]/i.test(MONTHS[lastActual]) ? "d'" : 'de '}${MONTHS[lastActual]} à décembre`}`
           results[String(sc.scenario_key)] = {
-            monthRows, balanceRows,
+            monthRows, balanceRows, gridRows,
             kpi: {
               scenario_key: String(sc.scenario_key), computed_at: nowIso, opening_cash: r2(opening), current_cash: r2(currentCash), reserve: r2(reserve),
               year_end_cash: r2(closing), year_end_cash_with_reserve: r2(closing + reserve), lowest_balance: r2(lowest), lowest_month: lowestMonth || null,
               runway_months: runway, year_income: r2(yearIncome), year_expense: r2(yearExpense), year_result: r2(yearIncome - yearExpense),
               comfort: lowest < 0 ? 'negative' : lowest < comfort ? 'tight' : 'ok', check_delta: r2(checkDelta), delta_vs_baseline: null as number | null,
+              actual_through: lastActual >= 1 ? firstOf(Y, Math.min(lastActual, 12)) : null, period_label: periodLabel,
             },
           }
         }
@@ -291,9 +370,13 @@ action:
           if (purge) {
             await context.actions.record.batchDelete({ table: 'forecast_months', filter: { conditions: [{ field: 'scenario_key', operator: 'equals', value: k }] }, limit: 5000 })
             await context.actions.record.batchDelete({ table: 'forecast_balances', filter: { conditions: [{ field: 'scenario_key', operator: 'equals', value: k }] }, limit: 500 })
+            await context.actions.record.batchDelete({ table: 'forecast_grid', filter: { conditions: [{ field: 'scenario_key', operator: 'equals', value: k }] }, limit: 500 })
           }
           for (const part of chunks(v.monthRows, 200)) await context.actions.record.batchUpsert({ table: 'forecast_months', items: part, matchField: 'row_key', continueOnItemError: true })
           await context.actions.record.batchUpsert({ table: 'forecast_balances', items: v.balanceRows, matchField: 'row_key', continueOnItemError: true })
+          await context.actions.record.batchUpsert({ table: 'forecast_grid', items: v.gridRows, matchField: 'row_key', continueOnItemError: true })
+          // A row the grid no longer has (a poste with nothing all year) goes.
+          await context.actions.record.batchDelete({ table: 'forecast_grid', filter: { conditions: [{ field: 'scenario_key', operator: 'equals', value: k }, { field: 'computed_at', operator: 'lessThan', value: nowIso }] }, limit: 500 })
           await context.actions.record.batchUpsert({ table: 'scenarios', items: [v.kpi], matchField: 'scenario_key' })
           context.log.info(`${k} : ${v.monthRows.length} lignes-mois, fin d'année ${v.kpi.year_end_cash} €, point bas ${v.kpi.lowest_balance} € (${v.kpi.lowest_month}), autonomie ${v.kpi.runway_months} mois`)
         }

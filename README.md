@@ -303,7 +303,10 @@ Digitale » spreadsheet and the script that filled it:
   raise on the pay line adds its employer charges) and the **dated items** (an
   IS instalment, a loan repayment, a subsidy expected on a date). Every edit
   recomputes the scenario within seconds; « Recalculer le prévisionnel » does
-  it on demand.
+  it on demand. Its « Plan de trésorerie » reads like the old spreadsheet:
+  one row per poste, one column per month (réalisé for a closed month, prévu
+  after), a total per group and per section, then the soldes — exportable as
+  CSV.
 - **Transactions** (`/administration/finances/transactions`) — the mirrored
   bank transactions, one tab per accountant question; a row opens the
   transaction in Pennylane, where it is corrected.

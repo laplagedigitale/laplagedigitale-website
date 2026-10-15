@@ -226,6 +226,58 @@ components:
                     emptyMessage: "Pas encore de prévisionnel : lancez « Recalculer le prévisionnel »."
 
           # The cash plan: twelve rows, one per month.
+          # The plan de trésorerie as the spreadsheet laid it out: one row per
+          # poste, one column per month (actual for a closed month, forecast
+          # after), group and section totals, then the soldes. A table cannot
+          # pivot, so the engine writes these rows into forecast_grid.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Soldes mois par mois, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: record-field, props: { field: period_label, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+              - { type: text, element: p, content: "Les recettes et les charges poste par poste, mois par mois, comme dans l'ancien tableau : un mois clos reprend les opérations Pennylane, un mois à venir le prévu (projection, budgets, ajustements, éléments datés). « dont réalisé » et « dont prévu » partagent le total de l'année ; « Budget » et « Écart » comparent au budget voté. « Exporter » donne le tableau en CSV.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    rowHeight: short
+                    props:
+                      aria-label: Plan de trésorerie, poste par poste et mois par mois
+                    dataSource:
+                      table: forecast_grid
+                      filter:
+                        - { field: scenario, operator: eq, value: $param.id }
+                      sort:
+                        - { field: sort_order, direction: asc }
+                      limit: 100
+                      refreshMode: poll
+                      pollIntervalMs: 5000
+                    toolbar: { export: true }
+                    emptyMessage: "Pas encore de plan : lancez « Recalculer le prévisionnel »."
+                    columns:
+                      - { field: row_type, label: '', width: 110 }
+                      - { field: label, label: Poste, frozen: true, width: 300 }
+                      - { field: m01, label: Janv., format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m02, label: Févr., format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m03, label: Mars, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m04, label: Avr., format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m05, label: Mai, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m06, label: Juin, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m07, label: Juil., format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m08, label: Août, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m09, label: Sept., format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m10, label: Oct., format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m11, label: Nov., format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: m12, label: Déc., format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: total, label: Total, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }] }
+                      - { field: total_actual, label: dont réalisé, format: currency, align: right }
+                      - { field: total_forecast, label: dont prévu, format: currency, align: right }
+                      - { field: budget_total, label: Budget, format: currency, align: right }
+                      - { field: variance, label: Écart, format: currency, align: right, cellStyle: [{ when: { lt: 0 }, tone: error }, { when: { gt: 0 }, tone: success }] }
+
           - type: container
             element: section
             props: { className: 'space-y-3' }
