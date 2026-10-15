@@ -20,6 +20,9 @@
 # than a `visibility.record` gate: that would make every page bind a members
 # row, and an admin without one would get a 404.
 #
+# The light-on-navy link colours are lg-only: below lg the navigation is a
+# drawer on the theme's light panel, where they would be unreadable.
+#
 # The sidebars keep their own height (lg:flex-none) and the column scrolls
 # (lg:overflow-y-auto): a sidebar stretched to fill the column is cut to the
 # height left over, and its last groups overflow onto the link below it.
@@ -51,7 +54,7 @@ children:
     visibility: { roles: [admin] }
     drawer: { below: lg, label: Menu }
     props:
-      className: 'lg:flex-none text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
+      className: 'max-lg:ml-auto lg:flex-none lg:text-white lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
     groups:
       - label: Pilotage
         items:
@@ -84,7 +87,7 @@ children:
     visibility: { roles: [editor] }
     drawer: { below: lg, label: Menu }
     props:
-      className: 'lg:flex-none text-white [&_a]:text-navy-100 [&_a:hover]:text-white [&_a:hover]:bg-navy-700 [&_a[aria-current=page]]:bg-navy-700 [&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold [&_svg]:text-navy-200'
+      className: 'max-lg:ml-auto lg:flex-none lg:text-white lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
     groups:
       - label: Contenu
         items:
