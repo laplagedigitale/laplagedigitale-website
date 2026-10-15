@@ -60,10 +60,11 @@ actions:
           }
 
           // `enabled` is the only status Pennylane documents for an active
-          // Compte Pro mandate; pennylane-sync reads it the same way.
+          // Compte Pro mandate, and a signed one answers `valid`;
+          // pennylane-sync reads them the same way.
           const mandates = await listAll('/pro_account/mandates', { limit: 100 })
           const customers = [...new Set<number>(
-            mandates.filter((m: any) => ['enabled', 'active'].includes(String(m.status ?? '').toLowerCase())).map((m: any) => Number(m.customer?.id)).filter((n: number) => Number.isFinite(n) && n > 0),
+            mandates.filter((m: any) => ['enabled', 'active', 'valid'].includes(String(m.status ?? '').toLowerCase())).map((m: any) => Number(m.customer?.id)).filter((n: number) => Number.isFinite(n) && n > 0),
           )]
           context.log.info(`${mandates.length} mandates, ${customers.length} customers with an active one`)
           if (customers.length === 0) return { notify: 'no', subject: '', body: '' }

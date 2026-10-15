@@ -65,7 +65,7 @@ actions:
           // Same fold as pennylane-sync.
           const mandateStatus = (m: any): string => {
             const s = String(m.status ?? '').toLowerCase()
-            if (s === 'enabled' || s === 'active') return 'active'
+            if (s === 'enabled' || s === 'active' || s === 'valid') return 'active'
             if (/fail|reject|refus|block/.test(s)) return 'failed'
             if (/disabl|revok|cancel|expir|terminat|clos/.test(s)) return 'ended'
             if (!m.pdf_url || /pend|request|wait|sent|creat/.test(s)) return 'pending'

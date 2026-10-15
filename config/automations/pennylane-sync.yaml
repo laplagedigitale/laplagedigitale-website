@@ -153,12 +153,13 @@ actions:
           for (const l of context.inputData.linked ?? []) if (!memberOf.has(l.customerId)) memberOf.set(l.customerId, l)
           const invoiceStatuses = new Set(['paid', 'partially_paid', 'upcoming', 'late', 'incomplete', 'cancelled', 'partially_cancelled', 'credit_note', 'archived'])
           // Pennylane does not publish the Compte Pro mandate statuses (only
-          // `enabled` is documented), so they are folded into our four. An
-          // unknown one reads as pending and is logged, to be added here.
-          // pennylane-direct-debit keeps the same rule for `active`.
+          // `enabled` is documented; a signed mandate answers `valid`), so they
+          // are folded into our four. An unknown one reads as pending and is
+          // logged, to be added here. pennylane-direct-debit and
+          // verify-mandate-apply keep the same rule for `active`.
           const mandateStatus = (m: any): string => {
             const s = String(m.status ?? '').toLowerCase()
-            if (s === 'enabled' || s === 'active') return 'active'
+            if (s === 'enabled' || s === 'active' || s === 'valid') return 'active'
             if (/fail|reject|refus|block/.test(s)) return 'failed'
             if (/disabl|revok|cancel|expir|terminat|clos/.test(s)) return 'ended'
             if (!m.pdf_url || /pend|request|wait|sent|creat/.test(s)) return 'pending'
