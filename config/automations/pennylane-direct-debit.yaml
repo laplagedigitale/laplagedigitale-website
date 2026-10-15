@@ -1,6 +1,6 @@
-# Automation: pennylane-direct-debit — every morning, moves the Fixe
-# subscriptions (330 € TTC a month) of every customer whose Compte Pro mandate
-# is active to direct debit on the Pennylane Compte Pro
+# Automation: pennylane-direct-debit — every morning, moves every monthly
+# subscription of every customer whose Compte Pro mandate is active — whatever
+# its amount: Fixe, domiciliation, private office… — to direct debit on the Pennylane Compte Pro
 # (payment_method pro_account_sepa_core), so the next invoice the subscription
 # issues is debited instead of waiting for a transfer. Pennylane debits it at
 # least 14 days after the due date (SEPA notice) and reconciles it itself.
@@ -8,11 +8,10 @@
 # The coworker signs the mandate from the portal (request-mandate). This run
 # picks it up from Pennylane itself, not from the mirrored mandates table, so a
 # customer who is not a portal member yet is switched as well. Only
-# subscriptions running or about to start, still `offline` or on the former
-# GoCardless debit (`gocardless_direct_debit`), and whose amount is one of
-# DIRECT_DEBIT_AMOUNTS, are touched: the domiciliation, the private offices and
-# anything already on the Compte Pro are left alone. Nothing is ever switched
-# back.
+# monthly subscriptions running or about to start, still `offline` or on the
+# former GoCardless debit (`gocardless_direct_debit`), are touched: each is
+# debited exactly what Pennylane invoices it every month, and anything already
+# on the Compte Pro is left alone. Nothing is ever switched back.
 #
 # It runs at 05:45, ahead of the invoices Pennylane issues on the 20th at
 # about 06:30, so a mandate signed the day before already covers that
@@ -38,12 +37,6 @@ actions:
         async function execute(context) {
           const BASE = 'https://app.pennylane.com/api/external/v2'
           const apply = String(context.env.DIRECT_DEBIT_APPLY ?? 'true').toLowerCase() !== 'false'
-          const amounts = new Set<number>(
-            String(context.env.DIRECT_DEBIT_AMOUNTS ?? '330')
-              .split(',')
-              .map((s: string) => Number(s.trim()))
-              .filter((n: number) => Number.isFinite(n) && n > 0),
-          )
           const read = (res: any, what: string): any => {
             if (res?.truncated) throw new Error(`${what} : réponse tronquée (64 KiB)`)
             return typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
@@ -83,7 +76,7 @@ actions:
             (s: any) =>
               (s.payment_method === 'offline' || s.payment_method === 'gocardless_direct_debit') &&
               (s.status === 'in_progress' || s.status === 'not_started') &&
-              amounts.has(Number(s.customer_invoice_data?.amount)),
+              s.recurring_rule?.rule_type === 'monthly',
           )
 
           const rows: { id: string; who: string; amount: number; next: string; status: string; error: string }[] = []
@@ -127,7 +120,7 @@ actions:
             subject: `Prélèvement Compte Pro — ${switched.length + planned.length} abonnement(s) passé(s) en prélèvement, ${failed.length} échec(s)`,
             body: [
               '<p>Bonjour Thomas,</p>',
-              '<p>Ces abonnements Fixe ont un mandat actif sur le Compte Pro Pennylane : leurs prochaines factures seront prélevées automatiquement, au plus tôt 14 jours après leur échéance.</p>',
+              '<p>Ces abonnements mensuels ont un mandat actif sur le Compte Pro Pennylane : leurs prochaines factures seront prélevées automatiquement, au plus tôt 14 jours après leur échéance.</p>',
               section('Passés en prélèvement', switched),
               section('À passer en prélèvement (mode test, rien n’a été écrit dans Pennylane)', planned),
               section('Échecs — à passer à la main dans Pennylane', failed),
@@ -149,7 +142,7 @@ actions:
             - name: done
               type: flow
               operator: stop
-              props: { status: success, message: No Fixe subscription to move to direct debit }
+              props: { status: success, message: No monthly subscription to move to direct debit }
         - name: notify
           actions:
             - name: mail
