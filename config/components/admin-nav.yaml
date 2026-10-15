@@ -1,7 +1,7 @@
 # Reusable component template: admin-nav — the left column of the
-# Administration de l'association (/administration/*). Logo on top, a "new
-# post" call to action, then the navigation. French only, like the rest of
-# the Administration.
+# Administration de l'association (/administration/*). Logo on top, then the
+# navigation. French only, like the rest of the Administration. A new article
+# starts from « Contenu » (the editor sidebar keeps its « Nouvel article »).
 #
 # Below lg the column becomes a top bar and the navigation folds into a drawer
 # behind its menu button. A template cannot take children, so each page places
@@ -24,7 +24,7 @@
 # drawer on the theme's light panel, where they would be unreadable.
 #
 # From lg up the column is three rows and only the middle one scrolls: the
-# header (logo, « + Nouvel article ») and the footer (« Mon Espace Membre »)
+# header (the logo) and the footer (« Mon Espace Membre »)
 # stay in place however long the navigation is. The column itself is clipped
 # (lg:overflow-hidden); the wrapper around the sidebars takes the height left
 # (lg:flex-1 lg:min-h-0) and scrolls (lg:overflow-y-auto). The sidebars inside
@@ -44,15 +44,10 @@ props:
   className: 'flex flex-row items-center justify-between gap-4 bg-navy px-4 py-3 text-white lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden lg:w-64 lg:flex-none lg:flex-col lg:items-stretch lg:justify-start lg:px-3 lg:py-6'
 children:
   - type: link
-    props: { href: /administration, className: 'flex flex-col gap-1 lg:flex-none lg:px-3 lg:mb-4', 'aria-label': "Administration de l'association" }
+    props: { href: /administration, className: 'flex flex-col gap-1 lg:flex-none lg:px-3 lg:mb-6', 'aria-label': "Administration de l'association" }
     children:
       - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-9 w-auto self-start' } }
       - { type: text, element: span, content: Administration, props: { className: 'hidden lg:inline text-xs font-bold uppercase tracking-widest text-orange' } }
-  - type: link
-    content: '+ Nouvel article'
-    props:
-      href: /administration/contenu/articles/nouveau
-      className: 'hidden lg:flex lg:flex-none justify-center lg:mx-3 lg:mb-6 px-4 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
 
   # The navigation: the one part of the column that scrolls.
   - type: container
