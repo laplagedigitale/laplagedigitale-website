@@ -5,8 +5,11 @@
 # Agricole Livret A (`manual:livret-a`), whose balance and statement date an
 # admin keys in from the bank statement.
 #
-# `kind` and `include_in_cash` are admin-owned on a known row: the sync sets
-# them on the first sight of an account and never resends them. A `loan`
+# `kind`, `include_in_cash` and `active` are admin-owned on a known row: the
+# sync sets them on the first sight of an account and never resends them. An
+# account Pennylane still lists but nobody uses any more is switched off
+# (`active` unticked): it leaves the Trésorerie page and the cash position,
+# and stays a row because the sync would recreate a deleted one. A `loan`
 # account is left out of the cash position; `is_reserve` marks the savings
 # that count in the total treasury but sit outside the Pennylane closing
 # balance. Admin only, like the other back-office tables.
@@ -43,6 +46,7 @@ fields:
   - { id: 9, name: is_reserve, label: Réserve (hors Pennylane), type: checkbox, default: false }
   - { id: 10, name: notes, label: Notes, type: long-text }
   - { id: 11, name: synced_at, label: Synchronisé le, type: datetime }
+  - { id: 12, name: active, label: Actif, type: checkbox, default: true }
 permissions:
   read: [admin]
   create: [admin]

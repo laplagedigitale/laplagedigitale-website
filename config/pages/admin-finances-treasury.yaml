@@ -58,6 +58,7 @@ components:
                   table: bank_accounts
                   filter:
                     - { field: include_in_cash, operator: eq, value: true }
+                    - { field: active, operator: eq, value: true }
                 kpiAggregate: { function: sum, field: balance }
                 kpiFormat: { type: currency, options: { currency: EUR } }
               - type: kpi
@@ -67,6 +68,7 @@ components:
                   table: bank_accounts
                   filter:
                     - { field: include_in_cash, operator: eq, value: true }
+                    - { field: active, operator: eq, value: true }
                     - { field: source, operator: eq, value: pennylane }
                 kpiAggregate: { function: sum, field: balance }
                 kpiFormat: { type: currency, options: { currency: EUR } }
@@ -102,6 +104,8 @@ components:
               - type: list
                 dataSource:
                   table: bank_accounts
+                  filter:
+                    - { field: active, operator: eq, value: true }
                   sort:
                     - { field: include_in_cash, direction: desc }
                     - { field: kind, direction: asc }
