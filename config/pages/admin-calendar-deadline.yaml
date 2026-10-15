@@ -1,0 +1,153 @@
+# Page: admin-calendar-deadline — one deadline of the Calendrier de gestion:
+# everything about it, editable, its procedure, what the reminders did, and
+# the button that closes an occurrence. A deadline is deleted from the list on
+# /administration/calendrier: in 0.37 a `crud delete` on a lone button renders
+# inside a hidden island, and a `fetch` can only answer with a toast, so
+# neither could leave this page once the row is gone.
+#
+# « Marquer comme fait » runs management-deadline-done, which moves due_date to
+# the next occurrence (or switches a one-off deadline off) and stamps
+# last_done_on. In 0.37 neither of the ways back works from here: an
+# automation button drops onSuccess.navigate, and a fetch body (which could
+# reload) sends `$record.id` literally on a page-level binding. So the toast
+# asks for a reload, and the form saves itself field by field (autoSave): a
+# form left open with the old date never writes it back unless that field is
+# edited. Its « Mettre à jour » still sends every field, the stale date
+# included. The list on /administration/calendrier has the same « Fait » and
+# refreshes in place.
+#
+# The « Suivi » card is what management-reminders wrote: the date each
+# reminder was sent for and the last Notion card it created.
+name: admin-calendar-deadline
+path: /administration/calendrier/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Échéance — Administration"
+  description: "Une échéance du calendrier de gestion."
+  noindex: true
+dataSource: { table: management_deadlines, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Calendrier de gestion', props: { href: /administration/calendrier, className: 'text-sm text-text-muted hover:text-navy' } }
+
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: $record.title, props: { className: 'text-3xl font-bold text-navy' } }
+                  - type: flex
+                    props:
+                      className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                    children:
+                      - { type: record-field, format: long-date, props: { field: due_date, className: 'font-semibold text-navy' } }
+                      - { type: record-field, props: { field: category } }
+                      - { type: record-field, props: { field: recurrence } }
+                  - { type: text, element: p, content: "Désactivée : elle n'apparaît plus dans le calendrier et aucun rappel ne part.", visibility: { record: { field: active, eq: false } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap gap-3'
+                children:
+                  - type: button
+                    content: Marquer comme fait
+                    visibility: { record: { field: active, eq: true } }
+                    props:
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                    action:
+                      type: automation
+                      name: management-deadline-done
+                      await: true
+                      inputData:
+                        deadlineId: $record.id
+                      onSuccess:
+                        type: message
+                        toast: { variant: success, message: "Échéance marquée comme faite : rechargez la page pour voir sa nouvelle date." }
+                      onError:
+                        type: message
+                        toast: { variant: error, message: "L'échéance n'a pas pu être marquée comme faite." }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Échéance, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: management_deadlines, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: management_deadlines
+                    fields:
+                      - { field: title }
+                      - { field: due_date, description: "La prochaine occurrence. « Marquer comme fait » la décale toute seule." }
+                      - { field: recurrence }
+                      - { field: notice_days, description: "Le premier rappel part ce nombre de jours avant la date ; un second le jour même." }
+                      - { field: category }
+                      - { field: owner_email, description: "Mentionné dans le rappel Slack et responsable de la carte Notion." }
+                      - { field: create_notion_card }
+                      - { field: procedure, control: textarea }
+                      - { field: notion_url }
+                      - { field: active }
+
+              - type: container
+                props:
+                  className: 'space-y-6'
+                children:
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-3'
+                    children:
+                      - { type: text, element: h2, content: Procédure, props: { className: 'text-xl font-semibold text-navy' } }
+                      - { type: record-field, props: { field: procedure, className: 'text-sm text-text whitespace-pre-line' } }
+                      - type: link
+                        content: 'Ouvrir la page Notion ↗'
+                        visibility: { record: { field: notion_url, isNotEmpty: true } }
+                        props:
+                          href: $record.notion_url
+                          target: _blank
+                          className: 'inline-flex text-sm font-semibold text-blue hover:text-navy'
+
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-3'
+                    children:
+                      - { type: text, element: h2, content: Suivi, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: container
+                        children:
+                          - { type: text, element: p, content: Dernière réalisation, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                          - { type: record-field, format: short-date, props: { field: last_done_on, className: 'mt-1 text-navy' } }
+                      - type: container
+                        children:
+                          - { type: text, element: p, content: Rappel envoyé pour l'échéance du, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                          - { type: record-field, format: short-date, props: { field: notice_sent_for, className: 'mt-1 text-navy' } }
+                      - type: container
+                        children:
+                          - { type: text, element: p, content: Rappel du jour envoyé pour, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                          - { type: record-field, format: short-date, props: { field: dayof_sent_for, className: 'mt-1 text-navy' } }
+                      - type: link
+                        content: 'Dernière carte Notion ↗'
+                        visibility: { record: { field: notion_card_url, isNotEmpty: true } }
+                        props:
+                          href: $record.notion_card_url
+                          target: _blank
+                          className: 'inline-flex text-sm font-semibold text-blue hover:text-navy'

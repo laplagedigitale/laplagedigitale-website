@@ -145,6 +145,8 @@ and the pages read those tables:
 | `flex-check-in`           | a Flex check-in      | dates the new `checkins` row, keeps one row per member per day (a full day replaces the half day) and stamps its amount HT |
 | `flex-signup-validate`    | « Valider » on a sign-up | finds or creates the Pennylane customer, links the member to it, invites them as a coworker |
 | `flex-invoicing`          | 1st of month 06:00   | creates one Pennylane invoice per linked member for last month's Flex days, marks them `invoiced`, mails the treasurer |
+| `management-reminders`    | daily 09:00          | reminds the Calendrier de gestion's deadlines in Slack (N days before, then on the day), mentioning the owner, and creates the Notion card when asked |
+| `management-deadline-done`| « Marquer comme fait » | moves a deadline to its next occurrence (or switches a one-off off) |
 
 **Isolation is the tables' job, not the page's.** Every portal table has a
 row-level rule matching the row's email to the signed-in user's email, so the
@@ -233,6 +235,43 @@ Set `FLEX_INVOICING_APPLY=false` to preview: the run then only logs and mails
 what it would create. An admin can also start it by hand:
 `POST /api/automations/flex-invoicing/trigger` with `{"dryRun": true}` (and
 `"month": "YYYY-MM"` to bill up to the end of another month).
+
+## Calendrier de gestion
+
+`/administration/calendrier` (admins) holds what the association has to think
+of each year — activity report, general assembly, fire extinguishers, summer
+offers… — on a month calendar coloured by pôle, with the same rows as a list.
+Each deadline has its own page (`/administration/calendrier/:id`) where it is
+edited, with its procedure and a link to its Notion page; new ones are added on
+`/administration/calendrier/nouvelle`. The dashboard shows what is overdue and
+the next 60 days.
+
+A row carries the date of its **next** occurrence, a recurrence (year,
+semester, quarter, month, once), how many days ahead to warn and an owner's
+e-mail. Every morning at 09:00 `management-reminders` posts in the channel
+`DEADLINES_SLACK_CHANNEL_ID`:
+
+1. **N days before** — « Dans N jours », the owner mentioned (Slack
+   `users.lookupByEmail`), the procedure's first lines; with « Créer une carte
+   Notion » ticked, a `[Calendrier] …` card is created in the Notion task
+   database with the owner and the date, so the Monday digest follows it;
+2. **on the day** — « C'est aujourd'hui ».
+
+Nothing moves the date by itself: « Marquer comme fait » on the deadline's page
+moves it to the next occurrence (a 31st stays a month-end) or switches a
+one-off deadline off. A deadline nobody marked stays overdue on the dashboard
+and is not reminded again. Each message is stamped on the row once Slack
+accepted it, so a replay never sends twice.
+
+To test (admin session, see the curl under « Automations » in `CLAUDE.md`):
+
+```bash
+POST /api/automations/management-reminders/trigger
+{"dryRun": true, "today": "2027-03-17", "channel": "C0123456789"}
+```
+
+`DEADLINES_APPLY=false` makes every run a dry run. The Slack bot must be in the
+channel.
 
 ## Payment matching
 
@@ -340,6 +379,11 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`FLEX_SIGNUP_APPLY`** — optional, default `true`. `false` makes « Valider »
   a dry run: the run says which customer it would reuse or create and writes
   nothing.
+- **`DEADLINES_SLACK_CHANNEL_ID`** — the channel (`C…`) the Calendrier de
+  gestion reminders go to. Required: set it before deploying, and invite the
+  bot there.
+- **`DEADLINES_APPLY`** — optional, default `true`. `false` turns
+  `management-reminders` into a dry run (it logs the messages it would send).
 - **`TREASURER_EMAIL`** — optional, default `tresorerie@laplagedigitale.fr`:
   where the payment-matching, direct-debit and Flex invoicing summaries go
   (needs the `SMTP_*` variables).

@@ -1,0 +1,69 @@
+# Table: management_deadlines — the « Calendrier de gestion » of the
+# association: what has to be done each year (or semester, quarter, month)
+# for the place to run — activity report, general assembly, fire
+# extinguishers, summer offers… One row per obligation, carrying the date of
+# its NEXT occurrence.
+#
+# management-reminders reads it every morning: notice_days before due_date it
+# posts a reminder in Slack (and creates the Notion card when
+# create_notion_card is ticked), then again on the day itself. notice_sent_for
+# and dayof_sent_for hold the due_date each reminder was sent for, so a replay
+# never sends twice and a new date re-arms both without a reset.
+#
+# Nothing rolls the date forward by itself: « Marquer comme fait » on
+# /administration/calendrier/:id runs management-deadline-done, which moves
+# due_date to the next occurrence (or switches a one-off row off). A deadline
+# nobody marked stays overdue on the dashboard.
+#
+# Admin only, like the Administration's other back-office tables.
+id: 10
+name: management_deadlines
+# Read-only over MCP: Claude lists and reads, never writes.
+aiAccess:
+  description: "Calendrier de gestion of the association: recurring management deadlines (activity report, general assembly, safety checks, communication), their next date, owner and reminder state."
+  operations: [read, list]
+fields:
+  - { id: 1, name: title, label: Échéance, type: single-line-text, required: true }
+  - { id: 2, name: due_date, label: Date, type: date, required: true, indexed: true }
+  - id: 3
+    name: recurrence
+    label: Récurrence
+    type: single-select
+    default: yearly
+    options:
+      - { value: yearly, label: Chaque année, color: '#3b82f6' }
+      - { value: semiannual, label: Chaque semestre, color: '#8b5cf6' }
+      - { value: quarterly, label: Chaque trimestre, color: '#14b8a6' }
+      - { value: monthly, label: Chaque mois, color: '#f59e0b' }
+      - { value: once, label: Une seule fois, color: '#94a3b8' }
+  - { id: 4, name: notice_days, label: Prévenir (jours avant), type: integer, default: 14 }
+  # Also the calendar's colours.
+  - id: 5
+    name: category
+    label: Pôle
+    type: single-select
+    default: gouvernance
+    options:
+      - { value: gouvernance, label: Gouvernance, color: '#1e3a8a' }
+      - { value: securite, label: Sécurité, color: '#ef4444' }
+      - { value: communication, label: Communication, color: '#ec4899' }
+      - { value: finances, label: Finances, color: '#10b981' }
+      - { value: locaux, label: Locaux, color: '#f59e0b' }
+      - { value: autre, label: Autre, color: '#94a3b8' }
+  # Mentioned in Slack (users.lookupByEmail) and set as the card's Responsable.
+  - { id: 6, name: owner_email, label: Responsable (e-mail), type: email }
+  - { id: 7, name: create_notion_card, label: Créer une carte Notion, type: checkbox }
+  - { id: 8, name: procedure, label: Procédure, type: long-text }
+  - { id: 9, name: notion_url, label: Page Notion, type: url }
+  - { id: 10, name: active, label: Active, type: checkbox, default: true }
+  # Written by the automations only.
+  - { id: 11, name: notice_sent_for, label: Rappel envoyé pour, type: date }
+  - { id: 12, name: dayof_sent_for, label: Rappel du jour envoyé pour, type: date }
+  - { id: 13, name: notion_card_url, label: Dernière carte Notion, type: url }
+  - { id: 14, name: last_done_on, label: Dernière réalisation, type: date }
+  - { id: 15, name: created_at, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

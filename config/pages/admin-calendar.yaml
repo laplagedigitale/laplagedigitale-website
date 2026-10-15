@@ -1,0 +1,124 @@
+# Page: admin-calendar — « Calendrier de gestion », in the Administration's
+# Pilotage section: the association's recurring deadlines (activity report,
+# general assembly, fire extinguishers, summer offers…) on a month calendar,
+# coloured by pôle, then the same rows as a list.
+#
+# Both open a deadline on its own page (admin-calendar-deadline.yaml), where it
+# is edited and marked done; the list is read-only so there is one place to
+# edit, and carries the one « Supprimer ». A new deadline is added on
+# /administration/calendrier/nouvelle.
+#
+# Only active rows are drawn on the calendar: a one-off deadline marked done
+# switches itself off. The list shows them all, active or not.
+#
+# The reminders are management-reminders' job (Slack, then the Notion card).
+name: admin-calendar
+path: /administration/calendrier
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Calendrier de gestion — Administration"
+  description: "Les échéances de gestion de l'association et leurs rappels."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Calendrier de gestion, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Ce qu'il faut penser à faire dans l'année pour faire vivre la Plage. Chaque échéance est rappelée dans Slack quelques jours avant, puis le jour même, jusqu'à ce qu'elle soit marquée comme faite.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: '+ Nouvelle échéance'
+                props:
+                  href: /administration/calendrier/nouvelle
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: calendar
+                dataSource:
+                  table: management_deadlines
+                  filter:
+                    - { field: active, operator: eq, value: true }
+                dateField: due_date
+                labelField: title
+                colorField: category
+                defaultView: month
+                maxEventsPerDay: 3
+                calendarEvent:
+                  onEventClick: { type: navigate, path: '/administration/calendrier/$record.id' }
+
+          - type: container
+            element: section
+            props:
+              className: 'space-y-3'
+            children:
+              - { type: text, element: h2, content: Toutes les échéances, props: { className: 'text-xl font-semibold text-navy' } }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    props:
+                      id: deadlines
+                      aria-label: Toutes les échéances
+                    dataSource:
+                      table: management_deadlines
+                      sort:
+                        - { field: due_date, direction: asc }
+                      pagination: { pageSize: 50, style: numbered }
+                    search:
+                      placeholder: Rechercher une échéance…
+                    emptyMessage: "Aucune échéance pour le moment : ajoutez la première avec « Nouvelle échéance »."
+                    columns:
+                      - { field: due_date, label: Date, format: short-date }
+                      - { field: title, label: Échéance }
+                      - { field: category, label: Pôle }
+                      - { field: recurrence, label: Récurrence }
+                      - { field: notice_days, label: Prévenir (j), align: right }
+                      - { field: owner_email, label: Responsable }
+                      - { field: active, label: Active }
+                      - type: actions
+                        actions:
+                          # Refreshes the grid, so the row shows its new date.
+                          - label: Fait
+                            visibleWhen: { field: active, eq: true }
+                            action:
+                              type: automation
+                              name: management-deadline-done
+                              await: true
+                              inputData:
+                                deadlineId: $record.id
+                              onSuccess:
+                                type: message
+                                toast: { variant: success, message: Échéance marquée comme faite. }
+                              onError:
+                                type: message
+                                toast: { variant: error, message: "L'échéance n'a pas pu être marquée comme faite." }
+                          - label: Supprimer
+                            variant: destructive
+                            action:
+                              type: crud
+                              operation: delete
+                              table: management_deadlines
+                              confirm: true
+                              confirmMessage: "Supprimer cette échéance ? Ses rappels s'arrêtent. Pour la mettre seulement en pause, décochez « Active » sur sa fiche."
+                    onRowClick: { type: navigate, path: '/administration/calendrier/$record.id' }

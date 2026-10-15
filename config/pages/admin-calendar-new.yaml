@@ -1,0 +1,35 @@
+# Page: admin-calendar-new — add a deadline to the Calendrier de gestion. The
+# declared form deadline-new creates the row and opens it on its own page.
+#
+# Declared before admin-calendar-deadline in app.yaml, so « nouvelle » is this
+# page and never read as an :id.
+name: admin-calendar-new
+path: /administration/calendrier/nouvelle
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Nouvelle échéance — Administration"
+  description: "Ajouter une échéance au calendrier de gestion."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: main
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - { type: link, content: '← Calendrier de gestion', props: { href: /administration/calendrier, className: 'text-sm text-text-muted hover:text-navy' } }
+          - type: card
+            props:
+              className: 'p-6 sm:p-8 max-w-2xl'
+            children:
+              - type: form
+                formRef: deadline-new
+                props: { headingLevel: h1 }

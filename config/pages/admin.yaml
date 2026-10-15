@@ -1,6 +1,7 @@
 # Page: admin — the dashboard of the Administration de l'association, where an
-# admin lands after sign-in (/app): what is waiting in each section — members,
-# finances, content — and the way into it.
+# admin lands after sign-in (/app): what is waiting in each section — the
+# Calendrier de gestion's deadlines, members, finances, content — and the way
+# into it.
 #
 # An admin bypasses row-level rules, so every count covers every member. The
 # « Mon Espace Membre » card is the sidebar's link for a phone (the sidebar's
@@ -31,7 +32,7 @@ components:
           - type: container
             children:
               - { type: text, element: h1, content: "Bonjour[, $session.name]", props: { className: 'text-3xl font-bold text-navy' } }
-              - { type: text, element: p, content: "L'administration de l'association : les membres, les finances et le contenu du site.", props: { className: 'text-text-muted mt-1' } }
+              - { type: text, element: p, content: "L'administration de l'association : les échéances, les membres, les finances et le contenu du site.", props: { className: 'text-text-muted mt-1' } }
 
           - type: list
             dataSource:
@@ -50,6 +51,50 @@ components:
                 props:
                   href: /espace-membre
                   className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+
+          # Échéances — the Calendrier de gestion: what is overdue (nobody marked
+          # it done) and what comes in the next 60 days.
+          - type: container
+            element: section
+            props: { className: 'space-y-4' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Échéances, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Voir le calendrier →', props: { href: /administration/calendrier, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+              - type: grid
+                props: { className: 'grid grid-cols-1 xl:grid-cols-4 gap-4 items-start' }
+                children:
+                  - type: kpi
+                    label: En retard
+                    icon: alarm-clock
+                    dataSource:
+                      table: management_deadlines
+                      filter:
+                        - { field: active, operator: eq, value: true }
+                        - { field: due_date, operator: lt, value: $today }
+                    kpiAggregate: { function: count }
+                    thresholds: [{ value: 1, color: yellow }]
+                  - type: card
+                    props: { className: 'p-4 sm:p-6 xl:col-span-3' }
+                    children:
+                      - type: list
+                        dataSource:
+                          table: management_deadlines
+                          filter:
+                            - { field: active, operator: eq, value: true }
+                            - { field: due_date, operator: gte, value: $today }
+                            - { field: due_date, operator: lte, value: $today+60d }
+                          sort:
+                            - { field: due_date, direction: asc }
+                          limit: 5
+                        listDisplay:
+                          emptyMessage: Aucune échéance dans les 60 prochains jours.
+                          itemTemplate:
+                            title: $record.title
+                            subtitle: $record.due_date
+                            badge: $record.category
 
           # Membres
           - type: container

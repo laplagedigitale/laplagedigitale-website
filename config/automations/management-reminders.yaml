@@ -1,0 +1,250 @@
+# Automation: management-reminders — the Slack reminders of the Calendrier de
+# gestion (/administration/calendrier), every morning at 09:00 Europe/Paris.
+#
+# For each active deadline it sends at most two messages per occurrence, in
+# DEADLINES_SLACK_CHANNEL_ID:
+#   1. notice — from notice_days before due_date until the day before: « Dans
+#      N jours », the owner mentioned, the procedure's first lines and links to
+#      the deadline's page and its Notion page. With create_notion_card ticked,
+#      a card is created in the Notion task database (« [Calendrier] <title> »,
+#      Responsable, Date de clôture estimée, status left to Notion's default),
+#      so the Monday digest follows it too;
+#   2. day-of — on due_date itself: « C'est aujourd'hui », and how to close it.
+#      When no notice went out (notice_days 0, or a deadline added late) the
+#      card, if wanted, is created with this one.
+# A deadline already past is never reminded again and never rolled forward:
+# it waits, overdue on the dashboard, for « Marquer comme fait »
+# (management-deadline-done). A missed morning is caught up the next one as
+# long as the date has not passed.
+#
+# Idempotence: notice_sent_for / dayof_sent_for hold the due_date each message
+# was sent for, written only after Slack accepted it — a failed post is retried
+# the next morning, a replay sends nothing twice, a new date re-arms both.
+#
+# The owner is mentioned through Slack users.lookupByEmail (scopes users:read +
+# users:read.email, as for notion-hebdo); an address Slack does not know is
+# printed as is. The card's Responsable is the Notion user with that e-mail
+# (the Notion integration reads e-mails, see notion-hebdo); none, it is empty.
+#
+# Each deadline is handled on its own: one failing (Slack refusal, Notion
+# error) does not stop the others, and the run fails at the end, naming them.
+#
+# DEADLINES_APPLY=false (or {"dryRun": true}) logs the messages it would send
+# and writes nothing. On demand (admin), to test against another channel or
+# another day:
+#   POST /api/automations/management-reminders/trigger
+#   {"dryRun": true, "today": "2027-03-17", "channel": "C0123456789"}
+name: management-reminders
+label: Rappels du calendrier de gestion
+description: >-
+  Chaque matin à 9 h, rappelle dans Slack les échéances du calendrier de gestion
+  qui arrivent (N jours avant, puis le jour même), en mentionnant le responsable,
+  et crée la carte Notion quand c'est demandé.
+trigger:
+  type: cron
+  expression: "0 9 * * *"
+  timezone: Europe/Paris
+timeout: 300000
+concurrency:
+  limit: 1
+tags: [calendrier, slack, notion]
+actions:
+  - name: deadlines
+    type: record
+    operator: list
+    props:
+      table: management_deadlines
+      filter:
+        conditions:
+          - { field: active, operator: equals, value: true }
+      sort: [{ field: due_date, direction: asc }]
+      limit: 1000
+  - name: remind
+    label: Envoyer les rappels du jour
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 240000
+      inputData:
+        rows: '{{steps.deadlines.records}}'
+        # Absent on scheduled fires (renders empty); set by an on-demand POST body.
+        dryRun: "{{trigger.data.body.dryRun}}"
+        todayOverride: "{{trigger.data.body.today}}"
+        channelOverride: "{{trigger.data.body.channel}}"
+        channel: $env.DEADLINES_SLACK_CHANNEL_ID
+        tasksDataSourceId: $env.NOTION_TASKS_DATA_SOURCE_ID
+        baseUrl: $env.BASE_URL
+      code: |
+        async function execute(context) {
+          const inp = context.inputData
+          const DAY = 86400000
+          const apply = String(context.env.DEADLINES_APPLY ?? 'true').toLowerCase() !== 'false'
+          const dryRun = !apply || String(inp.dryRun ?? '').toLowerCase() === 'true'
+          const channel = String(inp.channelOverride ?? '').trim() || String(inp.channel ?? '').trim()
+          const tasksDs = String(inp.tasksDataSourceId ?? '').trim()
+          const baseUrl = String(inp.baseUrl ?? '').trim().replace(/\/+$/, '')
+          if (!channel) throw new Error('Aucun canal Slack (DEADLINES_SLACK_CHANNEL_ID ou body.channel)')
+
+          // --- today in Europe/Paris (or the override), date math at noon UTC
+          const override = String(inp.todayOverride ?? '').trim()
+          const today = /^\d{4}-\d{2}-\d{2}$/.test(override) ? override
+            : new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+          const days = (from: string, to: string): number => Math.round((Date.parse(`${to}T12:00:00Z`) - Date.parse(`${from}T12:00:00Z`)) / DAY)
+          const longDate = (d: string): string => new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${d}T12:00:00Z`))
+
+          // --- what is due today
+          type Todo = { row: any; due: string; kind: 'notice' | 'dayof'; inDays: number; card: boolean }
+          const todos: Todo[] = []
+          for (const r of (inp.rows ?? []) as any[]) {
+            const due = String(r.due_date ?? '').slice(0, 10)
+            if (!due || r.active === false) continue
+            const inDays = days(today, due)
+            const noticeFor = String(r.notice_sent_for ?? '').slice(0, 10)
+            const dayofFor = String(r.dayof_sent_for ?? '').slice(0, 10)
+            const notice = Math.max(0, Number(r.notice_days ?? 14) || 0)
+            const wantsCard = r.create_notion_card === true || String(r.create_notion_card) === 'true'
+            if (inDays > 0 && inDays <= notice && noticeFor !== due) todos.push({ row: r, due, kind: 'notice', inDays, card: wantsCard })
+            else if (inDays === 0 && dayofFor !== due) todos.push({ row: r, due, kind: 'dayof', inDays, card: wantsCard && noticeFor !== due })
+          }
+          context.log.info(`${today}: ${todos.length} rappel(s) à envoyer`)
+          if (!todos.length) return { today, dryRun, sent: 0, cards: 0, errors: 0 }
+
+          // --- Notion over the connection (token injected, 429 retried by the engine)
+          const notion = async (method: string, path: string, opts: { body?: unknown; query?: Record<string, unknown> } = {}): Promise<any> => {
+            let res: any
+            try {
+              res = await context.actions.http[method]({
+                url: 'https://api.notion.com/v1' + path,
+                connection: 'notion',
+                headers: { 'Notion-Version': '2026-03-11' },
+                timeout: 20000,
+                ...(opts.body !== undefined ? { body: opts.body } : {}),
+                ...(opts.query !== undefined ? { query: opts.query } : {}),
+              })
+            } catch (e) {
+              throw new Error(`Notion ${method.toUpperCase()} ${path} a échoué : ${e?.message ?? String(e)}`)
+            }
+            if (res?.truncated) throw new Error(`Notion ${path} : réponse tronquée`)
+            const body = typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+            if (!body || typeof body !== 'object') throw new Error(`Notion ${path} : réponse illisible`)
+            if (body.object === 'error') throw new Error(`Notion ${path} : ${body.code} ${body.message}`)
+            return body
+          }
+          const slack = async (method: 'get' | 'post', api: string, opts: { body?: unknown; query?: Record<string, unknown> }): Promise<any> => {
+            const res = await context.actions.http[method]({ url: `https://slack.com/api/${api}`, connection: 'slack', timeout: 15000, ...opts })
+            return typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+          }
+
+          // --- the task database's title property and the Notion users by e-mail, once
+          const needCards = todos.some((t) => t.card)
+          let titleProp = ''
+          let taskProps: { responsable: boolean; due: boolean } = { responsable: false, due: false }
+          const notionUserByEmail: Record<string, string> = {}
+          if (needCards) {
+            if (!tasksDs) throw new Error('NOTION_TASKS_DATA_SOURCE_ID est vide : impossible de créer les cartes')
+            const schema = await notion('get', `/data_sources/${tasksDs}`)
+            const props = schema.properties ?? {}
+            titleProp = Object.keys(props).find((k) => props[k]?.type === 'title') ?? 'Task name'
+            const has = (n: string) => props[n] !== undefined
+            if (!has('Responsable') || !has('Date de clôture estimée')) context.log.warn('Base des tâches sans « Responsable » ou « Date de clôture estimée » : ces champs ne seront pas remplis')
+            let cursor: string | undefined
+            for (let guard = 0; guard < 20; guard++) {
+              const u = await notion('get', '/users', { query: { page_size: 100, ...(cursor ? { start_cursor: cursor } : {}) } })
+              for (const x of u.results ?? []) if (x.type === 'person' && x.person?.email) notionUserByEmail[String(x.person.email).toLowerCase()] = x.id
+              if (!u.has_more || !u.next_cursor) break
+              cursor = u.next_cursor
+            }
+            taskProps = { responsable: has('Responsable'), due: has('Date de clôture estimée') }
+          }
+
+          // --- Slack mention by e-mail (cached; any miss prints the address)
+          const esc = (s: unknown) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          const slackIds: Record<string, string> = {}
+          let slackWarned = false
+          const mention = async (email: string): Promise<string> => {
+            if (!email) return '_sans responsable_'
+            if (slackIds[email] === undefined) {
+              slackIds[email] = ''
+              try {
+                const body = await slack('get', 'users.lookupByEmail', { query: { email } })
+                if (body?.ok && body.user?.id) slackIds[email] = body.user.id
+                else if (body?.error !== 'users_not_found' && !slackWarned) { slackWarned = true; context.log.warn('Slack users.lookupByEmail :', body?.error ?? 'réponse illisible') }
+              } catch (e) { if (!slackWarned) { slackWarned = true; context.log.warn('Slack users.lookupByEmail a échoué :', e?.message ?? String(e)) } }
+            }
+            return slackIds[email] ? `<@${slackIds[email]}>` : `*${esc(email)}*`
+          }
+
+          let sent = 0
+          let cards = 0
+          const errors: string[] = []
+          const planned: string[] = []
+          for (const t of todos) {
+            const r = t.row
+            const id = String(r.id)
+            const title = String(r.title ?? 'Sans titre')
+            const owner = String(r.owner_email ?? '').trim().toLowerCase()
+            const pageUrl = baseUrl ? `${baseUrl}/administration/calendrier/${id}` : ''
+            const notionUrl = String(r.notion_url ?? '').trim()
+            const procedure = String(r.procedure ?? '').trim()
+            try {
+              if (dryRun) {
+                planned.push(`${t.kind} · ${t.due} · ${title} · ${owner || 'sans responsable'}${t.card ? ' · + carte Notion' : ''}`)
+                continue
+              }
+
+              // 1. the Notion card first, so the message can link it
+              let cardUrl = ''
+              if (t.card) {
+                const properties: Record<string, unknown> = { [titleProp]: { title: [{ text: { content: `[Calendrier] ${title}` } }] } }
+                if (taskProps.due) properties['Date de clôture estimée'] = { date: { start: t.due } }
+                if (taskProps.responsable && notionUserByEmail[owner]) properties['Responsable'] = { people: [{ id: notionUserByEmail[owner] }] }
+                const lines = [
+                  `Échéance du calendrier de gestion, le ${longDate(t.due)}.`,
+                  ...(procedure ? [procedure] : []),
+                  ...(pageUrl ? [`Fiche de l'échéance : ${pageUrl}`] : []),
+                  ...(notionUrl ? [`Procédure : ${notionUrl}`] : []),
+                ]
+                const children = lines.map((l) => ({ object: 'block', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: l.slice(0, 1900) } }] } }))
+                const page = await notion('post', '/pages', { body: { parent: { type: 'data_source_id', data_source_id: tasksDs }, properties, children } })
+                cardUrl = String(page.url ?? '')
+                cards++
+                // Stored now: a Slack failure below must not create the card twice tomorrow.
+                await context.actions.record.update({ table: 'management_deadlines', id, data: { notion_card_url: cardUrl, notice_sent_for: t.due } })
+              }
+
+              // 2. the Slack message
+              const link = pageUrl ? `<${pageUrl}|${esc(title).replace(/\|/g, '¦')}>` : `*${esc(title)}*`
+              const head = t.kind === 'notice'
+                ? `📅 *Dans ${t.inDays} jour${t.inDays > 1 ? 's' : ''}* — ${link}, le ${longDate(t.due)}`
+                : `⏰ *C'est aujourd'hui* — ${link}`
+              const excerpt = procedure ? procedure.split('\n').filter(Boolean).slice(0, 3).join('\n').slice(0, 400) : ''
+              const links = [
+                notionUrl ? `<${notionUrl}|📄 Procédure>` : '',
+                cardUrl ? `<${cardUrl}|🗂️ Carte Notion créée>` : '',
+              ].filter(Boolean).join(' · ')
+              const text = [
+                head,
+                `Responsable : ${await mention(owner)}`,
+                ...(excerpt ? [excerpt.split('\n').map((l) => `> ${esc(l)}`).join('\n')] : []),
+                ...(links ? [links] : []),
+                ...(t.kind === 'dayof' ? ['_Quand c\'est fait : « Marquer comme fait » sur la fiche de l\'échéance, la date passe à la prochaine occurrence._'] : []),
+              ].join('\n')
+              const body = await slack('post', 'chat.postMessage', { body: { channel, text, unfurl_links: false, unfurl_media: false } })
+              if (!body?.ok) throw new Error(`Slack a refusé le message : ${body?.error ?? 'réponse sans ok:true'}`)
+              sent++
+
+              // 3. stamp the occurrence, only once Slack accepted it
+              const data: Record<string, unknown> = t.kind === 'notice' ? { notice_sent_for: t.due } : { dayof_sent_for: t.due, ...(t.card ? { notice_sent_for: t.due } : {}) }
+              await context.actions.record.update({ table: 'management_deadlines', id, data })
+            } catch (e) {
+              const msg = `« ${title} » (${id}) : ${e?.message ?? String(e)}`
+              context.log.error(msg)
+              errors.push(msg)
+            }
+          }
+
+          const summary = { today, dryRun, channel, todo: todos.length, sent, cards, errors: errors.length, ...(dryRun ? { planned } : {}) }
+          context.log.info('Résumé', JSON.stringify(summary))
+          if (errors.length) throw new Error(`${errors.length} rappel(s) en échec — ${errors.join(' | ')}`)
+          return summary
+        }

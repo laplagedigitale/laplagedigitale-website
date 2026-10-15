@@ -1,0 +1,30 @@
+# Form: deadline-new — add a deadline to the Calendrier de gestion, placed on
+# /administration/calendrier/nouvelle.
+#
+# A declared form because the page form never creates a row (same reason as
+# post-new). The redirect opens the new deadline on its own page, where every
+# field stays editable. Admin only, like the table.
+id: 5
+name: deadline-new
+title: Nouvelle échéance
+description: "Une ligne par obligation récurrente : la date de sa prochaine occurrence, sa récurrence et combien de jours avant prévenir. Le rappel part dans Slack, puis le jour même."
+display:
+  submitLabel: Ajouter au calendrier
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: management_deadlines
+fields:
+  - { kind: table-field, column: title, placeholder: "Rapport d'activité", required: true }
+  - { kind: table-field, column: due_date, helpText: La prochaine occurrence., required: true }
+  - { kind: table-field, column: recurrence, defaultValue: yearly, required: true }
+  - { kind: table-field, column: notice_days, defaultValue: 14, helpText: "Le premier rappel part ce nombre de jours avant la date ; un second le jour même." }
+  - { kind: table-field, column: category, required: true }
+  - { kind: table-field, column: owner_email, helpText: "Mentionné dans le rappel Slack (son e-mail Slack) et responsable de la carte Notion." }
+  - { kind: table-field, column: create_notion_card, helpText: "Crée une carte dans « Suivi des sujets, projets & tâches » au premier rappel." }
+  - { kind: table-field, column: procedure, placeholder: "Comment faire, qui contacter, où sont les documents…" }
+  - { kind: table-field, column: notion_url, placeholder: 'https://www.notion.so/…' }
+  - { kind: table-field, column: active, defaultValue: true, hidden: true }
+onSuccess:
+  type: redirect
+  url: /administration/calendrier/$record.id
+  delaySeconds: 0
