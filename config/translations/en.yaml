@@ -568,8 +568,8 @@ portal.invoices.recipients.error: "The recipients could not be saved. Try again 
 portal.mandate.current: My mandate
 portal.mandate.how: How does it work?
 portal.mandate.how.1: "1. Click “Set up direct debit”."
-portal.mandate.how.2: "2. Pennylane emails you the GoCardless signing link."
-portal.mandate.how.3: "3. Once the mandate is signed, GoCardless leaves you on a Pennylane page: close it and come back here, your mandate shows up within 15 minutes. Your invoices are then debited when due."
+portal.mandate.how.2: "2. Pennylane emails you, at your invoice address, a link to its secure page: enter your IBAN and sign the mandate."
+portal.mandate.how.3: "3. Come back here: your mandate shows up within 15 minutes. Your invoices are then debited to the association's account, at the earliest 14 days after they are due."
 portal.account.unlinked: "Your account is not linked to Pennylane yet — we are on it."
 portal.match.pending: Looking you up
 portal.match.matched: Linked
@@ -583,9 +583,8 @@ formule.domiciliation: Business address
 formule.source.auto: From Pennylane
 formule.source.manual: Set by hand
 portal.mandate.title: Direct debit
-portal.mandate.intro: "Set up a SEPA mandate through GoCardless and your invoices will be paid automatically when due. The signing link is sent to you by email."
+portal.mandate.intro: "Set up a SEPA direct-debit mandate with La Plage Digitale and your invoices will be paid automatically. Pennylane, our invoicing tool, emails you the signing link."
 portal.mandate.none: No direct-debit mandate yet.
-portal.mandate.account: Bank account
 portal.mandate.since: Since
 portal.mandate.cta: Set up direct debit
 portal.mandate.done: Request processed

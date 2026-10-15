@@ -23,7 +23,7 @@ env:
     default: 'false'
     secret: false
   - key: DIRECT_DEBIT_APPLY
-    description: pennylane-direct-debit moves Fixe subscriptions with an active GoCardless mandate to direct debit; 'false' makes it a dry run
+    description: pennylane-direct-debit moves Fixe subscriptions with an active Compte Pro mandate to Compte Pro direct debit; 'false' makes it a dry run
     required: false
     default: 'true'
     secret: false
@@ -31,11 +31,6 @@ env:
     description: Comma-separated monthly amounts (TTC) of the subscriptions pennylane-direct-debit moves to direct debit — the Fixe plan
     required: false
     default: '330'
-    secret: false
-  - key: MANDATE_MAIL_CUSTOM
-    description: request-mandate sends its own subject and body (with the way back to the Espace Membre) instead of Pennylane's default; 'true' only once a test mail showed the GoCardless link is kept
-    required: false
-    default: 'false'
     secret: false
   - key: FLEX_INVOICING_APPLY
     description: flex-invoicing creates the monthly Flex invoices in Pennylane and marks the check-ins; 'false' makes it a dry run
@@ -60,7 +55,7 @@ env:
     default: http://localhost:3000
     secret: false
   - key: TREASURER_EMAIL
-    description: Recipient of the pennylane-auto-match morning summary
+    description: Recipient of the pennylane-auto-match morning summary and the pennylane-direct-debit mail
     required: false
     default: tresorerie@laplagedigitale.fr
     secret: false
@@ -196,7 +191,7 @@ automations:
   - $ref: ./config/automations/update-billing-emails.yaml
   # Moves a member's rows to their new address once they confirmed it.
   - $ref: ./config/automations/member-email-sync.yaml
-  # Fixe subscriptions with an active mandate → GoCardless direct debit
+  # Fixe subscriptions with an active mandate → Compte Pro direct debit
   - $ref: ./config/automations/pennylane-direct-debit.yaml
   # Flex: one row per member per day, then the monthly Pennylane invoice
   - $ref: ./config/automations/flex-check-in.yaml

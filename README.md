@@ -66,7 +66,7 @@ Unknown property 'noindexx'
 
 `/espace-membre` (« Espace Membre ») is where a coworker administers their place
 at La Plage: their formule, their Pennylane invoices (payment status and PDF),
-their GoCardless direct-debit mandate, the meeting rooms, the practical guide
+their direct-debit mandate (Pennylane Compte Pro), the meeting rooms, the practical guide
 and community life — everything that used to live in the Notion « Kit du
 Plagiste ». It is an app shell: a sidebar (`espace-membre-nav`) beside
 
@@ -108,7 +108,7 @@ shape: one sidebar (`admin-nav`), three sections.
 - **Membres** — the members, the invitations, one member's space read-only,
   and the Flex sign-ups to validate.
 - **Finances** — an overview, every member invoice, the Flex check-ins to
-  invoice (editable), the GoCardless mandates and requests, and the
+  invoice (editable), the Compte Pro direct-debit mandates and requests, and the
   `pennylane-auto-match` log. All of it is a Pennylane mirror: read-only here,
   corrected in Pennylane.
 - **Contenu** — the blog: a dashboard, the post lists (all, drafts,
@@ -137,11 +137,11 @@ and the pages read those tables:
 | Automation                | When                 | Does                                                                 |
 | ------------------------- | -------------------- | -------------------------------------------------------------------- |
 | `member-sign-up`          | account created      | files a `members` row for a `coworker` or `admin` account            |
-| `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, mirrors every linked member's invoices and GoCardless mandates, and derives each member's formules (Fixe, Nomade, Flex, Box, Domiciliation) from their subscriptions and check-ins |
-| `request-mandate`         | the mandate button   | asks Pennylane to email the coworker their GoCardless signing link   |
+| `pennylane-sync`          | every 15 min         | links each unlinked member to the Pennylane customer with that email, mirrors every linked member's invoices and Compte Pro mandates (one row per Pennylane customer), and derives each member's formules (Fixe, Nomade, Flex, Box, Domiciliation) from their subscriptions and check-ins |
+| `request-mandate`         | the mandate button   | asks Pennylane to email the coworker the link to sign a Compte Pro SEPA mandate |
 | `update-billing-emails`   | the recipients form on Factures | writes the addresses a coworker's invoices go to into their Pennylane customer (`emails`), then `members.billing_emails` |
 | `member-email-sync`       | e-mail confirmed, sign-in | when a coworker confirmed a new sign-in address, moves their `members` row, every `member_email` copy and their Pennylane recipients to it (followed by `members.user_id`) |
-| `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active GoCardless mandate from manual transfer to direct debit, and mails the treasurer what changed |
+| `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active Compte Pro mandate to Compte Pro direct debit (`pro_account_sepa_core`), and mails the treasurer what changed |
 | `flex-check-in`           | a Flex check-in      | dates the new `checkins` row, keeps one row per member per day (a full day replaces the half day) and stamps its amount HT |
 | `flex-signup-validate`    | « Valider » on a sign-up | finds or creates the Pennylane customer, links the member to it, invites them as a coworker |
 | `flex-invoicing`          | 1st of month 06:00   | creates one Pennylane invoice per linked member for last month's Flex days, marks them `invoiced`, mails the treasurer |
@@ -328,11 +328,10 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`FLEX_INVOICING_APPLY`** — optional, default `true`. `false` turns the
   monthly Flex invoicing into a dry run (nothing created in Pennylane, no
   check-in marked).
-- **`MANDATE_MAIL_CUSTOM`** — optional, default `false`. `true` makes
-  `request-mandate` send its own subject and body, with the link back to the
-  Espace Membre (GoCardless ends on a Pennylane page and the API takes no
-  return URL). Pennylane does not document whether a custom body keeps the
-  signing link: send one test request to your own address before turning it on.
+- **`DIRECT_DEBIT_APPLY`** — optional, default `true`. `false` turns
+  `pennylane-direct-debit` into a dry run (it mails what it would switch).
+  `DIRECT_DEBIT_AMOUNTS` (default `330`) lists the monthly amounts TTC it
+  switches — the Fixe plan.
 - **`INVITE_API_KEY`** — an API key minted in `/_admin` (API keys) by an
   **admin** account. `flex-signup-validate` sends the coworker invitation
   through the app's own admin endpoint with it, at `BASE_URL`: Sovrium 0.37's
@@ -377,7 +376,8 @@ account on each release.
 are mailed, so set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`,
 `SMTP_FROM` (and optionally `SMTP_FROM_NAME`, `SMTP_SECURE`) with
 `scalingo env-set`. Until then the startup banner says mail is not sent. (The
-mandate email itself is sent by Pennylane, not by this app.)
+mandate email itself is sent by Pennylane, not by this app, to the customer's
+Pennylane e-mails.)
 
 The `formation` pins one **M** container. Do not size it back down — an `S`
 container crashes on deploy: Sovrium compiles the stylesheet at boot, and that

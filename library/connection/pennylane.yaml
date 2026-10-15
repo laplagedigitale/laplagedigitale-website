@@ -54,41 +54,6 @@ operations:
       cursorParam: cursor
       cursorPath: next_cursor
       itemsPath: items
-  - name: get-gocardless-mandates
-    method: GET
-    path: /gocardless_mandates
-    summary: List gocardless mandates
-    params:
-      cursor:
-        in: query
-        type: string
-      limit:
-        in: query
-        type: integer
-      filter:
-        in: query
-        type: string
-      sort:
-        in: query
-        type: string
-    pagination:
-      style: cursor
-      cursorParam: cursor
-      cursorPath: next_cursor
-      itemsPath: items
-  - name: post-gocardless-mandate-mail-requests
-    method: POST
-    path: /gocardless_mandates/mail_requests
-    summary: Send a GoCardless mandate email request
-    params:
-      customer_id:
-        in: body
-        type: integer
-        required: true
-      email:
-        in: body
-        type: object
-        required: true
   - name: get-transactions
     method: GET
     path: /transactions
@@ -697,3 +662,34 @@ operations:
           - en_GB
           - de_DE
           - es_ES
+  - name: get-pro-account-mandates
+    method: GET
+    path: /pro_account/mandates
+    summary: List Pro Account payment mandates
+    params:
+      cursor:
+        in: query
+        type: string
+      limit:
+        in: query
+        type: integer
+      filter:
+        in: query
+        type: string
+      sort:
+        in: query
+        type: string
+    pagination:
+      style: cursor
+      cursorParam: cursor
+      cursorPath: next_cursor
+      itemsPath: items
+  - name: post-pro-account-mandate-mail-requests
+    method: POST
+    path: /pro_account/mandate_requests
+    summary: Send a Pro Account SEPA mandate request
+    params:
+      customer_id:
+        in: body
+        type: integer
+        required: true

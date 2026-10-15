@@ -1,11 +1,15 @@
-# Table: mandates — a read-only mirror of the GoCardless mandates Pennylane
-# holds for each linked member, refreshed by the pennylane-sync automation.
+# Table: mandates — a read-only mirror of the Compte Pro direct-debit mandates
+# Pennylane holds for each linked member, refreshed by the pennylane-sync
+# automation. The API gives a Compte Pro mandate no id and no IBAN, so there
+# is one row per Pennylane customer (pennylane_id `pro-<customer id>`, its most
+# relevant mandate), `status` is our own normalised set and the raw Pennylane
+# value is kept in pennylane_status.
 id: 5
 name: mandates
 # Read-only over MCP: Claude lists and reads, never writes. Row-level and
 # field rules still apply, as the owner of the API key.
 aiAccess:
-  description: "Read-only mirror of the GoCardless direct-debit mandates Pennylane holds per coworker."
+  description: "Read-only mirror of the Compte Pro direct-debit mandate Pennylane holds per coworker (one row per Pennylane customer)."
   operations: [read, list]
 fields:
   - { id: 1, name: pennylane_id, type: single-line-text, required: true, unique: true }
@@ -16,18 +20,13 @@ fields:
     type: single-select
     options:
       - { value: active, label: $t:portal.mandate.active, color: '#10b981' }
-      - { value: pending_customer_approval, label: $t:portal.mandate.pending, color: '#f59e0b' }
-      - { value: pending_submission, label: $t:portal.mandate.pending, color: '#f59e0b' }
-      - { value: submitted, label: $t:portal.mandate.pending, color: '#f59e0b' }
+      - { value: pending, label: $t:portal.mandate.pending, color: '#f59e0b' }
       - { value: failed, label: $t:portal.mandate.failed, color: '#ef4444' }
-      - { value: blocked, label: $t:portal.mandate.failed, color: '#ef4444' }
-      - { value: bank_disconnected, label: $t:portal.mandate.failed, color: '#ef4444' }
-      - { value: cancelled, label: $t:portal.mandate.ended, color: '#94a3b8' }
-      - { value: expired, label: $t:portal.mandate.ended, color: '#94a3b8' }
-      - { value: consumed, label: $t:portal.mandate.ended, color: '#94a3b8' }
-      - { value: replaced, label: $t:portal.mandate.ended, color: '#94a3b8' }
-  - { id: 4, name: bank_account, type: single-line-text }
+      - { value: ended, label: $t:portal.mandate.ended, color: '#94a3b8' }
   - { id: 5, name: signed_at, type: datetime }
+  - { id: 7, name: pennylane_status, type: single-line-text }
+  # The signed mandate's PDF; empty while the mandate is still a request.
+  - { id: 8, name: pdf_url, type: url }
 permissions:
   read: [coworker, admin]
   create: [admin]
@@ -38,8 +37,9 @@ permissions:
     - { field: member, read: [coworker, admin], write: [admin] }
     - { field: member_email, read: [coworker, admin], write: [admin] }
     - { field: status, read: [coworker, admin], write: [admin] }
-    - { field: bank_account, read: [coworker, admin], write: [admin] }
     - { field: signed_at, read: [coworker, admin], write: [admin] }
+    - { field: pennylane_status, read: [coworker, admin], write: [admin] }
+    - { field: pdf_url, read: [coworker, admin], write: [admin] }
 # Rows are scoped by member_email, the member's login email copied onto each
 # row when it is written. A rule through the relationship (member.email) fails on
 # list reads in Sovrium 0.30, so the email is stored where the rule can see it.

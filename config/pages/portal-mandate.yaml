@@ -1,5 +1,7 @@
-# Page: portal-mandate — the coworker's GoCardless direct-debit mandate, and
-# the button that asks Pennylane to mail them the signing link.
+# Page: portal-mandate — the coworker's direct-debit mandate on the Pennylane
+# Compte Pro, and the button that asks Pennylane to mail them the signing link.
+# The Compte Pro API gives no IBAN, so the card shows the status and the date
+# signed; the signed PDF opens from the admin's Prélèvements page.
 name: portal-mandate
 path: /espace-membre/prelevement
 access: { require: [coworker, admin], redirectTo: /connexion }
@@ -55,16 +57,12 @@ components:
                     children:
                       - type: grid
                         props:
-                          className: 'grid grid-cols-1 sm:grid-cols-3 gap-4 rounded-lg border border-border p-4'
+                          className: 'grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-lg border border-border p-4'
                         children:
                           - type: container
                             children:
                               - { type: text, element: p, content: $t:portal.invoices.status, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
                               - { type: record-field, props: { field: status, className: 'mt-1' } }
-                          - type: container
-                            children:
-                              - { type: text, element: p, content: $t:portal.mandate.account, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
-                              - { type: record-field, props: { field: bank_account, className: 'mt-1 font-mono text-navy' } }
                           - type: container
                             children:
                               - { type: text, element: p, content: $t:portal.mandate.since, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
