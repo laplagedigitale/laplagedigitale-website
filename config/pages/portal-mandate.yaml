@@ -79,50 +79,56 @@ components:
                         - { field: email, operator: eq, value: $currentUser.email }
                       limit: 1
                     props:
-                      className: 'list-none p-0 m-0 flex flex-wrap gap-3'
+                      className: 'list-none p-0 m-0'
                     children:
-                      - type: button
-                        content: $t:portal.mandate.cta
+                      # One row wraps both buttons: the gap is between them, not
+                      # between list items (they share the one member row's item).
+                      - type: flex
                         props:
-                          className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
-                        # Calls the manual trigger directly so the run's own message —
-                        # sent, or why it was refused — is shown in #mandate-status.
-                        action:
-                          type: fetch
-                          method: POST
-                          url: /api/automations/request-mandate/trigger
-                          # The member row's address (the list below binds it to the
-                          # signed-in user): the run's three reads filter on it, which
-                          # keeps an admin to their own rows. Row-level rules still
-                          # apply, so a coworker naming another address is refused.
-                          body: { email: $record.email }
-                          onSuccess:
-                            type: toast
-                            message: $t:portal.mandate.done
-                            status: { target: mandate-status, message: $response.output.message }
-                          onError:
-                            type: toast
-                            message: $t:portal.mandate.error
-                      # Re-reads the mandate from Pennylane now rather than at the
-                      # next 15-minute sync: Pennylane sends no webhook for mandates.
-                      # Same body and same status region as the request button.
-                      - type: button
-                        content: $t:portal.mandate.verify
-                        props:
-                          className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy border border-navy hover:bg-blue-100 transition-colors'
-                        action:
-                          type: fetch
-                          method: POST
-                          url: /api/automations/verify-mandate/trigger
-                          body: { email: $record.email }
-                          onSuccess:
-                            type: toast
-                            message: $t:portal.mandate.verify.done
-                            status: { target: mandate-status, message: $response.output.message }
-                            refetch: mandate-card
-                          onError:
-                            type: toast
-                            message: $t:portal.mandate.verify.error
+                          className: 'flex flex-wrap items-center gap-3'
+                        children:
+                          - type: button
+                            content: $t:portal.mandate.cta
+                            props:
+                              className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                            # Calls the manual trigger directly so the run's own message —
+                            # sent, or why it was refused — is shown in #mandate-status.
+                            action:
+                              type: fetch
+                              method: POST
+                              url: /api/automations/request-mandate/trigger
+                              # The member row's address (the list below binds it to the
+                              # signed-in user): the run's three reads filter on it, which
+                              # keeps an admin to their own rows. Row-level rules still
+                              # apply, so a coworker naming another address is refused.
+                              body: { email: $record.email }
+                              onSuccess:
+                                type: toast
+                                message: $t:portal.mandate.done
+                                status: { target: mandate-status, message: $response.output.message }
+                              onError:
+                                type: toast
+                                message: $t:portal.mandate.error
+                          # Re-reads the mandate from Pennylane now rather than at the
+                          # next 15-minute sync: Pennylane sends no webhook for mandates.
+                          # Same body and same status region as the request button.
+                          - type: button
+                            content: $t:portal.mandate.verify
+                            props:
+                              className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-surface border border-navy hover:bg-blue-100 transition-colors'
+                            action:
+                              type: fetch
+                              method: POST
+                              url: /api/automations/verify-mandate/trigger
+                              body: { email: $record.email }
+                              onSuccess:
+                                type: toast
+                                message: $t:portal.mandate.verify.done
+                                status: { target: mandate-status, message: $response.output.message }
+                                refetch: mandate-card
+                              onError:
+                                type: toast
+                                message: $t:portal.mandate.verify.error
                   # The run's own message: link sent by email, refused, or failed. The
                   # toast cannot carry it (only `status` reads $response), and a
                   # failed run still answers 200, so the outcome is told here.
