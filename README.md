@@ -141,7 +141,7 @@ and the pages read those tables:
 | `request-mandate`         | the mandate button   | asks Pennylane to email the coworker the link to sign a Compte Pro SEPA mandate |
 | `update-billing-emails`   | the recipients form on Factures | writes the addresses a coworker's invoices go to into their Pennylane customer (`emails`), then `members.billing_emails` |
 | `member-email-sync`       | e-mail confirmed, sign-in | when a coworker confirmed a new sign-in address, moves their `members` row, every `member_email` copy and their Pennylane recipients to it (followed by `members.user_id`) |
-| `pennylane-direct-debit`  | daily 05:45          | moves every Fixe subscription (330 €) whose customer has an active Compte Pro mandate to Compte Pro direct debit (`pro_account_sepa_core`), and mails the treasurer what changed |
+| `pennylane-direct-debit`  | daily 05:45          | moves every monthly subscription (any amount) whose customer has an active Compte Pro mandate to Compte Pro direct debit (`pro_account_sepa_core`), and mails the treasurer what changed |
 | `flex-check-in`           | a Flex check-in      | dates the new `checkins` row, keeps one row per member per day (a full day replaces the half day) and stamps its amount HT |
 | `flex-signup-validate`    | « Valider » on a sign-up | finds or creates the Pennylane customer, links the member to it, invites them as a coworker |
 | `flex-invoicing`          | 1st of month 06:00   | creates one Pennylane invoice per linked member for last month's Flex days, marks them `invoiced`, mails the treasurer |
@@ -330,8 +330,6 @@ that does not exist fails the build rather than deploying something unexpected.
   check-in marked).
 - **`DIRECT_DEBIT_APPLY`** — optional, default `true`. `false` turns
   `pennylane-direct-debit` into a dry run (it mails what it would switch).
-  `DIRECT_DEBIT_AMOUNTS` (default `330`) lists the monthly amounts TTC it
-  switches — the Fixe plan.
 - **`INVITE_API_KEY`** — an API key minted in `/_admin` (API keys) by an
   **admin** account. `flex-signup-validate` sends the coworker invitation
   through the app's own admin endpoint with it, at `BASE_URL`: Sovrium 0.37's

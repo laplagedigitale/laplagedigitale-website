@@ -5,7 +5,7 @@
 #
 # Both read-only: a mandate is changed in Pennylane, and a request
 # is a log request-mandate reads to refuse a second one within 24 hours. The
-# Fixe subscriptions with an active mandate are moved to direct debit by
+# monthly subscriptions with an active mandate are moved to direct debit by
 # pennylane-direct-debit.
 name: admin-finances-direct-debit
 path: /administration/finances/prelevements
@@ -32,7 +32,7 @@ components:
           - type: container
             children:
               - { type: text, element: h1, content: Prélèvements, props: { className: 'text-3xl font-bold text-navy' } }
-              - { type: text, element: p, content: "Les mandats de prélèvement des membres sur le Compte Pro Pennylane, recopiés de Pennylane, et les demandes envoyées depuis l'Espace Membre. Les abonnements Fixe dont le mandat est actif passent automatiquement en prélèvement. Cliquez sur un mandat signé pour ouvrir son PDF.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - { type: text, element: p, content: "Les mandats de prélèvement des membres sur le Compte Pro Pennylane, recopiés de Pennylane, et les demandes envoyées depuis l'Espace Membre. Les abonnements mensuels dont le mandat est actif passent automatiquement en prélèvement, quel que soit leur montant. Cliquez sur un mandat signé pour ouvrir son PDF.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
 
           - type: grid
             props:
