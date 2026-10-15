@@ -565,3 +565,135 @@ operations:
       cursorParam: cursor
       cursorPath: next_cursor
       itemsPath: items
+  - name: get-customer
+    method: GET
+    path: "/customers/{id}"
+    summary: Retrieve a customer
+    params:
+      id:
+        in: path
+        type: integer
+        required: true
+  - name: put-company-customer
+    method: PUT
+    path: "/company_customers/{id}"
+    summary: Update a company customer
+    params:
+      id:
+        in: path
+        type: string
+        required: true
+      name:
+        in: body
+        type: string
+      vat_number:
+        in: body
+        type: string
+      reg_no:
+        in: body
+        type: string
+      phone:
+        in: body
+        type: string
+      billing_address:
+        in: body
+        type: object
+      delivery_address:
+        in: body
+        type: object
+      payment_conditions:
+        in: body
+        type: object
+      billing_iban:
+        in: body
+        type: string
+      recipient:
+        in: body
+        type: string
+      reference:
+        in: body
+        type: string
+      notes:
+        in: body
+        type: string
+      emails:
+        in: body
+        type: array
+        items:
+          type: string
+      external_reference:
+        in: body
+        type: string
+      billing_language:
+        in: body
+        type: string
+        enum:
+          - fr_FR
+          - en_GB
+          - de_DE
+          - es_ES
+  - name: put-individual-customer
+    method: PUT
+    path: "/individual_customers/{id}"
+    summary: Update an individual customer
+    params:
+      id:
+        in: path
+        type: string
+        required: true
+      first_name:
+        in: body
+        type: string
+      last_name:
+        in: body
+        type: string
+      phone:
+        in: body
+        type: string
+      billing_address:
+        in: body
+        type: object
+      delivery_address:
+        in: body
+        type: object
+      payment_conditions:
+        in: body
+        type: string
+        enum:
+          - upon_receipt
+          - custom
+          - 7_days
+          - 15_days
+          - 30_days
+          - 30_days_end_of_month
+          - 45_days
+          - 45_days_end_of_month
+          - 60_days
+      billing_iban:
+        in: body
+        type: string
+      recipient:
+        in: body
+        type: string
+      reference:
+        in: body
+        type: string
+      notes:
+        in: body
+        type: string
+      emails:
+        in: body
+        type: array
+        items:
+          type: string
+      external_reference:
+        in: body
+        type: string
+      billing_language:
+        in: body
+        type: string
+        enum:
+          - fr_FR
+          - en_GB
+          - de_DE
+          - es_ES
