@@ -1,0 +1,117 @@
+# Automation: verify-mandate-apply — re-mirrors ONE Pennylane customer's
+# Compte Pro mandate into `mandates`, for verify-mandate. An automation-call
+# run has no user role and writes as the system, which a coworker's own run
+# may not do on this admin-only mirror. Only another automation can start it,
+# and verify-mandate passes the customer id of the caller's own member row.
+#
+# It writes exactly what pennylane-sync would: the row goes to the first
+# linked member of that customer (a company's mandate is mirrored onto one of
+# its coworkers, pennylane_id being unique), and the status fold below is a
+# copy of the sync's — keep the two alike.
+name: verify-mandate-apply
+trigger:
+  type: automation-call
+  inputSchema:
+    customerId: { type: string }
+actions:
+  - name: owners
+    type: record
+    operator: list
+    props:
+      table: members
+      filter:
+        conditions:
+          - { field: pennylane_customer_id, operator: equals, value: '{{trigger.input.customerId}}' }
+      limit: 50
+  - name: prep
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        owners: '{{steps.owners.records}}'
+        customerId: '{{trigger.input.customerId}}'
+      code: |
+        async function execute(context) {
+          const id = Number(context.inputData.customerId)
+          const owner = ((context.inputData.owners ?? []) as any[]).find((m) => m.match_status === 'matched' || m.match_status === 'manual')
+          // No linked owner, or no usable id: filter on customer 0, which matches nothing.
+          const ok = Boolean(owner) && Number.isFinite(id) && id > 0
+          return {
+            owner: ok ? { id: String(owner.id), email: owner.email } : null,
+            filter: JSON.stringify([{ field: 'customer_id', operator: 'in', value: [ok ? id : 0] }]),
+          }
+        }
+  - name: mandates
+    type: connection
+    operator: call
+    props:
+      connection: pennylane
+      operation: get-pro-account-mandates
+      params: { filter: '{{steps.prep.filter}}', limit: 100 }
+      paginate: all
+  - name: fold
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        owner: '{{steps.prep.owner}}'
+        customerId: '{{trigger.input.customerId}}'
+        mandates: '{{steps.mandates.data}}'
+      code: |
+        async function execute(context) {
+          const owner = context.inputData.owner
+          const customerId = String(context.inputData.customerId ?? '')
+          if (!owner) return { rows: [], message: 'Votre compte n’est pas encore relié à Pennylane. Contactez l’équipe de La Plage Digitale.' }
+          // Same fold as pennylane-sync.
+          const mandateStatus = (m: any): string => {
+            const s = String(m.status ?? '').toLowerCase()
+            if (s === 'enabled' || s === 'active') return 'active'
+            if (/fail|reject|refus|block/.test(s)) return 'failed'
+            if (/disabl|revok|cancel|expir|terminat|clos/.test(s)) return 'ended'
+            if (!m.pdf_url || /pend|request|wait|sent|creat/.test(s)) return 'pending'
+            context.log.warn(`unknown Compte Pro mandate status "${m.status}", read as pending`)
+            return 'pending'
+          }
+          const rank: Record<string, number> = { active: 0, pending: 1, failed: 2, ended: 3 }
+          let best: any = null
+          for (const m of context.inputData.mandates ?? []) {
+            if (String(m.customer?.id ?? '') !== customerId) continue
+            const row = {
+              pennylane_id: `pro-${customerId}`,
+              member: owner.id,
+              member_email: owner.email,
+              status: mandateStatus(m),
+              pennylane_status: String(m.status ?? ''),
+              pdf_url: m.pdf_url ?? null,
+              signed_at: m.signed_at ?? null,
+              created: String(m.created_at ?? ''),
+            }
+            if (!best || rank[row.status] < rank[best.status] || (rank[row.status] === rank[best.status] && row.created > best.created)) best = row
+          }
+          const MESSAGES: Record<string, string> = {
+            active: 'Votre mandat est actif : vos prochaines factures seront prélevées automatiquement.',
+            pending: 'Votre mandat est en cours de validation chez Pennylane. Revérifiez dans quelques minutes.',
+            failed: 'Votre mandat n’a pas abouti. Vous pouvez refaire une demande avec « Mettre en place le prélèvement ».',
+            ended: 'Votre mandat est terminé. Vous pouvez en mettre un nouveau en place avec « Mettre en place le prélèvement ».',
+          }
+          if (!best) {
+            context.log.info(`customer ${customerId}: no Compte Pro mandate`)
+            return { rows: [], message: 'Pennylane n’a encore aucun mandat à votre nom. Si vous venez de le signer, réessayez dans quelques minutes.' }
+          }
+          const { created, ...row } = best
+          context.log.info(`customer ${customerId}: mandate ${row.status} (${row.pennylane_status}) → ${owner.email}`)
+          return { rows: [row], message: MESSAGES[row.status] }
+        }
+  - name: save
+    type: record
+    operator: batchUpsert
+    props:
+      table: mandates
+      items: '{{steps.fold.rows}}'
+      matchField: pennylane_id
+  - name: done
+    type: automation
+    operator: return
+    props:
+      data:
+        message: '{{steps.fold.message}}'

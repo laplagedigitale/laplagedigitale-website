@@ -569,7 +569,7 @@ portal.mandate.current: My mandate
 portal.mandate.how: How does it work?
 portal.mandate.how.1: "1. Click “Set up direct debit”."
 portal.mandate.how.2: "2. Pennylane emails you, at your invoice address, a link to its secure page: enter your IBAN and sign the mandate."
-portal.mandate.how.3: "3. Come back here: your mandate shows up within 15 minutes. Your invoices are then debited to the association's account, at the earliest 14 days after they are due."
+portal.mandate.how.3: "3. Come back here and click « Check my mandate »: it shows up at once (otherwise within 15 minutes). Your invoices are then debited to the association's account, at the earliest 14 days after they are due."
 portal.account.unlinked: "Your account is not linked to Pennylane yet — we are on it."
 portal.match.pending: Looking you up
 portal.match.matched: Linked
@@ -589,6 +589,9 @@ portal.mandate.since: Since
 portal.mandate.cta: Set up direct debit
 portal.mandate.done: Request processed
 portal.mandate.error: "The request could not be sent. Please try again in a few minutes or contact us."
+portal.mandate.verify: Check my mandate
+portal.mandate.verify.done: Mandate checked
+portal.mandate.verify.error: "The mandate could not be checked. Please try again in a few minutes."
 portal.mandate.active: Active
 portal.mandate.pending: Pending approval
 portal.mandate.failed: Failed

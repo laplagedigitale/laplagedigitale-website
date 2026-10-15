@@ -53,6 +53,8 @@ components:
                     listDisplay:
                       emptyMessage: $t:portal.mandate.none
                     props:
+                      # Re-read by « Vérifier mon mandat ».
+                      id: mandate-card
                       className: 'list-none p-0 m-0'
                     children:
                       - type: grid
@@ -77,7 +79,7 @@ components:
                         - { field: email, operator: eq, value: $currentUser.email }
                       limit: 1
                     props:
-                      className: 'list-none p-0 m-0'
+                      className: 'list-none p-0 m-0 flex flex-wrap gap-3'
                     children:
                       - type: button
                         content: $t:portal.mandate.cta
@@ -101,6 +103,26 @@ components:
                           onError:
                             type: toast
                             message: $t:portal.mandate.error
+                      # Re-reads the mandate from Pennylane now rather than at the
+                      # next 15-minute sync: Pennylane sends no webhook for mandates.
+                      # Same body and same status region as the request button.
+                      - type: button
+                        content: $t:portal.mandate.verify
+                        props:
+                          className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy border border-navy hover:bg-blue-100 transition-colors'
+                        action:
+                          type: fetch
+                          method: POST
+                          url: /api/automations/verify-mandate/trigger
+                          body: { email: $record.email }
+                          onSuccess:
+                            type: toast
+                            message: $t:portal.mandate.verify.done
+                            status: { target: mandate-status, message: $response.output.message }
+                            refetch: mandate-card
+                          onError:
+                            type: toast
+                            message: $t:portal.mandate.verify.error
                   # The run's own message: link sent by email, refused, or failed. The
                   # toast cannot carry it (only `status` reads $response), and a
                   # failed run still answers 200, so the outcome is told here.
