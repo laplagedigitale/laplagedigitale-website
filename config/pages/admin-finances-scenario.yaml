@@ -22,7 +22,7 @@
 # A new adjustment or dated item is a declared form (a page form never creates
 # a row) in a dialog, the scenario prefilled and locked from the page record.
 name: admin-finances-scenario
-path: /administration/finances/previsionnel/:scenario
+path: /administration/finances/previsionnel/:id
 sitemap: false
 access: { require: [admin], redirectTo: /connexion }
 meta:
@@ -31,7 +31,7 @@ meta:
   title: "Scénario — Administration"
   description: "Un scénario du prévisionnel de trésorerie."
   noindex: true
-dataSource: { table: scenarios, mode: single, param: scenario }
+dataSource: { table: scenarios, mode: single, param: id }
 components:
   - type: flex
     props:
@@ -76,7 +76,7 @@ components:
                       name: treasury-forecast
                       await: true
                       inputData:
-                        scenarioId: $param.scenario
+                        scenarioId: $param.id
                       onSuccess:
                         type: message
                         toast: { variant: success, message: "Prévisionnel recalculé : les chiffres se mettent à jour dans quelques secondes." }
@@ -110,7 +110,7 @@ components:
                 dataSource:
                   table: scenarios
                   filter:
-                    - { field: id, operator: eq, value: $param.scenario }
+                    - { field: id, operator: eq, value: $param.id }
                   refreshMode: poll
                   pollIntervalMs: 5000
                 kpiAggregate: { function: sum, field: year_end_cash }
@@ -125,7 +125,7 @@ components:
                 dataSource:
                   table: scenarios
                   filter:
-                    - { field: id, operator: eq, value: $param.scenario }
+                    - { field: id, operator: eq, value: $param.id }
                   refreshMode: poll
                   pollIntervalMs: 5000
                 kpiAggregate: { function: sum, field: delta_vs_baseline }
@@ -140,7 +140,7 @@ components:
                 dataSource:
                   table: scenarios
                   filter:
-                    - { field: id, operator: eq, value: $param.scenario }
+                    - { field: id, operator: eq, value: $param.id }
                   refreshMode: poll
                   pollIntervalMs: 5000
                 kpiAggregate: { function: min, field: lowest_balance }
@@ -155,7 +155,7 @@ components:
                 dataSource:
                   table: scenarios
                   filter:
-                    - { field: id, operator: eq, value: $param.scenario }
+                    - { field: id, operator: eq, value: $param.id }
                   refreshMode: poll
                   pollIntervalMs: 5000
                 kpiAggregate: { function: min, field: runway_months }
@@ -183,7 +183,7 @@ components:
                     dataSource:
                       table: forecast_balances
                       filter:
-                        - { field: scenario, operator: eq, value: $param.scenario }
+                        - { field: scenario, operator: eq, value: $param.id }
                       sort:
                         - { field: month, direction: asc }
                       limit: 12
@@ -211,7 +211,7 @@ components:
                     dataSource:
                       table: forecast_balances
                       filter:
-                        - { field: scenario, operator: eq, value: $param.scenario }
+                        - { field: scenario, operator: eq, value: $param.id }
                       sort:
                         - { field: month, direction: asc }
                       limit: 12
@@ -244,7 +244,7 @@ components:
                     dataSource:
                       table: forecast_balances
                       filter:
-                        - { field: scenario, operator: eq, value: $param.scenario }
+                        - { field: scenario, operator: eq, value: $param.id }
                       sort:
                         - { field: month, direction: asc }
                       limit: 12
@@ -293,7 +293,7 @@ components:
                     dataSource:
                       table: budget_entries
                       filter:
-                        - { field: scenario, operator: eq, value: $param.scenario }
+                        - { field: scenario, operator: eq, value: $param.id }
                       sort:
                         - { field: line_order, direction: asc }
                       pagination: { pageSize: 100 }
@@ -326,7 +326,7 @@ components:
                     dataSource:
                       table: budget_entries
                       filter:
-                        - { field: scenario, operator: eq, value: $param.scenario }
+                        - { field: scenario, operator: eq, value: $param.id }
                       sort:
                         - { field: line_order, direction: asc }
                       pagination: { pageSize: 100 }
@@ -382,7 +382,7 @@ components:
                         dataSource:
                           table: budget_adjustments
                           filter:
-                            - { field: scenario, operator: eq, value: $param.scenario }
+                            - { field: scenario, operator: eq, value: $param.id }
                           sort:
                             - { field: from_month, direction: asc }
                           pagination: { pageSize: 50 }
@@ -437,7 +437,7 @@ components:
                         dataSource:
                           table: planned_items
                           filter:
-                            - { field: scenario, operator: eq, value: $param.scenario }
+                            - { field: scenario, operator: eq, value: $param.id }
                           sort:
                             - { field: date, direction: asc }
                           pagination: { pageSize: 50 }
@@ -486,7 +486,7 @@ components:
                     dataSource:
                       table: forecast_months
                       filter:
-                        - { field: scenario, operator: eq, value: $param.scenario }
+                        - { field: scenario, operator: eq, value: $param.id }
                       sort:
                         - { field: line_order, direction: asc }
                         - { field: month, direction: asc }
@@ -526,7 +526,7 @@ components:
                   # A simulation: everything, saved field by field.
                   - type: form
                     visibility: { record: { field: is_baseline, eq: false } }
-                    dataSource: { table: scenarios, mode: single, param: scenario }
+                    dataSource: { table: scenarios, mode: single, param: id }
                     showHeader: false
                     autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
                     action:
@@ -543,7 +543,7 @@ components:
                   # The baseline: its name and notes only.
                   - type: form
                     visibility: { record: { field: is_baseline, eq: true } }
-                    dataSource: { table: scenarios, mode: single, param: scenario }
+                    dataSource: { table: scenarios, mode: single, param: id }
                     showHeader: false
                     autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
                     action:

@@ -1,5 +1,5 @@
 # Form: adjustment-new — add a monthly adjustment to a scenario, opened in a
-# dialog on /administration/finances/previsionnel/:scenario. The scenario is
+# dialog on /administration/finances/previsionnel/:id. The scenario is
 # prefilled and locked by the page (inlinePrefill), so the form only asks what
 # changes: on which line, how much per month, from when to when.
 #

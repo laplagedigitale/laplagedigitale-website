@@ -4,7 +4,7 @@
 # dated items into it and computes it.
 #
 # Declared before admin-finances-scenario in app.yaml, so « nouveau » is this
-# page and never read as a :scenario.
+# page and never read as an :id.
 name: admin-finances-forecast-new
 path: /administration/finances/previsionnel/nouveau
 sitemap: false

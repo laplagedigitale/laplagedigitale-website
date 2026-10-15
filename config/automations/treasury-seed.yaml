@@ -73,8 +73,8 @@ actions:
           const R = (key: string, match_type: string, pattern: string, code: string, priority: number, direction = 'any', is_internal_transfer = false, notes = '') =>
             ({ mapping_key: `label:${key}`, source: 'manual', match_type, pattern, direction, priority, active: true, is_internal_transfer, notes, _code: code })
           const rules: any[] = [
-            R('livret-a', 'label', 'Vir COMPTE COURANT A LIVRET A|Vir LIVRET A A COMPTE COURANT|Retrait fonds transfert compte courant|LIVRET A', 'transfer_livret', 1, 'any', true, 'Allers-retours avec le Livret A (hors Pennylane)'),
-            R('virement-interne', 'label', 'VIREMENT EMIS WEB.*ASSOC\\.?\\s*LA PLAGE|VIREMENT EN VOTRE FAVEUR.*ASSOC\\.?\\s*LA PLAGE DIGITALE$|^ASSOC\\.?\\s*LA PLAGE DIGITALE$|VIREMENT EMIS VIR INST vers La Plage Digitale|virement emis web la plage digitale pen', 'transfer_internal', 1, 'any', true, 'Virements entre les comptes Pennylane'),
+            R('livret-a', 'label', '^VIREMENT EMIS WEB ASSOC\\.? LA PLAGE DIGI|^VIREMENT EN VOTRE FAVEUR DE ASSOC\\.? LA PLAGE DIGITALE$|Vir COMPTE COURANT A LIVRET A|VIR CPTE COURANT A LIVRET A|Vir LIVRET A A COMPTE COURANT|Retrait fonds transfert compte courant', 'transfer_livret', 1, 'any', true, "Allers-retours avec le Livret A : les virements que le compte courant émet vers (ou reçoit de) l'association elle-même, et les libellés du Livret A"),
+            R('virement-interne', 'label', '^VIREMENT EMIS VIR INST vers La Plage Digitale', 'transfer_internal', 2, 'out', true, "Virements vers un autre compte de l'association (un virement dont les deux côtés sont dans Pennylane est reconnu sans règle, par appariement)"),
             R('cat-ventes', 'category_label', '^Mise à disposition de bureau|^Mise à disposition FIXES|^Services d.hébergement|^Domiciliation|^Héberger des (réunions|manifestations)|^Mise à disposition de salle|^Ev[eè]nement port|^Restauration', '70_ca', 10, 'in'),
             R('cat-cotisations', 'category_label', '^Cotisations?$|HelloAsso', '756_cotisations', 10, 'in'),
             R('cat-subventions', 'category_label', '^Subvention|Provision pour TF', '74_subventions', 10, 'in'),

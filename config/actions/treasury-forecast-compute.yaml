@@ -236,7 +236,7 @@ action:
               if (line.kind === 'income') { inc += forecast; incA += a }
               else if (line.kind === 'expense') { exp += forecast; expA += a }
               else if (line.kind === 'tax') { vat += forecast; exp += forecast; expA += a }
-              else if (code === 'transfer_livret') trOut += forecast
+              else if (line.kind === 'transfer') trOut += forecast   // paired legs net to zero; a leg to the Livret A (or unpaired) is cash that left
             }
             const net = inc - exp - trOut
             const o = closing

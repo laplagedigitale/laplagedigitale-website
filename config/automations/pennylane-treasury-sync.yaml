@@ -179,7 +179,8 @@ actions:
             if (!knownByKey.has(key)) {
               const n = String(a.name ?? '')
               row.kind = /livret|épargne|epargne|savings/i.test(n) ? 'savings' : /prêt|pret|loan|dailly|emprunt/i.test(n) ? 'loan' : 'current'
-              row.include_in_cash = row.kind !== 'loan'
+              // A savings account (the Livret A) is tracked by hand: Pennylane's copy is partial.
+              row.include_in_cash = row.kind === 'current'
               row.is_reserve = false
             }
             return row
@@ -209,9 +210,37 @@ actions:
             })
           const hits = new Map<string, number>()
           const existingById = new Map<string, any>(existing.map((e: any) => [String(e.pennylane_id), e]))
+          // Internal transfers by pairing: the same amount, opposite signs, two accounts, three days apart at most.
+          // Both legs on cash accounts → a transfer between Pennylane accounts (nets to zero); one leg on a
+          // savings or excluded account → a movement to or from the reserve (the Livret A).
+          const cashOf = new Map<string, boolean>()
+          for (const a of known) cashOf.set(String(a.pennylane_id), isTrue(a.include_in_cash) && a.kind !== 'loan')
+          for (const r of accountRows) if (!cashOf.has(r.pennylane_id)) cashOf.set(r.pennylane_id, r.include_in_cash === true)
+          const isCashAccount = (bankId: unknown) => cashOf.get(`pl:${bankId}`) === true
+          const byAbs = new Map<string, any[]>()
+          for (const t of txns) { const k = Math.abs(num(t.amount)).toFixed(2); byAbs.set(k, [...(byAbs.get(k) ?? []), t]) }
+          const pairKind = new Map<string, 'transfer_internal' | 'transfer_livret'>()
+          for (const group of byAbs.values()) {
+            if (group.length < 2) continue
+            const sorted = [...group].sort((a: any, b: any) => String(a.date).localeCompare(String(b.date)))
+            for (const a of sorted) {
+              if (pairKind.has(String(a.id))) continue
+              for (const b of sorted) {
+                if (a === b || pairKind.has(String(b.id))) continue
+                if (num(a.amount) !== -num(b.amount) || String(a.bank_account?.id) === String(b.bank_account?.id)) continue
+                if (Math.abs(Date.parse(String(a.date)) - Date.parse(String(b.date))) > 3 * 86400000) continue
+                const kind = isCashAccount(a.bank_account?.id) && isCashAccount(b.bank_account?.id) ? 'transfer_internal' : 'transfer_livret'
+                pairKind.set(String(a.id), kind); pairKind.set(String(b.id), kind)
+                break
+              }
+            }
+          }
+          const transferLine = (code: string) => lines.find((l: any) => String(l.code) === code)
           const resolve = (t: any, prev: any) => {
             const cats = arr(t.categories)
             if (prev && isTrue(prev.manual_line_override) && prev.budget_line) return { line: lineById.get(String(prev.budget_line)), source: 'manual', internal: false }
+            const paired = pairKind.get(String(t.id))
+            if (paired && transferLine(paired)) return { line: transferLine(paired), source: 'label_rule', internal: true }
             for (const c of cats) {
               const m = mappingByKey.get(`cat:${c.id}`)
               if (m?.budget_line && lineById.has(String(m.budget_line))) return { line: lineById.get(String(m.budget_line)), source: 'pennylane_category', internal: isTrue(m.is_internal_transfer) }

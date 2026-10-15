@@ -1,6 +1,6 @@
 # Form: planned-item-new — add a dated cash item (an expected subsidy, an
 # IS instalment, a loan repayment) to a scenario, opened in a dialog on
-# /administration/finances/previsionnel/:scenario. The scenario is prefilled
+# /administration/finances/previsionnel/:id. The scenario is prefilled
 # and locked by the page (inlinePrefill).
 #
 # A dated item lands on its month in the forecast, once or on its recurrence,
