@@ -240,7 +240,7 @@ components:
                     children:
                       - { type: text, element: h2, content: $t:portal.mandate.title, props: { className: 'text-xl font-semibold text-navy' } }
                       - { type: link, content: $t:portal.dashboard.manage, props: { href: $t:href.portal.mandate, className: 'text-sm font-semibold text-blue hover:text-navy' } }
-                  # One mandate per coworker: its status and account, as a card.
+                  # One mandate per coworker: its status and signing date, as a card.
                   - type: list
                     dataSource:
                       table: mandates
@@ -264,8 +264,8 @@ components:
                               - { type: record-field, props: { field: status, className: 'mt-1' } }
                           - type: container
                             children:
-                              - { type: text, element: p, content: $t:portal.mandate.account, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
-                              - { type: record-field, props: { field: bank_account, className: 'mt-1 font-mono text-navy' } }
+                              - { type: text, element: p, content: $t:portal.mandate.since, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
+                              - { type: record-field, format: short-date, props: { field: signed_at, className: 'mt-1 text-navy' } }
 
           # First steps, for everyone.
           - type: card

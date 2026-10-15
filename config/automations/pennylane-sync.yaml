@@ -1,5 +1,5 @@
 # Automation: pennylane-sync — every 15 minutes, links every member to their
-# Pennylane customer and mirrors the invoices and GoCardless mandates of every
+# Pennylane customer and mirrors the invoices and Compte Pro mandates of every
 # linked member, so a new coworker sees all their invoices, with their status,
 # at the latest 15 minutes after their members row exists.
 #
@@ -133,7 +133,7 @@ actions:
     operator: call
     props:
       connection: pennylane
-      operation: get-gocardless-mandates
+      operation: get-pro-account-mandates
       params: { filter: '{{steps.link.filter}}', limit: 100 }
       paginate: all
   - name: rows
@@ -152,7 +152,23 @@ actions:
           const memberOf = new Map<string, any>()
           for (const l of context.inputData.linked ?? []) if (!memberOf.has(l.customerId)) memberOf.set(l.customerId, l)
           const invoiceStatuses = new Set(['paid', 'partially_paid', 'upcoming', 'late', 'incomplete', 'cancelled', 'partially_cancelled', 'credit_note', 'archived'])
-          const mandateStatuses = new Set(['active', 'pending_customer_approval', 'pending_submission', 'submitted', 'failed', 'blocked', 'bank_disconnected', 'cancelled', 'expired', 'consumed', 'replaced'])
+          // Pennylane does not publish the Compte Pro mandate statuses (only
+          // `enabled` is documented), so they are folded into our four. An
+          // unknown one reads as pending and is logged, to be added here.
+          // pennylane-direct-debit keeps the same rule for `active`.
+          const mandateStatus = (m: any): string => {
+            const s = String(m.status ?? '').toLowerCase()
+            if (s === 'enabled' || s === 'active') return 'active'
+            if (/fail|reject|refus|block/.test(s)) return 'failed'
+            if (/disabl|revok|cancel|expir|terminat|clos/.test(s)) return 'ended'
+            if (!m.pdf_url || /pend|request|wait|sent|creat/.test(s)) return 'pending'
+            context.log.warn(`unknown Compte Pro mandate status "${m.status}", read as pending`)
+            return 'pending'
+          }
+          // One row per customer: its mandate request turns into a mandate with
+          // nothing to tie the two, so only the most relevant one is kept —
+          // active, then pending, then failed, then ended, newest first.
+          const rank: Record<string, number> = { active: 0, pending: 1, failed: 2, ended: 3 }
           const skipped = new Map<string, number>()
           const skip = (why: string) => skipped.set(why, (skipped.get(why) ?? 0) + 1)
           const num = (v: unknown) => (v === null || v === undefined || v === '' ? null : Number(v))
@@ -176,20 +192,25 @@ actions:
               pdf_url: i.public_file_url ?? null,
             })
           }
-          const mandates: any[] = []
+          const best = new Map<string, any>()
           for (const m of context.inputData.mandates ?? []) {
-            const member = memberOf.get(String(m.customer?.id))
+            const customerId = String(m.customer?.id ?? '')
+            const member = memberOf.get(customerId)
             if (!member) { skip('mandate of no linked member'); continue }
-            if (!mandateStatuses.has(m.status)) { skip(`mandate status ${m.status}`); continue }
-            mandates.push({
-              pennylane_id: String(m.id),
+            const row = {
+              pennylane_id: `pro-${customerId}`,
               member: member.id,
               member_email: member.email,
-              status: m.status,
-              bank_account: m.external_customer_account ?? '',
-              signed_at: m.created_at ?? null,
-            })
+              status: mandateStatus(m),
+              pennylane_status: String(m.status ?? ''),
+              pdf_url: m.pdf_url ?? null,
+              signed_at: m.signed_at ?? null,
+              created: String(m.created_at ?? ''),
+            }
+            const kept = best.get(customerId)
+            if (!kept || rank[row.status] < rank[kept.status] || (rank[row.status] === rank[kept.status] && row.created > kept.created)) best.set(customerId, row)
           }
+          const mandates = [...best.values()].map(({ created, ...row }) => row)
           const perMember = new Map<string, number>()
           for (const i of invoices) perMember.set(i.member_email, (perMember.get(i.member_email) ?? 0) + 1)
           for (const l of context.inputData.linked ?? []) context.log.info(`${l.email}: ${perMember.get(l.email) ?? 0} invoices`)

@@ -568,8 +568,8 @@ portal.invoices.recipients.error: "Die Empfänger konnten nicht gespeichert werd
 portal.mandate.current: Mein Mandat
 portal.mandate.how: Wie funktioniert es?
 portal.mandate.how.1: "1. Klicken Sie auf „Lastschrift einrichten“."
-portal.mandate.how.2: "2. Pennylane sendet Ihnen eine E-Mail mit dem GoCardless-Unterschriftslink."
-portal.mandate.how.3: "3. Nach der Unterzeichnung lässt GoCardless Sie auf einer Pennylane-Seite: Schließen Sie sie und kehren Sie hierher zurück, Ihr Mandat erscheint innerhalb von 15 Minuten. Ihre Rechnungen werden dann bei Fälligkeit eingezogen."
+portal.mandate.how.2: "2. Pennylane sendet Ihnen an Ihre Rechnungsadresse eine E-Mail mit einem Link zu seiner sicheren Seite: Geben Sie Ihre IBAN ein und unterzeichnen Sie das Mandat."
+portal.mandate.how.3: "3. Kehren Sie hierher zurück: Ihr Mandat erscheint innerhalb von 15 Minuten. Ihre Rechnungen werden dann frühestens 14 Tage nach Fälligkeit auf das Konto des Vereins eingezogen."
 portal.account.unlinked: "Ihr Konto ist noch nicht mit Pennylane verknüpft — wir kümmern uns darum."
 portal.match.pending: Wird gesucht
 portal.match.matched: Verknüpft
@@ -583,9 +583,8 @@ formule.domiciliation: Geschäftsadresse
 formule.source.auto: Aus Pennylane
 formule.source.manual: Manuell gesetzt
 portal.mandate.title: Lastschrift
-portal.mandate.intro: "Richten Sie über GoCardless ein SEPA-Mandat ein, dann werden Ihre Rechnungen bei Fälligkeit automatisch bezahlt. Den Link zur Unterzeichnung erhalten Sie per E-Mail."
+portal.mandate.intro: "Richten Sie ein SEPA-Lastschriftmandat bei La Plage Digitale ein, dann werden Ihre Rechnungen automatisch bezahlt. Den Link zur Unterzeichnung sendet Ihnen Pennylane, unser Rechnungstool, per E-Mail."
 portal.mandate.none: Noch kein Lastschriftmandat.
-portal.mandate.account: Bankkonto
 portal.mandate.since: Seit
 portal.mandate.cta: Lastschrift einrichten
 portal.mandate.done: Anfrage bearbeitet

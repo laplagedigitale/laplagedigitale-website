@@ -1,19 +1,21 @@
 # Automation: pennylane-direct-debit — every morning, moves the Fixe
-# subscriptions (330 € TTC a month) of every customer whose GoCardless mandate
-# is active from manual transfers to direct debit, so the next invoice the
-# subscription issues is collected by GoCardless instead of waiting for a
-# transfer.
+# subscriptions (330 € TTC a month) of every customer whose Compte Pro mandate
+# is active to direct debit on the Pennylane Compte Pro
+# (payment_method pro_account_sepa_core), so the next invoice the subscription
+# issues is debited instead of waiting for a transfer. Pennylane debits it at
+# least 14 days after the due date (SEPA notice) and reconciles it itself.
 #
-# The coworker signs the mandate from the portal (request-mandate); GoCardless
-# activates it a few days later. This run picks it up from Pennylane itself,
-# not from the mirrored mandates table, so a customer who is not a portal
-# member yet is switched as well. Only subscriptions still `offline`, running
-# or about to start, and whose amount is one of DIRECT_DEBIT_AMOUNTS, are
-# touched: the domiciliation, the private offices and anything already on
-# direct debit are left alone. Nothing is ever switched back.
+# The coworker signs the mandate from the portal (request-mandate). This run
+# picks it up from Pennylane itself, not from the mirrored mandates table, so a
+# customer who is not a portal member yet is switched as well. Only
+# subscriptions running or about to start, still `offline` or on the former
+# GoCardless debit (`gocardless_direct_debit`), and whose amount is one of
+# DIRECT_DEBIT_AMOUNTS, are touched: the domiciliation, the private offices and
+# anything already on the Compte Pro are left alone. Nothing is ever switched
+# back.
 #
 # It runs at 05:45, ahead of the invoices Pennylane issues on the 20th at
-# about 06:30, so a mandate activated the day before already pays that
+# about 06:30, so a mandate signed the day before already covers that
 # morning's invoice. The treasurer gets a mail only when something was
 # switched, would be (dry run) or failed; a failure is mailed again each
 # morning until it is settled in Pennylane.
@@ -64,9 +66,11 @@ actions:
             throw new Error(`${path} : plus de 50 pages`)
           }
 
-          const mandates = await listAll('/gocardless_mandates', { limit: 100 })
+          // `enabled` is the only status Pennylane documents for an active
+          // Compte Pro mandate; pennylane-sync reads it the same way.
+          const mandates = await listAll('/pro_account/mandates', { limit: 100 })
           const customers = [...new Set<number>(
-            mandates.filter((m: any) => m.status === 'active').map((m: any) => Number(m.customer?.id)).filter((n: number) => Number.isFinite(n) && n > 0),
+            mandates.filter((m: any) => ['enabled', 'active'].includes(String(m.status ?? '').toLowerCase())).map((m: any) => Number(m.customer?.id)).filter((n: number) => Number.isFinite(n) && n > 0),
           )]
           context.log.info(`${mandates.length} mandates, ${customers.length} customers with an active one`)
           if (customers.length === 0) return { notify: 'no', subject: '', body: '' }
@@ -77,7 +81,7 @@ actions:
           })
           const due = subscriptions.filter(
             (s: any) =>
-              s.payment_method === 'offline' &&
+              (s.payment_method === 'offline' || s.payment_method === 'gocardless_direct_debit') &&
               (s.status === 'in_progress' || s.status === 'not_started') &&
               amounts.has(Number(s.customer_invoice_data?.amount)),
           )
@@ -97,7 +101,7 @@ actions:
                 await context.actions.http.put({
                   url: `${BASE}/billing_subscriptions/${s.id}`,
                   connection: 'pennylane',
-                  body: { payment_method: 'gocardless_direct_debit' },
+                  body: { payment_method: 'pro_account_sepa_core' },
                   timeout: 20000,
                 })
                 row.status = 'switched'
@@ -120,10 +124,10 @@ actions:
           context.log.info(`${switched.length} switched, ${planned.length} would switch, ${failed.length} failed`)
           return {
             notify: rows.length > 0 ? 'yes' : 'no',
-            subject: `Prélèvement GoCardless — ${switched.length + planned.length} abonnement(s) passé(s) en prélèvement, ${failed.length} échec(s)`,
+            subject: `Prélèvement Compte Pro — ${switched.length + planned.length} abonnement(s) passé(s) en prélèvement, ${failed.length} échec(s)`,
             body: [
               '<p>Bonjour Thomas,</p>',
-              '<p>Ces abonnements Fixe ont un mandat GoCardless actif : leurs prochaines factures seront prélevées automatiquement.</p>',
+              '<p>Ces abonnements Fixe ont un mandat actif sur le Compte Pro Pennylane : leurs prochaines factures seront prélevées automatiquement, au plus tôt 14 jours après leur échéance.</p>',
               section('Passés en prélèvement', switched),
               section('À passer en prélèvement (mode test, rien n’a été écrit dans Pennylane)', planned),
               section('Échecs — à passer à la main dans Pennylane', failed),

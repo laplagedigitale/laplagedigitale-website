@@ -176,10 +176,6 @@ components:
                               - { type: record-field, props: { field: status, className: 'mt-1' } }
                           - type: container
                             children:
-                              - { type: text, element: p, content: $t:portal.mandate.account, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
-                              - { type: record-field, props: { field: bank_account, className: 'mt-1 font-mono text-navy' } }
-                          - type: container
-                            children:
                               - { type: text, element: p, content: $t:portal.mandate.since, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
                               - { type: record-field, format: short-date, props: { field: signed_at, className: 'mt-1 text-navy' } }
 

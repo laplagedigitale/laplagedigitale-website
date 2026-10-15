@@ -1,5 +1,5 @@
 # Automation: request-mandate — the portal's "set up direct debit" button.
-# Pennylane mails the coworker their GoCardless signing link.
+# Pennylane mails the coworker the link to sign a Compte Pro SEPA mandate.
 #
 # A run started by hand reads and writes as the person who started it, so the
 # member read below is the caller's own row (row-level rule on email): the
@@ -43,7 +43,7 @@ actions:
           if (!me || !me.pennylane_customer_id) {
             return refuse('Votre compte n’est pas encore relié à Pennylane. Contactez l’équipe de La Plage Digitale.')
           }
-          const live = new Set(['active', 'pending_customer_approval', 'pending_submission', 'submitted'])
+          const live = new Set(['active', 'pending'])
           if ((context.inputData.mandates ?? []).some((m) => live.has(m.status))) {
             return refuse('Un mandat de prélèvement est déjà en place ou en cours de validation.')
           }
@@ -54,21 +54,10 @@ actions:
           }
           // The default message is the failure one: a run whose Pennylane call fails
           // still answers 200, and the top-level `confirm` step replaces it only on success.
-          // GoCardless ends on Pennylane's page and the mail request takes no
-          // return URL, so the way back to the Espace Membre can only be told in
-          // the mail itself. Off until MANDATE_MAIL_CUSTOM=true: Pennylane does
-          // not document whether a custom body keeps the signing link, so check
-          // it once on a real address before switching it on. Without it the
-          // mail is Pennylane's own (no subject, no body sent).
-          const custom = String(context.env.MANDATE_MAIL_CUSTOM ?? 'false').toLowerCase() === 'true'
-          const back = `${String(context.env.BASE_URL ?? '').replace(/\/+$/, '')}/espace-membre/prelevement`
-          const mail: Record<string, unknown> = { recipients: [me.email] }
-          if (custom) {
-            mail.subject = 'La Plage Digitale — votre prélèvement automatique'
-            mail.body = 'Bonjour,\n\nVoici le lien pour signer votre mandat de prélèvement SEPA avec GoCardless. Une fois le mandat signé, GoCardless vous laisse sur une page Pennylane : vous pouvez la fermer.\n\n' +
-              `Votre mandat apparaît ensuite dans votre Espace Membre, sous 15 minutes : ${back}\n\nL’équipe de La Plage Digitale`
-          }
-          return { ok: 'yes', message: 'La demande n’a pas pu être envoyée à Pennylane. Réessayez plus tard ou contactez-nous.', memberId: String(me.id), customerId: Number(me.pennylane_customer_id), email: me.email, mail }
+          // The Compte Pro request takes the customer id alone: Pennylane writes
+          // the mail and sends it to the customer's own e-mails (the invoice
+          // recipients), so no recipient, subject or body is sent from here.
+          return { ok: 'yes', message: 'La demande n’a pas pu être envoyée à Pennylane. Réessayez plus tard ou contactez-nous.', memberId: String(me.id), customerId: Number(me.pennylane_customer_id), email: me.email }
         }
   # A refusal is an expected outcome, not a failure: it stops the run as a
   # success so it raises no operator alert. The button reads `message` from
@@ -98,10 +87,9 @@ actions:
               operator: call
               props:
                 connection: pennylane
-                operation: post-gocardless-mandate-mail-requests
+                operation: post-pro-account-mandate-mail-requests
                 params:
                   customer_id: '{{steps.check.customerId}}'
-                  email: '{{steps.check.mail}}'
             - name: log
               type: record
               operator: create
@@ -116,9 +104,7 @@ actions:
     type: code
     operator: runTypescript
     props:
-      inputData:
-        email: '{{steps.check.email}}'
       code: |
         async function execute(context) {
-          return { message: `C’est envoyé ! Un lien pour mettre en place le prélèvement vous a été envoyé par e-mail à ${context.inputData.email}. Pensez à vérifier vos courriers indésirables. Une fois le mandat signé, GoCardless vous laisse sur une page Pennylane : fermez-la et revenez ici, votre mandat s’affiche sous 15 minutes.` }
+          return { message: `C’est envoyé ! Pennylane vous a envoyé par e-mail, à l’adresse de vos factures, un lien vers sa page sécurisée : saisissez votre IBAN et signez le mandat. Pensez à vérifier vos courriers indésirables. Une fois le mandat signé, revenez ici : il s’affiche sous 15 minutes.` }
         }

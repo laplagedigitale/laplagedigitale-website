@@ -1,9 +1,9 @@
 # Page: admin-finances-direct-debit — « Prélèvements », in the
-# Administration's Finances section: every GoCardless mandate (a Pennylane
-# mirror) and the direct-debit requests coworkers sent from
-# /espace-membre/prelevement.
+# Administration's Finances section: every Compte Pro mandate (a Pennylane
+# mirror, one row per Pennylane customer) and the direct-debit requests
+# coworkers sent from /espace-membre/prelevement.
 #
-# Both read-only: a mandate is changed in Pennylane / GoCardless, and a request
+# Both read-only: a mandate is changed in Pennylane, and a request
 # is a log request-mandate reads to refuse a second one within 24 hours. The
 # Fixe subscriptions with an active mandate are moved to direct debit by
 # pennylane-direct-debit.
@@ -32,7 +32,7 @@ components:
           - type: container
             children:
               - { type: text, element: h1, content: Prélèvements, props: { className: 'text-3xl font-bold text-navy' } }
-              - { type: text, element: p, content: "Les mandats de prélèvement GoCardless des membres, recopiés de Pennylane, et les demandes envoyées depuis l'Espace Membre. Les abonnements Fixe dont le mandat est actif passent automatiquement en prélèvement.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - { type: text, element: p, content: "Les mandats de prélèvement des membres sur le Compte Pro Pennylane, recopiés de Pennylane, et les demandes envoyées depuis l'Espace Membre. Les abonnements Fixe dont le mandat est actif passent automatiquement en prélèvement. Cliquez sur un mandat signé pour ouvrir son PDF.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
 
           - type: grid
             props:
@@ -52,7 +52,7 @@ components:
                 dataSource:
                   table: mandates
                   filter:
-                    - { field: status, operator: in, value: [pending_customer_approval, pending_submission, submitted] }
+                    - { field: status, operator: eq, value: pending }
                 kpiAggregate: { function: count }
               - type: kpi
                 label: En échec
@@ -60,7 +60,7 @@ components:
                 dataSource:
                   table: mandates
                   filter:
-                    - { field: status, operator: in, value: [failed, blocked, bank_disconnected] }
+                    - { field: status, operator: eq, value: failed }
                 kpiAggregate: { function: count }
                 thresholds:
                   - { value: 1, color: red }
@@ -85,6 +85,8 @@ components:
                       pagination: { pageSize: 50, style: numbered }
                     search:
                       placeholder: Rechercher un membre…
+                    # The signed mandate's PDF, in a new tab; a request has none yet.
+                    onRowClick: { type: navigate, path: $record.pdf_url, openInNewTab: true }
                     emptyMessage: Aucun mandat pour le moment.
                     columns:
                       - { field: member_email, label: Membre }
@@ -92,17 +94,10 @@ components:
                         label: Statut
                         valueLabels:
                           active: Actif
-                          pending_customer_approval: En attente
-                          pending_submission: En attente
-                          submitted: En attente
+                          pending: En attente
                           failed: En échec
-                          blocked: En échec
-                          bank_disconnected: En échec
-                          cancelled: Terminé
-                          expired: Terminé
-                          consumed: Terminé
-                          replaced: Terminé
-                      - { field: bank_account, label: Compte }
+                          ended: Terminé
+                      - { field: pennylane_status, label: Statut Pennylane }
                       - { field: signed_at, label: Signé le, format: short-date }
 
           - type: container

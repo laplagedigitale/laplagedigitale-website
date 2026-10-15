@@ -569,8 +569,8 @@ portal.invoices.recipients.error: "Les destinataires n'ont pas pu être enregist
 portal.mandate.current: Mon mandat
 portal.mandate.how: Comment ça marche ?
 portal.mandate.how.1: "1. Cliquez sur « Mettre en place le prélèvement »."
-portal.mandate.how.2: "2. Pennylane vous envoie un e-mail avec le lien de signature GoCardless."
-portal.mandate.how.3: "3. Une fois le mandat signé, GoCardless vous laisse sur une page Pennylane : fermez-la et revenez ici, votre mandat s'affiche sous 15 minutes. Vos factures sont ensuite prélevées à leur échéance."
+portal.mandate.how.2: "2. Pennylane vous envoie un e-mail, à l'adresse de vos factures, avec un lien vers sa page sécurisée : saisissez votre IBAN et signez le mandat."
+portal.mandate.how.3: "3. Revenez ici : votre mandat s'affiche sous 15 minutes. Vos factures sont ensuite prélevées sur le compte de l'association, au plus tôt 14 jours après leur échéance."
 portal.account.unlinked: "Votre compte n'est pas encore relié à Pennylane — nous nous en occupons."
 portal.match.pending: Recherche en cours
 portal.match.matched: Relié
@@ -584,9 +584,8 @@ formule.domiciliation: Domiciliation
 formule.source.auto: Depuis Pennylane
 formule.source.manual: Fixée à la main
 portal.mandate.title: Prélèvement automatique
-portal.mandate.intro: "Mettez en place un mandat SEPA via GoCardless : vos factures seront réglées automatiquement à leur échéance. Le lien de signature vous est envoyé par e-mail."
+portal.mandate.intro: "Mettez en place un mandat de prélèvement SEPA auprès de La Plage Digitale : vos factures seront réglées automatiquement. Le lien de signature vous est envoyé par e-mail par Pennylane, notre outil de facturation."
 portal.mandate.none: Aucun mandat de prélèvement pour le moment.
-portal.mandate.account: Compte bancaire
 portal.mandate.since: Depuis le
 portal.mandate.cta: Mettre en place le prélèvement
 portal.mandate.done: Demande traitée
