@@ -329,12 +329,17 @@ First run, after deploy (admin session, see the curl in `CLAUDE.md`):
 
 ```bash
 POST /api/automations/treasury-seed/trigger            {"dryRun": "true"}  then  {}
-POST /api/automations/pennylane-treasury-sync/trigger  {"since": "2025-01-01"}
+POST /api/automations/pennylane-treasury-sync/trigger  {"since": "2025-01-01", "until": "2025-06-30"}
+POST /api/automations/pennylane-treasury-sync/trigger  {"since": "2025-07-01", "until": "2025-12-31"}
+POST /api/automations/pennylane-treasury-sync/trigger  {"since": "2026-01-01"}
 POST /api/automations/treasury-forecast/trigger        {"dryRun": "true"}
 ```
 
-The backfill gives the trailing-12 baseline its year N-1; the sync's log names
-the Pennylane category families and ids. Then fill the lines of the Pennylane
+The backfill goes in slices of about six months — a whole year in one run held
+too much in memory for the M container — and gives the trailing-12 baseline its
+year N-1; the sync's log names the Pennylane category families and ids. The
+router cuts the HTTP answer after a minute while the run goes on: read it in
+`/_admin` › Runs. Then fill the lines of the Pennylane
 categories, run the sync again, and the forecast follows.
 
 ## Payment matching

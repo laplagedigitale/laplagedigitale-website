@@ -22,8 +22,17 @@
 #
 # On demand, with the admin sign-in of CLAUDE.md « Run it on demand »:
 #   POST /api/automations/pennylane-treasury-sync/trigger
-#     {"since": "2025-01-01"}   backfill (the trailing-12 baseline needs N-1)
-#     {"dryRun": "true"}        reads and logs, writes nothing
+#     {"since": "2025-01-01", "until": "2025-06-30"}   one slice of the backfill
+#     {"since": "2025-07-01", "until": "2025-12-31"}   (the trailing-12 baseline
+#     {"since": "2026-01-01"}                           needs year N-1)
+#     {"dryRun": "true"}                                reads and logs, writes nothing
+#
+# The backfill goes in slices of about six months: a whole year at once (2 200
+# transactions and their invoices held in the run's step outputs) exceeded the
+# memory of the M container and the server was killed mid-run. A slice with an
+# `until` before last month reads no invoice at all: the open invoices are the
+# current slice's business. The router cuts the HTTP answer after a minute;
+# the run goes on — read it in /_admin › Runs.
 #
 # Transactions are read 50 per page: with their categories a page stays under
 # the 64 KiB a connection step reads. Every step is top-level (README quirks).
@@ -42,6 +51,7 @@ actions:
     props:
       inputData:
         since: '{{trigger.data.body.since}}'
+        until: '{{trigger.data.body.until}}'
         dryRun: '{{trigger.data.body.dryRun}}'
       code: |
         async function execute(context) {
@@ -49,13 +59,19 @@ actions:
           const dryRun = String(inp.dryRun ?? '').toLowerCase() === 'true'
           const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
           const days = Number(context.env.TREASURY_SYNC_SINCE_DAYS ?? 120) || 120
-          const asked = String(inp.since ?? '').trim()
-          const since = /^\d{4}-\d{2}-\d{2}$/.test(asked) ? asked : new Date(Date.parse(today) - days * 86400000).toISOString().slice(0, 10)
-          const invSince = new Date(Date.parse(since) - 365 * 86400000).toISOString().slice(0, 10)
-          context.log.info(`fenêtre : transactions depuis ${since}, factures depuis ${invSince}${dryRun ? ' — DRY RUN' : ''}`)
+          const isDate = (v: unknown) => /^\d{4}-\d{2}-\d{2}$/.test(String(v ?? '').trim())
+          const dayBefore = (d: string, n: number) => new Date(Date.parse(d) - n * 86400000).toISOString().slice(0, 10)
+          const since = isDate(inp.since) ? String(inp.since).trim() : dayBefore(today, days)
+          const until = isDate(inp.until) ? String(inp.until).trim() : ''
+          // A historical slice (ending before last month) reads no invoice: the open invoices belong to the current window.
+          const historical = until !== '' && until < dayBefore(today, 30)
+          const invSince = historical ? '2099-01-01' : dayBefore(today, 180)
+          const txFilter: any[] = [{ field: 'date', operator: 'gteq', value: since }]
+          if (until) txFilter.push({ field: 'date', operator: 'lteq', value: until })
+          context.log.info(`fenêtre : transactions du ${since} au ${until || today}, factures ${historical ? 'ignorées (tranche historique)' : 'depuis ' + invSince}${dryRun ? ' — DRY RUN' : ''}`)
           return {
-            today, since, dryRun: dryRun ? 'yes' : 'no',
-            txFilter: JSON.stringify([{ field: 'date', operator: 'gteq', value: since }]),
+            today, since, until, dryRun: dryRun ? 'yes' : 'no',
+            txFilter: JSON.stringify(txFilter),
             invFilter: JSON.stringify([{ field: 'date', operator: 'gteq', value: invSince }]),
           }
         }
@@ -298,7 +314,8 @@ actions:
               synced_at: nowIso,
             })
           }
-          for (const e of existing) if (!seen.has(String(e.pennylane_id)) && !isTrue(e.missing_in_pennylane)) rows.push({ pennylane_id: String(e.pennylane_id), missing_in_pennylane: true, synced_at: nowIso })
+          const until = String(plan.until ?? '')
+          for (const e of existing) if (!seen.has(String(e.pennylane_id)) && !isTrue(e.missing_in_pennylane) && (!until || String(e.date) <= until)) rows.push({ pennylane_id: String(e.pennylane_id), missing_in_pennylane: true, synced_at: nowIso })
           const mappingHits: any[] = mappings.filter((m: any) => m.source === 'manual').map((m: any) => ({ mapping_key: m.mapping_key, hit_count: hits.get(String(m.mapping_key)) ?? 0 }))
 
           // 4. Open invoices as dated items; the ones no longer open are done.
@@ -325,7 +342,8 @@ actions:
             if (!date) continue
             plannedRows.push({ item_key: key, source: 'pennylane_invoice', label: `Facture fournisseur ${i.invoice_number ?? i.id}${i.label ? ' — ' + String(i.label).slice(0, 60) : ''}`, budget_line: String(supplierLine.id), line_code: String(supplierLine.code), direction: 'out', amount: r2(remaining), date, month: `${date.slice(0, 7)}-01`, year: Number(date.slice(0, 4)), recurrence: 'once', certainty: 'certain', status: 'expected', pennylane_ref: String(i.invoice_number ?? i.id) })
           }
-          for (const p of knownPlanned) if (p.item_key && !openKeys.has(String(p.item_key)) && p.status === 'expected') plannedRows.push({ item_key: String(p.item_key), status: 'done' })
+          const historical = String(plan.until ?? '') !== '' && String(plan.until) < new Date(Date.parse(today) - 30 * 86400000).toISOString().slice(0, 10)
+          if (!historical) for (const p of knownPlanned) if (p.item_key && !openKeys.has(String(p.item_key)) && p.status === 'expected') plannedRows.push({ item_key: String(p.item_key), status: 'done' })
 
           const summary = { accounts: accountRows.length, categories: mappingRows.length, transactions: rows.length, attention, catchAll: rows.filter((r: any) => r.mapping_source === 'catch_all').length, internal: rows.filter((r: any) => r.is_internal_transfer).length, openInvoices: openKeys.size }
           context.log.info(JSON.stringify(summary))
