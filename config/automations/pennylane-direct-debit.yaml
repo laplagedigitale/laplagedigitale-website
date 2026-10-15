@@ -8,10 +8,11 @@
 # The coworker signs the mandate from the portal (request-mandate). This run
 # picks it up from Pennylane itself, not from the mirrored mandates table, so a
 # customer who is not a portal member yet is switched as well. Only
-# monthly subscriptions running or about to start, still `offline` or on the
-# former GoCardless debit (`gocardless_direct_debit`), are touched: each is
-# debited exactly what Pennylane invoices it every month, and anything already
-# on the Compte Pro is left alone. Nothing is ever switched back.
+# monthly subscriptions running or about to start and not yet on the Compte
+# Pro — `offline`, or whatever another payment method left behind — are
+# touched: each is debited exactly what Pennylane invoices it every month, and
+# anything already on the Compte Pro is left alone. Nothing is ever switched
+# back.
 #
 # It runs at 05:45, ahead of the invoices Pennylane issues on the 20th at
 # about 06:30, so a mandate signed the day before already covers that
@@ -75,7 +76,7 @@ actions:
           })
           const due = subscriptions.filter(
             (s: any) =>
-              (s.payment_method === 'offline' || s.payment_method === 'gocardless_direct_debit') &&
+              s.payment_method !== 'pro_account_sepa_core' &&
               (s.status === 'in_progress' || s.status === 'not_started') &&
               s.recurring_rule?.rule_type === 'monthly',
           )

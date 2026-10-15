@@ -198,6 +198,7 @@ actions:
               // A savings account (the Livret A) is tracked by hand: Pennylane's copy is partial.
               row.include_in_cash = row.kind === 'current'
               row.is_reserve = false
+              row.active = true
             }
             return row
           })
@@ -230,7 +231,7 @@ actions:
           // Both legs on cash accounts → a transfer between Pennylane accounts (nets to zero); one leg on a
           // savings or excluded account → a movement to or from the reserve (the Livret A).
           const cashOf = new Map<string, boolean>()
-          for (const a of known) cashOf.set(String(a.pennylane_id), isTrue(a.include_in_cash) && a.kind !== 'loan')
+          for (const a of known) cashOf.set(String(a.pennylane_id), isTrue(a.include_in_cash) && a.kind !== 'loan' && a.active !== false && a.active !== 'false')
           for (const r of accountRows) if (!cashOf.has(r.pennylane_id)) cashOf.set(r.pennylane_id, r.include_in_cash === true)
           const isCashAccount = (bankId: unknown) => cashOf.get(`pl:${bankId}`) === true
           const byAbs = new Map<string, any[]>()

@@ -99,7 +99,7 @@ action:
         // 2. Lines, accounts, transactions, items, budgets.
         const lines = (await list('budget_lines')).filter((l: any) => l.active !== false && l.active !== 'false').sort((a: any, b: any) => num(a.line_order) - num(b.line_order))
         const lineByCode = new Map<string, any>(lines.map((l: any) => [String(l.code), l]))
-        const accounts = await list('bank_accounts')
+        const accounts = (await list('bank_accounts')).filter((a: any) => a.active !== false && a.active !== 'false')
         const isTrue = (v: unknown) => v === true || v === 'true' || v === 1 || v === '1'
         const cashAccounts = accounts.filter((a: any) => a.source === 'pennylane' && isTrue(a.include_in_cash) && a.kind !== 'loan')
         const cashIds = new Set<string>(cashAccounts.map((a: any) => String(a.pennylane_id ?? '').replace(/^pl:/, '')))
