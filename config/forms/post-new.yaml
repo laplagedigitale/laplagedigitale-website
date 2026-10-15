@@ -1,26 +1,28 @@
-# Form: post-new — write a new post, placed on /administration/contenu/articles/nouveau.
+# Form: post-new — start a new post, placed on
+# /administration/contenu/articles/nouveau.
 #
-# A declared form because 0.37 moved `fieldGroups` and the upload controls
-# (`accept`, `dropZone`) off the page `form`. It also answers on
-# /forms/post-new, hence the same gate as the « Contenu » section of the Administration.
+# Only what a row needs to exist: the title and the address (slug, required
+# and unique). The draft is created at once and the redirect opens it in the
+# editor (admin-post-edit.yaml), where it is written and saves itself.
+#
+# A declared form because the page form never creates a row. It also answers
+# on /forms/post-new, hence the same gate as the « Contenu » section of the
+# Administration.
 id: 2
 name: post-new
 title: Nouvel article
+description: "Donnez un titre et une adresse à l'article : le brouillon s'ouvre ensuite dans l'éditeur, où tout est enregistré automatiquement."
+display:
+  submitLabel: Commencer à écrire →
 access: { require: [editor, admin], redirectTo: /connexion }
 submitTo:
   table: posts
-fieldGroups:
-  - { label: Article, fields: [title, slug, excerpt, body] }
-  - { label: Publication, fields: [status, published_at, categories, cover] }
 fields:
   - { kind: table-field, column: title, placeholder: "Titre de l'article", required: true }
   - { kind: table-field, column: slug, placeholder: 'mon-article', required: true }
-  - { kind: table-field, column: excerpt }
-  - { kind: table-field, column: body }
-  - { kind: table-field, column: status, defaultValue: draft, required: true }
-  - { kind: table-field, column: published_at, defaultValue: $now }
-  - { kind: table-field, column: categories }
-  - { kind: table-field, column: cover, accept: 'image/jpeg,image/png,image/webp', dropZone: true }
+  - { kind: table-field, column: status, defaultValue: draft, hidden: true }
+  - { kind: table-field, column: published_at, defaultValue: $now, hidden: true }
 onSuccess:
   type: redirect
-  url: /administration/contenu/articles
+  url: /administration/contenu/articles/$record.id
+  delaySeconds: 0

@@ -1,4 +1,22 @@
-# Page: admin-post-edit — edit one post by id.
+# Page: admin-post-edit — the article editor: a blank page to write on (the
+# title, then the rich-text body) with every detail of the article in a column
+# beside it — status, publication date, address, summary, categories, author
+# and cover.
+#
+# One form on the record, `layout: main-aside`: the fields with `region: aside`
+# and the save button sit in the right column from lg up, everything stacks on
+# a phone.
+#
+# Drawn twice, gated on the status, because saving means something else:
+# - a draft saves itself as you type (autoSave), nothing of it is public yet;
+# - a published article saves on « Enregistrer » only (stickyActions keeps the
+#   bar in view, counts the changes and asks before leaving with some), so a
+#   half-written correction never goes live by itself.
+# Setting a draft to « Publié » saves it like any other change; the page then
+# shows the published form on its next load.
+#
+# A new article is created by admin-post-new (title and address), which lands
+# here on the new draft.
 name: admin-post-edit
 path: /administration/contenu/articles/:id
 sitemap: false
@@ -6,8 +24,8 @@ access: { require: [editor, admin], redirectTo: /connexion }
 meta:
   favicons:
     $ref: ../favicons.yaml
-  title: Modifier l'article — Administration
-  description: Modifier un article.
+  title: Éditeur — Administration
+  description: Écrire et publier un article.
   noindex: true
 dataSource: { table: posts, mode: single, param: id }
 components:
@@ -20,66 +38,70 @@ components:
       - type: container
         element: main
         props:
-          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+          className: 'flex-1 min-w-0 px-4 py-6 sm:px-8 lg:px-10 lg:py-8 space-y-6'
         children:
-          - { type: link, content: '← Tous les articles', props: { href: /administration/contenu/articles, className: 'text-sm text-text-muted hover:text-navy' } }
           - type: flex
             props:
-              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+              className: 'flex items-center justify-between gap-4'
             children:
-              - { type: text, element: h1, content: "Modifier l'article", props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: link, content: '← Tous les articles', props: { href: /administration/contenu/articles, className: 'text-sm text-text-muted hover:text-navy' } }
+              - { type: text, element: span, content: 'Brouillon — enregistré automatiquement', visibility: { record: { field: status, eq: draft } }, props: { className: 'text-sm text-text-muted' } }
               - type: link
                 content: "Voir l'article ↗"
+                visibility: { record: { field: status, eq: published } }
                 props:
                   href: '/blog/$record.slug'
                   target: _blank
-                  className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-semibold text-navy border border-navy-200 hover:bg-navy-100 transition-colors'
-          # Writing on the left, publication settings on the right (xl and up).
-          # Two forms on the same record, each saving its own fields: one form
-          # draws its fields in a single column, whatever its className says.
-          - type: grid
-            props:
-              className: 'grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_22rem] gap-6 items-start'
-            children:
-              - type: card
-                props:
-                  className: 'p-6 space-y-4'
-                children:
-                  - { type: text, element: h2, content: Article, props: { className: 'text-lg font-semibold text-navy' } }
-                  - type: form
-                    dataSource: { table: posts, mode: single, param: id }
-                    action:
-                      type: crud
-                      operation: update
-                      table: posts
-                      onSuccess:
-                        type: message
-                        toast: { variant: success, message: Article enregistré. }
-                    fields:
-                      - { field: title }
-                      - { field: slug }
-                      - { field: excerpt, control: textarea }
-                      - { field: body }
-              - type: card
-                props:
-                  className: 'p-6 space-y-4 xl:sticky xl:top-6'
-                children:
-                  - { type: text, element: h2, content: Publication, props: { className: 'text-lg font-semibold text-navy' } }
-                  - type: form
-                    dataSource: { table: posts, mode: single, param: id }
-                    action:
-                      type: crud
-                      operation: update
-                      table: posts
-                      onSuccess:
-                        type: message
-                        toast: { variant: success, message: Publication enregistrée. }
-                    fields:
-                      - { field: status }
-                      - { field: published_at }
-                      - { field: categories }
-                      - { field: author }
-                      # The file types are the column's (allowedFileTypes); 0.37
-                      # draws an edit form's attachment with its default control.
-                      - { field: cover }
-                      - { field: legacy_cover, readOnly: true }
+                  className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy border border-navy-200 hover:bg-navy-100 transition-colors'
+
+          # Draft: saves itself.
+          - type: form
+            visibility: { record: { field: status, eq: draft } }
+            dataSource: { table: posts, mode: single, param: id }
+            layout: main-aside
+            asideWidth: 22rem
+            showHeader: false
+            # The blank page: a tall white writing area and a title set like
+            # one, the body typeset as /blog/:slug prints it (blog-post.yaml).
+            # The form exposes no part for them, so the classes reach in
+            # (.rte / .ProseMirror is the editor's body, input[name=title] the
+            # title).
+            props: &editor-look
+              className: "[&_input[name=title]]:text-3xl [&_input[name=title]]:font-bold [&_input[name=title]]:text-navy [&_input[name=title]]:py-3 [&_input[name=title]]:bg-white [&_.rte]:min-h-[70vh] [&_.rte]:bg-white [&_.rte]:px-6 [&_.rte]:py-5 [&_.ProseMirror]:min-h-[66vh] [&_.ProseMirror]:outline-none [&_.ProseMirror]:prose [&_.ProseMirror]:prose-lg [&_.ProseMirror]:max-w-none [&_.ProseMirror]:prose-headings:text-navy [&_.ProseMirror]:prose-a:text-magenta [&_.ProseMirror]:prose-img:rounded-lg [&_.ProseMirror]:text-text [&_.ProseMirror_h2]:!text-[1.75rem] [&_.ProseMirror_h2]:!leading-tight [&_.ProseMirror_h2]:!font-bold [&_.ProseMirror_h2]:!text-navy [&_.ProseMirror_h2]:!mt-8 [&_.ProseMirror_h2]:!mb-3 [&_.ProseMirror_h3]:!text-xl [&_.ProseMirror_h3]:!font-bold [&_.ProseMirror_h3]:!text-navy [&_.ProseMirror_h3]:!mt-6 [&_.ProseMirror_h3]:!mb-2"
+            autoSave: { saveMode: auto, autoSaveDebounceMs: 1500, showSaveIndicator: true, saveIndicatorPosition: inline }
+            action:
+              type: crud
+              operation: update
+              table: posts
+            fields: &editor-fields
+              # The page: title, then the body.
+              - { field: title, label: Titre, placeholder: "Titre de l'article" }
+              - { field: body, label: Contenu, placeholder: 'Commencez à écrire…' }
+              # The details, beside it.
+              - { field: status, region: aside }
+              - { field: published_at, region: aside }
+              - { field: slug, region: aside }
+              - { field: excerpt, control: textarea, region: aside }
+              - { field: categories, region: aside }
+              - { field: author, region: aside }
+              # The file types are the column's (allowedFileTypes).
+              - { field: cover, region: aside }
+              - { field: legacy_cover, readOnly: true, region: aside }
+
+          # Published: saves on « Enregistrer » only.
+          - type: form
+            visibility: { record: { field: status, eq: published } }
+            dataSource: { table: posts, mode: single, param: id }
+            layout: main-aside
+            asideWidth: 22rem
+            showHeader: false
+            props: *editor-look
+            stickyActions: true
+            action:
+              type: crud
+              operation: update
+              table: posts
+              onSuccess:
+                type: message
+                toast: { variant: success, message: Article enregistré. }
+            fields: *editor-fields
