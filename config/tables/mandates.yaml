@@ -6,6 +6,9 @@
 # value is kept in pennylane_status.
 id: 5
 name: mandates
+# Lets the migration drop bank_account, the GoCardless account reference the
+# Compte Pro API no longer gives. Its data has no use once GoCardless is gone.
+allowDestructive: true
 # Read-only over MCP: Claude lists and reads, never writes. Row-level and
 # field rules still apply, as the owner of the API key.
 aiAccess:
