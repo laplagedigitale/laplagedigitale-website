@@ -78,10 +78,8 @@ components:
                       inputData:
                         scenarioId: $param.id
                       onSuccess:
-                        type: message
                         toast: { variant: success, message: "Prévisionnel recalculé : les chiffres se mettent à jour dans quelques secondes." }
                       onError:
-                        type: message
                         toast: { variant: error, message: "Le prévisionnel n'a pas pu être recalculé." }
                   - type: button
                     content: Ajouter un ajustement
@@ -241,6 +239,19 @@ components:
                 props:
                   className: 'p-4 sm:p-6'
                 children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/forecast_grid/export?format=csv&filterField=scenario&filterValue=$param.id', filename: forecast_grid.csv }
                   - type: table
                     readOnly: true
                     rowHeight: short
@@ -255,7 +266,6 @@ components:
                       limit: 100
                       refreshMode: poll
                       pollIntervalMs: 5000
-                    toolbar: { export: true }
                     emptyMessage: "Pas encore de plan : lancez « Recalculer le prévisionnel »."
                     columns:
                       - { field: row_type, label: '', width: 110 }
@@ -530,12 +540,34 @@ components:
                 props:
                   className: 'p-4 sm:p-6'
                 children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher…
+                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-finances-scenario-2, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-finances-scenario-2 }
+                        fieldsFrom: { table: forecast_months }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/forecast_months/export?format=csv&filterField=scenario&filterValue=$param.id', filename: forecast_months.csv }
                   - type: table
                     readOnly: true
                     rowHeight: short
                     props:
                       aria-label: Détail du prévisionnel par ligne et par mois
                     dataSource:
+                      bindTo: admin-finances-scenario-2
+                      sharedFilter: {}
                       table: forecast_months
                       filter:
                         - { field: scenario, operator: eq, value: $param.id }
@@ -545,7 +577,6 @@ components:
                       pagination: { pageSize: 100, style: numbered }
                       refreshMode: poll
                       pollIntervalMs: 5000
-                    toolbar: { search: true, filters: true, export: true }
                     emptyMessage: "Pas encore de détail : lancez « Recalculer le prévisionnel »."
                     columns:
                       - { field: cash_group, label: Groupe }

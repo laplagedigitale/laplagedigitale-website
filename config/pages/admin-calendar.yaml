@@ -52,7 +52,7 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
-              - type: calendar
+              - type: event-calendar
                 dataSource:
                   table: management_deadlines
                   filter:
@@ -75,18 +75,24 @@ components:
                 props:
                   className: 'p-4 sm:p-6'
                 children:
+                  - type: search-input
+                    placeholder: Rechercher une échéance…
+                    props:
+                      aria-label: Rechercher une échéance…
+                      className: 'mb-4 h-9 w-full sm:w-72'
+                    publishes: { bindTo: admin-calendar, param: q }
                   - type: table
                     readOnly: true
                     props:
                       id: deadlines
                       aria-label: Toutes les échéances
                     dataSource:
+                      bindTo: admin-calendar
+                      sharedFilter: {}
                       table: management_deadlines
                       sort:
                         - { field: due_date, direction: asc }
                       pagination: { pageSize: 50, style: numbered }
-                    search:
-                      placeholder: Rechercher une échéance…
                     emptyMessage: "Aucune échéance pour le moment : ajoutez la première avec « Nouvelle échéance »."
                     columns:
                       - { field: due_date, label: Date, format: short-date }
@@ -108,10 +114,8 @@ components:
                               inputData:
                                 deadlineId: $record.id
                               onSuccess:
-                                type: message
                                 toast: { variant: success, message: Échéance marquée comme faite. }
                               onError:
-                                type: message
                                 toast: { variant: error, message: "L'échéance n'a pas pu être marquée comme faite." }
                           - label: Supprimer
                             variant: destructive

@@ -14,7 +14,7 @@ When working on `app.yaml` or any Sovrium configuration, **always fetch `https:/
 ### Key Concepts
 
 - **Config-driven**: The entire app (design system, languages, components, pages, analytics) is declared in YAML — `app.yaml` plus the partials it `$ref`s from `config/`.
-- **Version**: pinned in `.sovrium-version` (currently 0.37.0) — the Scalingo buildpack downloads exactly that release.
+- **Version**: pinned in `.sovrium-version` (currently 0.40.0) — the Scalingo buildpack downloads exactly that release.
 - **49 field types**, **90 component types**, built-in auth, RBAC permissions, i18n.
 - App is started with `sovrium start app.yaml` (CLI only, no TypeScript needed).
 
@@ -66,6 +66,10 @@ Working rules:
 - Page content lives under `pages[].components` (not `sections`).
 - Design tokens are direct keys of `design` — `colors`, `radius`, `elevation`, `motion`, `breakpoints`, `typeScale`. Both `design.theme` and the top-level `theme` were removed in v0.30 and are refused.
 - Colour token names are kebab-case (`text-muted`, not `textMuted`).
+- `design.colorScheme: light` is deliberate: the charte has no dark palette, and since 0.38 an app without it follows the visitor's OS and paints the engine's default dark palette.
+- Component names are shadcn's since 0.38: the deadlines view is `type: event-calendar` (a bare `calendar` is a date picker), `separator`, `empty`, `item`, `sheet`, `command`. Engine utilities are shadcn's too (`text-muted-foreground`, `bg-card`); our own `design.colors` keep minting theirs (`text-text-muted`).
+- **A table draws no search box, filters or export of its own** (0.39). Each is a control placed beside it on a shared-filter channel: a `search-input` with `publishes: { bindTo: <channel>, param: q }`, a `filter-bar` with `publishes: { bindTo: <channel> }` and `fieldsFrom: { table }`, and the table's `dataSource` gets `bindTo: <channel>` + `sharedFilter: {}`. The channel is the page name (`-2`, `-3` … for further tables on the page). Export is a button `{ type: fetch, mode: download, url: /api/tables/<t>/export?format=csv&filterField=…&filterValue=… }` — one eq filter only, so the « Sans catégorie » tab (`in` on two reasons) has no export.
+- A button or row action's `onSuccess`/`onError` carries a `toast` (or `navigate`) only: `type: message` belongs to forms and is refused elsewhere since 0.40.
 - Faces live in `design.typeScale.families`; sizes, leading and weight live in `design.typeScale.steps`. A face's `size`, `lineHeight` and `weights` validate but reach nothing.
 - `design.spacing` takes lengths only (`px`/`rem`), each step becoming a utility suffix (`py-section`). A reusable class list belongs on `props.className`, not in a token.
 - **Auth is on because the `auth` block exists** — there is no `enabled` flag; presence is the switch. It mounts `/api/auth/*`, RBAC and the admin endpoints. Every page stays public except the two signed-in spaces: `/espace-membre/*`, « Espace Membre », the coworker space (roles `coworker`, `admin`), and `/administration/*`, « Administration de l'association » — Calendrier de gestion, Membres, Finances, Contenu (role `admin`; `editor` only on `/administration/contenu/*` and `/administration/compte`). Both sign in at `/connexion`, which sends everyone to `/app`; `/app` shows each role exactly one card and forwards to it — coworker → `/espace-membre`, admin → `/administration`, editor → `/administration/contenu`. No `landingPath`: in 0.30 a custom role's `defaultLanding` lands on `/403`.

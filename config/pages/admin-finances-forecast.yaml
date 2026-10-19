@@ -156,10 +156,8 @@ components:
                               inputData:
                                 scenarioId: $record.id
                               onSuccess:
-                                type: message
                                 toast: { variant: success, message: Prévisionnel recalculé. }
                               onError:
-                                type: message
                                 toast: { variant: error, message: "Le prévisionnel n'a pas pu être recalculé." }
                           - label: Supprimer
                             variant: destructive

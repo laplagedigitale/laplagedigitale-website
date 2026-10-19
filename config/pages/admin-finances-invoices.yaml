@@ -69,18 +69,24 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
+              - type: search-input
+                placeholder: Rechercher une facture, un membre…
+                props:
+                  aria-label: Rechercher une facture, un membre…
+                  className: 'mb-4 h-9 w-full sm:w-72'
+                publishes: { bindTo: admin-finances-invoices, param: q }
               - type: table
                 readOnly: true
                 props:
                   aria-label: Factures
                 onRowClick: { type: navigate, path: $record.pdf_url, openInNewTab: true }
                 dataSource:
+                  bindTo: admin-finances-invoices
+                  sharedFilter: {}
                   table: invoices
                   sort:
                     - { field: invoice_date, direction: desc }
                   pagination: { pageSize: 50, style: numbered }
-                search:
-                  placeholder: Rechercher une facture, un membre…
                 emptyMessage: Aucune facture pour le moment.
                 columns:
                   - { field: invoice_number, label: N° }

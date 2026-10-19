@@ -71,17 +71,23 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
+              - type: search-input
+                placeholder: Rechercher un tiers, une facture, un libellé…
+                props:
+                  aria-label: Rechercher un tiers, une facture, un libellé…
+                  className: 'mb-4 h-9 w-full sm:w-72'
+                publishes: { bindTo: admin-finances-reconciliation, param: q }
               - type: table
                 readOnly: true
                 props:
                   aria-label: Rapprochements
                 dataSource:
+                  bindTo: admin-finances-reconciliation
+                  sharedFilter: {}
                   table: payment_matches
                   sort:
                     - { field: run_at, direction: desc }
                   pagination: { pageSize: 50, style: numbered }
-                search:
-                  placeholder: Rechercher un tiers, une facture, un libellé…
                 emptyMessage: Aucun rapprochement pour le moment.
                 columns:
                   - { field: run_at, label: Vu le, format: short-date }
