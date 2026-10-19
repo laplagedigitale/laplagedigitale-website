@@ -32,7 +32,7 @@ children:
 
           - type: navigation-menu
             props:
-              className: 'hidden lg:flex'
+              className: 'hidden lg:flex [&_[data-slot=navigation-menu-link]]:text-md [&_[data-slot=navigation-menu-trigger]]:text-md'
             navItems:
               - { label: $t:nav.home, href: $t:href.home }
               - label: $t:nav.about

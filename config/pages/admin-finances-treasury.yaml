@@ -131,7 +131,7 @@ components:
                         children:
                           - { type: text, element: span, content: Solde au }
                           - { type: record-field, format: short-date, props: { field: balance_date } }
-                      - { type: text, element: p, content: "Solde saisi à la main depuis le relevé : à mettre à jour dans la console Sovrium (table bank_accounts).", visibility: { record: { field: source, eq: manual } }, props: { className: 'text-xs text-navy p-2 rounded-lg bg-orange-100' } }
+                      - { type: text, element: p, content: "Solde saisi à la main depuis le relevé : à mettre à jour dans la console Sovrium (table bank_accounts).", visibility: { record: { field: source, eq: manual } }, props: { className: 'text-xs text-navy p-2 rounded-panel bg-orange-100' } }
                       - { type: text, element: p, content: "Hors trésorerie : ce compte n'entre pas dans le total.", visibility: { record: { field: include_in_cash, eq: false } }, props: { className: 'text-xs text-text-muted' } }
                       - { type: record-field, props: { field: notes, className: 'text-xs text-text-muted whitespace-pre-line' } }
 

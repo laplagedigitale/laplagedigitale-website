@@ -21,7 +21,10 @@
 # row, and an admin without one would get a 404.
 #
 # The light-on-navy link colours are lg-only: below lg the navigation is a
-# drawer on the theme's light panel, where they would be unreadable.
+# drawer on the theme's light panel, where they would be unreadable. The
+# sidebar drops the panel colour (`sidebar`, the Espace Membre's sand) that
+# 0.38 paints behind it, and below lg its menu button is the white-outlined
+# pill of the navy top bar.
 #
 # From lg up the column is three rows and only the middle one scrolls: the
 # header (the logo) and the footer (« Mon Espace Membre »)
@@ -60,7 +63,7 @@ children:
         visibility: { roles: [admin] }
         drawer: { below: lg, label: Menu }
         props:
-          className: 'max-lg:ml-auto lg:flex-none lg:text-white lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
+          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-200 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
         groups:
           - label: Pilotage
             items:
@@ -97,7 +100,7 @@ children:
         visibility: { roles: [editor] }
         drawer: { below: lg, label: Menu }
         props:
-          className: 'max-lg:ml-auto lg:flex-none lg:text-white lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
+          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-200 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
         groups:
           - label: Contenu
             items:

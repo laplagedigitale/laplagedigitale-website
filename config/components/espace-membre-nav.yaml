@@ -18,6 +18,10 @@
 # on a page with no member record the gate does not apply and the entry shows.
 # Like the admin sidebar, the extra sidebars are hidden below lg — on a phone
 # the dashboard carries the same way in (the Flex « Pointer » card).
+#
+# Since 0.38 a sidebar is a scroll area (flex-1, min-h-0, 48px kept under its
+# entries for a scroll fade): the short extra sidebars are lg:flex-none, or the
+# column squeezes them, and drop that padding.
 name: espace-membre-nav
 type: container
 element: aside
@@ -56,7 +60,7 @@ children:
   - type: sidebar
     visibility: { record: { field: formules, contains: flex } }
     props:
-      className: 'hidden lg:block lg:border-t lg:border-border lg:pt-4 [&_a[aria-current=page]]:bg-surface [&_a[aria-current=page]]:font-semibold [&_a[aria-current=page]]:text-navy [&_a[aria-current=page]]:shadow-sm'
+      className: 'hidden lg:block lg:flex-none [&_[data-slot=sidebar-content]]:pb-0 lg:border-t lg:border-border lg:pt-4 [&_a[aria-current=page]]:bg-surface [&_a[aria-current=page]]:font-semibold [&_a[aria-current=page]]:text-navy [&_a[aria-current=page]]:shadow-sm'
     groups:
       - label: $t:member.nav.flex
         items:
@@ -68,7 +72,7 @@ children:
   - type: sidebar
     visibility: { roles: [admin] }
     props:
-      className: 'hidden lg:block lg:border-t lg:border-border lg:pt-4'
+      className: 'hidden lg:block lg:flex-none [&_[data-slot=sidebar-content]]:pb-0 lg:border-t lg:border-border lg:pt-4'
     groups:
       - label: $t:admin.nav.group
         items:

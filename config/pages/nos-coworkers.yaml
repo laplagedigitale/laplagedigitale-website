@@ -50,7 +50,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-navy'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/caroline-bosc.webp, alt: $t:coworkers.caroline.alt, className: 'w-full aspect-square object-cover' } }
@@ -65,7 +65,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/frederic-fuchs.webp, alt: $t:coworkers.frederic.alt, className: 'w-full aspect-square object-cover' } }
@@ -80,7 +80,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-orange'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/roland-margelidon.webp, alt: $t:coworkers.roland.alt, className: 'w-full aspect-square object-cover' } }
@@ -95,7 +95,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-magenta'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/bastien-remy.webp, alt: $t:coworkers.bastien.alt, className: 'w-full aspect-square object-cover' } }
@@ -110,7 +110,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-navy'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/sylvaine-gross.webp, alt: $t:coworkers.sylvaine.alt, className: 'w-full aspect-square object-cover' } }
@@ -125,7 +125,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/eleonore-greif.webp, alt: $t:coworkers.eleonore.alt, className: 'w-full aspect-square object-cover' } }

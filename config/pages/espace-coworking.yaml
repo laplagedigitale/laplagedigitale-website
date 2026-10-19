@@ -54,7 +54,7 @@ components:
             props:
               src: /images/pages/espace-cowork/espace-coworking.webp
               alt: $t:space.hero.alt
-              className: 'w-full h-48 sm:h-auto object-cover rounded-lg shadow-md'
+              className: 'w-full h-48 sm:h-auto object-cover rounded-panel shadow-md'
 
   # ── What is available ──
   - type: container
@@ -83,7 +83,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md border-t-4 border-navy p-6'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md border-t-4 border-navy p-6'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: door-closed, size: 28, className: 'text-navy mb-4' } }
@@ -94,7 +94,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md border-t-4 border-blue p-6'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md border-t-4 border-blue p-6'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: monitor, size: 28, className: 'text-blue mb-4' } }
@@ -105,7 +105,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md border-t-4 border-orange p-6'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md border-t-4 border-orange p-6'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: laptop, size: 28, className: 'text-navy mb-4' } }
@@ -116,7 +116,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md border-t-4 border-magenta p-6'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md border-t-4 border-magenta p-6'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: users, size: 28, className: 'text-magenta mb-4' } }
@@ -153,7 +153,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md p-6 sm:p-8'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md p-6 sm:p-8'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/espace-cowork/bouee-violette-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
@@ -170,7 +170,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md p-6 sm:p-8'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md p-6 sm:p-8'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/espace-cowork/bouee-bleu-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
@@ -183,7 +183,7 @@ components:
               - type: container
                 element: article
                 props:
-                  className: 'flex flex-col bg-white rounded-lg shadow-md p-6 sm:p-8'
+                  className: 'flex flex-col bg-white rounded-panel shadow-md p-6 sm:p-8'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/espace-cowork/bouee-orange-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
@@ -194,7 +194,7 @@ components:
             props:
               src: /images/pages/espace-cowork/acces.webp
               alt: $t:space.how.rooms.alt
-              className: 'w-full h-48 sm:h-auto object-cover rounded-lg shadow-md mt-12'
+              className: 'w-full h-48 sm:h-auto object-cover rounded-panel shadow-md mt-12'
 
   # ── CTA ──
   - type: container

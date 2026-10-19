@@ -59,7 +59,7 @@ components:
                     children:
                       - type: grid
                         props:
-                          className: 'grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-lg border border-border p-4'
+                          className: 'grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-panel border border-border p-4'
                         children:
                           - type: container
                             children:
@@ -137,7 +137,7 @@ components:
                     element: p
                     props:
                       id: mandate-status
-                      className: 'text-sm font-medium text-navy p-4 rounded-lg bg-blue-100 empty:hidden!'
+                      className: 'text-sm font-medium text-navy p-4 rounded-panel bg-blue-100 empty:hidden!'
 
               - type: card
                 props:

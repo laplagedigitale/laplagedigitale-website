@@ -36,10 +36,39 @@ colors:
   sage: '#92aa58'
   amber: '#f9af25'
   coral-red: '#e83d3b'
-  # Semantic roles
+  # Engine roles — since 0.38 the components read shadcn/ui's names, and
+  # `secondary` / `accent` are neutral surfaces there (a secondary button, a
+  # hover), not brand colours. The page markup never uses these utilities.
   primary: '#273a61'
-  secondary: '#6290bc'
-  accent: '#f08137'
+  secondary: '#e4e6eb'
+  secondary-foreground: '#273a61'
+  accent: '#f4ede4'
+  accent-foreground: '#273a61'
+  foreground: '#273a61'
+  card: '#ffffff'
+  card-foreground: '#273a61'
+  popover: '#ffffff'
+  popover-foreground: '#273a61'
+  muted: '#f4ede4'
+  muted-foreground: '#5d6a88'
+  destructive: '#e83d3b'
+  input: '#929caf'
+  ring: '#6290bc'
+  # The Espace Membre sidebar sits on sand; the Administration's restyles its
+  # own for navy (admin-nav).
+  sidebar: '#f4ede4'
+  sidebar-foreground: '#273a61'
+  sidebar-accent: '#ffffff'
+  sidebar-accent-foreground: '#273a61'
+  sidebar-border: '#e4e6eb'
+  sidebar-ring: '#6290bc'
+  # Chart series take these by position: in 0.40 a series `color` naming a
+  # token is not applied, and the default palette is grey.
+  chart-1: '#6290bc'
+  chart-2: '#f08137'
+  chart-3: '#273a61'
+  chart-4: '#f6a66b'
+  chart-5: '#cf1769'
   highlight: '#cf1769'
   success: '#92aa58'
   danger: '#e83d3b'
@@ -50,11 +79,13 @@ colors:
   text-muted: '#5d6a88'
   border: '#e4e6eb'
 
+# The page markup's own corners. Since 0.38 the engine's components round on
+# shadcn/ui's steps (`rounded-lg` a button, `rounded-xl` a card, derived from
+# its `--radius`): redefining sm…xl here turned every button, field and card
+# into a pill, so the charte's corners carry names of their own.
 radius:
-  sm: '0.5rem'
-  md: '1rem'
-  lg: '1.5rem'
-  xl: '2rem'
+  tile: '1rem'
+  panel: '1.5rem'
   full: '9999px'
 
 elevation:
@@ -76,6 +107,19 @@ motion:
       keyframes:
         '0%': { opacity: '0' }
         '100%': { opacity: '1' }
+
+# Sidebars: the group headings keep the small capitals they had before 0.38
+# (the shadcn recipe sets them in plain case), and the entries keep their size.
+components:
+  # A card's children sat 0.5rem apart before 0.38 (now 1rem): the pages'
+  # cards space their own content.
+  card:
+    parts:
+      root: gap-2
+  sidebar:
+    parts:
+      groupLabel: h-auto py-1 uppercase tracking-wide
+      link: text-md
 
 breakpoints:
   sm: '640px'

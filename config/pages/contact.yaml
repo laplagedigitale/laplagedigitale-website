@@ -70,7 +70,7 @@ components:
               # Phone
               - type: container
                 props:
-                  className: 'bg-white rounded-lg shadow-md border-t-4 border-navy p-6'
+                  className: 'bg-white rounded-panel shadow-md border-t-4 border-navy p-6'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - type: container
@@ -97,7 +97,7 @@ components:
               # Email
               - type: container
                 props:
-                  className: 'bg-white rounded-lg shadow-md border-t-4 border-blue p-6'
+                  className: 'bg-white rounded-panel shadow-md border-t-4 border-blue p-6'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - type: container
@@ -119,7 +119,7 @@ components:
               # Address
               - type: container
                 props:
-                  className: 'bg-white rounded-lg shadow-md border-t-4 border-orange p-6'
+                  className: 'bg-white rounded-panel shadow-md border-t-4 border-orange p-6'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - type: container
@@ -148,7 +148,7 @@ components:
               # Opening hours
               - type: container
                 props:
-                  className: 'bg-white rounded-lg shadow-md border-t-4 border-magenta p-6'
+                  className: 'bg-white rounded-panel shadow-md border-t-4 border-magenta p-6'
                 interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - type: container
@@ -206,7 +206,7 @@ components:
                           className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text-muted mb-8'
                       - type: container
                         props:
-                          className: 'rounded-lg overflow-hidden shadow-md border border-border'
+                          className: 'rounded-panel overflow-hidden shadow-md border border-border'
                         children:
                           - type: iframe
                             props:
@@ -219,7 +219,7 @@ components:
                   # Contact form
                   - type: container
                     props:
-                      className: 'bg-sand rounded-lg p-6 sm:p-8 border-t-4 border-orange [&_.embedded-form]:!block [&_.embedded-form]:!w-full'
+                      className: 'bg-sand rounded-panel p-6 sm:p-8 border-t-4 border-orange [&_.embedded-form]:!block [&_.embedded-form]:!w-full'
                     children:
                       - type: text
                         element: p

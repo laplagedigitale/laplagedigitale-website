@@ -50,7 +50,7 @@ components:
                   - { type: text, element: span, content: $t:formule.flex, visibility: { record: { field: formules, contains: flex } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-orange-100 text-navy' } }
                   - { type: text, element: span, content: $t:formule.box, visibility: { record: { field: formules, contains: box } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-blue-100 text-navy' } }
                   - { type: text, element: span, content: $t:formule.domiciliation, visibility: { record: { field: formules, contains: domiciliation } }, props: { className: 'inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-sand text-navy' } }
-              - { type: text, element: p, content: $t:member.home.formule.none, visibility: { record: { field: formules, isEmpty: true } }, props: { className: 'text-sm text-navy mt-3 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
+              - { type: text, element: p, content: $t:member.home.formule.none, visibility: { record: { field: formules, isEmpty: true } }, props: { className: 'text-sm text-navy mt-3 p-3 rounded-panel bg-blue-100 max-w-2xl' } }
 
           # Admins only: the way back to the Administration on every screen
           # size (the sidebar's admin group is hidden below lg).
@@ -71,7 +71,7 @@ components:
                 - { field: match_status, operator: in, value: [pending, not_found] }
               limit: 1
             props:
-              className: 'text-sm text-navy [&_li]:rounded-md [&_li]:border [&_li]:border-amber [&_li]:bg-orange-100 [&_li]:px-4 [&_li]:py-3'
+              className: 'text-sm text-navy [&_li]:rounded-tile [&_li]:border [&_li]:border-amber [&_li]:bg-orange-100 [&_li]:px-4 [&_li]:py-3'
             listDisplay:
               emptyMessage: ''
               itemTemplate:
@@ -204,7 +204,7 @@ components:
                     children:
                       - type: container
                         props:
-                          className: 'space-y-3 rounded-lg border border-border p-4'
+                          className: 'space-y-3 rounded-panel border border-border p-4'
                         children:
                           - type: container
                             children:
