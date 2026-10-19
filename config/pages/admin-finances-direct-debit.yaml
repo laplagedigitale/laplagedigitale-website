@@ -74,17 +74,23 @@ components:
                 props:
                   className: 'p-4 sm:p-6'
                 children:
+                  - type: search-input
+                    placeholder: Rechercher un membre…
+                    props:
+                      aria-label: Rechercher un membre…
+                      className: 'mb-4 h-9 w-full sm:w-72'
+                    publishes: { bindTo: admin-finances-direct-debit, param: q }
                   - type: table
                     readOnly: true
                     props:
                       aria-label: Mandats
                     dataSource:
+                      bindTo: admin-finances-direct-debit
+                      sharedFilter: {}
                       table: mandates
                       sort:
                         - { field: signed_at, direction: desc }
                       pagination: { pageSize: 50, style: numbered }
-                    search:
-                      placeholder: Rechercher un membre…
                     # The signed mandate's PDF, in a new tab; a request has none yet.
                     onRowClick: { type: navigate, path: $record.pdf_url, openInNewTab: true }
                     emptyMessage: Aucun mandat pour le moment.

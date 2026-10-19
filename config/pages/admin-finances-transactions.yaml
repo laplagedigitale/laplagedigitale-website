@@ -52,17 +52,38 @@ components:
                 props:
                   className: 'p-4 sm:p-6'
                 children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher…
+                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-finances-transactions, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-finances-transactions }
+                        fieldsFrom: { table: transactions }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/transactions/export?format=csv', filename: transactions.csv }
                   - type: table
                     readOnly: true
                     props:
                       aria-label: Toutes les transactions
                     onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
                     dataSource:
+                      bindTo: admin-finances-transactions
+                      sharedFilter: {}
                       table: transactions
                       sort:
                         - { field: date, direction: desc }
                       pagination: { pageSize: 50, style: numbered }
-                    toolbar: { search: true, filters: true, export: true }
                     emptyMessage: "Aucune transaction pour le moment : la synchronisation Pennylane les recopie à son premier passage."
                     columns:
                       - { field: date, label: Date, format: short-date }
@@ -80,19 +101,37 @@ components:
                   className: 'p-4 sm:p-6 space-y-3'
                 children:
                   - { type: text, element: p, content: "Les débits pour lesquels Pennylane attend une facture et n'en a pas. Joignez-la dans Pennylane : la ligne disparaît à la synchronisation suivante.", props: { className: 'text-sm text-text-muted' } }
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher…
+                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-finances-transactions-2, param: q }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/transactions/export?format=csv&filterField=attention_reason&filterValue=unjustified_expense', filename: transactions.csv }
                   - type: table
                     readOnly: true
                     props:
                       aria-label: Débits sans justificatif
                     onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
                     dataSource:
+                      bindTo: admin-finances-transactions-2
+                      sharedFilter: {}
                       table: transactions
                       filter:
                         - { field: attention_reason, operator: eq, value: unjustified_expense }
                       sort:
                         - { field: date, direction: desc }
                       pagination: { pageSize: 50, style: numbered }
-                    toolbar: { search: true, export: true }
                     emptyMessage: Aucun débit sans justificatif.
                     columns:
                       - { field: date, label: Date, format: short-date }
@@ -110,19 +149,31 @@ components:
                   className: 'p-4 sm:p-6 space-y-3'
                 children:
                   - { type: text, element: p, content: "Les opérations sans catégorie Pennylane, et celles qu'aucune règle ne range : elles tombent sur la ligne par défaut du prévisionnel. Choisissez la catégorie dans Pennylane.", props: { className: 'text-sm text-text-muted' } }
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher…
+                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-finances-transactions-3, param: q }
                   - type: table
                     readOnly: true
                     props:
                       aria-label: Transactions sans catégorie
                     onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
                     dataSource:
+                      bindTo: admin-finances-transactions-3
+                      sharedFilter: {}
                       table: transactions
                       filter:
                         - { field: attention_reason, operator: in, value: [uncategorised, catch_all] }
                       sort:
                         - { field: date, direction: desc }
                       pagination: { pageSize: 50, style: numbered }
-                    toolbar: { search: true, export: true }
                     emptyMessage: Toutes les opérations ont une catégorie.
                     columns:
                       - { field: date, label: Date, format: short-date }
@@ -140,19 +191,37 @@ components:
                   className: 'p-4 sm:p-6 space-y-3'
                 children:
                   - { type: text, element: p, content: "Les encaissements de clients qu'aucune facture ne solde encore. Le rapprochement automatique du matin en lettre la plupart ; le reste se lettre dans Pennylane.", props: { className: 'text-sm text-text-muted' } }
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher…
+                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-finances-transactions-4, param: q }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/transactions/export?format=csv&filterField=attention_reason&filterValue=unallocated_customer_payment', filename: transactions.csv }
                   - type: table
                     readOnly: true
                     props:
                       aria-label: Encaissements non lettrés
                     onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
                     dataSource:
+                      bindTo: admin-finances-transactions-4
+                      sharedFilter: {}
                       table: transactions
                       filter:
                         - { field: attention_reason, operator: eq, value: unallocated_customer_payment }
                       sort:
                         - { field: date, direction: desc }
                       pagination: { pageSize: 50, style: numbered }
-                    toolbar: { search: true, export: true }
                     emptyMessage: Tous les encaissements sont lettrés.
                     columns:
                       - { field: date, label: Date, format: short-date }
@@ -169,19 +238,37 @@ components:
                   className: 'p-4 sm:p-6 space-y-3'
                 children:
                   - { type: text, element: p, content: "Les mouvements entre les comptes de l'association — vers le Livret A et retour. Ils ne sont ni des recettes ni des dépenses et ne comptent pas dans le prévisionnel.", props: { className: 'text-sm text-text-muted' } }
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher…
+                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-finances-transactions-5, param: q }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/transactions/export?format=csv&filterField=is_internal_transfer&filterValue=true', filename: transactions.csv }
                   - type: table
                     readOnly: true
                     props:
                       aria-label: Virements internes
                     onRowClick: { type: navigate, path: $record.pennylane_url, openInNewTab: true }
                     dataSource:
+                      bindTo: admin-finances-transactions-5
+                      sharedFilter: {}
                       table: transactions
                       filter:
                         - { field: is_internal_transfer, operator: eq, value: true }
                       sort:
                         - { field: date, direction: desc }
                       pagination: { pageSize: 50, style: numbered }
-                    toolbar: { search: true, export: true }
                     emptyMessage: Aucun virement interne.
                     columns:
                       - { field: date, label: Date, format: short-date }

@@ -54,14 +54,20 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
+              - type: search-input
+                placeholder: $t:admin.members.search
+                props:
+                  aria-label: $t:admin.members.search
+                  className: 'mb-4 h-9 w-full sm:w-72'
+                publishes: { bindTo: admin-members, param: q }
               - type: table
                 dataSource:
+                  bindTo: admin-members
+                  sharedFilter: {}
                   table: members
                   sort:
                     - { field: name, direction: asc }
                   pagination: { pageSize: 50, style: numbered }
-                search:
-                  placeholder: $t:admin.members.search
                 emptyMessage: $t:admin.members.none
                 onRowClick:
                   type: navigate

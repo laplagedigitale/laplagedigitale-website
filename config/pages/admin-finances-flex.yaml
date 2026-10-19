@@ -69,16 +69,22 @@ components:
                 props:
                   className: 'p-4 sm:p-6'
                 children:
+                  - type: search-input
+                    placeholder: $t:admin.flex.search
+                    props:
+                      aria-label: $t:admin.flex.search
+                      className: 'mb-4 h-9 w-full sm:w-72'
+                    publishes: { bindTo: admin-finances-flex, param: q }
                   - type: table
                     props:
                       aria-label: $t:admin.flex.checkins
                     dataSource:
+                      bindTo: admin-finances-flex
+                      sharedFilter: {}
                       table: checkins
                       sort:
                         - { field: date, direction: desc }
                       pagination: { pageSize: 50, style: numbered }
-                    search:
-                      placeholder: $t:admin.flex.search
                     emptyMessage: $t:flex.presences.none
                     columns:
                       - { field: date, label: $t:flex.col.date, format: short-date }

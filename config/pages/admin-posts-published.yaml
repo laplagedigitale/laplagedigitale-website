@@ -39,16 +39,22 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
+              - type: search-input
+                placeholder: Rechercher un article…
+                props:
+                  aria-label: Rechercher un article…
+                  className: 'mb-4 h-9 w-full sm:w-72'
+                publishes: { bindTo: admin-posts-published, param: q }
               - type: table
                 dataSource:
+                  bindTo: admin-posts-published
+                  sharedFilter: {}
                   table: posts
                   filter:
                     - { field: status, operator: eq, value: published }
                   sort:
                     - { field: updated_at, direction: desc }
                   pagination: { pageSize: 25, style: numbered }
-                search:
-                  placeholder: Rechercher un article…
                 emptyMessage: Aucun article ici pour le moment.
                 columns:
                   - { field: title, label: Titre }

@@ -94,10 +94,8 @@ components:
                               inputData:
                                 signupId: $record.id
                               onSuccess:
-                                type: message
                                 toast: { variant: success, message: $t:admin.flex.signups.validate.done }
                               onError:
-                                type: message
                                 toast: { variant: error, message: $t:admin.flex.signups.validate.error }
                           - label: $t:admin.flex.signups.decline
                             variant: ghost

@@ -74,10 +74,8 @@ components:
                       inputData:
                         deadlineId: $record.id
                       onSuccess:
-                        type: message
                         toast: { variant: success, message: "Échéance marquée comme faite : rechargez la page pour voir sa nouvelle date." }
                       onError:
-                        type: message
                         toast: { variant: error, message: "L'échéance n'a pas pu être marquée comme faite." }
 
           - type: grid

@@ -7,6 +7,11 @@
 #
 # Contrast: orange and amber are fills and accents only — navy text on them,
 # never orange text on white (fails WCAG AA at body size).
+#
+# The charte has no dark palette: since 0.38 an app with no colorScheme
+# follows the visitor's OS and paints the engine's default dark palette.
+colorScheme: light
+
 colors:
   # Palette principale
   navy: '#273a61'
