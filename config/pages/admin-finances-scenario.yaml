@@ -62,7 +62,7 @@ components:
                       - { type: record-field, props: { field: comfort } }
                       - { type: text, element: span, content: 'Calculé' }
                       - { type: record-field, format: relative-time, props: { field: computed_at } }
-                  - { type: text, element: p, content: "Le scénario de référence suit le réalisé Pennylane : ses budgets se lisent mais ne se modifient pas, et il ne prend pas d'ajustement. Pour simuler une décision, créez un scénario à partir de lui.", visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
+                  - { type: text, element: p, content: "Le scénario de référence suit le réalisé Pennylane : ses budgets se lisent mais ne se modifient pas, et il ne prend pas d'ajustement. Pour simuler une décision, créez un scénario à partir de lui.", visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-panel bg-blue-100 max-w-2xl' } }
               - type: flex
                 props:
                   className: 'flex flex-wrap gap-3'

@@ -36,7 +36,7 @@ components:
             children:
               - type: container
                 element: article
-                props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue' }
+                props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue' }
                 children:
                   - { type: image, props: { src: /images/pages/les-formules/salle-crevette.webp, alt: $t:pricing.room.crevette.alt, className: 'w-full aspect-[16/9] object-cover' } }
                   - type: container
@@ -55,7 +55,7 @@ components:
                           - { type: text, element: span, content: $t:pricing.room.unit, props: { className: 'text-sm font-bold text-text-muted' } }
               - type: container
                 element: article
-                props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-orange' }
+                props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange' }
                 children:
                   - { type: image, props: { src: /images/pages/les-formules/salle-requin.webp, alt: $t:pricing.room.requin.alt, className: 'w-full aspect-[16/9] object-cover' } }
                   - type: container
@@ -74,7 +74,7 @@ components:
                           - { type: text, element: span, content: $t:pricing.room.unit, props: { className: 'text-sm font-bold text-text-muted' } }
               - type: container
                 element: article
-                props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue' }
+                props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue' }
                 children:
                   - { type: image, props: { src: /images/pages/les-formules/salle-baleine.webp, alt: $t:pricing.room.baleine.alt, className: 'w-full aspect-[16/9] object-cover' } }
                   - type: container
@@ -93,7 +93,7 @@ components:
                           - { type: text, element: span, content: $t:pricing.room.unit, props: { className: 'text-sm font-bold text-text-muted' } }
               - type: container
                 element: article
-                props: { className: 'flex flex-col bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-orange' }
+                props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange' }
                 children:
                   - { type: image, props: { src: /images/pages/les-formules/salle-narval.webp, alt: $t:pricing.room.narval.alt, className: 'w-full aspect-[16/9] object-cover' } }
                   - type: container

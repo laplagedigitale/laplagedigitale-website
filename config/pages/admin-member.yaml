@@ -37,7 +37,7 @@ components:
             children:
               - { type: text, element: h1, content: $record.name, props: { className: 'text-3xl font-bold text-navy' } }
               - { type: text, element: p, content: $record.email, props: { className: 'text-text-muted mt-1' } }
-              - { type: text, element: p, content: $t:admin.member.readonly, props: { className: 'text-sm text-navy mt-4 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
+              - { type: text, element: p, content: $t:admin.member.readonly, props: { className: 'text-sm text-navy mt-4 p-3 rounded-panel bg-blue-100 max-w-2xl' } }
 
           # The one thing an admin edits here: the member's formules, which
           # decide what their Espace Membre shows. pennylane-sync fills them
@@ -65,7 +65,7 @@ components:
                 - { field: match_status, operator: in, value: [pending, not_found] }
               limit: 1
             props:
-              className: 'text-sm text-navy [&_li]:rounded-md [&_li]:border [&_li]:border-amber [&_li]:bg-orange-100 [&_li]:px-4 [&_li]:py-3'
+              className: 'text-sm text-navy [&_li]:rounded-tile [&_li]:border [&_li]:border-amber [&_li]:bg-orange-100 [&_li]:px-4 [&_li]:py-3'
             listDisplay:
               emptyMessage: ''
               itemTemplate:
@@ -168,7 +168,7 @@ components:
                     children:
                       - type: container
                         props:
-                          className: 'space-y-3 rounded-lg border border-border p-4'
+                          className: 'space-y-3 rounded-panel border border-border p-4'
                         children:
                           - type: container
                             children:

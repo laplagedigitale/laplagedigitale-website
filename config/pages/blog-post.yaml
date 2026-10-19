@@ -60,11 +60,11 @@ components:
               src: '$record.legacy_cover'
               alt: '$record.title'
               loading: eager
-              className: 'w-full rounded-lg shadow-md mb-10'
+              className: 'w-full rounded-panel shadow-md mb-10'
           - type: record-field
             props:
               field: body
-              className: 'prose prose-lg max-w-none prose-headings:text-navy prose-a:text-magenta prose-img:rounded-lg text-text'
+              className: 'prose prose-lg max-w-none prose-headings:text-navy prose-a:text-magenta prose-img:rounded-panel text-text'
 
       - type: container
         element: nav
@@ -75,14 +75,14 @@ components:
           - type: link
             props:
               href: '/blog/$collection.previous.slug'
-              className: 'block p-5 rounded-md bg-white border border-navy-100 hover:border-blue transition-colors'
+              className: 'block p-5 rounded-tile bg-white border border-navy-100 hover:border-blue transition-colors'
             children:
               - { type: text, element: span, content: $t:post.previous, props: { className: 'block [font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] uppercase tracking-widest text-text-muted mb-1' } }
               - { type: text, element: span, content: '$collection.previous.title', props: { className: 'block [font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
           - type: link
             props:
               href: '/blog/$collection.next.slug'
-              className: 'block p-5 rounded-md bg-white border border-navy-100 hover:border-blue transition-colors sm:text-right'
+              className: 'block p-5 rounded-tile bg-white border border-navy-100 hover:border-blue transition-colors sm:text-right'
             children:
               - { type: text, element: span, content: $t:post.next, props: { className: 'block [font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] uppercase tracking-widest text-text-muted mb-1' } }
               - { type: text, element: span, content: '$collection.next.title', props: { className: 'block [font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }

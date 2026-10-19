@@ -80,7 +80,7 @@ components:
                       href: 'https://www.grandest.fr'
                       target: _blank
                       rel: 'noopener noreferrer'
-                      className: 'group flex flex-col items-center text-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg hover:-translate-y-1 transition'
+                      className: 'group flex flex-col items-center text-center bg-white rounded-panel shadow-md p-8 hover:shadow-lg hover:-translate-y-1 transition'
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-soutiens/region-grand-est.webp, alt: 'Région Grand Est', loading: lazy, className: 'h-20 w-full object-contain grayscale group-hover:grayscale-0 transition duration-300' } }
@@ -92,7 +92,7 @@ components:
                       href: 'https://www.strasbourg.eu'
                       target: _blank
                       rel: 'noopener noreferrer'
-                      className: 'group flex flex-col items-center text-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg hover:-translate-y-1 transition'
+                      className: 'group flex flex-col items-center text-center bg-white rounded-panel shadow-md p-8 hover:shadow-lg hover:-translate-y-1 transition'
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-soutiens/eurometropole-strasbourg.webp, alt: 'Eurométropole de Strasbourg', loading: lazy, className: 'h-14 w-full object-contain grayscale group-hover:grayscale-0 transition duration-300' } }
@@ -134,7 +134,7 @@ components:
                       href: 'https://tierslieuxgrandest.org'
                       target: _blank
                       rel: 'noopener noreferrer'
-                      className: 'group flex flex-col items-center text-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg hover:-translate-y-1 transition'
+                      className: 'group flex flex-col items-center text-center bg-white rounded-panel shadow-md p-8 hover:shadow-lg hover:-translate-y-1 transition'
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-soutiens/tiers-lieux-grand-est.webp, alt: 'Tiers-Lieux Grand Est', loading: lazy, className: 'h-20 w-full object-contain grayscale group-hover:grayscale-0 transition duration-300' } }
@@ -144,7 +144,7 @@ components:
                   - type: container
                     element: article
                     props:
-                      className: 'group flex flex-col items-center text-center bg-white rounded-lg shadow-md p-8'
+                      className: 'group flex flex-col items-center text-center bg-white rounded-panel shadow-md p-8'
                     interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-soutiens/centre-collaboratif-connecte.webp, alt: 'Centre Collaboratif Connecté (C³)', loading: lazy, className: 'h-20 w-full object-contain grayscale group-hover:grayscale-0 transition duration-300' } }

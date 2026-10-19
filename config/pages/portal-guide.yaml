@@ -46,7 +46,7 @@ components:
                   # On a phone and a narrow screen: the outline before the text.
                   - type: container
                     element: nav
-                    props: { className: 'xl:hidden rounded-lg border border-border bg-surface p-4' }
+                    props: { className: 'xl:hidden rounded-panel border border-border bg-surface p-4' }
                     children:
                       - { type: text, element: p, content: $t:member.guide.toc, props: { className: 'text-xs font-semibold uppercase tracking-wide text-text-muted mb-2' } }
                       - { type: toc, props: { className: 'text-sm [&_a]:block [&_a]:py-1 [&_a]:text-text-muted [&_a:hover]:text-navy [&_a[aria-current]]:font-semibold [&_a[aria-current]]:text-navy [&_a.active]:font-semibold [&_a.active]:text-navy' } }

@@ -57,7 +57,7 @@ components:
                       - { type: record-field, format: long-date, props: { field: due_date, className: 'font-semibold text-navy' } }
                       - { type: record-field, props: { field: category } }
                       - { type: record-field, props: { field: recurrence } }
-                  - { type: text, element: p, content: "Désactivée : elle n'apparaît plus dans le calendrier et aucun rappel ne part.", visibility: { record: { field: active, eq: false } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-lg bg-blue-100 max-w-2xl' } }
+                  - { type: text, element: p, content: "Désactivée : elle n'apparaît plus dans le calendrier et aucun rappel ne part.", visibility: { record: { field: active, eq: false } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-panel bg-blue-100 max-w-2xl' } }
               - type: flex
                 props:
                   className: 'flex flex-wrap gap-3'

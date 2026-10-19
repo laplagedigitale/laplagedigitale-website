@@ -40,19 +40,19 @@ components:
             children:
               - type: link
                 visibility: { roles: [coworker] }
-                props: { href: $t:href.portal, data-space: espace-membre, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
+                props: { href: $t:href.portal, data-space: espace-membre, className: 'block rounded-panel border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
                 children:
                   - { type: text, element: p, content: $t:nav.portal, props: { className: 'text-xl font-bold text-navy' } }
                   - { type: text, element: p, content: $t:spaces.member, props: { className: 'text-sm text-text-muted mt-1' } }
               - type: link
                 visibility: { roles: [admin] }
-                props: { href: /administration, data-space: administration, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
+                props: { href: /administration, data-space: administration, className: 'block rounded-panel border border-border bg-surface p-6 hover:border-orange hover:shadow-md transition' }
                 children:
                   - { type: text, element: p, content: $t:spaces.admin, props: { className: 'text-xl font-bold text-navy' } }
                   - { type: text, element: p, content: $t:spaces.admin.desc, props: { className: 'text-sm text-text-muted mt-1' } }
               - type: link
                 visibility: { roles: [editor] }
-                props: { href: /administration/contenu, data-space: editor, className: 'block rounded-lg border border-border bg-surface p-6 hover:border-magenta hover:shadow-md transition' }
+                props: { href: /administration/contenu, data-space: editor, className: 'block rounded-panel border border-border bg-surface p-6 hover:border-magenta hover:shadow-md transition' }
                 children:
                   - { type: text, element: p, content: $t:spaces.editor, props: { className: 'text-xl font-bold text-navy' } }
                   - { type: text, element: p, content: $t:spaces.editor.desc, props: { className: 'text-sm text-text-muted mt-1' } }
