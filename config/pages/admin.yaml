@@ -1,7 +1,7 @@
 # Page: admin — the dashboard of the Administration de l'association, where an
 # admin lands after sign-in (/app): what is waiting in each section — the
-# Calendrier de gestion's deadlines, members, finances, content — and the way
-# into it.
+# « À faire » strip first (the five counts that need someone), then each
+# section — deadlines, members, finances, content — and the way into it.
 #
 # An admin bypasses row-level rules, so every count covers every member. The
 # « Mon Espace Membre » card is the sidebar's link for a phone (the sidebar's
@@ -52,6 +52,94 @@ components:
                   href: /espace-membre
                   className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
 
+          # À faire — what is waiting, one tile per thing to handle, each opening the
+          # page where it is handled. The sections below keep the context; these
+          # five counts live only here.
+          - type: container
+            element: section
+            props: { className: 'space-y-4', 'aria-labelledby': admin-todo }
+            children:
+              - { type: text, element: h2, content: À faire, props: { id: admin-todo, className: 'text-xl font-semibold text-navy' } }
+              - type: grid
+                props: { className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4' }
+                children:
+                  - type: link
+                    props: { href: /administration/calendrier, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Échéances en retard : voir' }
+                    children:
+                      - type: kpi
+                        label: Échéances en retard
+                        description: Passées sans être marquées « faites »
+                        icon: alarm-clock
+                        dataSource:
+                          table: management_deadlines
+                          filter:
+                          - { field: active, operator: eq, value: true }
+                          - { field: due_date, operator: lt, value: $today }
+                        kpiAggregate: { function: count }
+                        thresholds:
+                          - { value: 0, color: green }
+                          - { value: 1, color: red }
+                  - type: link
+                    props: { href: /administration/demandes, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Demandes à traiter : voir' }
+                    children:
+                      - type: kpi
+                        label: Demandes à traiter
+                        description: Messages du formulaire de contact
+                        icon: inbox
+                        dataSource:
+                          table: leads
+                          filter:
+                          - { field: status, operator: eq, value: new }
+                        kpiAggregate: { function: count }
+                        thresholds:
+                          - { value: 0, color: green }
+                          - { value: 1, color: yellow }
+                  - type: link
+                    props: { href: /administration/inscriptions-flex, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Inscriptions Flex : voir' }
+                    children:
+                      - type: kpi
+                        label: Inscriptions Flex
+                        description: À valider ou à refuser
+                        icon: user-plus
+                        dataSource:
+                          table: flex_signups
+                          filter:
+                          - { field: status, operator: eq, value: new }
+                        kpiAggregate: { function: count }
+                        thresholds:
+                          - { value: 0, color: green }
+                          - { value: 1, color: yellow }
+                  - type: link
+                    props: { href: /administration/finances/factures, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Factures en retard : voir' }
+                    children:
+                      - type: kpi
+                        label: Factures en retard
+                        description: Échéance passée, pas encore payées
+                        icon: receipt
+                        dataSource:
+                          table: invoices
+                          filter:
+                          - { field: status, operator: eq, value: late }
+                        kpiAggregate: { function: count }
+                        thresholds:
+                          - { value: 0, color: green }
+                          - { value: 1, color: red }
+                  - type: link
+                    props: { href: /administration/finances/rapprochements, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Rapprochements : voir' }
+                    children:
+                      - type: kpi
+                        label: Rapprochements
+                        description: À vérifier ou en échec
+                        icon: git-compare-arrows
+                        dataSource:
+                          table: payment_matches
+                          filter:
+                          - { field: status, operator: in, value: [review, failed] }
+                        kpiAggregate: { function: count }
+                        thresholds:
+                          - { value: 0, color: green }
+                          - { value: 1, color: yellow }
+
           # Échéances — the Calendrier de gestion: what is overdue (nobody marked
           # it done) and what comes in the next 60 days.
           - type: container
@@ -64,20 +152,10 @@ components:
                   - { type: text, element: h2, content: Échéances, props: { className: 'text-xl font-semibold text-navy' } }
                   - { type: link, content: 'Voir le calendrier →', props: { href: /administration/calendrier, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: grid
-                props: { className: 'grid grid-cols-1 xl:grid-cols-4 gap-4 items-start' }
+                props: { className: 'grid grid-cols-1 gap-4 items-start' }
                 children:
-                  - type: kpi
-                    label: En retard
-                    icon: alarm-clock
-                    dataSource:
-                      table: management_deadlines
-                      filter:
-                        - { field: active, operator: eq, value: true }
-                        - { field: due_date, operator: lt, value: $today }
-                    kpiAggregate: { function: count }
-                    thresholds: [{ value: 1, color: yellow }]
                   - type: card
-                    props: { className: 'p-4 sm:p-6 xl:col-span-3' }
+                    props: { className: 'p-4 sm:p-6' }
                     children:
                       - type: list
                         dataSource:
@@ -125,16 +203,6 @@ components:
                     kpiAggregate: { function: count }
                     thresholds:
                       - { value: 1, color: yellow }
-                  - type: kpi
-                    label: Inscriptions Flex à traiter
-                    icon: user-plus
-                    dataSource:
-                      table: flex_signups
-                      filter:
-                        - { field: status, operator: eq, value: new }
-                    kpiAggregate: { function: count }
-                    thresholds:
-                      - { value: 1, color: yellow }
 
           # Finances
           - type: container
@@ -148,7 +216,7 @@ components:
                   - { type: link, content: 'Voir les finances →', props: { href: /administration/finances, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: grid
                 props:
-                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
+                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
                 children:
                   - type: kpi
                     label: Reste à encaisser (TTC)
@@ -160,16 +228,6 @@ components:
                     kpiAggregate: { function: sum, field: remaining_amount }
                     kpiFormat: { type: currency, options: { currency: EUR } }
                   - type: kpi
-                    label: Factures en retard
-                    icon: alarm-clock
-                    dataSource:
-                      table: invoices
-                      filter:
-                        - { field: status, operator: eq, value: late }
-                    kpiAggregate: { function: count }
-                    thresholds:
-                      - { value: 1, color: red }
-                  - type: kpi
                     label: Flex à facturer (HT)
                     icon: calendar-days
                     dataSource:
@@ -178,16 +236,6 @@ components:
                         - { field: status, operator: eq, value: to_invoice }
                     kpiAggregate: { function: sum, field: amount }
                     kpiFormat: { type: currency, options: { currency: EUR } }
-                  - type: kpi
-                    label: Rapprochements à vérifier
-                    icon: git-compare-arrows
-                    dataSource:
-                      table: payment_matches
-                      filter:
-                        - { field: status, operator: in, value: [review, failed] }
-                    kpiAggregate: { function: count }
-                    thresholds:
-                      - { value: 1, color: yellow }
                   - type: kpi
                     label: Trésorerie totale
                     icon: piggy-bank
@@ -224,11 +272,10 @@ components:
                   - type: flex
                     props: { className: 'flex flex-wrap items-center gap-x-5 gap-y-2' }
                     children:
-                      - { type: link, content: 'Voir les demandes →', props: { href: /administration/demandes, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
                       - { type: link, content: 'Gérer le blog →', props: { href: /administration/contenu, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: grid
                 props:
-                  className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+                  className: 'grid grid-cols-1 sm:grid-cols-2 gap-4'
                 children:
                   - type: kpi
                     label: Articles publiés
@@ -246,15 +293,3 @@ components:
                       filter:
                         - { field: status, operator: eq, value: draft }
                     kpiAggregate: { function: count }
-                  - type: kpi
-                    label: Demandes à traiter
-                    description: Messages du formulaire de contact pas encore marqués « Traité »
-                    icon: mail
-                    dataSource:
-                      table: leads
-                      filter:
-                        - { field: status, operator: eq, value: new }
-                    kpiAggregate: { function: count }
-                    thresholds:
-                      - { value: 0, color: green }
-                      - { value: 1, color: yellow }
