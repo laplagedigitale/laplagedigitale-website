@@ -2,20 +2,13 @@
 
 # ── Hrefs ──
 href.home: /de
-href.about: /de/qui-sommes-nous
-href.activities: /de/nos-activites
-href.supporters: /de/nos-soutiens
-href.space: /de/espace-coworking
-href.pricing: /de/les-formules
-href.coworkers: /de/nos-coworkers
-href.companies: /de/les-entreprises
+href.pricing: "/de/preise"
 href.blog: /de/blog
-href.contact: /de/contact
+href.contact: "/de/praktische-infos"
 href.legal: /de/mentions-legales
 href.portal: /de/espace-membre
 href.portal.invoices: /de/espace-membre/factures
 href.portal.mandate: /de/espace-membre/prelevement
-href.portal.account: /de/espace-membre/compte
 href.portal.presences: "/de/espace-membre/presences"
 href.flex: "/de/flex"
 href.privacy: /de/confidentialite
@@ -24,36 +17,16 @@ href.privacy: /de/confidentialite
 nav.aria: Hauptnavigation
 nav.portal: Mitgliederbereich
 nav.menu: Menü
-nav.home: Startseite
-nav.about: Über uns
-nav.about.desc: Das Projekt, der Verein und das Team
-nav.activities: Unsere Aktivitäten
-nav.activities.desc: Was wir anbieten und beherbergen
-nav.supporters: Unsere Unterstützer
-nav.supporters.desc: Partner, Labels und Netzwerke
-nav.coworking: Coworking-Space
-nav.space: Die Räume
-nav.space.desc: Schreibtische, Flex-Plätze, Boxen und Säle
-nav.pricing: Tarife
-nav.pricing.desc: Fix, Nomade, Flex und Besprechungsräume
-nav.coworkers: Unsere Coworker
-nav.coworkers.desc: Die Menschen hinter La Plage
-nav.companies: Die Unternehmen
-nav.companies.desc: Die Unternehmen vor Ort
+nav.home: "Start"
 nav.blog: Neuigkeiten
-nav.contact: Praktische Infos
-nav.cta: Mitglied werden
 nav.legal: Impressum
 nav.privacy: Datenschutz
 nav.editor: Redaktionsbereich
 
 # ── Footer ──
 footer.tagline: "Ein gemeinnütziger Dritter Ort und Coworking-Space mitten in Straßburg: über 600 m² zum Arbeiten, Begegnen und Gründen."
-footer.visit: So finden Sie uns
-footer.hours: "Montag bis Freitag, 9–17 Uhr · 24/7-Zugang für Fixplätze"
-footer.explore: Entdecken
-footer.follow: Folgen Sie uns
-footer.copyright: "© La Plage Digitale — Verein nach elsässisch-lothringischem Recht von 1908"
+footer.follow: Folge uns
+footer.copyright: "© La Plage Digitale, Verein nach Ortsrecht von 1908"
 
 # ── Blog ──
 blog.meta.title: Neuigkeiten — La Plage Digitale
@@ -69,121 +42,11 @@ post.next: Nächster Artikel
 
 # ═══ Page dictionaries (generated from fragments — edit the fragments) ═══
 
-# ── about ──
-about.meta.title: Über uns — La Plage Digitale
-about.meta.description: "La Plage Digitale, ein aus Alsace Digitale hervorgegangener Verein, betreibt einen Dritten Ort mit über 600 m² mitten in Straßburg. Projekt, Vorstand, Team."
-about.eyebrow: Über uns
-about.title: Ein Dritter Ort mitten in Straßburg
-about.lead: La Plage Digitale empfängt Sie in ihrem Coworking-Space, dem Herzstück ihres Dritten Ortes.
-about.place.eyebrow: Der Ort
-about.place.title: Über 600 m² in den ehemaligen Räumen der Coop
-about.place.p1: "In den ehemaligen Räumen der Coop in der Rue Jacques Peirotes, mitten in Straßburg, bietet La Plage Digitale über 600 m² für Gründer, Innovatorinnen und Kreative der Region. Als Treffpunkt der Straßburger Gründerszene fördert der Ort kreative Initiativen – einzeln wie gemeinsam."
-about.place.p2: "Zugleich ist er einer der größten Coworking-Spaces Straßburgs: 52 Festplätze für Coworker und 30 Plätze ohne Reservierung, montags bis freitags von 9 bis 17 Uhr. Voll ausgestattete Besprechungsräume bieten Platz für Seminare und Teammeetings."
-about.place.p3: "Nicht zuletzt fasst unser Flex-Bereich bis zu 60 Personen für Meetups und Abendveranstaltungen mit unseren Partnern aus Vereinen, Institutionen und Wirtschaft – und Sie können ihn für Ihre eigenen beruflichen Veranstaltungen mieten."
-about.place.imageAlt: "Der Open Space von La Plage Digitale: Schreibtische, Hängeleuchten und Glaswände unter einer Betondecke"
-about.project.title: Das Projekt
-about.project.p1: "La Plage Digitale will die Entwicklung innovativer Projekte beschleunigen. Sie fördert den Austausch zwischen den Coworkern und empfängt jeden Besucher persönlich."
-about.project.p2: "Unser Coworking-Space steht allen offen. Gerade diese Vielfalt schafft ein herzliches, wohlwollendes Miteinander: gemeinsam arbeiten, Leistungen und Werte teilen, mit Respekt füreinander."
-about.project.motto: Teilen und Serendipität sind die Leitgedanken unserer Entscheidungen und unseres Handelns.
-about.association.title: Der Verein
-about.association.p1: "La Plage Digitale ist ein Verein nach elsässisch-lothringischem Ortsrecht (loi 1908), 2019 entstanden aus der Ausgliederung eines Teils der Aktivitäten des Vereins Alsace Digitale."
-about.association.p2: "Er betreibt den Dritten Ort und seinen Coworking-Space. La Plage Digitale ist damit zugleich der Name des Vereins und des Ortes mit doppelter Bestimmung."
-about.board.eyebrow: Vorstand
-about.board.title: Der Vorstand von La Plage Digitale
-about.role.president: Präsident von La Plage Digitale
-about.role.treasurer: Schatzmeister von La Plage Digitale
-about.role.secretary: Schriftführer von La Plage Digitale
-about.team.eyebrow: Im Alltag
-about.team.title: Das Team
-about.team.lead: Sie empfangen Sie, beantworten Ihre Fragen und halten die Plage jeden Tag am Laufen.
-about.role.operations: Operativer Leiter von La Plage Digitale
-about.cta.title: Machen Sie mit!
-about.cta.lead: Werden Sie Mitglied des Vereins oder rufen Sie uns an, um einen Besuch zu vereinbaren.
-about.cta.join: Mitglied werden
-about.cta.call: Rufen Sie uns an
-about.cta.callNumber: Rufen Sie uns an · +33 9 77 42 59 29
-
-# ── activities ──
-activities.meta.title: Unsere Aktivitäten — La Plage Digitale
-activities.meta.description: "Plage-Rat, gemeinsame Bibliothek, Meetups, Hack SXB, Beratungssprechstunden und Bidouillothèque: das Leben im Dritten Ort La Plage Digitale in Straßburg."
-activities.eyebrow: Dritter Ort · Community · Veranstaltungen
-activities.title: Unsere Aktivitäten
-activities.lead: "Die Plage ist mehr als ein Schreibtisch: eine Community, die sich trifft, ihre Ressourcen teilt und ihre Türen für Vereine und die Tech-Communities Straßburgs öffnet."
-activities.offer.eyebrow: Für unsere Coworker
-activities.offer.title: Was wir anbieten …
-activities.offer.lead: Regelmäßige Treffen und Angebote, die die Gemeinschaft unserer Mitglieder lebendig halten.
-activities.council.title: Der Plage-Rat
-activities.council.text: "Einmal im Monat bringt der Plage-Rat die Coworker zusammen: Neuigkeiten aus dem Space, Wünsche aller und die Vorstellung der Neuankömmlinge."
-activities.council.imageAlt: Vier Personen im Gespräch an einem Tisch voller Unterlagen
-activities.library.title: Gemeinsame Bibliothek
-activities.library.text: Bücher zu den unterschiedlichsten Themen stehen allen Mitgliedern zur Verfügung.
-activities.library.imageAlt: Die Regale der gemeinsamen Bibliothek
-activities.startupce.title: Startup CE
-activities.startupce.text: "Dank unserer Partnerschaft mit der Plattform Startup CE profitieren Sie von zahlreichen Vorteilen und Rabatten für Kultur- und Freizeitangebote."
-activities.startupce.imageAlt: Illustration einer Rakete, die über einer Stadt startet
-activities.ecology.title: Nachhaltigkeit
-activities.ecology.text: "Mülltrennung, Sensibilisierung für umweltbewusstes Verhalten und Maßnahmen gegen Verschwendung: Wir handeln jeden Tag, um unseren Fußabdruck zu verringern."
-activities.ecology.imageAlt: Illustration des Nachhaltigkeitsansatzes von La Plage Digitale
-activities.host.eyebrow: Offen für die Stadt
-activities.host.title: Wen wir empfangen …
-activities.host.lead: Communities, Fachleute und Begeisterte, die die Plage zu einem offenen Lernort machen.
-activities.meetups.title: Meetups
-activities.meetups.text: "Entwickler-Communities (Go SXB Go!, Strasbourg JS …) veranstalten regelmäßig Meetups rund um Programmiersprachen und ihre Weiterentwicklung."
-activities.meetups.imageAlt: Ein Entwickler-Meetup im Flex-Bereich
-activities.advice.title: Beratungssprechstunden
-activities.advice.text: "Am 1. und 3. Freitag im Monat erhalten Sie fachkundige Beratung und Antworten auf Ihre Fragen zu gewerblichem Rechtsschutz und Steuern."
-activities.advice.imageAlt: Zwei Personen bei einem Beratungsgespräch am Fenster
-activities.hack.title: Hack SXB
-activities.hack.text: "Am letzten Freitag jedes Monats lädt Hack SXB zu einem Programmierabend mit freien Themen ein: Bringen Sie Ihr eigenes Projekt mit oder machen Sie bei einem gemeinsamen mit."
-activities.hack.imageAlt: Ein Hack-SXB-Abend bei La Plage Digitale
-activities.hack.link: hacksxb.com →
-activities.bidouillo.title: Bidouillothèque
-activities.bidouillo.text: "Ein gemeinsames Ressourcenzentrum für praxisnahes Lernen und digitale wie kreative Projekte: VR-Brillen, Computer, Tablets, Roboter … für Bildungsprojekte zu mieten."
-activities.bidouillo.imageAlt: Hände bauen einen kleinen elektronischen Roboter zusammen
-activities.cta.title: Lust mitzumachen?
-activities.cta.lead: Werden Sie Mitglied des Vereins und gestalten Sie das Leben an der Plage mit – oder schlagen Sie uns Ihre Veranstaltung vor.
-activities.cta.join: Mitglied werden
-activities.cta.contact: Kontakt aufnehmen
-
-# ── companies ──
-companies.meta.title: Die Unternehmen bei La Plage Digitale
-companies.meta.description: "Start-ups, Selbstständige, Vereine und KMU: Entdecken Sie die Unternehmen, die ihre Büros bei La Plage Digitale im Herzen von Straßburg haben."
-companies.eyebrow: Die Unternehmen
-companies.title: Die Unternehmen bei La Plage Digitale
-companies.lead: "Start-ups, Selbstständige, Vereine und KMU aus Digitalwirtschaft, Umwelt und Beratung arbeiten Seite an Seite in der 13 rue Jacques Peirotes."
-companies.wall.title: Sie arbeiten in der Plage
-companies.wall.text: Klicken Sie auf ein Logo, um die Website des Unternehmens zu besuchen.
-companies.cta.title: Machen Sie mit
-companies.cta.text: "Ein fester Arbeitsplatz, eine Box für Ihr Team oder ein Flex-Platz: In der Plage ist Platz für Sie."
-companies.cta.pricing: Unsere Angebote
-companies.cta.contact: Kontakt aufnehmen
-
 # ── contact ──
-contact.meta.title: "Kontakt und Anfahrt — La Plage Digitale"
-contact.meta.description: "Telefon, E-Mail, Öffnungszeiten und Anfahrt zu La Plage Digitale, Dritter Ort und Coworking-Space in der 13 rue Jacques Peirotes in Straßburg."
-contact.eyebrow: "Praktische Informationen"
-contact.title: "Kontaktieren Sie uns!"
-contact.lead: "Sie möchten uns besuchen, suchen einen Arbeitsplatz oder einen Besprechungsraum oder planen eine Veranstaltung? Unser Team ist montags bis freitags für Sie da – unsere Tür steht Ihnen offen."
-contact.reach.eyebrow: "So erreichen Sie uns"
-contact.reach.title: "Sprechen wir über Ihr Vorhaben"
-contact.phone.label: "Telefon"
-contact.email.label: "E-Mail"
-contact.address.label: "Adresse"
-contact.address.directions: "Route berechnen"
-contact.hours.label: "Öffnungszeiten"
-contact.hours.weekdays: "Montag bis Freitag · 9:00 – 17:00 Uhr"
-contact.hours.fixed: "Mieter eines festen Arbeitsplatzes haben rund um die Uhr, 7 Tage die Woche Zugang."
-contact.map.eyebrow: "So finden Sie uns"
-contact.map.title: "Mitten im Herzen von Straßburg"
-contact.map.lead: "La Plage Digitale befindet sich in den ehemaligen Räumen der Coop, 13 rue Jacques Peirotes, in Straßburg."
 contact.map.iframeTitle: "Karte: La Plage Digitale, 13 rue Jacques Peirotes, 67000 Straßburg"
-contact.form.eyebrow: "Schreiben Sie uns"
 contact.form.title: "Nachricht senden"
-contact.form.lead: "Schreiben Sie uns ein paar Zeilen, das Team antwortet Ihnen per E-Mail."
-contact.form.submit: "Nachricht senden"
-contact.form.success.title: "Vielen Dank, Ihre Nachricht ist angekommen!"
-contact.form.success.message: "Danke, Ihre Nachricht ist angekommen. In dringenden Fällen erreichen Sie uns unter +33 9 77 42 59 29."
-contact.form.error: "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an contact@laplagedigitale.fr."
+contact.form.success.message: "Danke, deine Nachricht ist angekommen. In dringenden Fällen erreichst du uns unter +33 9 77 42 59 29."
+contact.form.error: "Deine Nachricht konnte nicht gesendet werden. Bitte versuch es erneut oder schreib uns direkt an contact@laplagedigitale.fr."
 contact.form.name.label: "Vor- und Nachname"
 contact.form.name.placeholder: "Alex Müller"
 contact.form.email.label: "E-Mail"
@@ -199,22 +62,11 @@ contact.form.subject.salle: "Besprechungsraum"
 contact.form.subject.domiciliation: "Geschäftsadresse"
 contact.form.subject.evenement: "Veranstaltung ausrichten"
 contact.form.subject.autre: "Sonstiges"
-contact.form.message.label: "Ihre Nachricht"
-contact.form.message.placeholder: "Beschreiben Sie uns in wenigen Zeilen, wonach Sie suchen …"
-contact.form.privacy: "Ihre Angaben verwenden wir ausschließlich zur Beantwortung Ihrer Anfrage; sie werden niemals verkauft. Mehr dazu und zu Ihren Rechten finden Sie in unserer Datenschutzerklärung."
-contact.cta.motif: "Coworking · Dritter Ort · Veranstaltungen"
-contact.cta.title: "Bereit, Ihren Laptop an der Plage aufzuklappen?"
-contact.cta.lead: "Vergleichen Sie unsere Coworking-Angebote oder werden Sie Mitglied des Vereins und gestalten Sie den Dritten Ort mit."
-contact.cta.pricing: "Angebote ansehen"
-contact.cta.membership: "Mitglied werden auf HelloAsso"
+contact.form.message.label: "Deine Nachricht"
+contact.form.message.placeholder: "Beschreib uns in wenigen Zeilen, wonach du suchst …"
+contact.form.privacy: "Deine Angaben verwenden wir ausschließlich zur Beantwortung deiner Anfrage; sie werden niemals verkauft. Mehr dazu und zu deinen Rechten findest du in unserer Datenschutzerklärung."
 
 # ── coworkers ──
-coworkers.meta.title: Unsere Coworker — La Plage Digitale
-coworkers.meta.description: "Designer, Entwickler, Gründerinnen: Lernen Sie die Menschen kennen, die täglich bei La Plage Digitale arbeiten, dem gemeinnützigen Coworking in Straßburg."
-coworkers.eyebrow: Unsere Coworker
-coworkers.title: Die Menschen, die die Plage ausmachen
-coworkers.lead: "Angestellte im Homeoffice, Selbstständige, Gründerinnen und Gründer: Sie haben sich für La Plage Digitale entschieden – und erzählen, warum."
-coworkers.list.title: Porträts unserer Coworker
 coworkers.caroline.alt: Porträt von Caroline Bosc
 coworkers.caroline.p1: "Nach einem Master in internationalem Handel hat Caroline ihr Wissen mit einem Master im Webbereich in Straßburg ergänzt."
 coworkers.caroline.p2: "Heute ist sie UX-Designerin bei Impact Positif und arbeitet seit März 2022 bei La Plage Digitale."
@@ -234,64 +86,6 @@ coworkers.sylvaine.p2: "Außerdem ist sie die inoffizielle Lieferantin für Heft
 coworkers.eleonore.alt: Porträt von Eléonore Greif
 coworkers.eleonore.p1: "In einem früheren Leben Dokumentarfilmerin, ist Eléonore vor Kurzem als Verwaltungsassistentin zum fröhlichen Team von Mu.se gestoßen – und zum noch fröhlicheren Team von La Plage Digitale!"
 coworkers.eleonore.p2: "Eine Gelegenheit, außerhalb der eigenen vier Wände zu arbeiten, umgeben von Menschen, die sich im Vereinsleben engagieren."
-coworkers.cta.title: Wird Ihr Porträt das nächste sein?
-coworkers.cta.text: Werden Sie Teil der Community von La Plage Digitale – für einen Tag oder für lange Zeit.
-coworkers.cta.pricing: Unsere Angebote
-coworkers.cta.companies: Die Unternehmen vor Ort
-
-# ── home ──
-home.meta.title: La Plage Digitale — Coworking und Dritter Ort in Straßburg
-home.meta.description: "Der Dritte Ort für Innovation in Straßburg: 600 m² Coworking im Stadtzentrum, mit Festplätzen, Flex-Plätzen und Besprechungsräumen zur Miete."
-home.href.fixe: /de/les-formules#fixe
-home.href.nomade: /de/les-formules#nomade
-home.href.flex: "/de/flex"
-home.href.reunion: /de/les-formules#reunion
-home.hero.eyebrow: Coworking · Dritter Ort · Straßburg
-home.hero.title: Der Dritte Ort für Innovation in Straßburg
-home.hero.lead: "Über 600 m² für Gründerinnen, Innovatoren und Kreative – in den ehemaligen Räumen der Coop, mitten in Straßburg. Ein Schreibtisch pro Monat, ein Platz für einen Tag oder ein Raum für Ihre Besprechung: Arbeiten Sie bei uns an der Plage."
-home.hero.cta.space: In unserem Space arbeiten
-home.hero.cta.fixe: Schreibtisch pro Monat
-home.hero.cta.flex: Schreibtisch pro Tag
-home.hero.cta.reunion: Besprechungsräume
-home.hero.imageAlt: "Fotocollage von La Plage Digitale: Coworker bei der Arbeit, Bibliothek, Gemeinschaftsküche, Kicker und ein Meetup"
-home.numbers.title: La Plage in Zahlen
-home.numbers.area: gemeinsame Arbeitsfläche
-home.numbers.fixed: Festplätze
-home.numbers.flex: Flex-Plätze ohne Reservierung
-home.numbers.rooms: Besprechungsräume für 6 bis 60 Personen
-home.numbers.companies: ansässige Unternehmen
-home.offers.eyebrow: Unsere Angebote
-home.offers.title: Ein Angebot für jede Arbeitsweise
-home.offers.lead: Pro Monat, pro Tag oder für eine Besprechung – wählen Sie, was zu Ihnen passt.
-home.offers.fixe.title: Fix
-home.offers.fixe.price: 275 € zzgl. MwSt. / Monat
-home.offers.fixe.text: Ihr eigener Schreibtisch im Open Space, ein Schließfach, Zugang rund um die Uhr und zu den Besprechungsräumen.
-home.offers.nomade.title: Nomade
-home.offers.nomade.price: 175 € zzgl. MwSt. / Monat
-home.offers.nomade.text: Zugang zum Flex-Bereich rund um die Uhr, mit eigenem Schlüssel.
-home.offers.flex.title: Flex
-home.offers.flex.price: 14 € zzgl. MwSt. / Tag
-home.offers.flex.text: Ein geteilter Arbeitsplatz für einen Tag, Montag bis Freitag von 9 bis 17 Uhr, ohne Bindung.
-home.offers.reunion.title: Besprechungsräume
-home.offers.reunion.price: ab 87 € zzgl. MwSt. / 4 Std.
-home.offers.reunion.text: Vier Räume mit Bildschirm für 6 bis 60 Personen, nur wenige Schritte vom Münster entfernt.
-home.offers.more: Details ansehen →
-home.offers.cta: Alle Angebote
-home.community.eyebrow: Dritter Ort
-home.community.title: Mehr als ein Coworking
-home.community.lead: "La Plage Digitale ist ein Ort der Begegnung und des Austauschs für die Straßburger Gründerszene. Teilen und Serendipität: Jeden Monat trifft sich die Community, lernt voneinander und gestaltet gemeinsam."
-home.community.item1: "Der Plage-Rat – einmal im Monat tauschen sich die Coworker aus und begrüßen die Neuankömmlinge."
-home.community.item2: "Meetups – Go SXB Go!, Strasbourg JS und weitere Entwickler-Communities treffen sich hier regelmäßig."
-home.community.item3: "Hack SXB – am letzten Freitag im Monat ein Abend rund ums Programmieren an freien Projekten."
-home.community.item4: "Gemeinsame Bibliothek, Bidouillothèque, Beratungssprechstunden – Ressourcen, die die Mitglieder teilen."
-home.community.cta: Unsere Aktivitäten entdecken
-home.community.imageAlt: Ein Entwickler-Meetup im Flex-Bereich von La Plage Digitale
-home.supporters.title: Mit Unterstützung von
-home.supporters.cta: Unsere Förderer und Netzwerke →
-home.cta.title: Lust, Teil der Plage zu werden?
-home.cta.lead: Besuchen Sie uns montags bis freitags von 9 bis 17 Uhr – oder werden Sie Mitglied des Vereins und Teil der Community.
-home.cta.visit: Besuch vereinbaren
-home.cta.join: Mitglied werden
 
 # ── legal ──
 legal.meta.title: "Impressum — La Plage Digitale"
@@ -326,31 +120,17 @@ legal.law.title: "Anwendbares Recht"
 legal.law.p1: "Dieses Impressum unterliegt französischem Recht. Bei Fragen schreiben Sie uns gerne an contact@laplagedigitale.fr."
 
 # ── pricing ──
-href.pricing.fixe: /de/les-formules#fixe
-href.pricing.nomade: /de/les-formules#nomade
-href.pricing.flex: "/de/flex"
-href.pricing.reunion: /de/les-formules#reunion
-href.pricing.domiciliation: /de/les-formules#domiciliation
-href.pricing.parrainage: /de/les-formules#parrainage
-pricing.meta.title: Unsere Coworking-Angebote in Straßburg
-pricing.meta.description: "Fix 275 € zzgl. MwSt./Monat, Nomade 175 €/Monat, Flex 14 €/Tag, Besprechungsräume ab 87 € für 4 Std. und Geschäftsadresse in Straßburg."
-pricing.eyebrow: Unsere Angebote
-pricing.title: Einfache Angebote für Ihren Arbeitsrhythmus
-pricing.lead: "Ein eigener Schreibtisch, freier Zugang zum Flex-Bereich oder ein Platz für einen Tag: Wählen Sie das passende Angebot und buchen Sie bei Bedarf einen Raum dazu."
-pricing.jump.aria: Zu einem Angebot springen
-pricing.jump.rooms: Besprechungsräume
-pricing.jump.domiciliation: Geschäftsadresse
-pricing.plans.eyebrow: Coworking
-pricing.plans.title: Drei Angebote zum Ankommen
-pricing.plans.vat: "Preise zzgl. 20 % MwSt. Fair Use bedeutet eine angemessene Nutzung, die fair unter den Mitgliedern geteilt wird."
-pricing.plan.cta: Kontakt aufnehmen
+href.pricing.fixe: "/de/preise#fixe"
+href.pricing.nomade: "/de/preise#nomade"
+href.pricing.flex: "/de/preise#flex"
+href.pricing.domiciliation: "/de/preise#domiciliation"
 pricing.fixe.name: Fix
 pricing.fixe.amount: 275 €
 pricing.fixe.unit: zzgl. MwSt. / Monat
 pricing.fixe.ttc: 330 € inkl. MwSt. pro Monat
-pricing.fixe.desc: "Ihr eigener Schreibtisch im Open Space, monatlich gemietet: ideal für langfristiges Arbeiten, mit Zugang zu den Besprechungsräumen."
+pricing.fixe.desc: "Dein eigener Schreibtisch im Open Space, monatlich gemietet: ideal für langfristiges Arbeiten, mit Zugang zu den Besprechungsräumen."
 pricing.fixe.f1: Zugang rund um die Uhr, 7 Tage die Woche, mit eigenem Schlüssel
-pricing.fixe.f2: Ihr eigener Schreibtisch
+pricing.fixe.f2: "Dein eigener Schreibtisch"
 pricing.fixe.f3: Ein abschließbarer persönlicher Spind
 pricing.fixe.f4: Stauraum
 pricing.fixe.f5: Glasfaser-Internet und WLAN
@@ -358,14 +138,8 @@ pricing.fixe.f6: Nutzung von Druckern und Scannern
 pricing.fixe.f7: Nutzung der Besprechungsräume nach Fair Use
 pricing.fixe.f8: Empfang und Versand von Post nach Fair Use
 pricing.fixe.f9: Geschäftsadresse möglich (im Einzelfall, je nach Tätigkeit und Mietdauer)
-pricing.fixe.f10: Kaffee so viel Sie möchten
+pricing.fixe.f10: Kaffee, so viel du willst
 pricing.fixe.f11: Kostenloser Zugang zu Lounge und Cafeteria
-pricing.fixe.offer.title: Angebot für junge Unternehmen
-pricing.fixe.offer.who: "Für juristische Personen (neu gegründetes Unternehmen oder Verein) mit einem Handelsregisterauszug (Kbis) unter einem Jahr bei Abschluss eines Fix-Vertrags:"
-pricing.fixe.offer.s1: erste 3 Monate
-pricing.fixe.offer.s2: folgende 3 Monate
-pricing.fixe.offer.s3: folgende 6 Monate
-pricing.fixe.offer.note: "Vorbehaltlich der Zustimmung des Vorstands von La Plage Digitale. Einzelne Ausnahmen sind möglich."
 pricing.nomade.name: Nomade
 pricing.nomade.amount: 175 €
 pricing.nomade.unit: zzgl. MwSt. / Monat
@@ -375,25 +149,20 @@ pricing.nomade.f1: Zugang zum Flex-Bereich rund um die Uhr, mit eigenem Schlüss
 pricing.nomade.f2: Nutzung von Druckern und Scannern nach Fair Use
 pricing.nomade.f3: Glasfaser-Internet und WLAN
 pricing.nomade.f4: Kostenloser Zugang zu Lounge und Cafeteria
-pricing.nomade.f5: Kaffee kostenlos und so viel Sie möchten
+pricing.nomade.f5: Kaffee gratis und so viel du willst
 pricing.nomade.info: "Gut zu wissen: Bei diesem Angebot werden Besprechungsräume zusätzlich berechnet."
 pricing.flex.name: Flex
 pricing.flex.amount: 14 €
 pricing.flex.unit: zzgl. MwSt. / Tag
 pricing.flex.ttc: 16,80 € inkl. MwSt. pro Tag
-pricing.flex.desc: "Ein Arbeitsplatz für einen Tag, für Ihren kurzfristigen Bedarf."
+pricing.flex.desc: "Ein Arbeitsplatz für einen Tag, für deinen kurzfristigen Bedarf."
 pricing.flex.f1: Ein geteilter Schreibtisch für den Tag (4 Plätze pro großem Tisch, 110 × 195 cm)
 pricing.flex.f2: Glasfaser-Internet und WLAN
 pricing.flex.f3: Nutzung von Druckern und Scannern
-pricing.flex.f4: Kaffee so viel Sie möchten
+pricing.flex.f4: Kaffee, so viel du willst
 pricing.flex.f5: Kostenloser Zugang zu Lounge und Cafeteria
-pricing.flex.info: "Von 9 bis 17 Uhr, Montag bis Freitag (außer an Feiertagen), ohne Reservierung. Sie checken im Mitgliederbereich ein und erhalten eine Rechnung pro Monat."
+pricing.flex.info: "Von 9 bis 17 Uhr, Montag bis Freitag (außer an Feiertagen), ohne Reservierung. Du checkst im Mitgliederbereich ein und bekommst eine Rechnung pro Monat."
 pricing.flex.f6: "Oder für einen halben Tag: 7 € zzgl. MwSt. (8,40 € inkl. MwSt.)"
-pricing.flex.cta: "So funktioniert es — anmelden"
-pricing.rooms.eyebrow: Besprechungsräume
-pricing.rooms.title: Vier Räume für 6 bis 60 Personen
-pricing.rooms.lead: "Ob Mitglied oder nicht: Mieten Sie einen Raum für einen ganzen oder halben Tag – ideal, um Kunden und Dienstleister mitten in Straßburg zu empfangen oder Schulungen nur wenige Schritte vom Münster entfernt durchzuführen. Jeder Raum ist mit einem Bildschirm ausgestattet."
-pricing.room.screen: Bildschirm
 pricing.room.unit: zzgl. MwSt. / 4 Std.
 pricing.room.crevette.name: Raum Crevette 🦐
 pricing.room.crevette.cap: Bis zu 6 Pers.
@@ -411,31 +180,11 @@ pricing.room.baleine.size: 36 m²
 pricing.room.baleine.price: 120 €
 pricing.room.baleine.alt: "Der Raum Baleine: langer Holztisch, hellblaue Sessel, Whiteboard und Bildschirm"
 pricing.room.narval.name: Raum Narval 🐋
-pricing.room.narval.cap: Bis zu 60 Pers.
+pricing.room.narval.cap: "50 Sitzplätze"
 pricing.room.narval.size: 82 m²
 pricing.room.narval.price: 253 €
 pricing.room.narval.alt: "Der Raum Narval: großer heller Raum mit Fensterfront zur Straße, Tischen und großem Bildschirm"
-pricing.dom.eyebrow: Geschäftsadresse
-pricing.dom.title: Ihre Geschäftsadresse in Straßburg
-pricing.dom.text: "Melden Sie den Sitz Ihres Unternehmens in der 13 rue Jacques Peirotes an – ganz ohne Schreibtisch in unserem Coworking-Space."
-pricing.dom.price: "40 € netto / Monat"
-pricing.dom.priceNote: "Unser veröffentlichter Preis – sprechen Sie uns für Details an."
-pricing.dom.offer: "Für jedes neu angemeldete Unternehmen gibt es 30 % Rabatt auf die ersten 3 Monate."
-pricing.dom.cta: Angebot anfragen
-pricing.referral.eyebrow: Empfehlung
-pricing.referral.title: "Bringen Sie jemanden mit – Sie gewinnen beide"
-pricing.referral.text: "Sie arbeiten bereits bei La Plage Digitale und jemand aus Ihrem Umfeld sucht einen Arbeitsplatz? Empfehlen Sie uns weiter: Die Person erhält beim Einstieg einen Rabatt, und Sie bekommen ein Dankeschön."
-pricing.referral.referee.title: Für die empfohlene Person
-pricing.referral.referee.amount: "−50 € auf die ersten 3 Monate"
-pricing.referral.referee.text: "50 € Rabatt auf die ersten 3 Monate bei La Plage Digitale."
-pricing.referral.referrer.title: Für Sie als Empfehlende·n
-pricing.referral.referrer.amount: "Ein Monat Rabatt oder ein Geschenk"
-pricing.referral.referrer.text: "Nach Wahl: ein Monat Rabatt oder ein Geschenk im gleichen Wert (Schokolade, Topfpflanze, Geschenkkarte…)."
-pricing.referral.note: "Nennen Sie bei der Anmeldung den Namen der Person, die Sie empfohlen hat. Empfehlungsprogramm, beschlossen vom Vorstand von La Plage Digitale."
-pricing.cta.title: Fragen oder Lust auf eine Besichtigung?
-pricing.cta.text: "Rufen Sie an, schreiben Sie uns oder kommen Sie montags bis freitags zwischen 9 und 17 Uhr vorbei – wir zeigen Ihnen den Raum."
-pricing.cta.contact: Kontakt aufnehmen
-pricing.cta.visit: Den Raum entdecken
+pricing.dom.text: "Melde den Sitz deines Unternehmens in der 13 rue Jacques Peirotes an, ganz ohne Schreibtisch in unserem Coworking-Space."
 
 # ── privacy ──
 privacy.meta.title: "Datenschutzerklärung — La Plage Digitale"
@@ -477,64 +226,6 @@ privacy.rights.p3: "Sind Sie nach Ihrer Kontaktaufnahme der Ansicht, dass Ihre R
 privacy.changes.title: "Änderungen dieser Erklärung"
 privacy.changes.p1: "Wir können diese Datenschutzerklärung anpassen, um Änderungen der Website oder der Rechtslage zu berücksichtigen. Das Datum der letzten Aktualisierung finden Sie oben auf dieser Seite."
 
-# ── space ──
-space.meta.title: Coworking-Space und Büros in Straßburg
-space.meta.description: "3 Boxen, 52 feste Arbeitsplätze, 30 Flex-Plätze und 4 Besprechungsräume für 6 bis 60 Personen in der 13 rue Jacques Peirotes, Straßburg. Virtueller Rundgang."
-space.eyebrow: Der Raum
-space.title: Coworking-Space und verfügbare Büros
-space.lead: "Über 600 m² im Herzen von Straßburg: abgeschlossene Büros, feste Arbeitsplätze, flexible Plätze und Räume für Besprechungen."
-space.hero.alt: "Ansichten von La Plage Digitale: der Open Space unter Betondecke und Oberlichtern sowie die Lounge am Empfang"
-space.offers.eyebrow: Was Sie erwartet
-space.offers.title: Ein Platz für jede Arbeitsweise
-space.box.title: Boxen für Start-ups
-space.box.text: Abgeschlossene Büros für Ihr kleines Team.
-space.fixed.title: Feste Arbeitsplätze
-space.fixed.text: Ihr eigener Schreibtisch im Open Space, mitten in der Stadt.
-space.flex.title: Flex-Plätze
-space.flex.text: Für den gelegentlichen Bedarf – ohne Reservierung, tage- oder halbtageweise.
-space.rooms.title: Besprechungsräume
-space.rooms.text: Für 6 bis 60 Personen – für Meetings, Konferenzen und Seminare.
-space.more: Mehr erfahren →
-space.how.eyebrow: So funktioniert's
-space.how.title: Wie kann ich bei La Plage Digitale arbeiten?
-space.how.fixed.title: Ein fester Arbeitsplatz
-space.how.fixed.text: "Sie interessieren sich für einen festen Arbeitsplatz? Kontaktieren Sie uns einfach telefonisch oder per E-Mail, um die verfügbaren Plätze zu erfahren."
-space.how.flex.title: Ein Flex-Platz
-space.how.flex.text: "Wenn Sie nur gelegentlich bei uns arbeiten möchten, wählen Sie das Flex-Angebot. Plätze können nicht im Voraus reserviert werden: Kommen Sie einfach während der Öffnungszeiten vorbei."
-space.how.flex.hours: Montag bis Freitag, 9 bis 17 Uhr
-space.how.flex.note: "Ausnahmsweise finden im Flex-Bereich Veranstaltungen statt, sodass er dann nicht verfügbar ist. Rufen Sie uns gerne an oder schauen Sie in unsere Neuigkeiten."
-space.how.flex.cta: Zu den Neuigkeiten →
-space.how.rooms.title: Ein Besprechungsraum
-space.how.rooms.text: "Sie interessieren sich für einen unserer Besprechungsräume? Kontaktieren Sie uns oder kommen Sie vorbei, um die Verfügbarkeit zu erfragen."
-space.how.rooms.cta: Kontakt aufnehmen
-space.how.rooms.alt: "Die Besprechungsräume Requin, Baleine und Narval von La Plage Digitale"
-space.cta.title: Bereit, Ihren Laptop aufzuklappen?
-space.cta.text: Entdecken Sie unsere Angebote oder besuchen Sie uns – wir zeigen Ihnen gerne alles.
-space.cta.pricing: Unsere Angebote
-space.cta.contact: Besichtigung vereinbaren
-
-# ── supporters ──
-supporters.meta.title: Unsere Förderer — La Plage Digitale
-supporters.meta.description: "La Plage Digitale wird von der Region Grand Est und der Eurométropole de Strasbourg gefördert und ist Mitglied im Netzwerk Tiers-Lieux Grand Est."
-supporters.eyebrow: Partner · Labels · Netzwerke
-supporters.title: Unsere Förderer
-supporters.lead: La Plage Digitale wächst dank der Gebietskörperschaften, die sie fördern, und der Netzwerke, die sie mit anderen Dritten Orten der Region verbinden.
-supporters.public.eyebrow: Öffentliche Hand
-supporters.public.title: Mit Unterstützung von
-supporters.public.lead: Die Gebietskörperschaften, die die Entwicklung des Dritten Ortes begleiten.
-supporters.region.text: Die Region Grand Est fördert La Plage Digitale.
-supporters.ems.text: Die Eurométropole de Strasbourg fördert La Plage Digitale.
-supporters.networks.eyebrow: Labels und Netzwerke
-supporters.networks.title: Unsere Labels und Netzwerke
-supporters.networks.lead: Die Netzwerke Dritter Orte und Labels, denen La Plage Digitale angehört.
-supporters.tlge.text: Mitglied im Netzwerk der Dritten Orte der Region Grand Est.
-supporters.c3.text: Ausgezeichnet mit dem Label Centre Collaboratif Connecté.
-supporters.visit: Website besuchen →
-supporters.cta.title: Unterstützen auch Sie die Plage
-supporters.cta.lead: Die Mitgliedschaft im Verein hält den Dritten Ort und seine Community lebendig.
-supporters.cta.join: Mitglied werden
-supporters.cta.about: Über uns
-
 # ── Espace Membre ── the coworker space (/espace-membre/*), and the portal tables' option labels.
 portal.nav.menu: Menü
 portal.nav.space: Mein Bereich
@@ -545,30 +236,30 @@ portal.nav.account: Konto
 portal.nav.profile: Mein Konto
 portal.nav.site: Zurück zur Website
 portal.dashboard.hello: "Hallo[, $session.name]"
-portal.dashboard.subtitle: "Ihr Coworker-Bereich: offene Beträge, Ihre Lastschrift und Ihre letzten Rechnungen, alle 15 Minuten aktualisiert."
+portal.dashboard.subtitle: "Dein Coworker-Bereich: offene Beträge, deine Lastschrift und deine letzten Rechnungen, alle 15 Minuten aktualisiert."
 portal.dashboard.due: Offener Betrag
 portal.dashboard.late: Überfällige Rechnungen
 portal.dashboard.paid: Bezahlte Rechnungen
 portal.dashboard.latest: Letzte Rechnungen
 portal.dashboard.all: Alle Rechnungen →
 portal.dashboard.manage: Verwalten →
-portal.invoices.intro: "Alle Ihre Rechnungen von La Plage Digitale, aus Pennylane. Klicken Sie auf eine Rechnung, um das PDF zu öffnen: Öffnet es sich nicht mehr, laden Sie die Seite neu (der Link bleibt 30 Minuten gültig)."
+portal.invoices.intro: "Alle deine Rechnungen von La Plage Digitale, aus Pennylane. Klick auf eine Rechnung, um das PDF zu öffnen: Öffnet es sich nicht mehr, lad die Seite neu (der Link bleibt 30 Minuten gültig)."
 portal.invoices.search: Rechnung suchen…
 portal.invoices.recipients: "Rechnungsempfänger"
-portal.invoices.recipients.help: "Ihre Rechnungen werden an diese Adressen gesendet, eine pro Zeile (höchstens fünf). Ihre Anmeldeadresse ist immer dabei."
+portal.invoices.recipients.help: "Deine Rechnungen werden an diese Adressen gesendet, eine pro Zeile (höchstens fünf). Deine Anmeldeadresse ist immer dabei."
 portal.invoices.recipients.label: "E-Mail-Adressen"
 portal.invoices.recipients.save: "Empfänger speichern"
 portal.invoices.recipients.done: "Anfrage bearbeitet"
-portal.invoices.recipients.error: "Die Empfänger konnten nicht gespeichert werden. Versuchen Sie es in einigen Minuten erneut oder kontaktieren Sie uns."
+portal.invoices.recipients.error: "Die Empfänger konnten nicht gespeichert werden. Versuch es in einigen Minuten erneut oder kontaktier uns."
 portal.mandate.current: Mein Mandat
 portal.mandate.how: Wie funktioniert es?
-portal.mandate.how.1: "1. Klicken Sie auf „Lastschrift einrichten“."
-portal.mandate.how.2: "2. Pennylane sendet Ihnen an Ihre Rechnungsadresse eine E-Mail mit einem Link zu seiner sicheren Seite: Geben Sie Ihre IBAN ein und unterzeichnen Sie das Mandat."
-portal.mandate.how.3: "3. Kehren Sie hierher zurück und klicken Sie auf „Mein Mandat prüfen“: Es erscheint sofort (sonst innerhalb von 15 Minuten). Ihre Rechnungen werden dann frühestens 14 Tage nach Fälligkeit auf das Konto des Vereins eingezogen."
-portal.account.unlinked: "Ihr Konto ist noch nicht mit Pennylane verknüpft — wir kümmern uns darum."
+portal.mandate.how.1: "1. Klick auf „Lastschrift einrichten“."
+portal.mandate.how.2: "2. Pennylane sendet dir an deine Rechnungsadresse eine E-Mail mit einem Link zu seiner sicheren Seite: Gib deine IBAN ein und unterzeichne das Mandat."
+portal.mandate.how.3: "3. Kehr hierher zurück und klick auf „Mein Mandat prüfen“: Es erscheint sofort (sonst innerhalb von 15 Minuten). Deine Rechnungen werden dann frühestens 14 Tage nach Fälligkeit auf das Konto des Vereins eingezogen."
+portal.account.unlinked: "Dein Konto ist noch nicht mit Pennylane verknüpft — wir kümmern uns darum."
 portal.match.pending: Wird gesucht
 portal.match.matched: Verknüpft
-portal.match.not_found: "Nicht gefunden — bitte kontaktieren Sie uns"
+portal.match.not_found: "Nicht gefunden — bitte kontaktier uns"
 portal.match.manual: Verknüpft
 formule.fixe: Fester Arbeitsplatz
 formule.nomade: Nomade
@@ -578,15 +269,15 @@ formule.domiciliation: Geschäftsadresse
 formule.source.auto: Aus Pennylane
 formule.source.manual: Manuell gesetzt
 portal.mandate.title: Lastschrift
-portal.mandate.intro: "Richten Sie ein SEPA-Lastschriftmandat bei La Plage Digitale ein, dann werden Ihre Rechnungen automatisch bezahlt. Den Link zur Unterzeichnung sendet Ihnen Pennylane, unser Rechnungstool, per E-Mail."
+portal.mandate.intro: "Richte ein SEPA-Lastschriftmandat bei La Plage Digitale ein, dann werden deine Rechnungen automatisch bezahlt. Den Link zur Unterzeichnung sendet dir Pennylane, unser Rechnungstool, per E-Mail."
 portal.mandate.none: Noch kein Lastschriftmandat.
 portal.mandate.since: Seit
 portal.mandate.cta: Lastschrift einrichten
 portal.mandate.done: Anfrage bearbeitet
-portal.mandate.error: "Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es in einigen Minuten erneut oder kontaktieren Sie uns."
+portal.mandate.error: "Die Anfrage konnte nicht gesendet werden. Bitte versuch es in einigen Minuten erneut oder kontaktier uns."
 portal.mandate.verify: Mein Mandat prüfen
 portal.mandate.verify.done: Mandat geprüft
-portal.mandate.verify.error: "Das Mandat konnte nicht geprüft werden. Bitte versuchen Sie es in einigen Minuten erneut."
+portal.mandate.verify.error: "Das Mandat konnte nicht geprüft werden. Bitte versuch es in einigen Minuten erneut."
 portal.mandate.active: Aktiv
 portal.mandate.pending: Wird geprüft
 portal.mandate.failed: Fehlgeschlagen
@@ -619,11 +310,11 @@ account.save: Speichern
 account.profile.saved: Name gespeichert.
 account.error: "Speichern fehlgeschlagen. Bitte erneut versuchen."
 account.email: "E-Mail-Adresse"
-account.email.intro: "Ihre Anmeldeadresse, an die auch Ihre Rechnungen gesendet werden. Ein Bestätigungslink wird an die neue Adresse gesendet: Die Änderung wird wirksam, sobald Sie ihm folgen."
+account.email.intro: "Deine Anmeldeadresse, an die auch deine Rechnungen gesendet werden. Ein Bestätigungslink wird an die neue Adresse gesendet: Die Änderung wird wirksam, sobald du ihm folgst."
 account.email.new: "Neue E-Mail-Adresse"
 account.email.submit: "Adresse ändern"
-account.email.sent: "Bestätigungslink an die neue Adresse gesendet. Öffnen Sie ihn, um die Änderung zu bestätigen."
-account.email.error: "Die Adresse konnte nicht geändert werden. Prüfen Sie sie und versuchen Sie es erneut."
+account.email.sent: "Bestätigungslink an die neue Adresse gesendet. Öffne ihn, um die Änderung zu bestätigen."
+account.email.error: "Die Adresse konnte nicht geändert werden. Prüf sie und versuch es erneut."
 account.password: Passwort
 account.password.current: Aktuelles Passwort
 account.password.new: Neues Passwort
@@ -631,27 +322,27 @@ account.password.rule: Mindestens 8 Zeichen.
 account.password.revoke: Meine anderen Geräte abmelden
 account.password.submit: Passwort ändern
 account.password.saved: Passwort geändert.
-account.password.error: "Das Passwort konnte nicht geändert werden. Prüfen Sie Ihr aktuelles Passwort."
+account.password.error: "Das Passwort konnte nicht geändert werden. Prüf dein aktuelles Passwort."
 account.session: Sitzung
-account.session.intro: Verlassen Sie Ihren Bereich auf diesem Gerät.
+account.session.intro: Verlass deinen Bereich auf diesem Gerät.
 account.logout: Abmelden
 
 # ── Sign-in ── /connexion, shared by coworkers and editors.
 auth.kicker: Mitgliederbereich
 auth.pitch: "Der Mitgliederbereich für Coworker, die Verwaltung für den Verein: ein Konto, eine Tür."
 auth.title: Anmelden
-auth.subtitle: "Ihr Konto wird vom Team von La Plage Digitale eröffnet. Noch kein Konto? Schreiben Sie uns."
+auth.subtitle: "Dein Konto wird vom Team von La Plage Digitale eröffnet. Noch kein Konto? Schreib uns."
 auth.submit: Anmelden
 auth.back: ← Zurück zur Website
 
 # ── Spaces ── /app, where /connexion sends every session.
 spaces.title: Meine Bereiche
-spaces.member: "Ihr Tarif, Rechnungen, Räume, Leitfaden und das Leben bei La Plage."
+spaces.member: "Dein Tarif, Rechnungen, Räume, Leitfaden und das Leben bei La Plage."
 spaces.editor: Redaktionsbereich
 spaces.editor.desc: Blogartikel schreiben und veröffentlichen.
 spaces.admin: "Vereinsverwaltung"
 spaces.admin.desc: "Die Inhalte der Website, die Mitglieder und die Finanzen von La Plage Digitale."
-spaces.none: "Ihr Konto öffnet noch keinen Bereich. Bitte wenden Sie sich an das Team von La Plage Digitale."
+spaces.none: "Dein Konto öffnet noch keinen Bereich. Bitte wende dich an das Team von La Plage Digitale."
 # The Administration (/administration/*): its members and Flex pages, and the way in from the Mitgliederbereich
 admin.nav.group: Verwaltung
 admin.nav.backoffice: "Vereinsverwaltung"
@@ -697,10 +388,10 @@ admin.member.invoices: Rechnungen
 
 # Flex — /flex, the check-in (/espace-membre/presences) and the admins' Flex desk
 flex.meta.title: "Flex — ein Schreibtisch für einen Tag | La Plage Digitale"
-flex.meta.description: "Arbeiten Sie tage- oder halbtageweise bei La Plage Digitale, ohne Reservierung: 14 € zzgl. MwSt. pro Tag, 7 € pro halben Tag, eine Rechnung pro Monat. Online anmelden."
+flex.meta.description: "Arbeite tage- oder halbtageweise bei La Plage Digitale, ohne Reservierung: 14 € zzgl. MwSt. pro Tag, 7 € pro halben Tag, eine Rechnung pro Monat. Online anmelden."
 flex.eyebrow: "Flex-Tarif"
 flex.title: "Ein Schreibtisch für einen Tag, ohne Reservierung"
-flex.lead: "Kommen Sie, wann Sie möchten, Montag bis Freitag von 9 bis 17 Uhr: Sie checken in Ihrem Mitgliederbereich ein, und wir schicken Ihnen eine einzige Rechnung pro Monat."
+flex.lead: "Komm, wann du möchtest, Montag bis Freitag von 9 bis 17 Uhr: Du checkst in deinem Mitgliederbereich ein, und wir schicken dir eine einzige Rechnung pro Monat."
 flex.cta.signup: "Jetzt anmelden"
 flex.cta.checkin: "Schon angemeldet? Einchecken"
 flex.price.title: "Preise und praktische Infos"
@@ -710,30 +401,30 @@ flex.price.half.amount: "7 €"
 flex.price.half.unit: "zzgl. MwSt. / halber Tag"
 flex.price.half.ttc: "8,40 € inkl. MwSt. pro halben Tag"
 flex.info.hours: "Montag bis Freitag, 9 bis 17 Uhr (außer an Feiertagen)."
-flex.info.booking: "Keine Reservierung: Kommen Sie einfach vorbei, es gibt 30 Flex-Plätze."
-flex.info.invoice: "Eine Rechnung pro Monat, ausgestellt am 1. des Folgemonats auf Ihren Rechnungsnamen und Ihre Rechnungsadresse und sichtbar in Ihrem Mitgliederbereich."
-flex.info.gift: "Mitglied im Verein La Plage Digitale? Ihr erster Tag im Jahr ist kostenlos."
+flex.info.booking: "Keine Reservierung: Komm einfach vorbei, es gibt 30 Flex-Plätze."
+flex.info.invoice: "Eine Rechnung pro Monat, ausgestellt am 1. des Folgemonats auf deinen Rechnungsnamen und deine Rechnungsadresse und sichtbar in deinem Mitgliederbereich."
+flex.info.gift: "Mitglied im Verein La Plage Digitale? Dein erster Tag im Jahr ist kostenlos."
 flex.how.title: "Wie funktioniert es?"
 flex.how.1.title: "Anmelden"
-flex.how.1.text: "Füllen Sie das Formular unten einmalig mit Ihren Rechnungsdaten aus."
+flex.how.1.text: "Füll das Formular unten einmalig mit deinen Rechnungsdaten aus."
 flex.how.2.title: "Zugang erhalten"
-flex.how.2.text: "Wir legen Ihr Coworker-Konto an: Sie erhalten eine E-Mail, um Ihr Passwort zu wählen. Bei Ihrem ersten Besuch melden Sie sich bitte am Empfang."
+flex.how.2.text: "Wir legen dein Coworker-Konto an: Du erhältst eine E-Mail, um dein Passwort zu wählen. Bei deinem ersten Besuch meldest du dich bitte am Empfang."
 flex.how.3.title: "Bei jedem Besuch einchecken"
-flex.how.3.text: "Öffnen Sie bei Ihrer Ankunft Mitgliederbereich › Anwesenheiten und wählen Sie halber oder ganzer Tag. Sie bleiben doch den ganzen Tag? Checken Sie erneut als ganzer Tag ein: Er ersetzt den halben Tag."
+flex.how.3.text: "Öffne bei deiner Ankunft Mitgliederbereich › Anwesenheiten und wähle halber oder ganzer Tag. Du bleibst doch den ganzen Tag? Check erneut als ganzer Tag ein: Er ersetzt den halben Tag."
 flex.how.4.title: "Eine Rechnung pro Monat"
-flex.how.4.text: "Am 1. des Monats wird die Rechnung für die Tage des Vormonats ausgestellt. Sie erscheint in Ihrem Mitgliederbereich, optional mit Lastschrift."
+flex.how.4.text: "Am 1. des Monats wird die Rechnung für die Tage des Vormonats ausgestellt. Sie erscheint in deinem Mitgliederbereich, optional mit Lastschrift."
 flex.signup.eyebrow: "Erster Besuch"
 flex.signup.title: "Anmeldung zu Flex"
-flex.signup.lead: "Ein paar Angaben, nur einmal: Wir legen Ihr Konto an und schicken Ihnen den Zugang zum Mitgliederbereich. Fragen? contact+flex@laplagedigitale.fr"
-flex.signup.form.title: "Ihre Angaben"
+flex.signup.lead: "Ein paar Angaben, nur einmal: Wir legen dein Konto an und schicken dir den Zugang zum Mitgliederbereich. Fragen? contact+flex@laplagedigitale.fr"
+flex.signup.form.title: "Deine Angaben"
 flex.signup.first_name: "Vorname"
 flex.signup.last_name: "Nachname"
 flex.signup.email: "E-Mail"
-flex.signup.email.help: "Das ist die Adresse Ihres Kontos: Ihr Zugang und Ihre Rechnungen gehen dorthin."
+flex.signup.email.help: "Das ist die Adresse deines Kontos: Dein Zugang und deine Rechnungen gehen dorthin."
 flex.signup.phone: "Telefon"
 flex.signup.company: "Unternehmen (optional)"
 flex.signup.billing_name: "Rechnungsname"
-flex.signup.billing_name.help: "Ihr Name oder der Ihres Unternehmens, so wie er auf der Rechnung stehen soll."
+flex.signup.billing_name.help: "Dein Name oder der deines Unternehmens, so wie er auf der Rechnung stehen soll."
 flex.signup.billing_address: "Rechnungsadresse"
 flex.signup.billing_address.placeholder: "13 rue Jacques Peirotes"
 flex.signup.billing_postal_code: "Postleitzahl"
@@ -751,11 +442,11 @@ flex.signup.country.GB: "Vereinigtes Königreich"
 flex.signup.siret: "SIRET (optional)"
 flex.signup.vat_number: "USt-IdNr. (optional)"
 flex.signup.association: "Ich möchte dem Verein La Plage Digitale beitreten"
-flex.signup.association.help: "Die Mitgliedschaft unterstützt den Dritten Ort und schenkt Ihnen einen Flex-Tag pro Jahr. Wir schicken Ihnen den Link zur Mitgliedschaft."
+flex.signup.association.help: "Die Mitgliedschaft unterstützt den Dritten Ort und schenkt dir einen Flex-Tag pro Jahr. Wir schicken dir den Link zur Mitgliedschaft."
 flex.signup.terms: "Ich akzeptiere die Nutzungs- und Verkaufsbedingungen"
 flex.signup.terms.help: "Nachzulesen in unserem [Impressum](/de/mentions-legales)."
-flex.signup.success: "Danke, Ihre Anmeldung ist angekommen! Wir legen Ihr Konto an und schicken Ihnen den Zugang zum Mitgliederbereich per E-Mail. Bis bald an der Plage!"
-flex.signup.error: "Ihre Anmeldung konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie an contact+flex@laplagedigitale.fr."
+flex.signup.success: "Danke, deine Anmeldung ist angekommen! Wir legen dein Konto an und schicken dir den Zugang zum Mitgliederbereich per E-Mail. Bis bald an der Plage!"
+flex.signup.error: "Deine Anmeldung konnte nicht gesendet werden. Bitte versuch es erneut oder schreib an contact+flex@laplagedigitale.fr."
 flex.signup.status.new: "Neu"
 flex.signup.status.invited: "Eingeladen"
 flex.signup.status.declined: "Erledigt"
@@ -765,20 +456,20 @@ flex.status.to_invoice: "Abzurechnen"
 flex.status.invoiced: "Abgerechnet"
 flex.status.offered: "Kostenlos"
 flex.checkin.title: "Einchecken"
-flex.checkin.lead: "Bei jedem Flex-Besuch, gleich bei Ihrer Ankunft. Das heutige Datum wird automatisch erfasst."
+flex.checkin.lead: "Bei jedem Flex-Besuch, gleich bei deiner Ankunft. Das heutige Datum wird automatisch erfasst."
 flex.checkin.submit: "Ich bin da"
 flex.checkin.account: "Konto"
 flex.checkin.success: "Notiert — einen schönen Tag an der Plage!"
 flex.checkin.duration: "Dauer"
-flex.checkin.duration.help: "Sie bleiben doch den ganzen Tag? Checken Sie erneut als ganzer Tag ein: Er ersetzt den halben Tag."
-flex.checkin.error: "Ihr Check-in konnte nicht gespeichert werden. Versuchen Sie es erneut oder melden Sie sich am Empfang."
+flex.checkin.duration.help: "Du bleibst doch den ganzen Tag? Check erneut als ganzer Tag ein: Er ersetzt den halben Tag."
+flex.checkin.error: "Dein Check-in konnte nicht gespeichert werden. Versuch es erneut oder melde dich am Empfang."
 flex.presences.title: "Meine Anwesenheiten"
-flex.presences.intro: "Checken Sie bei jedem Flex-Besuch ein. Ihre Tage werden einmal im Monat, am 1., abgerechnet, und die Rechnung erscheint unter Rechnungen."
+flex.presences.intro: "Check bei jedem Flex-Besuch ein. Deine Tage werden einmal im Monat, am 1., abgerechnet, und die Rechnung erscheint unter Rechnungen."
 flex.presences.how: "Gut zu wissen"
-flex.presences.how.1: "Erster Besuch? Bitte melden Sie sich zuerst am Empfang."
+flex.presences.how.1: "Erster Besuch? Bitte melde dich zuerst am Empfang."
 flex.presences.how.2: "Halber Tag: 7 € zzgl. MwSt. Ganzer Tag: 14 € zzgl. MwSt. Ein Check-in pro Tag."
-flex.presences.how.3: "Checken Sie gleich bei Ihrer Ankunft ein: Wenn Sie es vergessen, erinnert Sie das Team daran."
-flex.presences.billing: "Ihre Rechnungsdaten haben sich geändert (Name, Adresse, Unternehmen)? Schreiben Sie uns, wir aktualisieren sie für Ihre nächsten Rechnungen."
+flex.presences.how.3: "Check gleich bei deiner Ankunft ein: Wenn du es vergisst, erinnert dich das Team daran."
+flex.presences.billing: "Deine Rechnungsdaten haben sich geändert (Name, Adresse, Unternehmen)? Schreib uns, wir aktualisieren sie für deine nächsten Rechnungen."
 flex.presences.billing.cta: "Rechnungsdaten ändern →"
 flex.presences.month: "Anwesenheiten diesen Monat"
 flex.presences.due: "Abzurechnen (netto)"
@@ -837,11 +528,11 @@ member.nav.partners: "Partner"
 member.nav.links: "Links"
 member.nav.slack: "Slack von La Plage ↗"
 member.nav.flex: "Flex"
-member.home.subtitle: "Alles für Ihren Platz bei La Plage: Ihr Tarif, Ihre Rechnungen, die Räume und das Leben vor Ort."
-member.home.formule: "Ihr Tarif"
-member.home.formule.none: "Ihr Tarif ist noch nicht hinterlegt: Er erscheint hier, sobald Ihr Vertrag erfasst ist. Fragen? contact@laplagedigitale.fr"
+member.home.subtitle: "Alles für deinen Platz bei La Plage: dein Tarif, deine Rechnungen, die Räume und das Leben vor Ort."
+member.home.formule: "Dein Tarif"
+member.home.formule.none: "Dein Tarif ist noch nicht hinterlegt: Er erscheint hier, sobald dein Vertrag erfasst ist. Fragen? contact@laplagedigitale.fr"
 member.home.flex.title: "Heute vor Ort?"
-member.home.flex.text: "Checken Sie Ihren Flex-Tag ein: halber Tag 7 € netto, ganzer Tag 14 € netto, abgerechnet am 1. des Monats."
+member.home.flex.text: "Check deinen Flex-Tag ein: halber Tag 7 € netto, ganzer Tag 14 € netto, abgerechnet am 1. des Monats."
 member.home.flex.cta: "Einchecken"
 member.home.start: "Gut starten"
 member.home.start.slack: "Dem Slack beitreten"
@@ -850,45 +541,45 @@ member.home.start.rooms: "Einen Raum buchen"
 member.home.start.mandate: "Lastschrift einrichten"
 member.home.start.idea: "Ein Thema für den Rat vorschlagen"
 member.formule.title: "Mein Tarif"
-member.formule.intro: "Was Ihr Tarif umfasst und wie Sie ihn ändern."
+member.formule.intro: "Was dein Tarif umfasst und wie du ihn änderst."
 member.formule.included: "Inklusive"
 member.formule.fixe.keys: "Schlüssel und Badges: vom Verein gegen Kaution ausgegeben. Nicht verleihen oder nachmachen."
-member.formule.box.desc: "Ihr abgeschlossenes Privatbüro bei La Plage, monatlich gemietet."
+member.formule.box.desc: "Dein abgeschlossenes Privatbüro bei La Plage, monatlich gemietet."
 member.formule.box.1: "Zugang rund um die Uhr mit den Schlüsseln von La Plage"
 member.formule.box.2: "Schnelles Internet (Glasfaser) und WLAN"
 member.formule.box.3: "Drucker und Scanner"
 member.formule.box.4: "Küche, Lounge und Kaffee"
-member.formule.box.note: "Fläche, Anzahl der Plätze und Zugang zu den Besprechungsräumen: Es gelten die Bedingungen Ihres Vertrags."
+member.formule.box.note: "Fläche, Anzahl der Plätze und Zugang zu den Besprechungsräumen: Es gelten die Bedingungen deines Vertrags."
 member.formule.dom.price: "40 € netto / Monat"
 member.formule.dom.mail: "Die Post wird montags, mittwochs und freitags geleert. Weiterleitung ist gegen Aufpreis möglich."
 member.formule.none.title: "Tarif folgt"
-member.formule.referral.title: "Empfehlen Sie uns weiter"
-member.formule.referral.text: "Jemand aus Ihrem Umfeld sucht einen Arbeitsplatz? Wenn die Person zu La Plage kommt, erhält sie 50 € Rabatt auf die ersten 3 Monate, und Sie wählen zwischen einem Monat Rabatt und einem Geschenk im gleichen Wert (Schokolade, Topfpflanze, Geschenkkarte…). Sie muss bei der Anmeldung nur Ihren Namen nennen."
-member.formule.referral.cta: "Zum Empfehlungsangebot"
+member.formule.referral.title: "Empfiehl uns weiter"
+member.formule.referral.text: "Jemand aus deinem Umfeld sucht einen Arbeitsplatz? Wenn die Person zu La Plage kommt, erhält sie 50 € Rabatt auf die ersten 3 Monate, und du wählst zwischen einem Monat Rabatt und einem Geschenk im gleichen Wert (Schokolade, Topfpflanze, Geschenkkarte…). Sie muss bei der Anmeldung nur deinen Namen nennen."
+member.formule.referral.cta: "Tarife und Preise zum Zeigen →"
 member.formule.change.title: "Tarif wechseln oder kündigen"
-member.formule.change.text: "Tarif wechseln, einen Platz hinzufügen oder den Vertrag beenden: Schreiben Sie uns."
+member.formule.change.text: "Tarif wechseln, einen Platz hinzufügen oder den Vertrag beenden: Schreib uns."
 member.formule.change.cta: "La Plage schreiben"
 member.formule.change.href: "mailto:contact@laplagedigitale.fr?subject=Mein%20Tarif"
 member.formule.all: "Alle Tarife ansehen →"
 member.rooms.title: "Besprechungsräume"
 member.rooms.intro: "Vier Räume für 6 bis 60 Personen, halbtags oder ganztags buchbar."
-member.rooms.fixe.title: "In Ihrem Tarif „Fester Arbeitsplatz“ inklusive"
-member.rooms.fixe.text: "Crevette, Requin und Baleine stehen Ihnen im Rahmen fairer Nutzung zur Verfügung. Narval, wiederholte Ganztagsbuchungen und kostenpflichtige Veranstaltungen (etwa eine Schulung) werden berechnet."
+member.rooms.fixe.title: "In deinem Tarif „Fester Arbeitsplatz“ inklusive"
+member.rooms.fixe.text: "Crevette, Requin und Baleine stehen dir im Rahmen fairer Nutzung zur Verfügung. Narval, wiederholte Ganztagsbuchungen und kostenpflichtige Veranstaltungen (etwa eine Schulung) werden berechnet."
 member.rooms.gcal.title: "Mit Google Kalender buchen"
-member.rooms.gcal.1: "1. Fügen Sie die Raumkalender hinzu: Sie erhalten eine Einladung per E-Mail, klicken Sie auf „Diesen Kalender hinzufügen“. Sie erscheinen unter „Weitere Kalender“."
-member.rooms.gcal.2: "2. Legen Sie einen Termin an, dann „Raum suchen“ und auswählen. Belegt? Anderen Raum oder Zeitpunkt wählen."
-member.rooms.gcal.3: "3. Prüfen Sie, dass der Termin im Raumkalender erscheint. Zum Stornieren den Termin löschen."
+member.rooms.gcal.1: "1. Füg die Raumkalender hinzu: Du erhältst eine Einladung per E-Mail, klick auf „Diesen Kalender hinzufügen“. Sie erscheinen unter „Weitere Kalender“."
+member.rooms.gcal.2: "2. Leg einen Termin an, dann „Raum suchen“ und auswählen. Belegt? Anderen Raum oder Zeitpunkt wählen."
+member.rooms.gcal.3: "3. Prüf, dass der Termin im Raumkalender erscheint. Zum Stornieren den Termin löschen."
 member.rooms.gcal.access: "Noch keine Kalender? Zugang bei contact@laplagedigitale.fr anfragen."
 member.rooms.request.title: "Eine Buchung anfragen"
-member.rooms.request.text: "Außerhalb des Tarifs „Fester Arbeitsplatz“ werden die Räume zu den obigen Preisen berechnet. Senden Sie uns Ihre Anfrage: Datum, Zeitfenster, Raum und Personenzahl."
+member.rooms.request.text: "Außerhalb des Tarifs „Fester Arbeitsplatz“ werden die Räume zu den obigen Preisen berechnet. Sende uns deine Anfrage: Datum, Zeitfenster, Raum und Personenzahl."
 member.rooms.request.cta: "Anfrage senden ↗"
 member.rooms.rules.title: "Gute Gewohnheiten"
 member.rooms.rules.1: "Ein gebuchter Raum, der 15 Minuten nach Beginn noch leer ist, gilt als frei."
-member.rooms.rules.2: "Hinterlassen Sie den Raum sauber und aufgeräumt."
-member.rooms.rules.3: "Stellen Sie die Temperatur bei Ankunft ein, nie mehr als 5 °C unter der Außentemperatur."
+member.rooms.rules.2: "Hinterlass den Raum sauber und aufgeräumt."
+member.rooms.rules.3: "Stell die Temperatur bei Ankunft ein, nie mehr als 5 °C unter der Außentemperatur."
 member.rooms.rules.4: "Ein kurzer Anruf? Der Kickerraum geht auch, aber Spielende haben Vorrang."
 member.guide.title: "Praktischer Leitfaden"
-member.guide.intro: "Das Strand-Kit: alles, was Sie für den Alltag bei La Plage wissen müssen."
+member.guide.intro: "Das Strand-Kit: alles, was du für den Alltag bei La Plage wissen musst."
 member.guide.toc: "Auf dieser Seite"
 member.guide.group.welcome: "Willkommen bei La Plage"
 member.guide.group.daily: "Im Alltag"
@@ -902,64 +593,64 @@ member.guide.access.title: "Öffnungszeiten und Zugang"
 member.guide.access.1: "Der Empfang ist Montag bis Freitag von 9 bis 17:30 Uhr besetzt. Flex-Mitglieder kommen zwischen 9 und 17 Uhr."
 member.guide.access.2: "Fester Arbeitsplatz, Nomade und Box haben mit Schlüsseln oder Badges, gegen Kaution ausgegeben, rund um die Uhr Zugang. Nicht verleihen oder nachmachen."
 member.guide.access.3: "Wer zuerst kommt, öffnet den hinteren Rollladen: Er versperrt einen Notausgang. Wer zuletzt geht, schaltet das Licht aus, stellt die Vordertür auf geschlossen, verriegelt die Hintertür und lässt den Rollladen herunter."
-member.guide.access.4: "Personen, die der Verein nicht kennt, werden während ihres Besuchs begleitet. Neu in Ihrem Team (Mitarbeitende, Praktikant:in)? Sagen Sie uns Bescheid."
+member.guide.access.4: "Personen, die der Verein nicht kennt, werden während ihres Besuchs begleitet. Neu in deinem Team (Mitarbeitende, Praktikant:in)? Sag uns Bescheid."
 member.guide.net.title: "Internet und WLAN"
-member.guide.net.1: "Glasfaser per Kabel an den Arbeitsplätzen und WLAN in allen Räumen. Netzwerkname und Passwort hängen in den Räumen aus, oder fragen Sie am Empfang."
+member.guide.net.1: "Glasfaser per Kabel an den Arbeitsplätzen und WLAN in allen Räumen. Netzwerkname und Passwort hängen in den Räumen aus, oder frag am Empfang."
 member.guide.net.2: "Kein Router oder Repeater ohne Zustimmung des Vereins, keine illegalen Downloads. Sehr viel Datenvolumen? Eine eigene Leitung ist möglich."
 member.guide.print.title: "Drucken und Scannen"
 member.guide.print.1: "Drucker und Scanner sind für alltägliche Geschäftsdokumente. Private, werbliche (Flyer, Plakate) oder große Druckaufträge fallen nicht unter faire Nutzung."
 member.guide.print.2: "Zum Scannen auf den Computer: den Treiber Brother MFC-L8690CDW installieren, dann „Scannen“ und den Drucker von La Plage wählen."
 member.guide.print.cta: "Brother-Treiber herunterladen ↗"
 member.guide.kitchen.title: "Küche und Kühlschränke"
-member.guide.kitchen.1: "Öfen, Mikrowellen und Kochplatten sind für alle da. Reinigen Sie Ihren Platz und Ihr Geschirr und räumen Sie die saubere Spülmaschine aus."
-member.guide.kitchen.2: "Gemeinschaftskühlschrank: orangefarbenes Etikett 🟠 mit Datum, der Inhalt ist für alle. Persönlicher Kühlschrank: blaues Etikett 🔵 mit Ihrem Namen."
+member.guide.kitchen.1: "Öfen, Mikrowellen und Kochplatten sind für alle da. Reinige deinen Platz und dein Geschirr und räum die saubere Spülmaschine aus."
+member.guide.kitchen.2: "Gemeinschaftskühlschrank: orangefarbenes Etikett 🟠 mit Datum, der Inhalt ist für alle. Persönlicher Kühlschrank: blaues Etikett 🔵 mit deinem Namen."
 member.guide.kitchen.3: "Alles ohne Etikett oder Abgelaufene wird beim Putzen entsorgt. Papier kommt neben die Drucker, Verpackungen in die gelbe Tonne."
 member.guide.together.title: "Zusammenleben"
 member.guide.together.1: "Telefone stumm, leise Stimmen in gemeinsamen Räumen, Anrufe und Videokonferenzen außerhalb des Großraums, stark riechendes Essen in der Küche."
-member.guide.together.2: "Die Pflanzen pflegen die Jardins de Gally: Bitte nicht gießen und nichts hineinschütten. Eigene Pflanzen pflegen Sie selbst."
+member.guide.together.2: "Die Pflanzen pflegen die Jardins de Gally: Bitte nicht gießen und nichts hineinschütten. Eigene Pflanzen pflegst du selbst."
 member.guide.together.3: "Weder Rauchen noch Dampfen. Alkohol nur bei vom Vorstand genehmigten Veranstaltungen. Keine Tiere außer Assistenz- und emotionalen Unterstützungstieren."
-member.guide.together.4: "Die Temperatur in den Büroräumen regelt das Team. Krank und ansteckend? Bleiben Sie zu Hause oder tragen Sie eine Maske."
+member.guide.together.4: "Die Temperatur in den Büroräumen regelt das Team. Krank und ansteckend? Bleib zu Hause oder trag eine Maske."
 member.guide.furniture.title: "Möbel"
 member.guide.furniture.1: "Steh-Sitz-Tisch klemmt? Ganz nach unten fahren: Ein doppeltes Klicken bedeutet, dass die Beine zurückgesetzt sind."
-member.guide.furniture.2: "Immer noch defekt oder ein anderes Kinnarps-Möbel beschädigt? Fotografieren Sie das Typenschild (unter der Platte oder dem Sitz) und das Problem und senden Sie beides an sav@kinnarps.com."
+member.guide.furniture.2: "Immer noch defekt oder ein anderes Kinnarps-Möbel beschädigt? Fotografier das Typenschild (unter der Platte oder dem Sitz) und das Problem und sende beides an sav@kinnarps.com."
 member.guide.furniture.3: "Eigene Möbel? Nur mit Zustimmung des Teams. Nicht auf Möbel steigen."
 member.guide.parking.title: "Parkplatz „Bermuda-Dreieck“"
 member.guide.parking.1: "Zwei Plätze zur rue de Genève, für Coworker mit Vereinsmitgliedschaft und Lieferanten von La Plage. Nicht für Gäste. Einer ist für Kinnarps reserviert, muss aber trotzdem gebucht werden."
-member.guide.parking.2: "Buchen Sie im Google-Kalender „Le Triangle des Bermudes“ (Zugang wie bei den Räumen anfragen). Jeder Platz hat zwei Kalender: In beiden eintragen."
-member.guide.parking.3: "Holen Sie den Schranken-Badge am Empfang und bringen Sie ihn danach zurück (niemand da? in den Stiftebecher auf dem Tisch). Ein verlorener Badge wird berechnet. Faire Nutzung: kein tägliches oder langes Parken."
+member.guide.parking.2: "Buch im Google-Kalender „Le Triangle des Bermudes“ (Zugang wie bei den Räumen anfragen). Jeder Platz hat zwei Kalender: In beiden eintragen."
+member.guide.parking.3: "Hol den Schranken-Badge am Empfang und bring ihn danach zurück (niemand da? in den Stiftebecher auf dem Tisch). Ein verlorener Badge wird berechnet. Faire Nutzung: kein tägliches oder langes Parken."
 member.guide.mail.title: "Schließfächer und Post"
 member.guide.mail.1: "Feste Arbeitsplätze haben ein persönliches abschließbares Schließfach. Für andere Tarife ist ein Schließfach auf Anfrage mit Vereinbarung möglich."
 member.guide.mail.2: "Post und Pakete werden am Empfang angenommen. Der Briefkasten wird montags, mittwochs und freitags geleert."
 member.guide.safety.title: "Sicherheit"
 member.guide.safety.1: "La Plage ist eine öffentlich zugängliche Einrichtung: höchstens 200 Personen. Notausgänge immer frei und von innen zu öffnen halten."
 member.guide.safety.2: "Sammelpunkt bei Evakuierung: hinter dem Gebäude, zur rue de Genève."
-member.guide.safety.3: "Sie haften für Geräte, die Sie vor Ort lassen: Eine Diebstahlversicherung wird empfohlen. Eine Organisation mit Vertrag braucht eine Berufshaftpflicht."
+member.guide.safety.3: "Du haftest für Geräte, die du vor Ort lässt: Eine Diebstahlversicherung wird empfohlen. Eine Organisation mit Vertrag braucht eine Berufshaftpflicht."
 member.guide.contact.title: "Eine Frage, ein Problem?"
 member.guide.contact.1: "Der Empfang, oder contact@laplagedigitale.fr für alles andere."
 member.guide.contact.2: "Flex: contact+flex@laplagedigitale.fr. Kommunikation, Veranstaltungen und Partnerschaften: lucie.dubief@laplagedigitale.fr."
-member.guide.contact.3: "Eine Idee für den Ort, ein wiederkehrendes Problem? Bringen Sie es in den Conseil de la Plage ein."
+member.guide.contact.3: "Eine Idee für den Ort, ein wiederkehrendes Problem? Bring es in den Conseil de la Plage ein."
 member.community.title: "Gemeinschaft"
-member.community.intro: "La Plage sind vor allem die Menschen, die dort arbeiten. So machen Sie mit."
+member.community.intro: "La Plage sind vor allem die Menschen, die dort arbeiten. So machst du mit."
 member.community.slack.title: "Der Slack von La Plage"
 member.community.slack.text: "Praktisches, Ankündigungen, gegenseitige Hilfe und Afterworks: Alles läuft über Slack, vor allem #général."
 member.community.slack.join: "Dem Slack beitreten ↗"
 member.community.slack.open: "Schon dabei? laplagedigitale.slack.com öffnen ↗"
 member.community.conseil.title: "Der Conseil de la Plage"
-member.community.conseil.text: "Am ersten Donnerstag im Monat um 12 Uhr treffen sich die Coworker zu Neuigkeiten, laufenden Projekten, Ideen und Problemen. Verhindert? Schicken Sie Ihr Thema vorab."
+member.community.conseil.text: "Am ersten Donnerstag im Monat um 12 Uhr treffen sich die Coworker zu Neuigkeiten, laufenden Projekten, Ideen und Problemen. Verhindert? Schick dein Thema vorab."
 member.community.conseil.cta: "Ein Thema vorschlagen ↗"
 member.community.rituals.title: "Feste Termine"
-member.community.rituals.1: "Mardis Gourmands: Jeden Dienstag gegen 10 Uhr bringt jemand ein Frühstück zum Teilen mit. Lust, eins auszurichten? Sagen Sie es dem Team."
+member.community.rituals.1: "Mardis Gourmands: Jeden Dienstag gegen 10 Uhr bringt jemand ein Frühstück zum Teilen mit. Lust, eins auszurichten? Sag es dem Team."
 member.community.rituals.2: "Kicker: Treffpunkt gegen 13:30 und 16 Uhr im Raum am Eingang."
 member.community.rituals.3: "Afterworks: regelmäßig in Bars in der Nähe und manchmal bei La Plage zu besonderen Anlässen."
 member.community.rituals.4: "Solidarität: Blutspendegruppen zwischen 12 und 14 Uhr, internationale Aktionstage."
 member.community.events.title: "Veranstaltungen"
-member.community.events.text: "La Plage beherbergt Meetups, Vorträge und Afterworks und stellt Communities und Vereinen ihre Räume kostenlos zur Verfügung. Planen Sie etwas?"
+member.community.events.text: "La Plage beherbergt Meetups, Vorträge und Afterworks und stellt Communities und Vereinen ihre Räume kostenlos zur Verfügung. Planst du etwas?"
 member.community.events.cta: "Veranstaltungen und Anfrage ↗"
 member.community.asso.title: "Der Verein"
-member.community.asso.text: "La Plage Digitale ist ein Verein: Als Mitglied entscheiden Sie mit, und Flex-Mitglieder erhalten jedes Jahr einen freien Tag. Freiwillige für den Empfangsdienst sind willkommen."
-member.community.asso.cta: "Beitreten oder helfen: schreiben Sie uns"
+member.community.asso.text: "La Plage Digitale ist ein Verein: Als Mitglied entscheidest du mit, und Flex-Mitglieder erhalten jedes Jahr einen freien Tag. Freiwillige für den Empfangsdienst sind willkommen."
+member.community.asso.cta: "Beitreten oder helfen: schreib uns"
 member.community.asso.href: "mailto:contact@laplagedigitale.fr?subject=Mitgliedschaft"
-member.community.social.title: "Folgen Sie uns"
+member.community.social.title: "Folge uns"
 member.docs.title: "Regeln & Dokumente"
 member.docs.intro: "Die Texte, die für alle Nutzenden von La Plage gelten, und das Wichtigste daraus."
 member.docs.summary.title: "Das Wichtigste"
@@ -1008,3 +699,224 @@ notFound.contact: "Dem Team schreiben"
 # Administration › Demandes (leads.status)
 admin.leads.status.new: "Offen"
 admin.leads.status.done: "Erledigt"
+
+# ── 4-page site (2026-11): Accueil, Formules et tarifs, Tiers-lieu, Infos pratiques ──
+cta.visit: "Besuch vereinbaren"
+offer.flex.name: "Flex, tageweise"
+offer.flex.price: "14 € netto / Tag"
+offer.flex.ttc: "16,80 € brutto · halber Tag: 7 € netto (8,40 € brutto)"
+offer.nomade.name: "Nomade"
+offer.nomade.price: "175 € netto / Monat"
+offer.nomade.ttc: "210 € brutto"
+offer.fixe.name: "Fester Arbeitsplatz"
+offer.fixe.price: "275 € netto / Monat"
+offer.fixe.ttc: "330 € brutto"
+offer.dom.name: "Geschäftsadresse"
+offer.dom.price: "40 € netto / Monat"
+offer.dom.ttc: "48 € brutto"
+room.crevette.cap: "6 Personen · 12 m²"
+room.requin.cap: "8 Personen · 16 m²"
+room.baleine.cap: "16 Personen · 36 m²"
+room.narval.cap: "50 Sitzplätze · 82 m²"
+room.crevette.price: "87 € netto / 4 Std."
+room.requin.price: "98 € netto / 4 Std."
+room.baleine.price: "120 € netto / 4 Std."
+room.narval.price: "253 € netto / 4 Std."
+room.crevette.alt: "Der Raum Crevette, ein kleiner Besprechungsraum mit Tisch und Bildschirm"
+room.requin.alt: "Der Raum Requin: langer Stehtisch, bunte Hocker und Bildschirm am Fenster"
+room.baleine.alt: "Der Raum Baleine: langer Holztisch, hellblaue Sessel, Whiteboard und Bildschirm"
+room.narval.alt: "Der Raum Narval: großer heller Raum mit Fensterfront zur Straße, Tischen und großem Bildschirm"
+accueil.hero.eyebrow: "Gemeinschaftliches Coworking · Straßburg Zentrum"
+accueil.hero.title: "Dein Arbeitsplatz mitten in Straßburg, ab 14 € netto pro Tag"
+accueil.hero.lead: "Ein Platz für einen Tag oder ein Büro im Monat, auf 600 m² nur ein paar Schritte vom Münster. Um dich herum Selbstständige, Gründerinnen, Gründer und Kreative, die sich kennen und sich gegenseitig helfen."
+cta.pricing: "Tarife und Preise ansehen →"
+accueil.hero.where: "13 rue Jacques Peirotes · Viertel Krutenau · Montag bis Freitag, 9–17 Uhr"
+accueil.hero.imageAlt: "Fotocollage von La Plage Digitale: Coworker bei der Arbeit, Bibliothek, Gemeinschaftsküche, Kicker und ein Meetup"
+accueil.numbers.title: "Die Plage in Zahlen"
+accueil.numbers.area: "Coworking, alles ebenerdig"
+accueil.numbers.fixed: "feste Arbeitsplätze"
+accueil.numbers.flex: "Tagesplätze ohne Reservierung"
+accueil.numbers.rooms: "Besprechungsräume"
+accueil.offers.eyebrow: "Tarife und Preise"
+accueil.offers.title: "Ein Tarif für jeden Rhythmus"
+accueil.offers.lead: "Du kommst ab und zu einen Tag oder jeden Tag? Für beides gibt es einen Tarif, und jeder öffnet dir die Community der Plage."
+accueil.offers.flex: "Ein geteilter Platz ohne Reservierung, Montag bis Freitag 9–17 Uhr. Eine Rechnung pro Monat."
+accueil.offers.nomade: "Der Flex-Bereich, wann du willst, rund um die Uhr, mit eigenem Schlüssel."
+accueil.offers.fixe: "Dein eigener Schreibtisch, jeden Morgen so, wie du ihn verlassen hast. Ein Schließfach, Schlüssel und die Besprechungsräume nach Fair Use."
+accueil.offers.dom: "Der Sitz deines Unternehmens in der 13 rue Jacques Peirotes, deine Post wird hier angenommen."
+offer.more: "Details ansehen →"
+offer.membership: "Wer einen Platz mietet, wird Mitglied des Vereins: 5 € pro Person oder 20 € pro Unternehmen, auf deiner ersten Rechnung und gültig bis zum 31. Dezember."
+accueil.offers.cta: "Tarife vergleichen"
+accueil.community.eyebrow: "Der Dritte Ort"
+accueil.community.title: "Deine Tischnachbarn"
+accueil.community.p1: "Auf der Plage sind deine Nachbarn Entwicklerinnen, Grafiker, Beraterinnen oder Gründer. Man tauscht Wissen, Kontakte und Tipps aus, und manchmal wird ein Nachbar zum Kunden oder Partner."
+accueil.community.p2: "Die Plage ist ein Verein: Wer einen Platz mietet, wird Mitglied und kann das Leben im Haus mitgestalten."
+accueil.community.i1: "Der Conseil de la Plage, am ersten Donnerstag im Monat um 12 Uhr: Neuigkeiten, Projekte und die Begrüßung der Neuen."
+accueil.community.i2: "Die Mardis gourmands: dienstags gegen 10 Uhr bringt jemand Frühstück mit."
+accueil.community.i3: "Meetups und Abende: Apéro recruteurs, Fail Club, Go SXB Go!, Strasbourg JS …"
+accueil.community.i4: "Sprechstunden von INPI und CCI für deine Unternehmensfragen."
+accueil.community.cta: "Den Dritten Ort entdecken →"
+accueil.community.imageAlt: "Ein Entwickler-Meetup im Flex-Bereich"
+accueil.people.eyebrow: "Sie arbeiten auf der Plage"
+accueil.people.title: "Ein paar Plagistes"
+accueil.people.cta: "Alle Porträts →"
+accueil.rooms.eyebrow: "Besprechungsräume"
+accueil.rooms.title: "Vier Räume, Mitglied oder nicht"
+accueil.rooms.lead: "Miete einen Raum, um Kundschaft und Dienstleister mitten in Straßburg zu empfangen oder eine Schulung zu geben. Jeder Raum hat einen Bildschirm."
+cta.room: "Raum anfragen"
+accueil.rooms.more: "Die Räume im Detail →"
+accueil.contact.title: "Komm vorbei"
+contact.band.lead: "Am einfachsten lernst du die Plage vor Ort kennen: Schreib uns, um einen Besuch zu vereinbaren, oder ruf an. Wir sind montags bis freitags von 9 bis 17 Uhr da."
+cta.call: "Anrufen: +33 9 77 42 59 29"
+contact.band.where: "13 rue Jacques Peirotes, 67000 Straßburg, Frankreich · contact@laplagedigitale.fr"
+accueil.meta.title: "Coworking als Verein in Straßburg | La Plage Digitale"
+accueil.meta.description: "Ein Platz für einen Tag, ein Büro im Monat, ein Besprechungsraum oder eine Geschäftsadresse: 600 m² Coworking als Verein mitten in Straßburg."
+tarifs.hero.eyebrow: "Tarife und Preise"
+tarifs.hero.title: "Arbeite auf der Plage, in deinem Rhythmus"
+tarifs.hero.lead: "Ein Tag ab und zu, jeden Tag oder nur eine Adresse für dein Unternehmen: Mit jedem Tarif gehörst du zur Community der Plage. Die Preise sind netto, der Bruttopreis steht darunter."
+tarifs.plans.title: "Die vier Tarife"
+tarifs.flex.for: "Für dich, wenn du die Plage ausprobieren, nicht mehr zu Hause arbeiten oder ein- bis zweimal pro Woche kommen willst."
+tarifs.flex.f1: "Ein Platz an einem großen geteilten Tisch"
+tarifs.feat.net: "Glasfaser und WLAN"
+tarifs.feat.print: "Drucker und Scanner"
+tarifs.feat.coffee: "Kaffee so viel du willst, Lounge und Küche"
+tarifs.flex.cond: "Ohne Reservierung, Montag bis Freitag 9–17 Uhr. Deine Tage werden einmal im Monat abgerechnet. Vereinsmitglied? Dein erster Tag im Jahr ist gratis."
+tarifs.flex.cta: "Für Flex anmelden"
+tarifs.nomade.for: "Für dich, wenn du mehrmals pro Woche oder zu ungewöhnlichen Zeiten kommst."
+tarifs.nomade.f1: "Der Flex-Bereich rund um die Uhr, mit eigenem Schlüssel"
+tarifs.nomade.f3: "Drucker und Scanner nach Fair Use"
+tarifs.nomade.cond: "Besprechungsräume werden extra berechnet. Keine Mindestlaufzeit: Du kannst monatlich kündigen, mit einem Monat Frist per Einschreiben."
+tarifs.fixe.for: "Für dich, wenn du jeden Tag deinen eigenen Schreibtisch am selben Ort willst."
+tarifs.fixe.f1: "Dein eigener Schreibtisch, Stauraum und ein abschließbares Schließfach"
+tarifs.fixe.f2: "Zugang rund um die Uhr, mit eigenem Schlüssel"
+tarifs.fixe.f3: "Glasfaser, WLAN, Drucker und Scanner"
+tarifs.fixe.f4: "Die Räume Crevette, Requin und Baleine nach Fair Use"
+tarifs.fixe.f5: "Deine Post wird angenommen und verschickt, nach Fair Use"
+tarifs.fixe.cond: "Deine Firma kann hier ohne Aufpreis ihren Sitz haben, je nach Tätigkeit im Einzelfall. Laufzeit und Kündigungsfrist erklären wir dir beim Besuch."
+tarifs.dom.for: "Für dich, wenn dein Unternehmen eine Adresse in Straßburg braucht, ohne ein Büro zu mieten."
+tarifs.dom.f1: "Der Sitz deines Unternehmens in der 13 rue Jacques Peirotes"
+tarifs.dom.f2: "Deine Post wird zu den Öffnungszeiten angenommen, Einschreiben holen wir für dich ab"
+tarifs.dom.f3: "Eine Nachricht, wenn ein Einschreiben oder Paket ankommt"
+tarifs.dom.f4: "Ein vertraulicher Raum für deine Gremiensitzungen"
+tarifs.dom.f5: "Postweiterleitung möglich: 10 € netto pro Monat zusätzlich"
+tarifs.dom.cond: "Mindestens 12 Monate, verlängert sich automatisch, Kündigung 3 Monate vor Ablauf."
+cta.quote: "Angebot anfragen"
+tarifs.compare.eyebrow: "Vergleich"
+tarifs.compare.title: "Flex, Nomade oder fester Platz?"
+tarifs.compare.label: "Vergleich der Tarife Flex, Nomade und fester Platz"
+tarifs.compare.h0: "Was zählt"
+tarifs.compare.h3: "Fester Platz"
+tarifs.cmp.price: "Preis"
+tarifs.cmp.place: "Dein Platz"
+tarifs.cmp.shared: "Ein geteilter Platz"
+tarifs.cmp.own: "Dein eigener Schreibtisch"
+tarifs.cmp.hours: "Zeiten"
+tarifs.cmp.office: "Mo–Fr, 9–17 Uhr"
+tarifs.cmp.always: "Rund um die Uhr"
+tarifs.cmp.keys: "Schlüssel"
+tarifs.cmp.yes: "Ja"
+tarifs.cmp.locker: "Schließfach"
+tarifs.cmp.rooms: "Besprechungsräume"
+tarifs.cmp.extra: "Extra"
+tarifs.cmp.fair: "Crevette, Requin, Baleine nach Fair Use"
+tarifs.cmp.term: "Laufzeit"
+tarifs.cmp.none: "Ohne Bindung"
+tarifs.cmp.monthly: "Monatlich, 1 Monat Frist"
+tarifs.cmp.visit: "Beim Besuch erklärt"
+tarifs.cmp.member: "Mitgliedschaft (5 € / 20 € pro Jahr)"
+tarifs.cmp.first: "Auf der ersten Rechnung"
+tarifs.rooms.eyebrow: "Besprechungsräume"
+tarifs.rooms.title: "Vier Räume für 6 bis 50 Personen"
+tarifs.rooms.lead: "Mitglied oder nicht: Du buchst einen Raum für jeweils 4 Stunden, jede weitere Stunde kostet 20 € netto. Bildschirm (HDMI), Flipchart, Whiteboard sowie Kaffee, Tee und Wasser."
+tarifs.rooms.assoc: "Du organisierst etwas für einen Verein oder eine Community? Die Plage kann dir nach Absprache und mit Mitgliedschaft einen Raum leihen."
+tarifs.member.eyebrow: "Der Verein"
+tarifs.member.title: "Mitglied im Verein"
+tarifs.member.p1: "Ob du einen Tag oder das ganze Jahr kommst: Du wirst Mitglied des Vereins. Der Beitrag steht auf deiner ersten Rechnung, du musst nichts weiter tun."
+tarifs.member.p2: "5 € pro Person, 20 € pro Unternehmen; die Mitarbeitenden eines Mitgliedsunternehmens sind mit abgedeckt. Sie gilt bis zum 31. Dezember (nach dem 14. Dezember bezahlt: bis Ende des Folgejahres)."
+tarifs.member.p3: "Du kannst zum Conseil de la Plage und zu den internen Veranstaltungen kommen und bekommst den monatlichen Newsletter."
+cta.support: "Mitglied werden, ohne zu mieten →"
+tarifs.faq.eyebrow: "Häufige Fragen"
+tarifs.faq.title: "Bevor du loslegst"
+tarifs.faq.q1: "Kann ich es vorher ausprobieren?"
+tarifs.faq.a1: "Ja: Arbeite einen Flex-Tag für 14 € netto, ohne Reservierung, oder schreib uns für einen Besuch."
+tarifs.faq.q2: "Ist die Mitgliedschaft Pflicht?"
+tarifs.faq.a2: "Ja, um einen Platz zu mieten: Der Verein stellt seine Räume seinen Mitgliedern zur Verfügung. Sie kostet 5 € pro Person oder 20 € pro Unternehmen und Jahr."
+tarifs.faq.q3: "Kann ich den Tarif wechseln?"
+tarifs.faq.a3: "Ja: Schreib an contact@laplagedigitale.fr, wir schauen es uns gemeinsam an."
+tarifs.faq.q4: "Wie bekomme ich meine Rechnungen?"
+tarifs.faq.a4: "Per E-Mail und in deinem Mitgliederbereich, wo du auch das Lastschriftverfahren einrichten kannst."
+tarifs.faq.q5: "Sind die Räume beim festen Platz inklusive?"
+tarifs.faq.a5: "Crevette, Requin und Baleine ja, nach Fair Use: nicht für bezahlte Veranstaltungen und nicht mehrmals im Monat ganztägig. Narval wird berechnet."
+tarifs.faq.q6: "Was umfasst die Geschäftsadresse?"
+tarifs.faq.a6: "Die Adresse deines Firmensitzes, die Annahme deiner Post zu den Öffnungszeiten, die Abholung deiner Einschreiben, eine Nachricht bei jedem Eingang und ein Raum für deine Gremiensitzungen. Die Weiterleitung kostet 10 € netto im Monat."
+tarifs.contact.title: "Eine Frage zu den Tarifen? Komm vorbei und sprich mit uns"
+tarifs.meta.title: "Coworking-Preise in Straßburg | La Plage Digitale"
+tarifs.meta.description: "Tag 14 €, Nomade 175 €/Monat, fester Platz 275 €/Monat, Räume ab 87 € für 4 Std., Geschäftsadresse 40 €/Monat, alles netto, mitten in Straßburg."
+tierslieu.hero.eyebrow: "Der Dritte Ort"
+tierslieu.hero.title: "Ein Coworking von und für seine Mitglieder"
+tierslieu.hero.lead: "La Plage Digitale ist ein Verein. Er betreibt 600 m² im Viertel Krutenau, mitten in Straßburg, wo Selbstständige, Gründerinnen, Kreative und Projektleute jeden Tag arbeiten und sich begegnen."
+tierslieu.story.eyebrow: "Unsere Geschichte"
+tierslieu.story.title: "Ein Verein, seit 2019"
+tierslieu.story.p1: "La Plage Digitale ist ein Verein nach elsässisch-lothringischem Ortsrecht (Gesetz von 1908), gegründet 2019, als der Verein Alsace Digitale ihm einen Teil seiner Tätigkeit übertrug."
+tierslieu.story.p2: "Er zog in die ehemaligen Räume der Coop in der rue Jacques Peirotes. « La Plage » ist zugleich der Verein und der Ort, den er betreibt; seine Mitglieder heißen Plagistes."
+tierslieu.story.imageAlt: "Der Open Space von La Plage Digitale: Schreibtische, Hängeleuchten und Glaswände unter einer Betondecke"
+tierslieu.life.eyebrow: "Leben auf der Plage"
+tierslieu.life.title: "Feste Termine"
+tierslieu.life.lead: "Auf der Plage trifft man sich in der Küche, hilft sich bei Projekten und empfiehlt sich gegenseitig Kundschaft. Und es gibt feste Termine:"
+tierslieu.life.conseil.title: "Der Conseil de la Plage"
+tierslieu.life.conseil.text: "Am ersten Donnerstag im Monat um 12 Uhr treffen sich die Coworker: Neuigkeiten, laufende Projekte, Ideen, offene Probleme und die Begrüßung der Neuen."
+tierslieu.life.mardis.title: "Die Mardis gourmands"
+tierslieu.life.mardis.text: "Jeden Dienstag gegen 10 Uhr bringt jemand ein Frühstück für alle mit."
+tierslieu.life.events.title: "Abende und Treffen"
+tierslieu.life.events.text: "Apéro recruteurs, Fail Club, die Vortragsreihe « Regards », Biz'dej solopreneurs: Treffen, um sich unter Gleichgesinnten über Unternehmerisches auszutauschen."
+tierslieu.life.advice.title: "Sprechstunden"
+tierslieu.life.advice.text: "INPI (Patentamt) und CCI (Handelskammer) bieten auf der Plage Sprechstunden für deine Unternehmensfragen an."
+tierslieu.communities.title: "Die Communities bei uns"
+tierslieu.communities.text: "Die Plage stellt Communities und Vereinen ihre Räume kostenlos zur Verfügung. Hier treffen sich unter anderem Go SXB Go!, Strasbourg JS, Software Crafters, Pixels & Bretzels und die Strasbourg Games Community."
+tierslieu.host.title: "Eine Veranstaltung auf der Plage"
+tierslieu.host.text: "Der Raum Narval bietet bis zu 50 Sitzplätze. Communities und Vereinen leihen wir ihn nach Absprache und mit Mitgliedschaft; für berufliche Veranstaltungen wird er vermietet."
+tierslieu.host.cta: "Veranstaltung vorschlagen"
+tierslieu.people.title: "Die Menschen der Plage"
+tierslieu.support.eyebrow: "Unsere Unterstützer"
+tierslieu.support.title: "Förderer und Netzwerke"
+tierslieu.support.lead: "La Plage Digitale wird von der Region Grand Est und der Eurométropole de Strasbourg unterstützt. Sie gehört zum Netzwerk Tiers-Lieux Grand Est und trägt das Label Centre Collaboratif Connecté."
+tierslieu.member.eyebrow: "Mitgliedschaft"
+tierslieu.member.title: "Mitglied werden"
+tierslieu.member.p1: "Du arbeitest auf der Plage? Dann bist du schon Mitglied: Der Beitrag steht auf deiner ersten Rechnung."
+tierslieu.member.p2: "Du willst die Plage unterstützen, ohne einen Platz zu mieten? Du kannst Mitglied werden, das Projekt unterstützen und am Vereinsleben teilnehmen."
+tierslieu.member.cta: "Online Mitglied werden"
+tierslieu.contact.title: "Lerne die Community kennen"
+tierslieu.meta.title: "Ein Dritter Ort als Verein in Straßburg | La Plage Digitale"
+tierslieu.meta.description: "Ein Dritter Ort als Verein mitten in Straßburg: monatlicher Conseil de la Plage, Treffen, Sprechstunden und eine Community, die sich hilft."
+infos.hero.eyebrow: "Praktische Infos"
+infos.hero.title: "Komm uns auf der Plage besuchen"
+infos.hero.lead: "Für einen Besuch, einen Besprechungsraum, eine Geschäftsadresse oder einfach eine Frage: Schreib uns oder ruf an."
+infos.reach.title: "Adresse, Zeiten und Kontakt"
+infos.address.label: "Adresse"
+infos.address.note: "Viertel Bourse–Krutenau. Haupteingang in der rue Jacques Peirotes; an Veranstaltungsabenden Eingang rue de Genève."
+infos.address.directions: "Route berechnen"
+infos.hours.label: "Öffnungszeiten"
+infos.hours.week: "Montag bis Freitag, 9–17 Uhr"
+infos.hours.keys: "Rund um die Uhr für die Tarife Nomade und fester Platz, mit eigenem Schlüssel."
+infos.phone.label: "Telefon"
+infos.email.label: "E-Mail"
+infos.access.eyebrow: "Zugang"
+infos.access.title: "Ebenerdig, im Erdgeschoss"
+infos.access.floor: "Der gesamte Bereich liegt im Erdgeschoss."
+infos.access.pmr: "Ein Behindertenparkplatz in der rue Jacques Peirotes."
+infos.access.wc: "Barrierefreie Toiletten."
+infos.form.eyebrow: "Noch eine Frage?"
+infos.form.title: "Schreib uns"
+infos.form.lead: "Füll dieses Formular aus: Deine Nachricht landet direkt beim Team."
+infos.meta.title: "Anfahrt, Öffnungszeiten, Kontakt | La Plage Digitale"
+infos.meta.description: "13 rue Jacques Peirotes, Straßburg. Montag bis Freitag 9–17 Uhr geöffnet. Schreib oder ruf uns an für einen Besuch, einen Raum oder eine Geschäftsadresse."
+nav.tarifs: "Tarife und Preise"
+nav.tierslieu: "Dritter Ort"
+nav.infos: "Praktische Infos"
+footer.site: "Die Website"
+footer.members: "Mitglieder"
+footer.support: "Den Verein unterstützen"
+href.pricing.compare: "/de/preise#comparer"
+href.pricing.rooms: "/de/preise#salles"
+href.thirdPlace: "/de/dritter-ort"
+href.thirdPlace.people: "/de/dritter-ort#portraits"

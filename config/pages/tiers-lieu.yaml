@@ -1,0 +1,652 @@
+# Page: tiers-lieu — Tiers-lieu / Association (requests 803–807): history,
+# the regular get-togethers (always shown, so the page is never empty), hosting
+# an event, the six Plagistes, supporters and networks, membership, contact.
+# Bidouillothèque, shared library, Startup CE and Hack SXB are left out: not
+# active in the 2026 AG and newsletter.
+name: tiers-lieu
+path:
+  fr: "/tiers-lieu"
+  en: "/third-place"
+  de: "/dritter-ort"
+meta:
+  favicons:
+    $ref: "../favicons.yaml"
+  noindex: true
+  title: $t:tierslieu.meta.title
+  description: $t:tierslieu.meta.description
+  openGraph:
+    type: website
+    image: "/images/pages/nos-activites/meetups.webp"
+components:
+  - component: site-header
+  - type: container
+    element: section
+    props:
+      className: "relative overflow-hidden bg-navy text-white"
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-16"
+        children:
+          - type: text
+            element: p
+            content: $t:tierslieu.hero.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-5"
+          - type: text
+            element: h1
+            content: $t:tierslieu.hero.title
+            props:
+              className: "[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] text-white max-w-4xl"
+          - type: text
+            element: p
+            content: $t:tierslieu.hero.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6"
+          - type: flex
+            props:
+              className: "flex flex-wrap gap-3 mt-10"
+            children:
+              - type: link
+                content: $t:cta.visit
+                props:
+                  href: "mailto:contact@laplagedigitale.fr?subject=Visite%20de%20la%20Plage"
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors"
+              - type: link
+                content: $t:cta.pricing
+                props:
+                  href: $t:href.pricing
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors"
+  - type: container
+    element: section
+    props:
+      className: bg-white
+      aria-labelledby: tierslieu-story
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+        children:
+          - type: container
+            props:
+              className: ""
+            children:
+              - type: text
+                element: p
+                content: $t:tierslieu.story.eyebrow
+                props:
+                  className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+              - type: text
+                element: h2
+                content: $t:tierslieu.story.title
+                props:
+                  className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+                  id: tierslieu-story
+              - type: text
+                element: p
+                content: $t:tierslieu.story.p1
+                props:
+                  className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-6"
+              - type: text
+                element: p
+                content: $t:tierslieu.story.p2
+                props:
+                  className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-4"
+          - type: image
+            props:
+              src: "/images/pages/accueil/coworking-1.webp"
+              alt: $t:tierslieu.story.imageAlt
+              width: 1600
+              height: 1064
+              className: "w-full h-auto aspect-[3/2] object-cover rounded-panel shadow-md"
+              loading: lazy
+  - type: container
+    element: section
+    props:
+      className: bg-sand
+      aria-labelledby: tierslieu-life
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: p
+            content: $t:tierslieu.life.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:tierslieu.life.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: tierslieu-life
+          - type: text
+            element: p
+            content: $t:tierslieu.life.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4"
+          - type: grid
+            props:
+              className: "grid grid-cols-1 md:grid-cols-2 gap-6 mt-12"
+            children:
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md border-t-4 border-navy p-6"
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tierslieu.life.conseil.title
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tierslieu.life.conseil.text
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md border-t-4 border-blue p-6"
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tierslieu.life.mardis.title
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tierslieu.life.mardis.text
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md border-t-4 border-orange p-6"
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tierslieu.life.events.title
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tierslieu.life.events.text
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md border-t-4 border-magenta p-6"
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tierslieu.life.advice.title
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tierslieu.life.advice.text
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-3"
+          - type: container
+            props:
+              className: "mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6"
+            children:
+              - type: container
+                props:
+                  className: "bg-white rounded-panel shadow-md p-6 sm:p-8"
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tierslieu.communities.title
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tierslieu.communities.text
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-3"
+              - type: container
+                props:
+                  className: "bg-navy text-white rounded-panel shadow-md p-6 sm:p-8"
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tierslieu.host.title
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-white"
+                  - type: text
+                    element: p
+                    content: $t:tierslieu.host.text
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-navy-100 mt-3"
+                  - type: link
+                    content: $t:tierslieu.host.cta
+                    props:
+                      href: "mailto:contact@laplagedigitale.fr?subject=Év%C3%A9nement%20à%20la%20Plage"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors mt-6"
+  - type: container
+    element: section
+    props:
+      className: "bg-background scroll-mt-24"
+      id: portraits
+      aria-labelledby: tierslieu-people
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: p
+            content: $t:accueil.people.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:tierslieu.people.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: tierslieu-people
+          - type: grid
+            props:
+              className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"
+            children:
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-cowork/caroline-bosc.webp"
+                      alt: $t:coworkers.caroline.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Caroline Bosc"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: "Impact Positif"
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.caroline.p1
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-4"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.caroline.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-cowork/frederic-fuchs.webp"
+                      alt: $t:coworkers.frederic.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Frédéric Fuchs"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: OpenClassrooms
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.frederic.p1
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-4"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.frederic.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-cowork/bastien-remy.webp"
+                      alt: $t:coworkers.bastien.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Bastien Remy"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.bastien.company
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.bastien.p1
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-4"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.bastien.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-cowork/roland-margelidon.webp"
+                      alt: $t:coworkers.roland.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Roland Margelidon"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: Rolrom
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.roland.p1
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-4"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.roland.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-sage"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-cowork/sylvaine-gross.webp"
+                      alt: $t:coworkers.sylvaine.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Sylvaine Gross"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: Mu.se
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.sylvaine.p1
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-4"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.sylvaine.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-cowork/eleonore-greif.webp"
+                      alt: $t:coworkers.eleonore.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Eléonore Greif"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: Mu.se
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.eleonore.p1
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-4"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.eleonore.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+  - type: container
+    element: section
+    props:
+      className: bg-white
+      aria-labelledby: tierslieu-support
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: p
+            content: $t:tierslieu.support.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:tierslieu.support.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: tierslieu-support
+          - type: text
+            element: p
+            content: $t:tierslieu.support.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4"
+          - type: grid
+            props:
+              className: "grid grid-cols-2 lg:grid-cols-4 gap-4 mt-12"
+            children:
+              - type: link
+                props:
+                  href: https://www.grandest.fr
+                  target: _blank
+                  rel: "noopener noreferrer"
+                  className: "flex items-center justify-center bg-white rounded-tile border border-border p-6 min-h-32 hover:shadow-md transition-shadow"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-soutiens/region-grand-est.webp"
+                      alt: "Région Grand Est"
+                      width: 520
+                      height: 141
+                      className: "h-12 w-auto max-w-full object-contain"
+                      loading: lazy
+              - type: link
+                props:
+                  href: https://www.strasbourg.eu
+                  target: _blank
+                  rel: "noopener noreferrer"
+                  className: "flex items-center justify-center bg-white rounded-tile border border-border p-6 min-h-32 hover:shadow-md transition-shadow"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-soutiens/eurometropole-strasbourg.webp"
+                      alt: "Eurométropole de Strasbourg"
+                      width: 600
+                      height: 160
+                      className: "h-12 w-auto max-w-full object-contain"
+                      loading: lazy
+              - type: link
+                props:
+                  href: https://tierslieuxgrandest.org
+                  target: _blank
+                  rel: "noopener noreferrer"
+                  className: "flex items-center justify-center bg-white rounded-tile border border-border p-6 min-h-32 hover:shadow-md transition-shadow"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-soutiens/tiers-lieux-grand-est.webp"
+                      alt: "Tiers-Lieux Grand Est"
+                      width: 584
+                      height: 312
+                      className: "h-16 w-auto max-w-full object-contain"
+                      loading: lazy
+              - type: container
+                props:
+                  className: "flex items-center justify-center bg-white rounded-tile border border-border p-6 min-h-32"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-soutiens/centre-collaboratif-connecte.webp"
+                      alt: "Centre Collaboratif Connecté (C³)"
+                      width: 213
+                      height: 237
+                      className: "h-20 w-auto max-w-full object-contain"
+                      loading: lazy
+  - type: container
+    element: section
+    props:
+      className: "bg-background scroll-mt-24"
+      id: adhesion
+      aria-labelledby: tierslieu-member
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 max-w-4xl"
+        children:
+          - type: text
+            element: p
+            content: $t:tierslieu.member.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:tierslieu.member.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: tierslieu-member
+          - type: text
+            element: p
+            content: $t:tierslieu.member.p1
+            props:
+              className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-6"
+          - type: text
+            element: p
+            content: $t:tierslieu.member.p2
+            props:
+              className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-4"
+          - type: link
+            content: $t:tierslieu.member.cta
+            props:
+              href: https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025
+              className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-6"
+              target: _blank
+              rel: "noopener noreferrer"
+  - type: container
+    element: section
+    props:
+      className: "bg-magenta text-white"
+      aria-labelledby: tierslieu-contact-title
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+        children:
+          - type: container
+            props:
+              className: ""
+            children:
+              - type: text
+                element: h2
+                content: $t:tierslieu.contact.title
+                props:
+                  className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-white"
+                  id: tierslieu-contact-title
+              - type: text
+                element: p
+                content: $t:contact.band.lead
+                props:
+                  className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-white mt-4 max-w-xl"
+          - type: container
+            props:
+              className: space-y-6
+            children:
+              - type: flex
+                props:
+                  className: "flex flex-wrap gap-3"
+                children:
+                  - type: link
+                    content: $t:cta.visit
+                    props:
+                      href: "mailto:contact@laplagedigitale.fr?subject=Visite%20de%20la%20Plage"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold text-magenta bg-white hover:bg-navy-100 transition-colors"
+                  - type: link
+                    content: $t:cta.call
+                    props:
+                      href: "tel:+33977425929"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors"
+              - type: text
+                element: p
+                content: $t:contact.band.where
+                props:
+                  className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-white"
+  - component: site-footer

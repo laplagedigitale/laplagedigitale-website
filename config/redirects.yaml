@@ -11,10 +11,10 @@
 
 
 # Pages, categories and feeds that changed address
-- { from: "/espace-cowork", to: "/espace-coworking" }
-- { from: "/espace-cowork/", to: "/espace-coworking" }
-- { from: "/nos-cowork", to: "/nos-coworkers" }
-- { from: "/nos-cowork/", to: "/nos-coworkers" }
+- { from: "/espace-cowork", to: "/formules-et-tarifs" }
+- { from: "/espace-cowork/", to: "/formules-et-tarifs" }
+- { from: "/nos-cowork", to: "/tiers-lieu" }
+- { from: "/nos-cowork/", to: "/tiers-lieu" }
 - { from: "/english", to: "/" }
 - { from: "/english/", to: "/" }
 - { from: "/deutsch", to: "/" }
@@ -48,8 +48,8 @@
 - { from: "/feed/", to: "/feed.xml" }
 - { from: "/comments/feed", to: "/feed.xml" }
 - { from: "/comments/feed/", to: "/feed.xml" }
-- { from: "/about", to: "/qui-sommes-nous" }
-- { from: "/about/", to: "/qui-sommes-nous" }
+- { from: "/about", to: "/tiers-lieu" }
+- { from: "/about/", to: "/tiers-lieu" }
 - { from: "/legal", to: "/mentions-legales" }
 - { from: "/legal/", to: "/mentions-legales" }
 - { from: "/privacy", to: "/confidentialite" }
@@ -948,3 +948,56 @@
 - { from: "/editor/compte", to: "/administration/compte" }
 - { from: "/espace-membre/membres", to: "/administration/membres" }
 - { from: "/espace-membre/flex", to: "/administration/inscriptions-flex" }
+
+# 2026-11: the site went from 12 pages to 4 (request 786). Every retired page
+# answers 301 to the page that took its content (request 787), with and without
+# the trailing slash. English and German get their own lines first, straight
+# to the translated slug, so no address takes two hops.
+- { from: "/en/les-formules", to: "/en/pricing" }
+- { from: "/en/les-formules/", to: "/en/pricing" }
+- { from: "/de/les-formules", to: "/de/preise" }
+- { from: "/de/les-formules/", to: "/de/preise" }
+- { from: "/les-formules", to: "/formules-et-tarifs" }
+- { from: "/les-formules/", to: "/formules-et-tarifs" }
+- { from: "/en/espace-coworking", to: "/en/pricing" }
+- { from: "/en/espace-coworking/", to: "/en/pricing" }
+- { from: "/de/espace-coworking", to: "/de/preise" }
+- { from: "/de/espace-coworking/", to: "/de/preise" }
+- { from: "/espace-coworking", to: "/formules-et-tarifs" }
+- { from: "/espace-coworking/", to: "/formules-et-tarifs" }
+- { from: "/en/qui-sommes-nous", to: "/en/third-place" }
+- { from: "/en/qui-sommes-nous/", to: "/en/third-place" }
+- { from: "/de/qui-sommes-nous", to: "/de/dritter-ort" }
+- { from: "/de/qui-sommes-nous/", to: "/de/dritter-ort" }
+- { from: "/qui-sommes-nous", to: "/tiers-lieu" }
+- { from: "/qui-sommes-nous/", to: "/tiers-lieu" }
+- { from: "/en/nos-activites", to: "/en/third-place" }
+- { from: "/en/nos-activites/", to: "/en/third-place" }
+- { from: "/de/nos-activites", to: "/de/dritter-ort" }
+- { from: "/de/nos-activites/", to: "/de/dritter-ort" }
+- { from: "/nos-activites", to: "/tiers-lieu" }
+- { from: "/nos-activites/", to: "/tiers-lieu" }
+- { from: "/en/nos-soutiens", to: "/en/third-place" }
+- { from: "/en/nos-soutiens/", to: "/en/third-place" }
+- { from: "/de/nos-soutiens", to: "/de/dritter-ort" }
+- { from: "/de/nos-soutiens/", to: "/de/dritter-ort" }
+- { from: "/nos-soutiens", to: "/tiers-lieu" }
+- { from: "/nos-soutiens/", to: "/tiers-lieu" }
+- { from: "/en/nos-coworkers", to: "/en/third-place" }
+- { from: "/en/nos-coworkers/", to: "/en/third-place" }
+- { from: "/de/nos-coworkers", to: "/de/dritter-ort" }
+- { from: "/de/nos-coworkers/", to: "/de/dritter-ort" }
+- { from: "/nos-coworkers", to: "/tiers-lieu" }
+- { from: "/nos-coworkers/", to: "/tiers-lieu" }
+- { from: "/en/les-entreprises", to: "/en/third-place" }
+- { from: "/en/les-entreprises/", to: "/en/third-place" }
+- { from: "/de/les-entreprises", to: "/de/dritter-ort" }
+- { from: "/de/les-entreprises/", to: "/de/dritter-ort" }
+- { from: "/les-entreprises", to: "/tiers-lieu" }
+- { from: "/les-entreprises/", to: "/tiers-lieu" }
+- { from: "/en/contact", to: "/en/practical-info" }
+- { from: "/en/contact/", to: "/en/practical-info" }
+- { from: "/de/contact", to: "/de/praktische-infos" }
+- { from: "/de/contact/", to: "/de/praktische-infos" }
+- { from: "/contact", to: "/infos-pratiques" }
+- { from: "/contact/", to: "/infos-pratiques" }
