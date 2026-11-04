@@ -42,11 +42,12 @@ env:
     required: false
     default: 'true'
     secret: false
-  # flex-signup-validate sends the coworker invitation through this app's own
-  # admin API (config/connections/sovrium-admin.yaml): an admin's API key,
-  # minted in /_admin, and the public origin to call.
+  # pennylane-sync reads the account directory through this app's own admin
+  # API (config/connections/sovrium-admin.yaml): an admin's API key, minted in
+  # /_admin, and the public origin to call. The Flex invitation no longer needs
+  # it: since 0.46 it is the built-in inviteUser auth action.
   - key: INVITE_API_KEY
-    description: API key of an admin account (minted in /_admin), sent on x-api-key to /api/auth/admin/invite-user; empty refuses every Flex validation
+    description: API key of an admin account (minted in /_admin), sent on x-api-key to /api/admin/users so pennylane-sync can fill members.user_id; empty skips that backfill
     required: false
     default: ''
   - key: BASE_URL

@@ -16,11 +16,14 @@
 #                 l'association » ticks association_member; an unticked one
 #                 never clears it (that box is an admin's).
 #   3. invite   — the person is invited as a `coworker`: the same e-mail the
-#                 « Inviter un membre » dialog sends, through the
-#                 sovrium-admin connection (see its header for why). An address
-#                 that already has an account, invited or onboarded, is not
-#                 invited again. The invitation fires member-sign-up, whose
-#                 upsert on e-mail only rewrites the name.
+#                 « Inviter un membre » dialog sends, through the built-in
+#                 `auth` action inviteUser (context.actions.auth). Not the
+#                 sovrium-admin connection any more: since 0.46 an API key is
+#                 answered 404 on every /api/auth/* route. With ifExists: skip
+#                 an account that already signs in is left alone; one still
+#                 waiting on its invitation gets a fresh link. The invitation
+#                 fires member-sign-up, whose upsert on e-mail only rewrites
+#                 the name.
 #   4. sign-up  — status `invited`, with the Pennylane customer id.
 #
 # Nothing is written before Pennylane answers: a Pennylane error (a bad token
@@ -89,10 +92,6 @@ actions:
             context.log.info(`sign-up ${signupId} is ${s.status}: nothing to do`)
             return { message: `Inscription déjà traitée (${s.status}) : rien à faire.`, customerId: text(s.pennylane_customer_id) }
           }
-          if (!dryRun && !text(context.env.INVITE_API_KEY)) {
-            throw new Error('INVITE_API_KEY n’est pas défini : l’invitation ne pourrait pas partir. Rien n’a été modifié.')
-          }
-
           // ── The billing address, in Pennylane's parts ──
           // Older sign-ups carry the whole address in billing_address: read a
           // « 67000 Strasbourg » tail (optionally followed by « France ») off it.
@@ -133,8 +132,9 @@ actions:
             ? text(member.pennylane_customer_id) : ''
 
           // Does the address already have an account (onboarded or invited)?
-          // Asked before anything is written, so a revoked or wrong
-          // INVITE_API_KEY fails here and not after the customer exists.
+          // Only read for the dry run's wording and the log: the invitation
+          // itself (inviteUser, ifExists: skip) never re-invites an account
+          // that signs in. Without INVITE_API_KEY the read is skipped.
           let account: any = null
           if (text(context.env.INVITE_API_KEY)) {
             const users: any = await context.actions.connection.call({
@@ -233,17 +233,17 @@ actions:
           context.log.info(`${email}: members row linked to ${customerId}${memberData.association_member ? ', association member' : ''}`)
 
           // ── 3. The invitation ──
+          // The built-in auth action, not POST /api/auth/admin/invite-user:
+          // since 0.46 an API key is answered 404 on every /api/auth/* route.
+          // ifExists: skip leaves an account that already signs in untouched;
+          // a pending invitation is sent again (its earlier link stops).
           let invited = 'no'
-          if (account) {
-            context.log.info(`${email}: account ${account.id ?? ''} already exists (role ${account.role ?? '?'}) — not invited again`)
-          } else {
-            const sent: any = await context.actions.connection.call({
-              connection: 'sovrium-admin',
-              operation: 'invite-user',
-              params: { email, name: name || email, role: 'coworker' },
-            })
+          const sent: any = await context.actions.auth.inviteUser({ email, name: name || email, role: 'coworker', ifExists: 'skip' })
+          if (sent?.invitationSent) {
             invited = 'yes'
-            context.log.info(`${email}: invited as coworker (${JSON.stringify(sent?.data ?? {}).slice(0, 200)})`)
+            context.log.info(`${email}: invited as coworker (account ${sent?.userId ?? '?'}${sent?.alreadyExists ? ', pending invitation sent again' : ''})`)
+          } else {
+            context.log.info(`${email}: account ${sent?.userId ?? ''} already signs in — not invited again`)
           }
 
           // ── 4. The sign-up ──

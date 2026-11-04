@@ -447,12 +447,13 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`DIRECT_DEBIT_APPLY`** — optional, default `true`. `false` turns
   `pennylane-direct-debit` into a dry run (it mails what it would switch).
 - **`INVITE_API_KEY`** — an API key minted in `/_admin` (API keys) by an
-  **admin** account. `flex-signup-validate` sends the coworker invitation
-  through the app's own admin endpoint with it, at `BASE_URL`: Sovrium 0.37's
-  automations can create a user but not invite one. Without it every
-  validation is refused before anything is written. The invitation names the
-  key's owner as the inviter; demoting or banning that owner, or revoking the
-  key, stops the invitations.
+  **admin** account. `pennylane-sync` reads the account directory
+  (`/api/admin/users`, at `BASE_URL`) with it to fill `members.user_id`;
+  without it that backfill is skipped. The Flex invitation no longer uses it:
+  since Sovrium 0.46 an API key is answered 404 on `/api/auth/*`, and
+  `flex-signup-validate` invites through the built-in `inviteUser` auth action.
+  A key minted since 0.46 expires after a year, and resetting its owner's
+  password (or turning on two-step verification) revokes it: mint a new one.
 - **`FLEX_SIGNUP_APPLY`** — optional, default `true`. `false` makes « Valider »
   a dry run: the run says which customer it would reuse or create and writes
   nothing.
