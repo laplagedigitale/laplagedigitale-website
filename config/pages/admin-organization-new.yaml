@@ -1,0 +1,35 @@
+# Page: admin-organization-new — pattern C: the back link, then one card holding the declared
+# form organization-new, which creates the row and opens it on its own page.
+#
+# Declared before the :id page in app.yaml, so this address is this page and
+# never read as an :id.
+name: admin-organization-new
+path: /administration/contacts/structures/nouvelle
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Nouvelle structure — Administration"
+  description: "Ajouter une structure à la base de la communauté."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - { type: link, content: '← Contacts', props: { href: '/administration/contacts?onglet=structures', className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+          - type: card
+            props:
+              className: 'p-6 sm:p-8 max-w-2xl'
+            children:
+              - type: form
+                formRef: organization-new
+                props: { headingLevel: h1 }

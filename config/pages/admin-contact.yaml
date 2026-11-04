@@ -1,0 +1,129 @@
+# Page: admin-contact — one person of the community base (pattern B, edit in
+# place): the form saves field by field, and the right column shows what the
+# person is linked to — their structure, their coworker account, their
+# adhésions year by year.
+#
+# The structure and the account are the row's relationships, shown by name
+# with a link to their own page. The adhésions are the memberships rows whose
+# `contact` is this person.
+name: admin-contact
+path: /administration/contacts/personnes/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Contact — Administration"
+  description: "Une personne de la communauté."
+  noindex: true
+dataSource: { table: contacts, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Contacts', props: { href: /administration/contacts, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: container
+            children:
+              - { type: text, element: h1, content: $record.name, props: { className: 'text-3xl font-bold text-navy' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                children:
+                  - { type: record-field, props: { field: email, className: 'font-semibold text-navy break-all' } }
+                  - { type: record-field, props: { field: activity } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Fiche, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: contacts, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: contacts
+                    fields:
+                      - { field: name }
+                      - { field: email, description: "Le même e-mail que celui d'un compte membre relie les deux à l'import suivant." }
+                      - { field: phone }
+                      - { field: activity }
+                      - { field: organization }
+                      - { field: member, description: "Le compte avec lequel la personne se connecte à l'Espace Membre, si elle en a un." }
+                      - { field: info_sheet_url }
+                      - { field: notes, control: textarea }
+
+              - type: container
+                props:
+                  className: 'space-y-6'
+                children:
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-4'
+                    children:
+                      - { type: text, element: h2, content: Liens, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: container
+                        element: div
+                        props: { className: 'grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm' }
+                        children:
+                          - { type: text, element: span, content: Structure, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: organization, className: 'text-navy' } }
+                          - { type: text, element: span, content: Compte membre, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: member, className: 'text-navy' } }
+                      - type: link
+                        content: 'Ouvrir la structure →'
+                        visibility: { record: { field: organization, isNotEmpty: true } }
+                        props:
+                          href: /administration/contacts/structures/$record.organization
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: "Ouvrir l'espace du membre →"
+                        visibility: { record: { field: member, isNotEmpty: true } }
+                        props:
+                          href: /administration/membres/$record.member
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Fiche de renseignements ↗'
+                        visibility: { record: { field: info_sheet_url, isNotEmpty: true } }
+                        props:
+                          href: $record.info_sheet_url
+                          target: _blank
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-3'
+                    children:
+                      - { type: text, element: h2, content: Adhésions, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: table
+                        readOnly: true
+                        rowHeight: short
+                        props: { aria-label: Adhésions de la personne }
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: contact, operator: eq, value: $param.id }
+                          sort:
+                            - { field: year, direction: desc }
+                          pagination: { pageSize: 20 }
+                        emptyMessage: "Aucune adhésion : elle apparaît ici quand une adhésion nomme cette personne."
+                        onRowClick: { type: navigate, path: /administration/adhesions/$record.id }
+                        columns:
+                          - { field: year, label: Année }
+                          - { field: kind, label: Type }
+                          - { field: paid, label: Payée, format: check-cross }

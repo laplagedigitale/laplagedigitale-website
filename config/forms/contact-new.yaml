@@ -1,0 +1,24 @@
+# Form: contact-new — add a person to the community base, placed on
+# /administration/contacts/personnes/nouveau. A declared form because a page
+# form never creates a row; the redirect opens the new person's page, where
+# every field stays editable. Admin only, like the table.
+id: 16
+name: contact-new
+title: Nouveau contact
+description: "Une personne de la communauté : coworker, bénévole, contact d'une structure partenaire. Le compte membre se relie sur sa fiche."
+display:
+  submitLabel: Ajouter le contact
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: contacts
+fields:
+  - { kind: table-field, column: name, placeholder: Prénom Nom, required: true }
+  - { kind: table-field, column: email }
+  - { kind: table-field, column: phone }
+  - { kind: table-field, column: activity, placeholder: "Graphiste, chargée de mission…" }
+  - { kind: table-field, column: organization, helpText: "La structure à laquelle elle est liée, si elle en a une." }
+  - { kind: table-field, column: notes }
+onSuccess:
+  type: redirect
+  url: /administration/contacts/personnes/$record.id
+  delaySeconds: 0

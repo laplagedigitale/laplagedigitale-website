@@ -1,0 +1,32 @@
+# Table: contacts — the « Personnes physiques » of the association's base:
+# coworkers, volunteers, partners' contacts, members of the association. A
+# person may belong to a structure (organization) and, when their e-mail is the
+# one a coworker signs in with, is linked to that members row.
+#
+# Brought out of Notion by notion-import-communaute, matched on
+# notion_page_id. Notion lets a person be « lié à » several structures; the
+# import keeps the first one. It only fills empty fields on an existing row,
+# so an admin's edits survive a re-run. Admin only.
+id: 33
+name: contacts
+aiAccess:
+  description: "People (personnes physiques) of La Plage Digitale's community base: name, e-mail, phone, activity, their structure and their coworker account when there is one. Imported from Notion."
+  operations: [read, list]
+fields:
+  - { id: 1, name: name, label: Nom, type: single-line-text, required: true, indexed: true }
+  - { id: 2, name: email, label: E-mail, type: email, indexed: true }
+  - { id: 3, name: phone, label: Téléphone, type: phone-number }
+  - { id: 4, name: activity, label: Activité principale, type: single-line-text }
+  - { id: 5, name: organization, label: Structure, type: relationship, relatedTable: organizations, relationType: many-to-one, displayField: name, onDelete: set-null }
+  # A Notion or Drive link can run past the 255 characters of a url field on PostgreSQL.
+  - { id: 6, name: info_sheet_url, label: Fiche de renseignements, type: long-text }
+  # The coworker account, when the e-mail is the one they sign in with.
+  - { id: 7, name: member, label: Compte membre, type: relationship, relatedTable: members, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 8, name: notes, label: Notes, type: long-text }
+  - { id: 9, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 10, name: created_at, label: Créé le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

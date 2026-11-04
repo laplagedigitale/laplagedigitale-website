@@ -1,0 +1,27 @@
+# Form: membership-new — record an adhésion for one year, placed on
+# /administration/adhesions/nouvelle. One row per person or structure per
+# year: a renewal is a new adhésion. The redirect opens it on its own page.
+# Admin only.
+id: 18
+name: membership-new
+title: Nouvelle adhésion
+description: "Une adhésion à l'association pour une année : la personne ou la structure, sa cotisation et si elle est payée."
+display:
+  submitLabel: Enregistrer l'adhésion
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: memberships
+fields:
+  - { kind: table-field, column: label, placeholder: Nom de l'adhérent, required: true }
+  - { kind: table-field, column: year, defaultValue: 2026, required: true }
+  - { kind: table-field, column: kind, required: true }
+  - { kind: table-field, column: contact, helpText: "La personne, si c'est une adhésion individuelle." }
+  - { kind: table-field, column: organization, helpText: "La structure, si c'est une adhésion d'entreprise ou d'association." }
+  - { kind: table-field, column: email }
+  - { kind: table-field, column: fee }
+  - { kind: table-field, column: paid }
+  - { kind: table-field, column: paid_on }
+onSuccess:
+  type: redirect
+  url: /administration/adhesions/$record.id
+  delaySeconds: 0

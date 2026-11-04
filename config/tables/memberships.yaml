@@ -1,0 +1,47 @@
+# Table: memberships — the adhésions to the association: one row per person or
+# structure per year (« Nos adhérents/bénévoles » in Notion, where one page
+# carries several « Années »: the import writes one row per year).
+#
+# membership_key is `<notion page id>:<year>` for an imported row (or
+# `<notion page id>:sans-annee` when Notion gives no year), the key the import
+# upserts on; a membership added here gets none and is never touched by it.
+# notion_page_id alone is not unique: a page with two years makes two rows.
+#
+# fee, paid and paid_on are the admin's: Notion holds no payment, so the
+# import leaves them empty and every imported row starts « à relancer ».
+#
+# members.association_member (the free Flex day) is NOT derived from this
+# table: flex-check-in still reads that checkbox, ticked by an admin.
+# Admin only.
+id: 34
+name: memberships
+aiAccess:
+  description: "Memberships (adhésions) of La Plage Digitale's association, one row per person or structure per year: kind (bénévole, communauté, association, entreprise), fee, paid or not. Imported from Notion."
+  operations: [read, list]
+fields:
+  - { id: 1, name: label, label: Adhérent, type: single-line-text, required: true }
+  - { id: 2, name: year, label: Année, type: integer, indexed: true }
+  - id: 3
+    name: kind
+    label: Type d'adhérent
+    type: single-select
+    options:
+      - { value: benevole, label: Bénévole, color: '#10b981' }
+      - { value: communaute, label: Communauté, color: '#3b82f6' }
+      - { value: association, label: Association, color: '#8b5cf6' }
+      - { value: entreprise, label: Entreprise, color: '#1e3a8a' }
+  - { id: 4, name: contact, label: Personne, type: relationship, relatedTable: contacts, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 5, name: organization, label: Structure, type: relationship, relatedTable: organizations, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 6, name: fee, label: Cotisation, type: currency, currency: EUR, precision: 2 }
+  - { id: 7, name: paid, label: Payée, type: checkbox, default: false }
+  - { id: 8, name: paid_on, label: Payée le, type: date }
+  - { id: 9, name: email, label: E-mail, type: email }
+  - { id: 10, name: notion_page_id, label: Page Notion, type: single-line-text, indexed: true }
+  - { id: 11, name: membership_key, label: Clé d'import, type: single-line-text, unique: true }
+  - { id: 12, name: notes, label: Notes, type: long-text }
+  - { id: 13, name: created_at, label: Créée le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

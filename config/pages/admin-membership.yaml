@@ -1,0 +1,99 @@
+# Page: admin-membership — one adhésion (pattern B, edit in place): the form
+# saves field by field — this is where the cotisation is recorded as paid —
+# and the right column links to the person or the structure it names.
+#
+# An imported adhésion keeps its membership_key: the import never overwrites a
+# field filled here.
+name: admin-membership
+path: /administration/adhesions/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Adhésion — Administration"
+  description: "Une adhésion à l'association."
+  noindex: true
+dataSource: { table: memberships, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Adhésions', props: { href: /administration/adhesions, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: container
+            children:
+              - { type: text, element: h1, content: $record.label, props: { className: 'text-3xl font-bold text-navy' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                children:
+                  - { type: text, element: span, content: Adhésion }
+                  - { type: record-field, props: { field: year, className: 'font-semibold text-navy' } }
+                  - { type: record-field, props: { field: kind, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+              - { type: text, element: p, content: "Cotisation pas encore enregistrée comme payée : coche « Payée » quand elle est encaissée.", visibility: { record: { field: paid, eq: false } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-panel bg-blue-100 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Adhésion, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: memberships, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: memberships
+                    fields:
+                      - { field: label }
+                      - { field: year }
+                      - { field: kind }
+                      - { field: contact }
+                      - { field: organization }
+                      - { field: email }
+                      - { field: fee }
+                      - { field: paid }
+                      - { field: paid_on }
+                      - { field: notes, control: textarea }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: Adhérent, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: container
+                    element: div
+                    props: { className: 'grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm' }
+                    children:
+                      - { type: text, element: span, content: Personne, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: contact, className: 'text-navy' } }
+                      - { type: text, element: span, content: Structure, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: organization, className: 'text-navy' } }
+                      - { type: text, element: span, content: E-mail, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: email, className: 'text-navy break-all' } }
+                  - type: link
+                    content: 'Ouvrir la fiche de la personne →'
+                    visibility: { record: { field: contact, isNotEmpty: true } }
+                    props:
+                      href: /administration/contacts/personnes/$record.contact
+                      className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                  - type: link
+                    content: 'Ouvrir la fiche de la structure →'
+                    visibility: { record: { field: organization, isNotEmpty: true } }
+                    props:
+                      href: /administration/contacts/structures/$record.organization
+                      className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'

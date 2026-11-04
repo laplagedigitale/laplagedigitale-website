@@ -1,0 +1,161 @@
+# Page: admin-contacts — « Contacts », in the Administration's Communauté
+# section: the association's base of people (contacts) and structures
+# (organizations), brought out of Notion by notion-import-communaute and kept
+# here from now on.
+#
+# Two tabs with an address (?onglet=personnes|structures), each a table on its
+# own shared-filter channel (admin-contacts, admin-contacts-2) with its search,
+# filters and CSV export. A row opens the person's or the structure's page,
+# where everything is edited. readOnly tables: the orange pill of each tab
+# creates (one shows at a time, so the page still has one primary action).
+name: admin-contacts
+path: /administration/contacts
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: personnes
+    enum: [personnes, structures]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Contacts — Administration"
+  description: "Les personnes et les structures de la communauté de La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Contacts, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Les personnes et les structures avec qui la Plage travaille : coworkers, bénévoles, partenaires, adhérents. Clique sur une ligne pour voir et modifier sa fiche.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: tabs
+            defaultTab: $query.onglet
+            panels:
+              - { id: personnes, label: Personnes }
+              - { id: structures, label: Structures }
+            children:
+              # Personnes
+              - type: container
+                props: { className: 'space-y-4' }
+                children:
+                  - type: flex
+                    props: { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-4' }
+                    children:
+                      - { type: text, element: p, content: "Une personne peut être liée à une structure et, quand son e-mail est celui avec lequel elle se connecte, à son compte membre.", props: { className: 'text-sm text-text-muted max-w-2xl' } }
+                      - type: link
+                        content: '+ Nouveau contact'
+                        props:
+                          href: /administration/contacts/personnes/nouveau
+                          className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6'
+                    children:
+                      - type: container
+                        element: div
+                        props:
+                          role: toolbar
+                          aria-label: Outils du tableau
+                          className: 'mb-4 flex flex-wrap items-center gap-2'
+                        children:
+                          - type: search-input
+                            placeholder: Rechercher une personne…
+                            props: { aria-label: Rechercher une personne, className: 'h-9 w-full sm:w-72' }
+                            publishes: { bindTo: admin-contacts, param: q }
+                          - type: filter-bar
+                            publishes: { bindTo: admin-contacts }
+                            fieldsFrom: { table: contacts }
+                          - type: button
+                            label: Exporter en CSV
+                            variant: outline
+                            size: sm
+                            props: { className: 'sm:ml-auto' }
+                            action: { type: fetch, mode: download, url: '/api/tables/contacts/export?format=csv', filename: contacts.csv }
+                      - type: table
+                        readOnly: true
+                        props:
+                          aria-label: Personnes
+                        dataSource:
+                          bindTo: admin-contacts
+                          sharedFilter: {}
+                          table: contacts
+                          sort:
+                            - { field: name, direction: asc }
+                          pagination: { pageSize: 50, style: numbered }
+                        emptyMessage: "Aucune personne pour le moment : l'import Notion (notion-import-communaute) recopie la base, ou ajoute la première avec « Nouveau contact »."
+                        onRowClick: { type: navigate, path: /administration/contacts/personnes/$record.id }
+                        columns:
+                          - { field: name, label: Nom }
+                          - { field: email, label: E-mail }
+                          - { field: phone, label: Téléphone }
+                          - { field: activity, label: Activité, truncate: true }
+                          - { field: organization, label: Structure }
+                          - { field: member, label: Compte membre }
+
+              # Structures
+              - type: container
+                props: { className: 'space-y-4' }
+                children:
+                  - type: flex
+                    props: { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-4' }
+                    children:
+                      - { type: text, element: p, content: "Les entreprises, associations et institutions : les structures des coworkers, les partenaires, les adhérents moraux.", props: { className: 'text-sm text-text-muted max-w-2xl' } }
+                      - type: link
+                        content: '+ Nouvelle structure'
+                        props:
+                          href: /administration/contacts/structures/nouvelle
+                          className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6'
+                    children:
+                      - type: container
+                        element: div
+                        props:
+                          role: toolbar
+                          aria-label: Outils du tableau
+                          className: 'mb-4 flex flex-wrap items-center gap-2'
+                        children:
+                          - type: search-input
+                            placeholder: Rechercher une structure…
+                            props: { aria-label: Rechercher une structure, className: 'h-9 w-full sm:w-72' }
+                            publishes: { bindTo: admin-contacts-2, param: q }
+                          - type: filter-bar
+                            publishes: { bindTo: admin-contacts-2 }
+                            fieldsFrom: { table: organizations }
+                          - type: button
+                            label: Exporter en CSV
+                            variant: outline
+                            size: sm
+                            props: { className: 'sm:ml-auto' }
+                            action: { type: fetch, mode: download, url: '/api/tables/organizations/export?format=csv', filename: structures.csv }
+                      - type: table
+                        readOnly: true
+                        props:
+                          aria-label: Structures
+                        dataSource:
+                          bindTo: admin-contacts-2
+                          sharedFilter: {}
+                          table: organizations
+                          sort:
+                            - { field: name, direction: asc }
+                          pagination: { pageSize: 50, style: numbered }
+                        emptyMessage: "Aucune structure pour le moment : l'import Notion (notion-import-communaute) recopie la base, ou ajoute la première avec « Nouvelle structure »."
+                        onRowClick: { type: navigate, path: /administration/contacts/structures/$record.id }
+                        columns:
+                          - { field: name, label: Nom }
+                          - { field: field_of_action, label: Champ d'action }
+                          - { field: email, label: E-mail }
+                          - { field: phone, label: Téléphone }
+                          - { field: siren, label: SIREN }

@@ -1,0 +1,114 @@
+# Page: admin-organization — one structure of the community base (pattern B,
+# edit in place): the form saves field by field, and the right column lists
+# the people linked to it and its adhésions year by year. A row opens the
+# person's or the adhésion's page.
+name: admin-organization
+path: /administration/contacts/structures/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Structure — Administration"
+  description: "Une structure de la communauté."
+  noindex: true
+dataSource: { table: organizations, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Contacts', props: { href: '/administration/contacts?onglet=structures', className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: container
+            children:
+              - { type: text, element: h1, content: $record.name, props: { className: 'text-3xl font-bold text-navy' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                children:
+                  - { type: record-field, props: { field: field_of_action, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+                  - { type: record-field, props: { field: email, className: 'font-semibold text-navy break-all' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Fiche, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: organizations, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: organizations
+                    fields:
+                      - { field: name }
+                      - { field: siren }
+                      - { field: field_of_action }
+                      - { field: email }
+                      - { field: billing_email }
+                      - { field: phone }
+                      - { field: address, control: textarea }
+                      - { field: notes, control: textarea }
+
+              - type: container
+                props:
+                  className: 'space-y-6'
+                children:
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-3'
+                    children:
+                      - { type: text, element: h2, content: Personnes, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: table
+                        readOnly: true
+                        rowHeight: short
+                        props: { aria-label: Personnes de la structure }
+                        dataSource:
+                          table: contacts
+                          filter:
+                            - { field: organization, operator: eq, value: $param.id }
+                          sort:
+                            - { field: name, direction: asc }
+                          pagination: { pageSize: 20 }
+                        emptyMessage: "Personne n'est lié à cette structure : choisis-la comme « Structure » sur la fiche d'une personne."
+                        onRowClick: { type: navigate, path: /administration/contacts/personnes/$record.id }
+                        columns:
+                          - { field: name, label: Nom }
+                          - { field: email, label: E-mail }
+
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-3'
+                    children:
+                      - { type: text, element: h2, content: Adhésions, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: table
+                        readOnly: true
+                        rowHeight: short
+                        props: { aria-label: Adhésions de la structure }
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: organization, operator: eq, value: $param.id }
+                          sort:
+                            - { field: year, direction: desc }
+                          pagination: { pageSize: 20 }
+                        emptyMessage: "Aucune adhésion : elle apparaît ici quand une adhésion nomme cette structure."
+                        onRowClick: { type: navigate, path: /administration/adhesions/$record.id }
+                        columns:
+                          - { field: year, label: Année }
+                          - { field: kind, label: Type }
+                          - { field: paid, label: Payée, format: check-cross }
