@@ -1,0 +1,24 @@
+# Form: meeting-new — plan a sitting (CA, AG, bureau), placed on
+# /administration/gouvernance/nouvelle. A declared form because a page form
+# never creates a row; the redirect opens the sitting on its own page, where
+# the agenda, the minutes, the decisions and the attendance are written.
+# Admin only, like the table.
+id: 24
+name: meeting-new
+title: Nouvelle instance
+description: "Un conseil d'administration, une assemblée générale ou une réunion de bureau. L'ordre du jour, le compte-rendu, les décisions et les présences se remplissent ensuite sur sa page."
+display:
+  submitLabel: Créer l'instance
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: meetings
+fields:
+  - { kind: table-field, column: body, required: true }
+  - { kind: table-field, column: held_on, required: true }
+  - { kind: table-field, column: title, placeholder: "CA du 25/11/2026", required: true, helpText: "Le nom qui la désigne dans les listes : l'organe et la date suffisent." }
+  - { kind: table-field, column: status, defaultValue: prevue, hidden: true }
+  - { kind: table-field, column: agenda, helpText: "Peut attendre : l'ordre du jour s'écrit aussi sur la page de l'instance." }
+onSuccess:
+  type: redirect
+  url: /administration/gouvernance/$record.id
+  delaySeconds: 0

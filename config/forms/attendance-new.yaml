@@ -1,0 +1,22 @@
+# Form: attendance-new — note who sat at a sitting, in the « + Présence »
+# dialog of /administration/gouvernance/:id (the sitting prefilled and
+# locked). The name is typed even when the person is a CA member: it is what
+# the table shows. Admin only.
+id: 26
+name: attendance-new
+title: Nouvelle présence
+description: "Une personne présente, représentée, excusée ou absente à cette séance."
+display:
+  submitLabel: Ajouter
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: attendances
+fields:
+  - { kind: table-field, column: meeting, hidden: true }
+  - { kind: table-field, column: person_name, placeholder: Prénom Nom, required: true }
+  - { kind: table-field, column: person, helpText: "Sa fiche parmi les membres du CA (Fiche association), si elle y est." }
+  - { kind: table-field, column: status, defaultValue: present, required: true }
+  - { kind: table-field, column: proxy_to, helpText: "Pour une personne représentée : à qui elle a donné sa procuration." }
+onSuccess:
+  type: message
+  message: "Présence ajoutée."

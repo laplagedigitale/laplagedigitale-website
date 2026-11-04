@@ -1,0 +1,108 @@
+# Page: admin-decisions — « Décisions », the Administration's Gouvernance
+# section: every résolution put to the vote of the CA or the AG, the newest
+# first, imported from Notion's two « Décisions soumises aux votes » databases
+# (one row per decision: the import merges the copies) and recorded here from
+# now on.
+#
+# Pattern A, one table: the bar filters on the body that voted, the outcome
+# and the year (decisions.year, derived from decided_on), or the date itself.
+# A row opens the decision's page, where everything is edited. readOnly: the
+# orange pill creates.
+name: admin-decisions
+path: /administration/gouvernance/decisions
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Décisions — Administration"
+  description: "Les décisions votées par le conseil d'administration et l'assemblée générale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Décisions, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Les résolutions soumises au vote du conseil d'administration et de l'assemblée générale, avec les voix et le résultat. Filtre par organe, par résultat ou par année ; clique sur une ligne pour la modifier.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: '+ Nouvelle décision'
+                props:
+                  href: /administration/gouvernance/decisions/nouvelle
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: container
+                element: div
+                props:
+                  role: toolbar
+                  aria-label: Outils du tableau
+                  className: 'mb-4 flex flex-wrap items-center gap-2'
+                children:
+                  - type: search-input
+                    placeholder: Rechercher une décision…
+                    props: { aria-label: Rechercher une décision, className: 'h-9 w-full sm:w-72' }
+                    publishes: { bindTo: admin-decisions, param: q }
+                  - type: filter-bar
+                    publishes: { bindTo: admin-decisions }
+                    fields:
+                      - name: body
+                        label: Votée par
+                        kind: select
+                        options:
+                          - { value: ca, label: Conseil d'administration }
+                          - { value: ag, label: Assemblée générale }
+                      - name: outcome
+                        label: Résultat
+                        kind: select
+                        options:
+                          - { value: adoptee, label: Adoptée }
+                          - { value: rejetee, label: Rejetée }
+                          - { value: reportee, label: Reportée }
+                          - { value: a-l-etude, label: À l'étude }
+                      - { name: year, label: Année, kind: number }
+                      - { name: decided_on, label: Date, kind: date }
+                  - type: button
+                    label: Exporter en CSV
+                    variant: outline
+                    size: sm
+                    props: { className: 'sm:ml-auto' }
+                    action: { type: fetch, mode: download, url: '/api/tables/decisions/export?format=csv', filename: decisions.csv }
+              - type: table
+                readOnly: true
+                props:
+                  aria-label: Décisions
+                dataSource:
+                  bindTo: admin-decisions
+                  sharedFilter: {}
+                  table: decisions
+                  sort:
+                    - { field: decided_on, direction: desc }
+                    - { field: title, direction: asc }
+                  pagination: { pageSize: 50, style: numbered }
+                emptyMessage: "Aucune décision pour le moment : l'import Notion (notion-import-gouvernance) recopie l'historique, ou enregistre la première avec « Nouvelle décision »."
+                onRowClick: { type: navigate, path: /administration/gouvernance/decisions/$record.id }
+                columns:
+                  - { field: decided_on, label: Date, format: short-date }
+                  - { field: title, label: Décision, truncate: true }
+                  - { field: body, label: Votée par }
+                  - { field: outcome, label: Résultat }
+                  - { field: votes_for, label: Pour, align: right }
+                  - { field: votes_against, label: Contre, align: right }
+                  - { field: abstentions, label: Abst., align: right }

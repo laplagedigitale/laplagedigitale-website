@@ -1,0 +1,196 @@
+# Page: admin-meeting — one sitting of the CA, the AG or the bureau (pattern
+# B, edit in place). The form saves field by field: the ordre du jour before
+# the sitting, the compte-rendu after, then « CR rédigé ». The right column
+# holds what the sitting produced: its decisions (a row opens the decision)
+# and its attendance (edited in the table itself).
+#
+# « + Décision » and « + Présence » are declared forms in dialogs (a page form
+# never creates a row), the sitting prefilled and locked; both tables poll,
+# because a dialog's submit does not reload the page. The Drive link shows
+# only when minutes_url is set.
+#
+# Declared LAST under /administration/gouvernance in app.yaml: « nouvelle »
+# and « decisions » are their own pages, never an :id.
+name: admin-meeting
+path: /administration/gouvernance/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "$record.title — Gouvernance"
+  description: "Une séance du conseil d'administration, de l'assemblée générale ou du bureau."
+  noindex: true
+dataSource: { table: meetings, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Instances', props: { href: /administration/gouvernance, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: $record.title, props: { className: 'text-3xl font-bold text-navy' } }
+                  - type: flex
+                    props:
+                      className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                    children:
+                      - { type: record-field, format: short-date, props: { field: held_on, className: 'font-semibold text-navy' } }
+                      - { type: record-field, props: { field: body } }
+                      - { type: record-field, props: { field: status, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+              - type: link
+                content: 'Compte-rendu sur Drive ↗'
+                visibility: { record: { field: minutes_url, isNotEmpty: true } }
+                props:
+                  href: $record.minutes_url
+                  target: _blank
+                  className: 'self-start inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+
+          - { type: text, element: p, content: "Séance tenue, compte-rendu à rédiger : écris-le ci-dessous (ou colle le lien Drive), puis passe le statut à « CR rédigé ».", visibility: { record: { field: status, eq: tenue } }, props: { className: 'text-sm text-navy p-3 rounded-panel bg-blue-100 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Séance, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: meetings, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: meetings
+                    fields:
+                      - { field: title }
+                      - { field: body }
+                      - { field: held_on }
+                      - { field: status, description: "Prévue, puis « Tenue » le jour de la séance, puis « CR rédigé » une fois le compte-rendu écrit." }
+                      - { field: agenda, control: textarea }
+                      - { field: minutes, control: textarea }
+                      - { field: minutes_url, description: "Le lien du compte-rendu ou du PV dans Drive, s'il y en a un." }
+                      - { field: document, description: "Le PV signé, s'il est rangé dans les pièces de la Fiche association." }
+
+              - type: container
+                props:
+                  className: 'space-y-6'
+                children:
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-3'
+                    children:
+                      - type: flex
+                        props: { className: 'flex flex-wrap items-center justify-between gap-3' }
+                        children:
+                          - { type: text, element: h2, content: Décisions, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: button
+                            content: '+ Décision'
+                            props:
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 transition-colors'
+                              interactions:
+                                click:
+                                  modal: new-decision
+                      - type: table
+                        readOnly: true
+                        rowHeight: short
+                        props: { aria-label: Décisions de la séance }
+                        dataSource:
+                          table: decisions
+                          filter:
+                            - { field: meeting, operator: eq, value: $param.id }
+                          sort:
+                            - { field: title, direction: asc }
+                          pagination: { pageSize: 30 }
+                          refreshMode: poll
+                          pollIntervalMs: 5000
+                        emptyMessage: "Aucune décision : « + Décision » enregistre une résolution votée à cette séance."
+                        onRowClick: { type: navigate, path: /administration/gouvernance/decisions/$record.id }
+                        columns:
+                          - { field: title, label: Décision, truncate: true }
+                          - { field: outcome, label: Résultat }
+
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-3'
+                    children:
+                      - type: flex
+                        props: { className: 'flex flex-wrap items-center justify-between gap-3' }
+                        children:
+                          - { type: text, element: h2, content: Présences, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: button
+                            content: '+ Présence'
+                            props:
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 transition-colors'
+                              interactions:
+                                click:
+                                  modal: new-attendance
+                      - type: table
+                        rowHeight: short
+                        props: { aria-label: Présences à la séance }
+                        dataSource:
+                          table: attendances
+                          filter:
+                            - { field: meeting, operator: eq, value: $param.id }
+                          sort:
+                            - { field: person_name, direction: asc }
+                          pagination: { pageSize: 50 }
+                          refreshMode: poll
+                          pollIntervalMs: 5000
+                        autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                        emptyMessage: "Personne n'est noté : « + Présence » ajoute qui était là, représenté ou excusé."
+                        columns:
+                          - { field: person_name, label: Nom, frozen: true }
+                          - { field: status, label: Présence }
+                          - { field: proxy_to, label: Procuration à }
+                          - type: actions
+                            actions:
+                              - label: Retirer
+                                variant: destructive
+                                action:
+                                  type: crud
+                                  operation: delete
+                                  table: attendances
+                                  confirm: true
+                                  confirmMessage: "Retirer cette personne des présences de la séance ?"
+
+  # The two dialogs: a declared form each, the sitting prefilled and locked.
+  - type: dialog
+    props:
+      id: new-decision
+      title: Nouvelle décision
+      description: "Une résolution soumise au vote à cette séance."
+    children:
+      - type: form
+        formRef: decision-new
+        showHeader: false
+        inlinePrefill:
+          prefill: { meeting: $record.id }
+          lockPrefill: true
+  - type: dialog
+    props:
+      id: new-attendance
+      title: Nouvelle présence
+      description: "Une personne présente, représentée, excusée ou absente à cette séance."
+    children:
+      - type: form
+        formRef: attendance-new
+        showHeader: false
+        inlinePrefill:
+          prefill: { meeting: $record.id }
+          lockPrefill: true
