@@ -1,0 +1,325 @@
+# Page: infos-pratiques — Infos pratiques (requests 808–811): address,
+# hours, phones and e-mail, access, the map and the general contact form.
+# « Réserver une visite » is a mailto/tel (decision 2026-11-04); the form is
+# for other questions, and every submission is mailed to the team
+# (lead-notify). How to get there by tram or bus is left out until confirmed.
+name: infos-pratiques
+path:
+  fr: "/infos-pratiques"
+  en: "/practical-info"
+  de: "/praktische-infos"
+meta:
+  favicons:
+    $ref: "../favicons.yaml"
+  noindex: true
+  title: $t:infos.meta.title
+  description: $t:infos.meta.description
+  openGraph:
+    type: website
+    image: "/images/pages/accueil/hero.webp"
+components:
+  - component: site-header
+  - type: container
+    element: section
+    props:
+      className: "relative overflow-hidden bg-navy text-white"
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-16"
+        children:
+          - type: text
+            element: p
+            content: $t:infos.hero.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-5"
+          - type: text
+            element: h1
+            content: $t:infos.hero.title
+            props:
+              className: "[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] text-white max-w-4xl"
+          - type: text
+            element: p
+            content: $t:infos.hero.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6"
+          - type: flex
+            props:
+              className: "flex flex-wrap gap-3 mt-10"
+            children:
+              - type: link
+                content: $t:cta.visit
+                props:
+                  href: "mailto:contact@laplagedigitale.fr?subject=Visite%20de%20la%20Plage"
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors"
+              - type: link
+                content: $t:cta.call
+                props:
+                  href: "tel:+33977425929"
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors"
+  - type: container
+    element: section
+    props:
+      className: bg-background
+      aria-labelledby: infos-reach
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: h2
+            content: $t:infos.reach.title
+            props:
+              className: sr-only
+              id: infos-reach
+          - type: grid
+            props:
+              className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            children:
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md p-6"
+                children:
+                  - type: container
+                    props:
+                      className: "grid place-items-center w-12 h-12 rounded-full bg-orange-100 text-navy mb-4"
+                      aria-hidden: "true"
+                    children:
+                      - type: icon
+                        props:
+                          name: map-pin
+                          size: 22
+                          aria-hidden: "true"
+                  - type: text
+                    element: h3
+                    content: $t:infos.address.label
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3"
+                  - type: text
+                    element: p
+                    content: "13 rue Jacques Peirotes\n67000 Strasbourg"
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text whitespace-pre-line"
+                  - type: text
+                    element: p
+                    content: $t:infos.address.note
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+                  - type: link
+                    content: $t:infos.address.directions
+                    props:
+                      href: "https://www.google.com/maps/dir/?api=1&destination=13+rue+Jacques+Peirotes+67000+Strasbourg"
+                      className: "font-bold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy inline-block mt-4"
+                      target: _blank
+                      rel: "noopener noreferrer"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md p-6"
+                children:
+                  - type: container
+                    props:
+                      className: "grid place-items-center w-12 h-12 rounded-full bg-blue-100 text-navy mb-4"
+                      aria-hidden: "true"
+                    children:
+                      - type: icon
+                        props:
+                          name: clock
+                          size: 22
+                          aria-hidden: "true"
+                  - type: text
+                    element: h3
+                    content: $t:infos.hours.label
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3"
+                  - type: text
+                    element: p
+                    content: $t:infos.hours.week
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text"
+                  - type: text
+                    element: p
+                    content: $t:infos.hours.keys
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md p-6"
+                children:
+                  - type: container
+                    props:
+                      className: "grid place-items-center w-12 h-12 rounded-full bg-magenta-100 text-navy mb-4"
+                      aria-hidden: "true"
+                    children:
+                      - type: icon
+                        props:
+                          name: phone
+                          size: 22
+                          aria-hidden: "true"
+                  - type: text
+                    element: h3
+                    content: $t:infos.phone.label
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3"
+                  - type: link
+                    content: "09 77 42 59 29"
+                    props:
+                      href: "tel:+33977425929"
+                      className: "font-bold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy block"
+                  - type: link
+                    content: "06 24 41 32 03"
+                    props:
+                      href: "tel:+33624413203"
+                      className: "font-bold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy block mt-2"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md p-6"
+                children:
+                  - type: container
+                    props:
+                      className: "grid place-items-center w-12 h-12 rounded-full bg-navy-100 text-navy mb-4"
+                      aria-hidden: "true"
+                    children:
+                      - type: icon
+                        props:
+                          name: mail
+                          size: 22
+                          aria-hidden: "true"
+                  - type: text
+                    element: h3
+                    content: $t:infos.email.label
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3"
+                  - type: link
+                    content: contact@laplagedigitale.fr
+                    props:
+                      href: mailto:contact@laplagedigitale.fr
+                      className: "font-bold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy break-all"
+  - type: container
+    element: section
+    props:
+      className: bg-white
+      aria-labelledby: infos-access
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12"
+        children:
+          - type: container
+            props:
+              className: ""
+            children:
+              - type: text
+                element: p
+                content: $t:infos.access.eyebrow
+                props:
+                  className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+              - type: text
+                element: h2
+                content: $t:infos.access.title
+                props:
+                  className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+                  id: infos-access
+              - type: container
+                props:
+                  className: "mt-6 space-y-3"
+                children:
+                  - type: flex
+                    props:
+                      className: "flex gap-3 items-start"
+                    children:
+                      - type: icon
+                        props:
+                          name: accessibility
+                          size: 20
+                          className: "text-navy mt-0.5 shrink-0"
+                          aria-hidden: "true"
+                      - type: text
+                        element: p
+                        content: $t:infos.access.floor
+                        props:
+                          className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text"
+                  - type: flex
+                    props:
+                      className: "flex gap-3 items-start"
+                    children:
+                      - type: icon
+                        props:
+                          name: square-parking
+                          size: 20
+                          className: "text-navy mt-0.5 shrink-0"
+                          aria-hidden: "true"
+                      - type: text
+                        element: p
+                        content: $t:infos.access.pmr
+                        props:
+                          className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text"
+                  - type: flex
+                    props:
+                      className: "flex gap-3 items-start"
+                    children:
+                      - type: icon
+                        props:
+                          name: bath
+                          size: 20
+                          className: "text-navy mt-0.5 shrink-0"
+                          aria-hidden: "true"
+                      - type: text
+                        element: p
+                        content: $t:infos.access.wc
+                        props:
+                          className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text"
+          - type: container
+            props:
+              className: "rounded-panel overflow-hidden shadow-md bg-white min-h-80"
+            children:
+              - type: iframe
+                props:
+                  src: "https://www.google.com/maps?q=13+rue+Jacques+Peirotes+67000+Strasbourg&output=embed"
+                  title: $t:contact.map.iframeTitle
+                  loading: lazy
+                  className: "w-full h-80 lg:h-full border-0"
+  - type: container
+    element: section
+    props:
+      className: bg-sand
+      aria-labelledby: infos-form
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 max-w-3xl"
+        children:
+          - type: text
+            element: p
+            content: $t:infos.form.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:infos.form.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: infos-form
+          - type: text
+            element: p
+            content: $t:infos.form.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4"
+          - type: container
+            props:
+              className: "mt-8 bg-white rounded-panel shadow-md p-6 sm:p-8"
+            children:
+              - type: form
+                formRef: contact
+                props:
+                  headingLevel: h3
+              - type: text
+                element: p
+                content: $t:contact.form.privacy
+                props:
+                  className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-6"
+  - component: site-footer

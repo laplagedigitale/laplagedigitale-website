@@ -142,7 +142,7 @@ components:
             children:
               - { type: flex, props: { className: 'flex items-center gap-3' }, children: [{ type: icon, props: { name: gift, size: 22, className: 'text-magenta shrink-0' } }, { type: text, element: h2, content: $t:member.formule.referral.title, props: { className: 'text-xl font-semibold text-navy' } }] }
               - { type: text, element: p, content: $t:member.formule.referral.text, props: { className: 'text-sm text-navy' } }
-              - { type: link, content: $t:member.formule.referral.cta, props: { href: $t:href.pricing.parrainage, className: 'inline-block text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+              - { type: link, content: $t:member.formule.referral.cta, props: { href: $t:href.pricing, className: 'inline-block text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
 
           - type: card
             props: { className: 'p-5 sm:p-6 space-y-3 bg-blue-100' }

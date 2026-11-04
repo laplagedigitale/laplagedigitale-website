@@ -1,7 +1,10 @@
 # Languages, locales and the $t: dictionary.
 #
-# French is the default and is served unprefixed (/les-formules); English and
-# German share the same paths under /en/ and /de/. Each dictionary lives in its
+# French is the default. Most pages answer unprefixed (/flex) and under /en/ and
+# /de/; the three content pages have translated slugs (path maps:
+# /fr/formules-et-tarifs, /en/pricing, /de/preise), and the engine sends their
+# unprefixed address to /fr/ with a 302 — which is why the French href.* keys
+# point at /fr/… directly. Each dictionary lives in its
 # own file — they are long, and a translator edits one language at a time.
 default: fr
 fallback: fr

@@ -45,7 +45,7 @@ Run by an association, not a company: a tiers-lieu in the former Coop premises, 
 - **Name**: La Plage Digitale, « la Plage » for short; its members are « Plagistes ».
 - **Charte graphique 2026** (« 2026-02 charte plage.pdf »): the palette and type in `config/design.yaml` are binding, and so are the logos in `public/brand/` (`logo-couleurs.svg`, `logo-blanc.svg`). Navy leads; orange and amber are fills and accents only, never text on white.
 - **Voice**: French first, warm and associative — convivial and community-minded, never corporate SaaS. **Tutoiement**: address the visitor as « tu ».
-  - *Open:* the current French copy uses « vous » throughout (`config/translations/fr.yaml`). Moving it to « tu » is a decision taken but not yet carried out; the matching register in EN/DE has not been decided.
+  - Applied 2026-11: French copy uses « tu » (legal and privacy pages stay neutral), German « du », English a neutral « you ».
 
 ## Evidence on Hand
 
