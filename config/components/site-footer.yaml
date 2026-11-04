@@ -195,3 +195,8 @@ children:
                     props:
                       href: "/connexion"
                       className: "text-navy-100 hover:text-white underline-offset-4 hover:underline"
+                  - type: link
+                    content: $t:nav.llms
+                    props:
+                      href: "/llms.txt"
+                      className: "text-navy-100 hover:text-white underline-offset-4 hover:underline"
