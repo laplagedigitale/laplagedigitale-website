@@ -26,7 +26,7 @@ components:
       - component: espace-membre-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10'
         children:
@@ -116,7 +116,7 @@ components:
                       - { type: text, element: h3, content: $t:member.guide.print.title, props: { id: imprimer-et-scanner, className: 'scroll-mt-6 text-xl sm:text-2xl font-semibold text-navy' } }
                       - { type: text, element: p, content: $t:member.guide.print.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
                       - { type: text, element: p, content: $t:member.guide.print.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
-                      - { type: link, content: $t:member.guide.print.cta, props: { href: $t:member.link.scan.driver, target: _blank, rel: noopener, className: 'inline-block text-base font-semibold text-blue underline underline-offset-4 hover:text-navy' } }
+                      - { type: link, content: $t:member.guide.print.cta, props: { href: $t:member.link.scan.driver, target: _blank, rel: noopener, className: 'inline-block text-base font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
                   - type: container
                     element: section
                     props: { className: 'space-y-4' }
@@ -142,7 +142,7 @@ components:
                       - { type: text, element: p, content: $t:member.guide.contact.1, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
                       - { type: text, element: p, content: $t:member.guide.contact.2, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
                       - { type: text, element: p, content: $t:member.guide.contact.3, props: { className: 'text-base sm:text-lg leading-relaxed text-text' } }
-                      - { type: link, content: $t:member.home.start.idea, props: { href: $t:member.link.conseil, target: _blank, rel: noopener, className: 'inline-block text-base font-semibold text-blue underline underline-offset-4 hover:text-navy' } }
+                      - { type: link, content: $t:member.home.start.idea, props: { href: $t:member.link.conseil, target: _blank, rel: noopener, className: 'inline-block text-base font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               # From xl up: the outline beside the text, following the reader.
               - type: container
                 element: aside

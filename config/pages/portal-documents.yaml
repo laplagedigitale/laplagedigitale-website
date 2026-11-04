@@ -21,7 +21,7 @@ components:
       - component: espace-membre-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -49,7 +49,7 @@ components:
                 props: { className: 'p-5 sm:p-6 space-y-3' }
                 children:
                   - { type: text, element: h2, content: $t:member.docs.files.title, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: $t:member.docs.rul, props: { href: /documents/reglement-utilisation-des-locaux-2023-09-13.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-navy' } }
-                  - { type: link, content: $t:member.docs.charte, props: { href: /documents/charte-des-valeurs-2023-09-13.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-navy' } }
-                  - { type: link, content: $t:member.docs.ria, props: { href: /documents/reglement-interieur-associatif-2025-03-07.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-navy' } }
-                  - { type: link, content: $t:member.docs.statuts, props: { href: /documents/statuts-2025-05-16.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: $t:member.docs.rul, props: { href: /documents/reglement-utilisation-des-locaux-2023-09-13.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: $t:member.docs.charte, props: { href: /documents/charte-des-valeurs-2023-09-13.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: $t:member.docs.ria, props: { href: /documents/reglement-interieur-associatif-2025-03-07.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: $t:member.docs.statuts, props: { href: /documents/statuts-2025-05-16.pdf, target: _blank, rel: noopener, className: 'inline-flex items-center gap-2 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }

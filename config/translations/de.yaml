@@ -60,8 +60,7 @@ blog.meta.title: Neuigkeiten — La Plage Digitale
 blog.meta.description: "Veranstaltungen, Newsletter und Neuigkeiten aus La Plage Digitale, dem Dritten Ort für Innovation in Straßburg, seit 2012."
 blog.eyebrow: Neuigkeiten
 blog.title: Das Leben an der Plage
-blog.lead: "Veranstaltungen, Meetups, monatliche Newsletter und Porträts: über zehn Jahre digitale Szene in Straßburg."
-blog.languageNote: "Unsere Artikel erscheinen auf Französisch."
+blog.lead: "Veranstaltungen, Meetups, monatliche Newsletter und Porträts: über zehn Jahre digitale Szene in Straßburg. Unsere Artikel erscheinen auf Französisch."
 blog.empty: Noch keine Artikel.
 post.back: "← Alle Neuigkeiten"
 post.more: Weitere Artikel
@@ -180,10 +179,10 @@ contact.map.lead: "La Plage Digitale befindet sich in den ehemaligen Räumen der
 contact.map.iframeTitle: "Karte: La Plage Digitale, 13 rue Jacques Peirotes, 67000 Straßburg"
 contact.form.eyebrow: "Schreiben Sie uns"
 contact.form.title: "Nachricht senden"
-contact.form.lead: "Schreiben Sie uns ein paar Zeilen – wir melden uns schnell bei Ihnen, in der Regel innerhalb von zwei Werktagen."
+contact.form.lead: "Schreiben Sie uns ein paar Zeilen, das Team antwortet Ihnen per E-Mail."
 contact.form.submit: "Nachricht senden"
 contact.form.success.title: "Vielen Dank, Ihre Nachricht ist angekommen!"
-contact.form.success.message: "Das Team von La Plage Digitale antwortet Ihnen in Kürze. In dringenden Fällen erreichen Sie uns unter +33 9 77 42 59 29."
+contact.form.success.message: "Danke, Ihre Nachricht ist angekommen. In dringenden Fällen erreichen Sie uns unter +33 9 77 42 59 29."
 contact.form.error: "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an contact@laplagedigitale.fr."
 contact.form.name.label: "Vor- und Nachname"
 contact.form.name.placeholder: "Alex Müller"
@@ -287,10 +286,6 @@ home.community.item3: "Hack SXB – am letzten Freitag im Monat ein Abend rund u
 home.community.item4: "Gemeinsame Bibliothek, Bidouillothèque, Beratungssprechstunden – Ressourcen, die die Mitglieder teilen."
 home.community.cta: Unsere Aktivitäten entdecken
 home.community.imageAlt: Ein Entwickler-Meetup im Flex-Bereich von La Plage Digitale
-home.news.eyebrow: Neuigkeiten
-home.news.title: Das Neueste von der Plage
-home.news.cta: Alle Neuigkeiten →
-home.news.empty: Noch keine Neuigkeiten.
 home.supporters.title: Mit Unterstützung von
 home.supporters.cta: Unsere Förderer und Netzwerke →
 home.cta.title: Lust, Teil der Plage zu werden?
@@ -729,7 +724,7 @@ flex.how.4.title: "Eine Rechnung pro Monat"
 flex.how.4.text: "Am 1. des Monats wird die Rechnung für die Tage des Vormonats ausgestellt. Sie erscheint in Ihrem Mitgliederbereich, optional mit Lastschrift."
 flex.signup.eyebrow: "Erster Besuch"
 flex.signup.title: "Anmeldung zu Flex"
-flex.signup.lead: "Ein paar Angaben, nur einmal: Wir legen Ihr Konto an und schicken Ihnen den Zugang zum Mitgliederbereich, meist innerhalb eines Werktags. Fragen? contact+flex@laplagedigitale.fr"
+flex.signup.lead: "Ein paar Angaben, nur einmal: Wir legen Ihr Konto an und schicken Ihnen den Zugang zum Mitgliederbereich. Fragen? contact+flex@laplagedigitale.fr"
 flex.signup.form.title: "Ihre Angaben"
 flex.signup.first_name: "Vorname"
 flex.signup.last_name: "Nachname"
@@ -871,7 +866,7 @@ member.formule.referral.title: "Empfehlen Sie uns weiter"
 member.formule.referral.text: "Jemand aus Ihrem Umfeld sucht einen Arbeitsplatz? Wenn die Person zu La Plage kommt, erhält sie 50 € Rabatt auf die ersten 3 Monate, und Sie wählen zwischen einem Monat Rabatt und einem Geschenk im gleichen Wert (Schokolade, Topfpflanze, Geschenkkarte…). Sie muss bei der Anmeldung nur Ihren Namen nennen."
 member.formule.referral.cta: "Zum Empfehlungsangebot"
 member.formule.change.title: "Tarif wechseln oder kündigen"
-member.formule.change.text: "Tarif wechseln, einen Platz hinzufügen oder den Vertrag beenden: Schreiben Sie uns, wir antworten innerhalb weniger Werktage."
+member.formule.change.text: "Tarif wechseln, einen Platz hinzufügen oder den Vertrag beenden: Schreiben Sie uns."
 member.formule.change.cta: "La Plage schreiben"
 member.formule.change.href: "mailto:contact@laplagedigitale.fr?subject=Mein%20Tarif"
 member.formule.all: "Alle Tarife ansehen →"
@@ -1001,3 +996,11 @@ member.partners.dollinger: "Obst- und Gemüsekörbe jeden Donnerstag zu La Plage
 member.partners.yse: "Produkte im Pfandsystem zu La Plage geliefert (Getränke, Müsli, Kompott…), und 5 % Rabatt mit dem Code LAPLAGEDIGITALE."
 member.partners.emma: "Workshops zum Wohlbefinden am Arbeitsplatz, freier Beitrag."
 member.partners.vivant: "Workshops in Straßburgs Parks und Grünanlagen."
+
+# 404 page (config/pages/not-found.yaml)
+notFound.meta.title: "Seite nicht gefunden — La Plage Digitale"
+notFound.title: "Diese Seite gibt es nicht (mehr)"
+notFound.lead: "Vielleicht ist der Link veraltet oder die Adresse enthält einen Tippfehler."
+notFound.member: "Du bist Coworker und kommst aus deinem Mitgliederbereich? Dein Konto ist wahrscheinlich noch nicht mit deinem Eintrag verknüpft: Schreib uns, wir kümmern uns darum."
+notFound.home: "Zur Startseite"
+notFound.contact: "Dem Team schreiben"

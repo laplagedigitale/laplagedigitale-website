@@ -5,7 +5,7 @@
 #
 # Below lg the column becomes a top bar and the navigation folds into a drawer
 # behind its menu button. A template cannot take children, so each page places
-# this column itself, beside its own <main>.
+# this column itself, beside its content section.
 #
 # Two audiences, one shell. A sidebar group cannot be gated on its own, so the
 # navigation is declared twice, each sidebar gated on a role (and left out of
@@ -50,7 +50,7 @@ children:
     props: { href: /administration, className: 'flex flex-col gap-1 lg:flex-none lg:px-3 lg:mb-6', 'aria-label': "Administration de l'association" }
     children:
       - { type: image, props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-9 w-auto self-start' } }
-      - { type: text, element: span, content: Administration, props: { className: 'hidden lg:inline text-xs font-bold uppercase tracking-widest text-orange' } }
+      - { type: text, element: span, content: Administration, props: { className: 'hidden lg:inline text-xs font-bold uppercase tracking-widest text-orange-300' } }
 
   # The navigation: the one part of the column that scrolls.
   - type: container
@@ -63,7 +63,7 @@ children:
         visibility: { roles: [admin] }
         drawer: { below: lg, label: Menu }
         props:
-          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-200 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
+          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
         groups:
           - label: Pilotage
             items:
@@ -100,7 +100,7 @@ children:
         visibility: { roles: [editor] }
         drawer: { below: lg, label: Menu }
         props:
-          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-200 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
+          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
         groups:
           - label: Contenu
             items:
@@ -139,4 +139,4 @@ children:
             content: Mon Espace Membre →
             props:
               href: /espace-membre
-              className: 'flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+              className: 'flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'

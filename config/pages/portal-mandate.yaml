@@ -21,7 +21,7 @@ components:
       - component: espace-membre-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -90,7 +90,7 @@ components:
                           - type: button
                             content: $t:portal.mandate.cta
                             props:
-                              className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                              className: 'self-start w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
                             # Calls the manual trigger directly so the run's own message —
                             # sent, or why it was refused — is shown in #mandate-status.
                             action:

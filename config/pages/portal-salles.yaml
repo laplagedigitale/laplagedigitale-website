@@ -22,7 +22,7 @@ components:
       - component: espace-membre-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -135,7 +135,7 @@ components:
                 children:
                   - { type: text, element: h2, content: $t:member.rooms.request.title, props: { className: 'text-xl font-semibold text-navy' } }
                   - { type: text, element: p, content: $t:member.rooms.request.text, props: { className: 'text-sm text-navy' } }
-                  - { type: link, content: $t:member.rooms.request.cta, props: { href: $t:member.link.rooms.request, target: _blank, rel: noopener, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+                  - { type: link, content: $t:member.rooms.request.cta, props: { href: $t:member.link.rooms.request, target: _blank, rel: noopener, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors' } }
               - type: card
                 props: { className: 'p-5 sm:p-6 space-y-3' }
                 children:

@@ -39,7 +39,7 @@ components:
                 content: $t:post.back
                 props:
                   href: $t:href.blog
-                  className: 'inline-block [font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange hover:text-orange-300 mb-6'
+                  className: 'inline-block [font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 hover:text-orange-200 mb-6'
               - type: text
                 element: h1
                 content: '$record.title'
@@ -49,7 +49,7 @@ components:
                 element: p
                 content: '$record.published_at'
                 props:
-                  className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy-200 mt-5'
+                  className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy-150 mt-5'
 
       - type: container
         props:

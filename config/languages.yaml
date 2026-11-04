@@ -5,6 +5,11 @@
 # own file — they are long, and a translator edits one language at a time.
 default: fr
 fallback: fr
+# The address decides the language, nothing else: an unprefixed path is always
+# French. Browser detection and a remembered choice served English at a French
+# URL (/blog with an English browser), so one address showed two languages.
+detectBrowser: false
+persistSelection: false
 supported:
   - code: fr
     locale: fr-FR

@@ -26,7 +26,7 @@ components:
             element: p
             content: $t:blog.eyebrow
             props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4'
           - type: text
             element: h1
             content: $t:blog.title
@@ -37,14 +37,9 @@ components:
             content: $t:blog.lead
             props:
               className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
-          - type: text
-            element: p
-            content: $t:blog.languageNote
-            props:
-              className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-blue-200 mt-4'
 
   - type: container
-    element: main
+    element: section
     props:
       className: 'bg-background'
     children:

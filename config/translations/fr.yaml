@@ -62,7 +62,6 @@ blog.meta.description: "Événements, newsletters et nouvelles du tiers-lieu La 
 blog.eyebrow: Actualités
 blog.title: La vie de la Plage
 blog.lead: "Événements, meetups, newsletters mensuelles et portraits : plus de dix ans d'histoire du numérique strasbourgeois."
-blog.languageNote: "Plus de 200 articles depuis 2012."
 blog.empty: Aucun article pour le moment.
 post.back: "← Toutes les actualités"
 post.more: Autres articles
@@ -181,10 +180,10 @@ contact.map.lead: "La Plage Digitale occupe les anciens locaux de la Coop, au 13
 contact.map.iframeTitle: "Carte : La Plage Digitale, 13 rue Jacques Peirotes, 67000 Strasbourg"
 contact.form.eyebrow: "Écrivez-nous"
 contact.form.title: "Envoyer un message"
-contact.form.lead: "Laissez-nous quelques mots : nous revenons vers vous rapidement, en général sous deux jours ouvrés."
+contact.form.lead: "Laissez-nous quelques mots : l’équipe vous répond par e-mail."
 contact.form.submit: "Envoyer le message"
 contact.form.success.title: "Merci, votre message est bien arrivé !"
-contact.form.success.message: "L’équipe de La Plage Digitale vous répond très vite. Pour une demande urgente, appelez-nous au 09 77 42 59 29."
+contact.form.success.message: "Merci, votre message est bien arrivé. Pour une demande urgente, appelez-nous au 09 77 42 59 29."
 contact.form.error: "Votre message n’a pas pu être envoyé. Merci de réessayer, ou écrivez-nous directement à contact@laplagedigitale.fr."
 contact.form.name.label: "Nom et prénom"
 contact.form.name.placeholder: "Camille Martin"
@@ -288,10 +287,6 @@ home.community.item3: "Hack SXB — le dernier vendredi du mois, une soirée de 
 home.community.item4: "Bibliothèque partagée, Bidouillothèque, permanences conseil — des ressources à partager entre plagistes."
 home.community.cta: Découvrir nos activités
 home.community.imageAlt: Un meetup de développeurs dans l'espace Flex de La Plage Digitale
-home.news.eyebrow: Actualités
-home.news.title: Les dernières nouvelles de la Plage
-home.news.cta: Toutes les actualités →
-home.news.empty: Aucune actualité pour le moment.
 home.supporters.title: Ils nous soutiennent
 home.supporters.cta: Nos soutiens et réseaux →
 home.cta.title: Envie de rejoindre la Plage ?
@@ -730,7 +725,7 @@ flex.how.4.title: "Une facture par mois"
 flex.how.4.text: "Le 1er du mois, la facture de vos présences du mois écoulé est émise. Elle apparaît dans votre Espace Membre, avec le prélèvement automatique en option."
 flex.signup.eyebrow: "Première visite"
 flex.signup.title: "Inscription au Flex"
-flex.signup.lead: "Quelques infos, une seule fois : nous créons votre compte et vous envoyons votre accès à l'Espace Membre, en général sous un jour ouvré. Une question ? contact+flex@laplagedigitale.fr"
+flex.signup.lead: "Quelques infos, une seule fois : nous créons votre compte et vous envoyons votre accès à l'Espace Membre. Une question ? contact+flex@laplagedigitale.fr"
 flex.signup.form.title: "Vos informations"
 flex.signup.first_name: "Prénom"
 flex.signup.last_name: "Nom"
@@ -872,7 +867,7 @@ member.formule.referral.title: "Parrainez quelqu'un"
 member.formule.referral.text: "Une personne de votre entourage cherche un bureau ? Si elle s'installe à La Plage, elle a 50 € de réduction sur ses 3 premiers mois, et vous recevez au choix un mois de réduction ou un cadeau d'une valeur équivalente (chocolats, plante en pot, carte cadeau…). Elle n'a qu'à donner votre nom à son inscription."
 member.formule.referral.cta: "Voir l'offre de parrainage"
 member.formule.change.title: "Changer de formule ou partir"
-member.formule.change.text: "Passer d'une formule à une autre, ajouter un poste, mettre fin à votre contrat : écrivez-nous, nous vous répondons sous quelques jours ouvrés."
+member.formule.change.text: "Passer d'une formule à une autre, ajouter un poste, mettre fin à votre contrat : écrivez-nous."
 member.formule.change.cta: "Écrire à La Plage"
 member.formule.change.href: "mailto:contact@laplagedigitale.fr?subject=Ma%20formule"
 member.formule.all: "Voir toutes les formules →"
@@ -1002,3 +997,11 @@ member.partners.dollinger: "Paniers de fruits et légumes livrés à La Plage to
 member.partners.yse: "Produits consignés livrés à La Plage (boissons, céréales, compotes…), et 5 % de réduction avec le code LAPLAGEDIGITALE."
 member.partners.emma: "Ateliers bien-être au travail, participation libre."
 member.partners.vivant: "Ateliers dans les parcs et espaces verts de Strasbourg."
+
+# 404 page (config/pages/not-found.yaml)
+notFound.meta.title: "Page introuvable — La Plage Digitale"
+notFound.title: "Cette page n’existe pas (ou plus)"
+notFound.lead: "Le lien est peut-être ancien, ou l’adresse contient une faute de frappe."
+notFound.member: "Tu es coworker et tu arrives ici depuis ton Espace Membre ? Ton compte n’est sans doute pas encore relié à ta fiche : écris-nous, on s’en occupe."
+notFound.home: "Retour à l’accueil"
+notFound.contact: "Écrire à l’équipe"

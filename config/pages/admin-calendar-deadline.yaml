@@ -37,7 +37,7 @@ components:
       - component: admin-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -123,7 +123,7 @@ components:
                         props:
                           href: $record.notion_url
                           target: _blank
-                          className: 'inline-flex text-sm font-semibold text-blue hover:text-navy'
+                          className: 'inline-flex text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
 
                   - type: card
                     props:
@@ -148,4 +148,4 @@ components:
                         props:
                           href: $record.notion_card_url
                           target: _blank
-                          className: 'inline-flex text-sm font-semibold text-blue hover:text-navy'
+                          className: 'inline-flex text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'

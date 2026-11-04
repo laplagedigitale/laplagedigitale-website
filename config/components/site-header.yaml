@@ -53,21 +53,22 @@ children:
             props:
               className: 'flex items-center gap-3'
             children:
+              # 44px targets: the switcher's trigger draws at 28px, the link at its text height.
               - type: language-switcher
                 props:
-                  className: 'text-sm'
+                  className: 'text-sm [&_button]:h-11 [&_button]:px-3'
               - type: link
                 content: $t:nav.portal
                 props:
                   href: $t:href.portal
-                  className: 'hidden sm:inline text-sm font-medium text-navy hover:text-orange transition-colors'
+                  className: 'hidden sm:inline-flex items-center min-h-11 px-1 text-sm font-medium text-navy hover:text-orange-700 transition-colors'
               - type: link
                 content: $t:nav.cta
                 props:
                   href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
                   target: _blank
                   rel: 'noopener noreferrer'
-                  className: 'hidden sm:inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                  className: 'hidden sm:inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
               - type: dropdown-menu
                 triggerLabel: $t:nav.menu
                 props:

@@ -16,7 +16,7 @@ meta:
   noindex: true
 components:
   - type: container
-    element: main
+    element: section
     props:
       className: 'min-h-screen grid lg:grid-cols-2 bg-background'
     children:
@@ -29,9 +29,9 @@ components:
             props: { src: /brand/logo-blanc.svg, alt: La Plage Digitale, className: 'h-16 w-auto self-start' }
           - type: container
             children:
-              - { type: text, element: p, content: $t:auth.kicker, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4' } }
+              - { type: text, element: p, content: $t:auth.kicker, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4' } }
               - { type: text, element: p, content: $t:auth.pitch, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold leading-tight text-white max-w-md' } }
-          - { type: text, element: p, content: 'Connecter · Innover · Entreprendre', props: { className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] uppercase tracking-widest text-navy-200' } }
+          - { type: text, element: p, content: 'Connecter · Innover · Entreprendre', props: { className: '[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] uppercase tracking-widest text-navy-150' } }
       - type: container
         props:
           className: 'flex items-center justify-center p-6 sm:p-12'

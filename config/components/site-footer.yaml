@@ -33,12 +33,12 @@ children:
                     element: p
                     content: $t:footer.tagline
                     props:
-                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy-200 max-w-xs'
+                      className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy-150 max-w-xs'
                   - type: text
                     element: p
                     content: 'Connecter · Innover · Entreprendre'
                     props:
-                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mt-5'
+                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mt-5'
 
               # Visit
               - type: container
@@ -121,17 +121,17 @@ children:
                       href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
                       target: _blank
                       rel: 'noopener noreferrer'
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
 
           - type: flex
             props:
-              className: 'mt-14 pt-6 border-t border-white/10 text-navy-200 flex flex-col sm:flex-row gap-3 justify-between [font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-navy-200'
+              className: 'mt-14 pt-6 border-t border-white/10 text-navy-150 flex flex-col sm:flex-row gap-3 justify-between [font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-navy-150'
             children:
               - type: text
                 element: p
                 content: $t:footer.copyright
                 props:
-                  className: 'text-navy-200'
+                  className: 'text-navy-150'
               - type: flex
                 props:
                   className: 'flex gap-5'

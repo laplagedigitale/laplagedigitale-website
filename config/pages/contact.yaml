@@ -28,7 +28,7 @@ components:
             element: p
             content: $t:contact.eyebrow
             props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4'
           - type: text
             element: h1
             content: $t:contact.title
@@ -41,7 +41,7 @@ components:
               className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
 
   - type: container
-    element: main
+    element: section
     props:
       className: 'bg-background'
     children:
@@ -71,7 +71,6 @@ components:
               - type: container
                 props:
                   className: 'bg-white rounded-panel shadow-md border-t-4 border-navy p-6'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - type: container
                     props:
@@ -98,7 +97,6 @@ components:
               - type: container
                 props:
                   className: 'bg-white rounded-panel shadow-md border-t-4 border-blue p-6'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - type: container
                     props:
@@ -120,7 +118,6 @@ components:
               - type: container
                 props:
                   className: 'bg-white rounded-panel shadow-md border-t-4 border-orange p-6'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - type: container
                     props:
@@ -134,9 +131,9 @@ components:
                       className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mb-3'
                   - type: text
                     element: p
-                    content: '13 rue Jacques Peirotes<br>67000 Strasbourg'
+                    content: "13 rue Jacques Peirotes\n67000 Strasbourg"
                     props:
-                      className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text'
+                      className: 'whitespace-pre-line [font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text'
                   - type: link
                     content: $t:contact.address.directions
                     props:
@@ -149,7 +146,6 @@ components:
               - type: container
                 props:
                   className: 'bg-white rounded-panel shadow-md border-t-4 border-magenta p-6'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - type: container
                     props:
@@ -259,7 +255,7 @@ components:
                 element: p
                 content: $t:contact.cta.motif
                 props:
-                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
+                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4'
               - type: text
                 element: h2
                 content: $t:contact.cta.title
@@ -278,7 +274,7 @@ components:
                     content: $t:contact.cta.pricing
                     props:
                       href: $t:href.pricing
-                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
                   - type: link
                     content: $t:contact.cta.membership
                     props:

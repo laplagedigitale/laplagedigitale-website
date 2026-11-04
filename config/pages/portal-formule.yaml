@@ -22,7 +22,7 @@ components:
       - component: espace-membre-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -111,7 +111,7 @@ components:
                   - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.flex.f5, props: { className: 'text-sm text-navy' } }] }
                   - { type: flex, props: { className: 'flex items-start gap-3' }, children: [{ type: icon, props: { name: check, size: 18, strokeWidth: 2.5, className: 'text-forest shrink-0 mt-0.5' } }, { type: text, element: span, content: $t:pricing.flex.f6, props: { className: 'text-sm text-navy' } }] }
               - { type: text, element: p, content: $t:pricing.flex.info, props: { className: 'text-sm text-text-muted' } }
-              - { type: link, content: $t:member.home.flex.cta, props: { href: /espace-membre/presences, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:member.home.flex.cta, props: { href: /espace-membre/presences, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors' } }
 
           - type: card
             visibility: { record: { field: formules, contains: box } }
@@ -142,12 +142,12 @@ components:
             children:
               - { type: flex, props: { className: 'flex items-center gap-3' }, children: [{ type: icon, props: { name: gift, size: 22, className: 'text-magenta shrink-0' } }, { type: text, element: h2, content: $t:member.formule.referral.title, props: { className: 'text-xl font-semibold text-navy' } }] }
               - { type: text, element: p, content: $t:member.formule.referral.text, props: { className: 'text-sm text-navy' } }
-              - { type: link, content: $t:member.formule.referral.cta, props: { href: $t:href.pricing.parrainage, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
+              - { type: link, content: $t:member.formule.referral.cta, props: { href: $t:href.pricing.parrainage, className: 'inline-block text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
 
           - type: card
             props: { className: 'p-5 sm:p-6 space-y-3 bg-blue-100' }
             children:
               - { type: text, element: h2, content: $t:member.formule.change.title, props: { className: 'text-xl font-semibold text-navy' } }
               - { type: text, element: p, content: $t:member.formule.change.text, props: { className: 'text-sm text-navy' } }
-              - { type: link, content: $t:member.formule.change.cta, props: { href: $t:member.formule.change.href, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
-              - { type: link, content: $t:member.formule.all, props: { href: $t:href.pricing, className: 'inline-block text-sm font-semibold text-blue hover:text-navy' } }
+              - { type: link, content: $t:member.formule.change.cta, props: { href: $t:member.formule.change.href, className: 'inline-flex items-center self-start px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:member.formule.all, props: { href: $t:href.pricing, className: 'inline-block text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }

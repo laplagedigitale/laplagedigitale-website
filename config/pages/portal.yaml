@@ -32,13 +32,13 @@ components:
       - component: espace-membre-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-10'
         children:
           - type: container
             children:
-              - { type: text, element: p, content: $t:portal.dashboard.hello, props: { className: 'text-sm font-semibold uppercase tracking-wide text-orange' } }
+              - { type: text, element: p, content: $t:portal.dashboard.hello, props: { className: 'text-sm font-semibold uppercase tracking-wide text-orange-700' } }
               - { type: text, element: h1, content: $t:nav.portal, props: { className: 'text-4xl font-bold text-navy mt-1' } }
               - { type: text, element: p, content: $t:member.home.subtitle, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
               - type: flex
@@ -59,7 +59,7 @@ components:
             content: $t:admin.backoffice.cta
             props:
               href: /administration
-              className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+              className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
 
           # Account link — shown only while the coworker's Pennylane customer
           # is not linked yet, so an empty invoice list is explained.
@@ -88,7 +88,7 @@ components:
                 children:
                   - { type: text, element: h2, content: $t:member.home.flex.title, props: { className: 'text-xl font-semibold text-navy' } }
                   - { type: text, element: p, content: $t:member.home.flex.text, props: { className: 'text-sm text-navy mt-1' } }
-              - { type: link, content: $t:member.home.flex.cta, props: { href: /espace-membre/presences, className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:member.home.flex.cta, props: { href: /espace-membre/presences, className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors' } }
 
           # The invoices, then — Flex members only — the days of the month.
           - type: grid
@@ -148,7 +148,7 @@ components:
                     props: { className: 'flex items-center justify-between gap-4' }
                     children:
                       - { type: text, element: h2, content: $t:portal.dashboard.latest, props: { className: 'text-xl font-semibold text-navy' } }
-                      - { type: link, content: $t:portal.dashboard.all, props: { href: $t:href.portal.invoices, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                      - { type: link, content: $t:portal.dashboard.all, props: { href: $t:href.portal.invoices, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
                   # Read-only (no « Nouvel enregistrement » for an admin either); a
                   # row opens the invoice PDF, as on /espace-membre/factures.
                   - type: table
@@ -187,7 +187,7 @@ components:
                     props: { className: 'flex items-center justify-between gap-4' }
                     children:
                       - { type: text, element: h2, content: $t:portal.mandate.title, props: { className: 'text-xl font-semibold text-navy' } }
-                      - { type: link, content: $t:portal.dashboard.manage, props: { href: $t:href.portal.mandate, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                      - { type: link, content: $t:portal.dashboard.manage, props: { href: $t:href.portal.mandate, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
                   # One mandate per coworker: its status and signing date, as a card.
                   - type: list
                     dataSource:
