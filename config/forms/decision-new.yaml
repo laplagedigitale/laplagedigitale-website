@@ -1,0 +1,27 @@
+# Form: decision-new — record a résolution, placed on
+# /administration/decisions/nouvelle and in the « + Décision »
+# dialog of a sitting's page (the sitting prefilled and locked there). The
+# redirect opens the decision on its own page. Admin only.
+id: 25
+name: decision-new
+title: Nouvelle décision
+description: "Une résolution soumise au vote du CA ou de l'AG : son texte, les voix et le résultat."
+display:
+  submitLabel: Enregistrer la décision
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: decisions
+fields:
+  - { kind: table-field, column: title, placeholder: "Validation du budget prévisionnel 2027", required: true }
+  - { kind: table-field, column: meeting, helpText: "La séance où elle est votée, si elle est déjà créée." }
+  - { kind: table-field, column: body }
+  - { kind: table-field, column: decided_on }
+  - { kind: table-field, column: wording }
+  - { kind: table-field, column: votes_for }
+  - { kind: table-field, column: votes_against }
+  - { kind: table-field, column: abstentions }
+  - { kind: table-field, column: outcome }
+onSuccess:
+  type: redirect
+  url: /administration/decisions/$record.id
+  delaySeconds: 0

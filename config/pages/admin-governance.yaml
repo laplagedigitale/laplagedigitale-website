@@ -1,0 +1,232 @@
+# Page: admin-governance — « Instances », the Administration's Gouvernance
+# section: the CA, AG and bureau sittings, brought out of Notion by
+# notion-import-gouvernance (the two « Ordres du jour » databases) and kept
+# here from now on.
+#
+# Pattern D then A: three tiles — the next sitting (a list bound to the first
+# meeting from today, so an empty calendar reads as a sentence, not a red
+# zero), the decisions of the last twelve months (a filter cannot name the
+# current year: there is no $startOfYear), the minutes still to write
+# (status « Tenue ») —, then the sittings in three tabs with an address
+# (?onglet=a-venir|passees|toutes), each table on its own shared-filter
+# channel (admin-governance, -2, -3). Export only on « Toutes »: the export
+# takes one eq filter, and « À venir » / « Passées » are date comparisons.
+name: admin-governance
+path: /administration/gouvernance
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: a-venir
+    enum: [a-venir, passees, toutes]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Instances — Administration"
+  description: "Les conseils d'administration, assemblées générales et bureaux de l'association."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Instances, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Les conseils d'administration, les assemblées générales et les réunions de bureau : leur ordre du jour, leur compte-rendu, les décisions votées et qui était là. Clique sur une ligne pour ouvrir la séance.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: '+ Nouvelle instance'
+                props:
+                  href: /administration/gouvernance/nouvelle
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+
+          - type: grid
+            props: { className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4' }
+            children:
+              # The next sitting: a list, so « none planned » is a sentence.
+              - type: card
+                props: { className: 'p-5 space-y-2' }
+                children:
+                  - { type: text, element: p, content: Prochaine instance, props: { className: 'text-sm font-medium text-text-muted' } }
+                  - type: list
+                    dataSource:
+                      table: meetings
+                      filter:
+                        - { field: held_on, operator: gte, value: $today }
+                      sort:
+                        - { field: held_on, direction: asc }
+                      limit: 1
+                    listDisplay:
+                      emptyMessage: "Aucune instance prévue : crée la prochaine avec « Nouvelle instance »."
+                    props:
+                      className: 'list-none p-0 m-0'
+                    children:
+                      - type: link
+                        props:
+                          href: /administration/gouvernance/$record.id
+                          className: 'block space-y-1 text-navy hover:text-navy underline-offset-4 hover:underline'
+                        children:
+                          - { type: record-field, format: short-date, props: { field: held_on, className: 'block text-2xl font-bold text-navy' } }
+                          - { type: record-field, props: { field: title, className: 'block text-sm text-text-muted' } }
+              - type: link
+                props: { href: '/administration/decisions', 'aria-label': 'Décisions des douze derniers mois : ouvrir les décisions', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                children:
+                  - type: kpi
+                    label: Décisions sur 12 mois
+                    description: Votées en CA ou en AG
+                    icon: gavel
+                    dataSource:
+                      table: decisions
+                      filter:
+                        - { field: decided_on, operator: gte, value: $today-52w }
+                    kpiAggregate: { function: count }
+              - type: link
+                props: { href: '/administration/gouvernance?onglet=passees', 'aria-label': 'Comptes-rendus à rédiger : ouvrir les instances passées', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                children:
+                  - type: kpi
+                    label: CR à rédiger
+                    description: Séances tenues sans compte-rendu
+                    icon: file-pen-line
+                    dataSource:
+                      table: meetings
+                      filter:
+                        - { field: status, operator: eq, value: tenue }
+                    kpiAggregate: { function: count }
+                    thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
+
+          - type: tabs
+            defaultTab: $query.onglet
+            panels:
+              - { id: a-venir, label: À venir }
+              - { id: passees, label: Passées }
+              - { id: toutes, label: Toutes }
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher une instance…
+                        props: { aria-label: Rechercher une instance, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-governance, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-governance }
+                        fieldsFrom: { table: meetings }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Instances à venir
+                    dataSource:
+                      bindTo: admin-governance
+                      sharedFilter: {}
+                      table: meetings
+                      filter:
+                        - { field: held_on, operator: gte, value: $today }
+                      sort:
+                        - { field: held_on, direction: asc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucune instance à venir : planifie la prochaine avec « Nouvelle instance »."
+                    onRowClick: { type: navigate, path: /administration/gouvernance/$record.id }
+                    columns:
+                      - { field: held_on, label: Date, format: short-date }
+                      - { field: title, label: Instance }
+                      - { field: body, label: Organe }
+                      - { field: status, label: Statut }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher une instance…
+                        props: { aria-label: Rechercher une instance, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-governance-2, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-governance-2 }
+                        fieldsFrom: { table: meetings }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Instances passées
+                    dataSource:
+                      bindTo: admin-governance-2
+                      sharedFilter: {}
+                      table: meetings
+                      filter:
+                        - { field: held_on, operator: lt, value: $today }
+                      sort:
+                        - { field: held_on, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucune instance passée pour le moment : l'import Notion (notion-import-gouvernance) recopie l'historique."
+                    onRowClick: { type: navigate, path: /administration/gouvernance/$record.id }
+                    columns:
+                      - { field: held_on, label: Date, format: short-date }
+                      - { field: title, label: Instance }
+                      - { field: body, label: Organe }
+                      - { field: status, label: Statut }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher une instance…
+                        props: { aria-label: Rechercher une instance, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-governance-3, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-governance-3 }
+                        fieldsFrom: { table: meetings }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/meetings/export?format=csv', filename: instances.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Toutes les instances
+                    dataSource:
+                      bindTo: admin-governance-3
+                      sharedFilter: {}
+                      table: meetings
+                      sort:
+                        - { field: held_on, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucune instance pour le moment : l'import Notion (notion-import-gouvernance) recopie l'historique, ou crée la première avec « Nouvelle instance »."
+                    onRowClick: { type: navigate, path: /administration/gouvernance/$record.id }
+                    columns:
+                      - { field: held_on, label: Date, format: short-date }
+                      - { field: title, label: Instance }
+                      - { field: body, label: Organe }
+                      - { field: status, label: Statut }

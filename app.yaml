@@ -6,10 +6,8 @@
 name: la-plage-digitale
 version: 2.0.0
 description: La Plage Digitale — Tiers-lieu et coworking à Strasbourg
-# The « Built with Sovrium » pill floated over content (on a phone it covered
-# the contact cards and the forms' submit row): a line after the footer instead.
-badge:
-  placement: footer
+# No « Built with Sovrium » badge on the site.
+badge: false
 
 # Secrets the config reads. A required variable missing at boot stops the
 # server, so set it on Scalingo (env-set) before deploying.
@@ -175,6 +173,12 @@ tables:
   - $ref: ./config/tables/lockers.yaml
   - $ref: ./config/tables/space-contracts.yaml
   - $ref: ./config/tables/room-bookings.yaml
+  # Gouvernance: the CA / AG / bureau sittings, the decisions put to the vote
+  # and who attended, imported from Notion by notion-import-gouvernance. The
+  # people are org_people, the signed PV an org_documents row. Admin only.
+  - $ref: ./config/tables/meetings.yaml
+  - $ref: ./config/tables/decisions.yaml
+  - $ref: ./config/tables/attendances.yaml
 
 buckets:
   $ref: ./config/buckets.yaml
@@ -214,6 +218,11 @@ forms:
   # Lieu: a new contract, a new meeting-room booking.
   - $ref: ./config/forms/space-contract-new.yaml
   - $ref: ./config/forms/room-booking-new.yaml
+  # Gouvernance: a new sitting, a new decision (its page and the sitting's
+  # dialog), a new attendance (the sitting's dialog).
+  - $ref: ./config/forms/meeting-new.yaml
+  - $ref: ./config/forms/decision-new.yaml
+  - $ref: ./config/forms/attendance-new.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
@@ -285,6 +294,15 @@ pages:
   - $ref: ./config/pages/admin-grant.yaml
   - $ref: ./config/pages/admin-grant-portal.yaml
   - $ref: ./config/pages/admin-association.yaml
+  # Gouvernance: the sittings, then every fixed address under
+  # /administration/gouvernance (a new sitting, the decisions, a new decision,
+  # one decision) before the sitting's :id page, which would read them as ids.
+  - $ref: ./config/pages/admin-governance.yaml
+  - $ref: ./config/pages/admin-governance-new.yaml
+  - $ref: ./config/pages/admin-decisions.yaml
+  - $ref: ./config/pages/admin-decision-new.yaml
+  - $ref: ./config/pages/admin-decision.yaml
+  - $ref: ./config/pages/admin-meeting.yaml
   - $ref: ./config/pages/admin-content.yaml
   - $ref: ./config/pages/admin-posts.yaml
   - $ref: ./config/pages/admin-posts-drafts.yaml
@@ -375,6 +393,9 @@ automations:
   # Europe/Paris) of the desks and lockers.
   - $ref: ./config/automations/notion-import-lieu.yaml
   - $ref: ./config/automations/lieu-occupancy-refresh.yaml
+  # Gouvernance: the import of the CA / AG sittings, decisions and attendance
+  # (manual, dry run unless {"dryRun": "false"})
+  - $ref: ./config/automations/notion-import-gouvernance.yaml
   # Calendrier de gestion: the morning Slack reminders (09:00 Europe/Paris),
   # and « Marquer comme fait », which moves a deadline to its next occurrence
   - $ref: ./config/automations/management-reminders.yaml
