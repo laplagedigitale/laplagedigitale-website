@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-04T09:46:47.123921+00:00",
+  "title": "Design System: La Plage Digitale",
+  "extensions": {
+    "colorMeta": {
+      "ink-navy": {
+        "role": "primary",
+        "displayName": "Ink Navy",
+        "canonical": "#273a61",
+        "tonalRamp": [
+          "#0e1625",
+          "#152038",
+          "#1c2b4a",
+          "#273a61",
+          "#5d6a88",
+          "#929caf",
+          "#e4e6eb"
+        ]
+      },
+      "seaside-blue": {
+        "role": "secondary",
+        "displayName": "Seaside Blue",
+        "canonical": "#6290bc",
+        "tonalRamp": [
+          "#31485e",
+          "#4a6c8d",
+          "#6290bc",
+          "#8fb2d6",
+          "#b5cce4",
+          "#e3ecf5",
+          "#f7f8fa"
+        ]
+      },
+      "sun-orange": {
+        "role": "secondary",
+        "displayName": "Sun Orange",
+        "canonical": "#f08137",
+        "tonalRamp": [
+          "#78401c",
+          "#b46129",
+          "#f08137",
+          "#f6a66b",
+          "#f9c296",
+          "#fde3cc",
+          "#f7f8fa"
+        ]
+      },
+      "plage-magenta": {
+        "role": "tertiary",
+        "displayName": "Plage Magenta",
+        "canonical": "#cf1769",
+        "tonalRamp": [
+          "#680c34",
+          "#9b114f",
+          "#cf1769",
+          "#e0538f",
+          "#ec8bb3",
+          "#f9dbe8",
+          "#f7f8fa"
+        ]
+      },
+      "forest": {
+        "role": "secondary",
+        "displayName": "Forest",
+        "canonical": "#455b32",
+        "tonalRamp": [
+          "#1c2414",
+          "#29371e",
+          "#374928",
+          "#455b32",
+          "#7d8c70",
+          "#a2ad98",
+          "#c7cec2",
+          "#ecefea"
+        ]
+      },
+      "sage": {
+        "role": "secondary",
+        "displayName": "Sage",
+        "canonical": "#92aa58",
+        "tonalRamp": [
+          "#3a4423",
+          "#586635",
+          "#758846",
+          "#92aa58",
+          "#b3c48a",
+          "#c8d4ac",
+          "#dee6cd",
+          "#f4f6ee"
+        ]
+      },
+      "amber": {
+        "role": "secondary",
+        "displayName": "Amber",
+        "canonical": "#f9af25",
+        "tonalRamp": [
+          "#64460f",
+          "#956916",
+          "#c78c1e",
+          "#f9af25",
+          "#fbc766",
+          "#fcd792",
+          "#fde7be",
+          "#fef7e9"
+        ]
+      },
+      "coral-red": {
+        "role": "secondary",
+        "displayName": "Coral Red",
+        "canonical": "#e83d3b",
+        "tonalRamp": [
+          "#5d1818",
+          "#8b2523",
+          "#ba312f",
+          "#e83d3b",
+          "#ef7776",
+          "#f49e9d",
+          "#f8c5c4",
+          "#fdeceb"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#fbf8f4",
+        "tonalRamp": [
+          "#646362",
+          "#979592",
+          "#c9c6c3",
+          "#fbf8f4",
+          "#fcfaf7",
+          "#fdfcfa",
+          "#fefdfc",
+          "#fffefe"
+        ]
+      },
+      "sand": {
+        "role": "neutral",
+        "displayName": "Sand",
+        "canonical": "#f4ede4",
+        "tonalRamp": [
+          "#625f5b",
+          "#928e89",
+          "#c3beb6",
+          "#f4ede4",
+          "#f7f2ec",
+          "#faf6f2",
+          "#fcfaf7",
+          "#fefdfc"
+        ]
+      },
+      "card-white": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#666666",
+          "#999999",
+          "#cccccc",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Home hero only, from sm up."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles (h1)."
+      },
+      "headline-section": {
+        "displayName": "Headline Section",
+        "purpose": "Section titles (h2)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and block titles (h3)."
+      },
+      "title-small": {
+        "displayName": "Title Small",
+        "purpose": "Offer card titles, small headings (h4)."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Paragraph under a page or section title, max 42rem."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text, max 48rem."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Card text."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Meta, chips, footnotes."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase overline eyebrow above section titles; sidebar group headings."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sm",
+        "value": "0 1px 2px 0 rgb(39 58 97 / 0.06)",
+        "purpose": "Small controls and inset tiles."
+      },
+      {
+        "name": "md",
+        "value": "0 8px 24px -8px rgb(39 58 97 / 0.18)",
+        "purpose": "Every card at rest."
+      },
+      {
+        "name": "lg",
+        "value": "0 24px 48px -16px rgb(39 58 97 / 0.28)",
+        "purpose": "Card under the pointer, featured panel."
+      }
+    ],
+    "motion": [
+      {
+        "name": "fadeInUp",
+        "value": "0.6s ease-out, translateY(20px) → 0, opacity 0 → 1",
+        "purpose": "Entrance of a section's content."
+      },
+      {
+        "name": "fadeIn",
+        "value": "0.4s ease-in-out, opacity 0 → 1",
+        "purpose": "Plain entrance."
+      },
+      {
+        "name": "card-lift",
+        "value": "transition, translateY(-4px) + shadow md → lg",
+        "purpose": "Hover on a clickable card."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main call to act: orange pill, navy label.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Réserver une visite</a>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;border-radius:9999px;font-weight:700;padding:12px 24px;text-decoration:none;transition:background-color .15s,color .15s;font-family:SUSE,system-ui,sans-serif;background:#f08137;color:#273a61;}.ds-btn-primary:hover{background:#f6a66b;}.ds-btn-primary:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Navy Button",
+      "kind": "button",
+      "refersTo": "button-navy",
+      "description": "Call to act on light ground when orange is already nearby.",
+      "html": "<a class=\"ds-btn-navy\" href=\"#\">Voir les formules</a>",
+      "css": ".ds-btn-navy{display:inline-flex;align-items:center;border-radius:9999px;font-weight:700;padding:12px 24px;text-decoration:none;transition:background-color .15s,color .15s;font-family:SUSE,system-ui,sans-serif;background:#273a61;color:#fff;}.ds-btn-navy:hover{background:#1c2b4a;}.ds-btn-navy:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Outline Inverse Button",
+      "kind": "button",
+      "refersTo": "button-outline-inverse",
+      "description": "Secondary choice on a navy band.",
+      "html": "<div class=\"ds-on-navy\"><a class=\"ds-btn-outline\" href=\"#\">Poste Flex</a></div>",
+      "css": ".ds-on-navy{background:#273a61;padding:24px;border-radius:1.5rem;}.ds-btn-outline{display:inline-flex;align-items:center;border-radius:9999px;font-weight:700;padding:12px 24px;text-decoration:none;transition:background-color .15s,color .15s;font-family:SUSE,system-ui,sans-serif;border:2px solid #fff;color:#fff;background:transparent;}.ds-btn-outline:hover{background:#fff;color:#273a61;}.ds-btn-outline:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Magenta Button",
+      "kind": "button",
+      "refersTo": "button-magenta",
+      "description": "Community actions such as « Rejoindre ».",
+      "html": "<a class=\"ds-btn-magenta\" href=\"#\">Rejoindre l'association</a>",
+      "css": ".ds-btn-magenta{display:inline-flex;align-items:center;border-radius:9999px;font-weight:700;padding:12px 24px;text-decoration:none;transition:background-color .15s,color .15s;font-family:SUSE,system-ui,sans-serif;padding:10px 20px;font-size:.875rem;background:#cf1769;color:#fff;}.ds-btn-magenta:hover{background:#e0538f;}.ds-btn-magenta:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Tags and small link chips.",
+      "html": "<a class=\"ds-chip\" href=\"#\">Événements</a>",
+      "css": ".ds-chip{font-family:SUSE,system-ui,sans-serif;display:inline-flex;align-items:center;border-radius:9999px;background:#e3ecf5;color:#273a61;padding:4px 12px;font-size:.875rem;font-weight:600;text-decoration:none;transition:background-color .15s;}.ds-chip:hover{background:#f4ede4;}.ds-chip:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Offer Card",
+      "kind": "card",
+      "refersTo": "card-pinned",
+      "description": "Pinned white card with the offer's colour tab; lifts on hover when clickable.",
+      "html": "<a class=\"ds-card\" href=\"#\"><span class=\"ds-card-title\">Flex</span><span class=\"ds-card-text\">Un poste à la journée, quand tu en as besoin.</span></a>",
+      "css": ".ds-card{font-family:SUSE,system-ui,sans-serif;display:flex;flex-direction:column;gap:8px;max-width:280px;background:#fff;color:#273a61;border-top:4px solid #f08137;border-radius:1.5rem;padding:24px;box-shadow:0 8px 24px -8px rgb(39 58 97 / .18);text-decoration:none;transition:transform .2s,box-shadow .2s;}.ds-card:hover{transform:translateY(-4px);box-shadow:0 24px 48px -16px rgb(39 58 97 / .28);}.ds-card:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}.ds-card-title{font-size:1.125rem;font-weight:600;line-height:1.35;}.ds-card-text{font-size:.9375rem;line-height:1.55;color:#5d6a88;}"
+    },
+    {
+      "name": "Note",
+      "kind": "card",
+      "refersTo": "note",
+      "description": "Information note on blue-100.",
+      "html": "<p class=\"ds-note\">Le badge d'accès est remis le premier jour.</p>",
+      "css": ".ds-note{font-family:SUSE,system-ui,sans-serif;margin:0;max-width:42rem;background:#e3ecf5;color:#273a61;border-radius:1.5rem;padding:12px;font-size:.875rem;}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "",
+      "description": "Engine field re-coloured by the tokens.",
+      "html": "<label class=\"ds-field\"><span>E-mail</span><input type=\"email\" placeholder=\"prenom@exemple.fr\"></label>",
+      "css": ".ds-field{font-family:SUSE,system-ui,sans-serif;display:flex;flex-direction:column;gap:6px;color:#273a61;font-size:.875rem;font-weight:600;max-width:320px;}.ds-field input{font:inherit;font-weight:400;font-size:1rem;border:1px solid #929caf;border-radius:.5rem;padding:8px 12px;background:#fff;color:#273a61;}.ds-field input:focus-visible{outline:none;border-color:#6290bc;box-shadow:0 0 0 3px rgb(98 144 188 / .4);}"
+    },
+    {
+      "name": "Site Header",
+      "kind": "nav",
+      "refersTo": "site-header",
+      "description": "Sticky translucent white bar: logo, menu, pill call to act.",
+      "html": "<nav class=\"ds-header\"><span class=\"ds-logo\">La Plage Digitale</span><span class=\"ds-links\"><a href=\"#\">Les formules</a><a href=\"#\">Qui sommes-nous</a></span><a class=\"ds-header-cta\" href=\"#\">Nous rejoindre</a></nav>",
+      "css": ".ds-header{font-family:SUSE,system-ui,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:24px;height:80px;padding:0 24px;background:rgb(255 255 255 / .95);border-bottom:1px solid #e4e6eb;color:#273a61;}.ds-logo{font-weight:800;letter-spacing:-.02em;}.ds-links{display:flex;gap:20px;}.ds-links a{color:#273a61;text-decoration:none;font-weight:500;}.ds-links a:hover{text-decoration:underline;}.ds-header-cta{border-radius:9999px;padding:10px 20px;background:#f08137;color:#273a61;font-weight:700;text-decoration:none;}.ds-header-cta:hover{background:#f6a66b;}.ds-header a:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Administration Sidebar",
+      "kind": "nav",
+      "refersTo": "admin-sidebar",
+      "description": "Navy app-shell column with orange overline and navy-deep active entry.",
+      "html": "<aside class=\"ds-admin\"><span class=\"ds-admin-mark\">Administration</span><span class=\"ds-admin-group\">Finances</span><a href=\"#\" aria-current=\"page\">Trésorerie</a><a href=\"#\">Transactions</a></aside>",
+      "css": ".ds-admin{font-family:SUSE,system-ui,sans-serif;display:flex;flex-direction:column;gap:4px;width:256px;padding:24px 12px;background:#273a61;border-radius:1rem;}.ds-admin-mark{color:#f6a66b;font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:0 12px 16px;}.ds-admin-group{color:#929caf;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;}.ds-admin a{color:#e4e6eb;text-decoration:none;padding:8px 12px;border-radius:.5rem;}.ds-admin a:hover,.ds-admin a[aria-current=page]{background:#1c2b4a;color:#fff;}.ds-admin a[aria-current=page]{font-weight:600;}.ds-admin a:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Neighbourhood Noticeboard",
+    "overview": "La Plage looks like the association's noticeboard: white cards pinned on a warm sand-and-paper wall, each with a colour tab along its top edge, headlines set in heavy, tight SUSE capitals like the signage on the building. People, events and offers are pinned up front. Nothing here is a product dashboard; it is a place where a community posts what is going on and how to join in.\n\nThe palette is the 2026 charte: ink navy leads and carries almost all text, the dark hero bands and the Administration's sidebar. Sun orange is the call to act, plage magenta the community's accent, seaside blue the calm one for tags, notes and secondary links. The ground is never pure white: paper (`#fbf8f4`) for pages, sand (`#f4ede4`) for alternating bands and the Espace Membre sidebar, so the white cards read as pinned sheets. Depth is soft and friendly: generous 1.5rem corners, pills for every action, navy-tinted shadows that lift a card a few pixels on hover.\n\nThe two signed-in spaces keep the same materials at a quieter volume. The Espace Membre is the noticeboard's back room (sand sidebar, the same cards); the Administration puts the board on a navy wall (navy sidebar, orange marker for the active space). Both are tools first: the colour tabs and pills stay, the display type does not.\n\nIt is not corporate SaaS (no cold grey dashboards, gradient heroes or startup clichés) and not a generic coworking chain (no anonymous plants-and-laptops imagery, no black-and-white-with-one-accent look).",
+    "keyCharacteristics": [
+      "Warm ground (paper, sand), white pinned cards, ink navy text.",
+      "One face, SUSE, from light body text to heavy signage capitals.",
+      "Pills for every action and tag; 1.5rem corners for every card.",
+      "A coloured top edge says which offer or room a card belongs to.",
+      "Soft navy-tinted shadows that lift on hover.",
+      "Real photographs of the place and its people, never stock."
+    ],
+    "rules": [
+      {
+        "name": "The Navy Voice Rule",
+        "body": "Text is ink navy (or its 300 shade when muted). Brand colours carry text only where they pass AA: magenta on white, white on magenta or navy.",
+        "section": "colors"
+      },
+      {
+        "name": "The Orange Is a Fill Rule",
+        "body": "Orange and amber are never text on white or paper. Navy text sits on them. (The charte's own rule.)",
+        "section": "colors"
+      },
+      {
+        "name": "The Colour Tab Rule",
+        "body": "A card's 4px top edge carries its offer: Fixe navy, Nomade blue, Flex orange, Salles de réunion magenta. Keep the mapping wherever an offer appears.",
+        "section": "colors"
+      },
+      {
+        "name": "The Eyebrow Rule",
+        "body": "Every public section opens with an overline eyebrow, then its Headline Section title, then a Lead. The eyebrow is orange on navy, magenta or navy on light grounds.",
+        "section": "typography"
+      },
+      {
+        "name": "The Signage Is Public Rule",
+        "body": "Display and the 800 weights belong to the public site. The two spaces start at Headline and mostly work at Title and below.",
+        "section": "typography"
+      },
+      {
+        "name": "The Navy Shadow Rule",
+        "body": "Shadows are tinted with ink navy (`rgb(39 58 97 / …)`). A neutral black shadow does not belong here.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Lift Means Link Rule",
+        "body": "A card that lifts on hover is clickable as a whole. A static card keeps its md shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** write colours, corners and type through the tokens in `config/design.yaml` (`bg-navy`, `rounded-panel`, `var(--text-h2)`), never as raw hex or pixel values in the markup.",
+      "**Do** set every action and tag as a pill, and every card as a 1.5rem panel.",
+      "**Do** keep the offer colours: Fixe navy, Nomade blue, Flex orange, Salles de réunion magenta.",
+      "**Do** open public sections with eyebrow, title, lead, and alternate the band grounds (paper, sand, white, navy).",
+      "**Do** use real photographs of La Plage, its rooms and its people (`public/images/`).",
+      "**Do** keep text at WCAG AA: navy on paper is 10.6:1, navy-300 on paper 5.1:1, magenta on white 5.3:1."
+    ],
+    "donts": [
+      "**Don't** set orange or amber text on white or paper (the charte's rule).",
+      "**Don't** use seaside blue as text on white: it is 3.4:1. The small semibold `text-blue` links (partner and venue names, links in the Administration's calendar, content and finance pages) do it today and fail AA; they should move to navy or magenta. The header's « Espace membre » link turning orange on hover breaks the orange rule the same way.",
+      "**Don't** add more navy-on-orange at body size: it is 4.24:1, just under AA. The orange pills use it today with 16px bold labels, and so does the orange 13px eyebrow on navy; both need orange-300 (5.7:1 with navy) or a larger label to pass.",
+      "**Don't** rely on the ink-navy-200 field border alone to show a field: it is 2.8:1 against white, under the 3:1 non-text minimum.",
+      "**Don't** use grey or black shadows, square corners on cards, or a pure white page ground.",
+      "**Don't** redefine `radius` `sm`…`xl` in `design.yaml`: the engine's components would all turn into pills.",
+      "**Don't** drift into corporate SaaS (cold grey dashboards, gradient heroes, startup clichés) or a generic coworking chain look (anonymous plants-and-laptops stock, black and white with a single accent)."
+    ]
+  }
+}
