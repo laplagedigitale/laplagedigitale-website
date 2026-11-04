@@ -65,7 +65,7 @@ children:
         props:
           className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
         groups:
-          - label: Pilotage
+          - label: Au quotidien
             items:
               - { label: Tableau de bord, href: /administration, icon: layout-dashboard }
               - { label: Calendrier, href: /administration/calendrier, icon: calendar-clock, activeMatch: prefix }
@@ -74,16 +74,20 @@ children:
             items:
               - { label: Membres, href: /administration/membres, icon: users, activeMatch: prefix }
               - { label: Inscriptions Flex, href: /administration/inscriptions-flex, icon: user-plus }
-          - label: Finances
+          # Finances in two: what comes in (billing work, weekly), and the cash
+          # picture (planning, monthly).
+          - label: Encaissements
+            items:
+              - { label: Factures, href: /administration/finances/factures, icon: receipt }
+              - { label: Facturation Flex, href: /administration/finances/flex, icon: calendar-days }
+              - { label: Prélèvements, href: /administration/finances/prelevements, icon: landmark }
+              - { label: Rapprochements, href: /administration/finances/rapprochements, icon: git-compare-arrows }
+          - label: Trésorerie
             items:
               - { label: Vue d'ensemble, href: /administration/finances, icon: chart-pie }
               - { label: Trésorerie, href: /administration/finances/tresorerie, icon: piggy-bank }
               - { label: Prévisionnel, href: /administration/finances/previsionnel, icon: chart-line, activeMatch: prefix }
               - { label: Transactions, href: /administration/finances/transactions, icon: arrow-left-right }
-              - { label: Factures, href: /administration/finances/factures, icon: receipt }
-              - { label: Facturation Flex, href: /administration/finances/flex, icon: calendar-days }
-              - { label: Prélèvements, href: /administration/finances/prelevements, icon: landmark }
-              - { label: Rapprochements, href: /administration/finances/rapprochements, icon: git-compare-arrows }
           - label: Subventions
             items:
               - { label: Demandes de subvention, href: /administration/subventions, icon: hand-coins, activeMatch: prefix }
@@ -97,8 +101,8 @@ children:
           - label: Compte
             items:
               - { label: Mon compte, href: /administration/compte, icon: user-round }
-              - { label: Console Sovrium, href: /_admin, icon: settings }
               - { label: Voir le site, href: /, icon: external-link }
+              - { label: Console Sovrium, href: /_admin, icon: settings }
 
       # Editors: the blog and their account.
       - type: sidebar

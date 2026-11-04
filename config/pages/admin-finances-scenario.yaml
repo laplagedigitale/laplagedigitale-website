@@ -63,6 +63,7 @@ components:
                       - { type: text, element: span, content: 'Calculé' }
                       - { type: record-field, format: relative-time, props: { field: computed_at } }
                   - { type: text, element: p, content: "Le scénario de référence suit le réalisé Pennylane : ses budgets se lisent mais ne se modifient pas, et il ne prend pas d'ajustement. Pour simuler une décision, créez un scénario à partir de lui.", visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-panel bg-blue-100 max-w-2xl' } }
+                  - { type: text, element: p, content: "Cette page se met à jour toute seule : après une modification (budget, ajustement, élément daté) ou un « Recalculer », les chiffres changent en quelques secondes, sans recharger.", props: { className: 'text-sm text-text-muted mt-1 max-w-3xl' } }
               - type: flex
                 props:
                   className: 'flex flex-wrap gap-3'
