@@ -31,9 +31,10 @@
 # header (the logo) and the footer (« Mon Espace Membre »)
 # stay in place however long the navigation is. The column itself is clipped
 # (lg:overflow-hidden); the wrapper around the sidebars takes the height left
-# (lg:flex-1 lg:min-h-0) and scrolls (lg:overflow-y-auto). The sidebars inside
-# keep their own height (lg:flex-none): a sidebar stretched to fill its box is
-# cut to the height left over, and its last groups overflow onto what follows.
+# (lg:flex-1 lg:min-h-0) and hands it to the sidebar (lg:flex-1 lg:min-h-0).
+# The scrolling is the engine's own: since 0.47 a sidebar's content is a
+# scroller (overflow-auto, with a fade at its foot) — the wrapper must not
+# scroll as well, or the column shows two scroll bars.
 # Below lg both wrappers are `contents`, so the top bar lays out as before.
 #
 # « Console Sovrium » (/_admin) — the built-in console: users and roles, API
@@ -57,14 +58,14 @@ children:
   - type: container
     element: div
     props:
-      className: 'max-lg:contents lg:flex-1 lg:min-h-0 lg:overflow-y-auto'
+      className: 'max-lg:contents lg:flex lg:flex-1 lg:min-h-0 lg:flex-col'
     children:
       # Admins: the whole back office.
       - type: sidebar
         visibility: { roles: [admin] }
         drawer: { below: lg, label: Menu }
         props:
-          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200 lg:[&_[data-sidebar-group=Compte]]:hidden'
+          className: 'max-lg:ml-auto lg:flex-1 lg:min-h-0 bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200 lg:[&_[data-sidebar-group=Compte]]:hidden'
         groups:
           - label: Pilotage
             items:
@@ -118,7 +119,7 @@ children:
         visibility: { roles: [editor] }
         drawer: { below: lg, label: Menu }
         props:
-          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
+          className: 'max-lg:ml-auto lg:flex-1 lg:min-h-0 bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
         groups:
           - label: Contenu
             items:
