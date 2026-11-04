@@ -13,6 +13,8 @@
 # la remplissent). `prudence` applies the accountant's rule: a `certain` line
 # is projected at its highest average, a `prudent` one at its lowest.
 # `is_catch_all` marks the two lines every unmapped transaction falls into.
+# `cerfa_row` is a third lens, the CERFA budget of a demande de subvention;
+# `cash_effect` off marks a non-cash charge (68 dotations).
 id: 13
 name: budget_lines
 aiAccess:
@@ -61,6 +63,11 @@ fields:
       - { value: impots, label: Impôts et taxes, color: '#8b5cf6' }
       - { value: personnel, label: Charges de personnel, color: '#ef4444' }
       - { value: financier, label: Charges financières, color: '#64748b' }
+      - { value: gestion_courante, label: Autres charges de gestion courante, color: '#a3a3a3' }
+      - { value: exceptionnel, label: Charges et produits exceptionnels, color: '#c084fc' }
+      - { value: amortissements, label: Dotations aux amortissements et provisions, color: '#475569' }
+      - { value: impot_benefices, label: Impôt sur les bénéfices, color: '#7c3aed' }
+      - { value: contributions_nature, label: Contributions volontaires en nature, color: '#0ea5e9' }
       - { value: hors_resultat, label: Hors compte de résultat, color: '#94a3b8' }
   - { id: 7, name: vat_rate, label: "TVA (%)", type: decimal, precision: 2, default: 0 }
   - { id: 8, name: vat_deductible, label: TVA déductible, type: checkbox, default: false }
@@ -88,6 +95,53 @@ fields:
   - { id: 13, name: line_order, label: Ordre, type: integer }
   - { id: 14, name: active, label: Active, type: checkbox, default: true }
   - { id: 15, name: notes, label: Notes, type: long-text }
+  # The CERFA lens: the row of the budget prévisionnel of a demande de
+  # subvention this line rolls up into (grant-budget-compute). Empty: the
+  # line is outside the compte de résultat (TVA, loan, transfers).
+  - id: 16
+    name: cerfa_row
+    label: Ligne CERFA
+    type: single-select
+    options:
+      - { value: '604', label: "604 — Prestations de services" }
+      - { value: '606', label: "606 — Achats matières et fournitures" }
+      - { value: '613', label: "613 — Locations" }
+      - { value: '615', label: "615 — Entretien et réparation" }
+      - { value: '616', label: "616 — Assurance" }
+      - { value: '618', label: "618 — Documentation" }
+      - { value: '622', label: "622 — Rémunérations intermédiaires et honoraires" }
+      - { value: '623', label: "623 — Publicité, publication" }
+      - { value: '625', label: "625 — Déplacements, missions" }
+      - { value: '627', label: "627 — Services bancaires, autres" }
+      - { value: '631', label: "631 — Impôts et taxes sur rémunération" }
+      - { value: '635', label: "635 — Autres impôts et taxes" }
+      - { value: '641', label: "641 — Rémunération des personnels" }
+      - { value: '645', label: "645 — Charges sociales" }
+      - { value: '647', label: "647 — Autres charges de personnel" }
+      - { value: '65', label: "65 — Autres charges de gestion courante" }
+      - { value: '66', label: "66 — Charges financières" }
+      - { value: '67', label: "67 — Charges exceptionnelles" }
+      - { value: '68', label: "68 — Dotation aux amortissements et provisions" }
+      - { value: '69', label: "69 — Impôt sur les bénéfices" }
+      - { value: '861', label: "861 — Mise à disposition gratuite de biens et services" }
+      - { value: '862', label: "862 — Prestations en nature" }
+      - { value: '864', label: "864 — Personnel bénévole" }
+      - { value: '70', label: "70 — Ventes, prestations de services" }
+      - { value: '73', label: "73 — Dotations et produits de tarification" }
+      - { value: '74', label: "74 — Subventions d'exploitation" }
+      - { value: '756', label: "756 — Cotisations" }
+      - { value: '758', label: "758 — Dons manuels, mécénat, autres produits" }
+      - { value: '76', label: "76 — Produits financiers" }
+      - { value: '77', label: "77 — Produits exceptionnels" }
+      - { value: '78', label: "78 — Reprises sur amortissements et provisions" }
+      - { value: '79', label: "79 — Transferts de charges" }
+      - { value: '870', label: "870 — Bénévolat" }
+      - { value: '871', label: "871 — Prestations en nature" }
+      - { value: '875', label: "875 — Dons en nature" }
+  # Off for a line that is in the compte de résultat but moves no cash (the
+  # dotations aux amortissements): the engine projects it from its budget
+  # cells only and leaves it out of the balances and the plan de trésorerie.
+  - { id: 17, name: cash_effect, label: Mouvement de trésorerie, type: checkbox, default: true }
 permissions:
   read: [admin]
   create: [admin]

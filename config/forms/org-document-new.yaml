@@ -1,0 +1,22 @@
+# Form: org-document-new — upload a pièce to the association's library, in a
+# dialog on /administration/association. Each demande then links the pièces
+# it sends (tab « Pièces & export »).
+id: 15
+name: org-document-new
+title: Nouvelle pièce
+description: "Un document que les financeurs demandent : statuts, comptes, rapport d'activité, RIB…"
+display:
+  submitLabel: Ajouter la pièce
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: org_documents
+fields:
+  - { kind: table-field, column: title, label: Intitulé, placeholder: "Comptes annuels 2026", required: true }
+  - { kind: table-field, column: kind, label: Type, required: true }
+  - { kind: table-field, column: year, label: Exercice }
+  - { kind: table-field, column: document_date, label: Date du document }
+  - { kind: table-field, column: valid_until, label: Valable jusqu'au }
+  - { kind: table-field, column: file, label: Fichier }
+onSuccess:
+  type: message
+  message: "Pièce ajoutée."

@@ -1,0 +1,945 @@
+# Page: formules-et-tarifs — Formules et tarifs (requests 797–802). Four plan
+# cards (Flex, Nomade, Bureau fixe, Domiciliation), the comparison, the rooms,
+# the membership, the questions the contracts answer, the contact band.
+# Facts: 2026 contracts (Nomade, Fixe, Domiciliation, salles) and the RIA. The
+# Bureau fixe term is left to the visit: its contract says both 12 months and
+# monthly (open question to the association).
+name: formules-et-tarifs
+path:
+  fr: "/formules-et-tarifs"
+  en: "/pricing"
+  de: "/preise"
+meta:
+  favicons:
+    $ref: "../favicons.yaml"
+  noindex: true
+  title: $t:tarifs.meta.title
+  description: $t:tarifs.meta.description
+  openGraph:
+    type: website
+    image: "/images/pages/les-formules/salle-narval.webp"
+components:
+  - component: site-header
+  - type: container
+    element: section
+    props:
+      className: "relative overflow-hidden bg-navy text-white"
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-16"
+        children:
+          - type: text
+            element: p
+            content: $t:tarifs.hero.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-5"
+          - type: text
+            element: h1
+            content: $t:tarifs.hero.title
+            props:
+              className: "[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] text-white max-w-4xl"
+          - type: text
+            element: p
+            content: $t:tarifs.hero.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6"
+          - type: flex
+            props:
+              className: "flex flex-wrap gap-3 mt-10"
+            children:
+              - type: link
+                content: $t:cta.visit
+                props:
+                  href: "mailto:contact@laplagedigitale.fr?subject=Visite%20de%20la%20Plage"
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors"
+  - type: container
+    element: section
+    props:
+      className: bg-background
+      aria-labelledby: tarifs-plans
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: h2
+            content: $t:tarifs.plans.title
+            props:
+              className: sr-only
+              id: tarifs-plans
+          - type: grid
+            props:
+              className: "grid grid-cols-1 md:grid-cols-2 gap-6"
+            children:
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md border-t-8 border-orange p-6 sm:p-8 scroll-mt-24"
+                  id: flex
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:offer.flex.name
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:offer.flex.price
+                    props:
+                      className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mt-4"
+                  - type: text
+                    element: p
+                    content: $t:offer.flex.ttc
+                    props:
+                      className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-1"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.flex.for
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-5"
+                  - type: container
+                    element: div
+                    props:
+                      className: "mt-5 space-y-2 flex-1"
+                    children:
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.flex.f1
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.feat.net
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.feat.print
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.feat.coffee
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.flex.cond
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-5 border-t border-border pt-4 max-w-[62ch]"
+                  - type: link
+                    content: $t:tarifs.flex.cta
+                    props:
+                      href: $t:href.flex
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-6 self-start"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md border-t-8 border-blue p-6 sm:p-8 scroll-mt-24"
+                  id: nomade
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:offer.nomade.name
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:offer.nomade.price
+                    props:
+                      className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mt-4"
+                  - type: text
+                    element: p
+                    content: $t:offer.nomade.ttc
+                    props:
+                      className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-1"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.nomade.for
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-5"
+                  - type: container
+                    element: div
+                    props:
+                      className: "mt-5 space-y-2 flex-1"
+                    children:
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.nomade.f1
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.feat.net
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.nomade.f3
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.feat.coffee
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.nomade.cond
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-5 border-t border-border pt-4 max-w-[62ch]"
+                  - type: link
+                    content: $t:cta.visit
+                    props:
+                      href: "mailto:contact@laplagedigitale.fr?subject=Visite%20%28Nomade%29"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-6 self-start"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md border-t-8 border-navy p-6 sm:p-8 scroll-mt-24"
+                  id: fixe
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:offer.fixe.name
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:offer.fixe.price
+                    props:
+                      className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mt-4"
+                  - type: text
+                    element: p
+                    content: $t:offer.fixe.ttc
+                    props:
+                      className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-1"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.fixe.for
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-5"
+                  - type: container
+                    element: div
+                    props:
+                      className: "mt-5 space-y-2 flex-1"
+                    children:
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.fixe.f1
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.fixe.f2
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.fixe.f3
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.fixe.f4
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.fixe.f5
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.feat.coffee
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.fixe.cond
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-5 border-t border-border pt-4 max-w-[62ch]"
+                  - type: link
+                    content: $t:cta.visit
+                    props:
+                      href: "mailto:contact@laplagedigitale.fr?subject=Visite%20%28Bureau%20fixe%29"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-6 self-start"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md border-t-8 border-magenta p-6 sm:p-8 scroll-mt-24"
+                  id: domiciliation
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:offer.dom.name
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:offer.dom.price
+                    props:
+                      className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy mt-4"
+                  - type: text
+                    element: p
+                    content: $t:offer.dom.ttc
+                    props:
+                      className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-1"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.dom.for
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text mt-5"
+                  - type: container
+                    element: div
+                    props:
+                      className: "mt-5 space-y-2 flex-1"
+                    children:
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.dom.f1
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.dom.f2
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.dom.f3
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.dom.f4
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                      - type: flex
+                        props:
+                          className: "flex gap-2 items-start"
+                        children:
+                          - type: icon
+                            props:
+                              name: check
+                              size: 18
+                              className: "text-navy mt-0.5 shrink-0"
+                              aria-hidden: "true"
+                          - type: text
+                            element: p
+                            content: $t:tarifs.dom.f5
+                            props:
+                              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.dom.cond
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-5 border-t border-border pt-4 max-w-[62ch]"
+                  - type: link
+                    content: $t:cta.quote
+                    props:
+                      href: "mailto:contact@laplagedigitale.fr?subject=Domiciliation"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-6 self-start"
+          - type: text
+            element: p
+            content: $t:offer.membership
+            props:
+              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-8 max-w-[70ch]"
+  - type: container
+    element: section
+    props:
+      className: "bg-white scroll-mt-24"
+      id: comparer
+      aria-labelledby: tarifs-compare
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: p
+            content: $t:tarifs.compare.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:tarifs.compare.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: tarifs-compare
+          - type: container
+            props:
+              className: "mt-10 overflow-x-auto rounded-panel border border-border"
+            children:
+              - type: table
+                props:
+                  aria-label: $t:tarifs.compare.label
+                  className: "min-w-[40rem] w-full"
+                tableHeaders:
+                  - $t:tarifs.compare.h0
+                  - Flex
+                  - Nomade
+                  - $t:tarifs.compare.h3
+                tableRows:
+                  - [$t:tarifs.cmp.price, $t:offer.flex.price, $t:offer.nomade.price, $t:offer.fixe.price]
+                  - [$t:tarifs.cmp.place, $t:tarifs.cmp.shared, $t:tarifs.cmp.shared, $t:tarifs.cmp.own]
+                  - [$t:tarifs.cmp.hours, $t:tarifs.cmp.office, $t:tarifs.cmp.always, $t:tarifs.cmp.always]
+                  - [$t:tarifs.cmp.keys, "—", $t:tarifs.cmp.yes, $t:tarifs.cmp.yes]
+                  - [$t:tarifs.cmp.locker, "—", "—", $t:tarifs.cmp.yes]
+                  - [$t:tarifs.cmp.rooms, $t:tarifs.cmp.extra, $t:tarifs.cmp.extra, $t:tarifs.cmp.fair]
+                  - [$t:tarifs.cmp.term, $t:tarifs.cmp.none, $t:tarifs.cmp.monthly, $t:tarifs.cmp.visit]
+                  - [$t:tarifs.cmp.member, $t:tarifs.cmp.first, $t:tarifs.cmp.first, $t:tarifs.cmp.first]
+  - type: container
+    element: section
+    props:
+      className: "bg-background scroll-mt-24"
+      id: salles
+      aria-labelledby: tarifs-rooms
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: p
+            content: $t:tarifs.rooms.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:tarifs.rooms.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: tarifs-rooms
+          - type: text
+            element: p
+            content: $t:tarifs.rooms.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4"
+          - type: grid
+            props:
+              className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12"
+            children:
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/les-formules/salle-crevette.webp"
+                      alt: $t:room.crevette.alt
+                      width: 1080
+                      height: 1080
+                      className: "w-full aspect-[4/3] object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: p-5
+                    children:
+                      - type: text
+                        element: h3
+                        content: Crevette
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:room.crevette.cap
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1"
+                      - type: text
+                        element: p
+                        content: $t:room.crevette.price
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/les-formules/salle-requin.webp"
+                      alt: $t:room.requin.alt
+                      width: 1600
+                      height: 1067
+                      className: "w-full aspect-[4/3] object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: p-5
+                    children:
+                      - type: text
+                        element: h3
+                        content: Requin
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:room.requin.cap
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1"
+                      - type: text
+                        element: p
+                        content: $t:room.requin.price
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/les-formules/salle-baleine.webp"
+                      alt: $t:room.baleine.alt
+                      width: 1600
+                      height: 1067
+                      className: "w-full aspect-[4/3] object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: p-5
+                    children:
+                      - type: text
+                        element: h3
+                        content: Baleine
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:room.baleine.cap
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1"
+                      - type: text
+                        element: p
+                        content: $t:room.baleine.price
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/les-formules/salle-narval.webp"
+                      alt: $t:room.narval.alt
+                      width: 1600
+                      height: 1067
+                      className: "w-full aspect-[4/3] object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: p-5
+                    children:
+                      - type: text
+                        element: h3
+                        content: Narval
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:room.narval.cap
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1"
+                      - type: text
+                        element: p
+                        content: $t:room.narval.price
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-3"
+          - type: text
+            element: p
+            content: $t:tarifs.rooms.assoc
+            props:
+              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-8 max-w-[70ch]"
+          - type: link
+            content: $t:cta.room
+            props:
+              href: "mailto:contact@laplagedigitale.fr?subject=Salle%20de%20r%C3%A9union"
+              className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-6"
+  - type: container
+    element: section
+    props:
+      className: "bg-white scroll-mt-24"
+      id: adhesion
+      aria-labelledby: tarifs-member
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 max-w-4xl"
+        children:
+          - type: text
+            element: p
+            content: $t:tarifs.member.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:tarifs.member.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: tarifs-member
+          - type: text
+            element: p
+            content: $t:tarifs.member.p1
+            props:
+              className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-6"
+          - type: text
+            element: p
+            content: $t:tarifs.member.p2
+            props:
+              className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-4"
+          - type: text
+            element: p
+            content: $t:tarifs.member.p3
+            props:
+              className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-4"
+          - type: link
+            content: $t:cta.support
+            props:
+              href: https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025
+              className: "font-bold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy inline-block mt-6"
+              target: _blank
+              rel: "noopener noreferrer"
+  - type: container
+    element: section
+    props:
+      className: "bg-background scroll-mt-24"
+      id: questions
+      aria-labelledby: tarifs-faq
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 max-w-4xl"
+        children:
+          - type: text
+            element: p
+            content: $t:tarifs.faq.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:tarifs.faq.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: tarifs-faq
+          - type: container
+            props:
+              className: "mt-10 divide-y divide-border border-y border-border"
+            children:
+              - type: container
+                props:
+                  className: py-6
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tarifs.faq.q1
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.faq.a1
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-2"
+              - type: container
+                props:
+                  className: py-6
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tarifs.faq.q2
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.faq.a2
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-2"
+              - type: container
+                props:
+                  className: py-6
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tarifs.faq.q3
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.faq.a3
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-2"
+              - type: container
+                props:
+                  className: py-6
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tarifs.faq.q4
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.faq.a4
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-2"
+              - type: container
+                props:
+                  className: py-6
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tarifs.faq.q5
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.faq.a5
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-2"
+              - type: container
+                props:
+                  className: py-6
+                children:
+                  - type: text
+                    element: h3
+                    content: $t:tarifs.faq.q6
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:tarifs.faq.a6
+                    props:
+                      className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-2"
+  - type: container
+    element: section
+    props:
+      className: "bg-magenta text-white"
+      aria-labelledby: tarifs-contact-title
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+        children:
+          - type: container
+            props:
+              className: ""
+            children:
+              - type: text
+                element: h2
+                content: $t:tarifs.contact.title
+                props:
+                  className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-white"
+                  id: tarifs-contact-title
+              - type: text
+                element: p
+                content: $t:contact.band.lead
+                props:
+                  className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-white mt-4 max-w-xl"
+          - type: container
+            props:
+              className: space-y-6
+            children:
+              - type: flex
+                props:
+                  className: "flex flex-wrap gap-3"
+                children:
+                  - type: link
+                    content: $t:cta.visit
+                    props:
+                      href: "mailto:contact@laplagedigitale.fr?subject=Visite%20de%20la%20Plage"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold text-magenta bg-white hover:bg-navy-100 transition-colors"
+                  - type: link
+                    content: $t:cta.call
+                    props:
+                      href: "tel:+33977425929"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors"
+              - type: text
+                element: p
+                content: $t:contact.band.where
+                props:
+                  className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-white"
+  - component: site-footer

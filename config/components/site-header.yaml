@@ -1,90 +1,90 @@
 # Reusable component template: site-header.
-# Sticky white bar: logo · main navigation (with the two sub-menus the live
-# site has) · language switcher · "Adhérer" CTA. Below md the navigation
-# folds into a dropdown.
+# Sticky white bar: logo · the four pages · language switcher · Espace Membre ·
+# the one main action « Réserver une visite » (a mailto to the team, visible at
+# every width). Below lg the navigation folds into the « Menu » dropdown; below
+# sm the language switcher moves to the footer. « Adhérer » lives in the footer
+# and on the Tiers-lieu page.
 name: site-header
 type: container
 children:
   - type: container
     element: header
     props:
-      className: 'sticky top-0 z-50 w-full bg-white/95 backdrop-blur border-b border-navy-100'
+      className: "sticky top-0 z-50 w-full bg-white/95 backdrop-blur border-b border-navy-100"
     children:
       - type: container
         element: nav
         props:
-          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6 h-20'
-          'aria-label': $t:nav.aria
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 h-20"
+          aria-label: $t:nav.aria
         children:
           - type: link
             props:
               href: $t:href.home
-              className: 'flex items-center shrink-0'
-              'aria-label': La Plage Digitale
+              className: "flex items-center shrink-0"
+              aria-label: "La Plage Digitale"
             children:
               - type: image
                 variant: default
                 props:
-                  src: /brand/logo-couleurs.svg
-                  alt: La Plage Digitale
+                  src: "/brand/logo-couleurs.svg"
+                  alt: "La Plage Digitale"
                   loading: eager
-                  className: 'h-12 w-auto'
-
+                  width: 120
+                  height: 48
+                  className: "h-10 sm:h-12 w-auto"
           - type: navigation-menu
             props:
-              className: 'hidden lg:flex [&_[data-slot=navigation-menu-link]]:text-md [&_[data-slot=navigation-menu-trigger]]:text-md'
+              className: "hidden lg:flex [&_[data-slot=navigation-menu-link]]:text-md"
             navItems:
-              - { label: $t:nav.home, href: $t:href.home }
-              - label: $t:nav.about
-                children:
-                  - { label: $t:nav.about, href: $t:href.about, description: $t:nav.about.desc }
-                  - { label: $t:nav.activities, href: $t:href.activities, description: $t:nav.activities.desc }
-                  - { label: $t:nav.supporters, href: $t:href.supporters, description: $t:nav.supporters.desc }
-              - label: $t:nav.coworking
-                children:
-                  - { label: $t:nav.space, href: $t:href.space, description: $t:nav.space.desc }
-                  - { label: $t:nav.pricing, href: $t:href.pricing, description: $t:nav.pricing.desc }
-                  - { label: $t:nav.coworkers, href: $t:href.coworkers, description: $t:nav.coworkers.desc }
-                  - { label: $t:nav.companies, href: $t:href.companies, description: $t:nav.companies.desc }
-              - { label: $t:nav.blog, href: $t:href.blog }
-              - { label: $t:nav.contact, href: $t:href.contact }
-
+              - label: $t:nav.home
+                href: $t:href.home
+              - label: $t:nav.tarifs
+                href: $t:href.pricing
+              - label: $t:nav.tierslieu
+                href: $t:href.thirdPlace
+              - label: $t:nav.infos
+                href: $t:href.contact
           - type: flex
             props:
-              className: 'flex items-center gap-3'
+              className: "flex items-center gap-2 sm:gap-3"
             children:
-              # 44px targets: the switcher's trigger draws at 28px, the link at its text height.
               - type: language-switcher
                 props:
-                  className: 'text-sm [&_button]:h-11 [&_button]:px-3'
+                  className: "hidden sm:block text-sm [&_button]:h-11 [&_button]:px-3"
               - type: link
                 content: $t:nav.portal
                 props:
                   href: $t:href.portal
-                  className: 'hidden sm:inline-flex items-center min-h-11 px-1 text-sm font-medium text-navy hover:text-orange-700 transition-colors'
+                  className: "hidden md:inline-flex items-center min-h-11 px-1 text-sm font-medium text-navy hover:text-orange-700 transition-colors"
               - type: link
-                content: $t:nav.cta
+                content: $t:cta.visit
                 props:
-                  href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
-                  target: _blank
-                  rel: 'noopener noreferrer'
-                  className: 'hidden sm:inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
+                  href: "mailto:contact@laplagedigitale.fr?subject=Visite%20de%20la%20Plage"
+                  className: "inline-flex items-center min-h-11 px-4 sm:px-5 rounded-full text-sm font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors whitespace-nowrap"
               - type: dropdown-menu
                 triggerLabel: $t:nav.menu
                 props:
-                  className: 'lg:hidden'
+                  className: lg:hidden
                 menuItems:
-                  - { label: $t:nav.home, action: { type: navigate, path: $t:href.home } }
-                  - { label: $t:nav.about, action: { type: navigate, path: $t:href.about } }
-                  - { label: $t:nav.activities, action: { type: navigate, path: $t:href.activities } }
-                  - { label: $t:nav.supporters, action: { type: navigate, path: $t:href.supporters } }
-                  - { separator: true }
-                  - { label: $t:nav.space, action: { type: navigate, path: $t:href.space } }
-                  - { label: $t:nav.pricing, action: { type: navigate, path: $t:href.pricing } }
-                  - { label: $t:nav.coworkers, action: { type: navigate, path: $t:href.coworkers } }
-                  - { label: $t:nav.companies, action: { type: navigate, path: $t:href.companies } }
-                  - { separator: true }
-                  - { label: $t:nav.blog, action: { type: navigate, path: $t:href.blog } }
-                  - { label: $t:nav.contact, action: { type: navigate, path: $t:href.contact } }
-                  - { separator: true }
-                  - { label: $t:nav.portal, action: { type: navigate, path: $t:href.portal } }
+                  - label: $t:nav.home
+                    action:
+                      type: navigate
+                      path: $t:href.home
+                  - label: $t:nav.tarifs
+                    action:
+                      type: navigate
+                      path: $t:href.pricing
+                  - label: $t:nav.tierslieu
+                    action:
+                      type: navigate
+                      path: $t:href.thirdPlace
+                  - label: $t:nav.infos
+                    action:
+                      type: navigate
+                      path: $t:href.contact
+                  - separator: true
+                  - label: $t:nav.portal
+                    action:
+                      type: navigate
+                      path: $t:href.portal

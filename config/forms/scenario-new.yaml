@@ -35,7 +35,16 @@ fields:
   - { kind: table-field, column: notes, label: Hypothèses, placeholder: "Ce que ce scénario suppose : embauche, nouvelle subvention, hausse de loyer…" }
   - { kind: table-field, column: status, defaultValue: active, hidden: true }
   - { kind: table-field, column: is_baseline, defaultValue: false, hidden: true }
-  - { kind: table-field, column: year, defaultValue: 2026, hidden: true }
+  - { kind: table-field, column: year, label: Exercice, defaultValue: 2026, helpText: "L'année que le scénario planifie. Une année à venir est entièrement prévue, à partir des douze derniers mois clos.", required: true }
+  - kind: table-field
+    column: opening_from
+    label: Trésorerie d'ouverture
+    helpText: "Pour une année à venir : le scénario dont la trésorerie de fin d'année ouvre celui-ci. Vide : le scénario de référence s'il planifie l'année d'avant, sinon le solde bancaire du jour."
+    optionsSource:
+      table: scenarios
+      displayField: name
+      filter:
+        - { field: status, operator: eq, value: active }
 onSuccess:
   type: redirect
   url: /administration/finances/previsionnel/$record.id

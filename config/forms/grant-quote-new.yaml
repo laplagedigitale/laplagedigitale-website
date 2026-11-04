@@ -1,0 +1,23 @@
+# Form: grant-quote-new — add a quote (devis) to an investissement demande,
+# in a dialog on /administration/subventions/:id, with the quote's file.
+id: 13
+name: grant-quote-new
+title: Nouveau devis
+description: "Une dépense d'investissement : travaux, mobilier, équipement."
+display:
+  submitLabel: Ajouter le devis
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: grant_quotes
+fields:
+  - { kind: table-field, column: application, hidden: true }
+  - { kind: table-field, column: label, label: Dépense, placeholder: "Isolation de la salle des freelances", required: true }
+  - { kind: table-field, column: supplier, label: Fournisseur }
+  - { kind: table-field, column: category, label: Nature, defaultValue: equipement }
+  - { kind: table-field, column: amount_ht, label: Montant HT }
+  - { kind: table-field, column: amount_ttc, label: Montant TTC }
+  - { kind: table-field, column: quote_date, label: Date du devis }
+  - { kind: table-field, column: file, label: Devis (PDF) }
+onSuccess:
+  type: message
+  message: "Devis ajouté : le plan de financement se recalcule."

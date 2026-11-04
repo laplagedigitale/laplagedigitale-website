@@ -1,0 +1,19 @@
+# Automation: grant-compute-on-application — a setting of a demande that the
+# budget reads changed (its scenario, type, exercise, share, typed amount,
+# bénévolat, status or granted amount): recompute it and the other demandes
+# of its exercise. The engine writes only the computed fields, which this
+# trigger does not watch.
+name: grant-compute-on-application
+trigger:
+  type: record
+  table: grant_applications
+  events: [update]
+  watchFields: [scenario, aid_type, exercise_year, funder, eligible_share_pct, amount_requested_override, volunteer_hours, volunteer_hourly_value, status, amount_granted]
+timeout: 180000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: grant-budget-compute
+    $vars:
+      applicationId: '{{trigger.data.record.id}}'

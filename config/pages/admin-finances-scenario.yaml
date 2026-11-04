@@ -63,6 +63,7 @@ components:
                       - { type: text, element: span, content: 'Calculé' }
                       - { type: record-field, format: relative-time, props: { field: computed_at } }
                   - { type: text, element: p, content: "Le scénario de référence suit le réalisé Pennylane : ses budgets se lisent mais ne se modifient pas, et il ne prend pas d'ajustement. Pour simuler une décision, créez un scénario à partir de lui.", visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-panel bg-blue-100 max-w-2xl' } }
+                  - { type: text, element: p, content: "Cette page se met à jour toute seule : après une modification (budget, ajustement, élément daté) ou un « Recalculer », les chiffres changent en quelques secondes, sans recharger.", props: { className: 'text-sm text-text-muted mt-1 max-w-3xl' } }
               - type: flex
                 props:
                   className: 'flex flex-wrap gap-3'
@@ -595,6 +596,37 @@ components:
                       - { field: actual, function: sum, label: Réalisé }
                       - { field: forecast, function: sum, label: Prévu }
                       - { field: budget, function: sum, label: Budget }
+
+          # The demandes de subvention whose CERFA budget is this scenario's year.
+          - type: container
+            element: section
+            props: { className: 'space-y-3' }
+            children:
+              - { type: text, element: h2, content: Demandes de subvention, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: "Les demandes dont le budget CERFA est construit sur ce scénario : chaque modification du scénario se retrouve dans leur budget au prochain « Recalculer » de la demande.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+              - type: card
+                props: { className: 'p-4 sm:p-6' }
+                children:
+                  - type: table
+                    readOnly: true
+                    rowHeight: short
+                    props: { aria-label: Demandes de subvention construites sur ce scénario }
+                    dataSource:
+                      table: grant_applications
+                      filter:
+                        - { field: scenario, operator: eq, value: $param.id }
+                      sort:
+                        - { field: deadline, direction: asc }
+                      limit: 50
+                    onRowClick: { type: navigate, path: '/administration/subventions/$record.id?onglet=budget' }
+                    emptyMessage: "Aucune demande ne s'appuie sur ce scénario. Une demande le choisit dans son onglet « Budget CERFA »."
+                    columns:
+                      - { field: title, label: Demande, frozen: true, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
+                      - { field: status, label: Statut }
+                      - { field: exercise_year, label: Exercice }
+                      - { field: amount_requested, label: Sollicité, format: currency, align: right }
+                      - { field: budget_total_charges, label: Charges, format: currency, align: right }
+                      - { field: budget_gap, label: Écart, format: currency, align: right, cellStyle: [{ when: { lt: -0.5 }, tone: error }, { when: { gt: 0.5 }, tone: error }] }
 
           # The scenario itself: name, hypotheses and the projection settings.
           - type: container

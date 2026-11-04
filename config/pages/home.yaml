@@ -1,368 +1,753 @@
-# Page: home — the showcase of the 2026 charte.
-# Hero (signage tagline + the live site's four CTAs), key numbers, the four
-# offers, "plus qu'un coworking", supporters, final CTA band.
+# Page: home — Accueil of the 4-page site (request 786): coworking first, the
+# tiers-lieu as the reason to choose it. Hero with the one main action
+# « Réserver une visite » (a mailto to the team, no form), key figures, the four
+# formules, the tiers-lieu, three Plagistes, the rooms, the contact band.
+# Generated layout; figures and rules come from the 2026 contracts and the RIA.
 name: home
-path: /
+path: "/"
 meta:
   favicons:
-    $ref: ../favicons.yaml
-  noindex: true  # pre-launch: keep out of search engines
-  title: $t:home.meta.title
-  description: $t:home.meta.description
+    $ref: "../favicons.yaml"
+  noindex: true
+  title: $t:accueil.meta.title
+  description: $t:accueil.meta.description
   openGraph:
     type: website
-    image: /images/pages/accueil/hero.webp
+    image: "/images/pages/accueil/hero.webp"
 components:
   - component: site-header
-
-  # ── Hero ────────────────────────────────────────────────────────────
   - type: container
     element: section
     props:
-      className: 'relative overflow-hidden bg-navy text-white'
+      className: "relative overflow-hidden bg-navy text-white"
     children:
       - type: container
         props:
-          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16'
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-16"
         children:
           - type: text
             element: p
-            content: $t:home.hero.eyebrow
+            content: $t:accueil.hero.eyebrow
             props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-5'
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-5"
           - type: text
             element: h1
-            content: $t:home.hero.title
+            content: $t:accueil.hero.title
             props:
-              className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-4xl'
+              className: "[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] text-white max-w-4xl"
           - type: text
             element: p
-            content: $t:home.hero.lead
+            content: $t:accueil.hero.lead
             props:
-              className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6"
           - type: flex
             props:
-              className: 'flex flex-wrap gap-3 mt-10'
+              className: "flex flex-wrap gap-3 mt-10"
             children:
               - type: link
-                content: $t:home.hero.cta.space
+                content: $t:cta.visit
+                props:
+                  href: "mailto:contact@laplagedigitale.fr?subject=Visite%20de%20la%20Plage"
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors"
+              - type: link
+                content: $t:cta.pricing
                 props:
                   href: $t:href.pricing
-                  className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
-              - type: link
-                content: $t:home.hero.cta.fixe
-                props:
-                  href: $t:home.href.fixe
-                  className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors'
-              - type: link
-                content: $t:home.hero.cta.flex
-                props:
-                  href: $t:home.href.flex
-                  className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors'
-              - type: link
-                content: $t:home.hero.cta.reunion
-                props:
-                  href: $t:home.href.reunion
-                  className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors'
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors"
           - type: text
             element: p
-            content: '13 rue Jacques Peirotes · 67000 Strasbourg'
+            content: $t:accueil.hero.where
             props:
-              className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-blue-200 mt-8'
-      # Hero photo — rounded frame on a coloured offset block.
+              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy-150 mt-8"
       - type: container
         props:
-          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24'
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24"
         children:
           - type: container
             props:
-              className: 'relative'
+              className: relative
             children:
               - type: container
                 props:
-                  className: 'absolute inset-0 translate-x-3 translate-y-3 sm:translate-x-5 sm:translate-y-5 rounded-panel bg-orange'
-                  'aria-hidden': 'true'
+                  className: "absolute inset-0 translate-x-3 translate-y-3 sm:translate-x-5 sm:translate-y-5 rounded-panel bg-orange"
+                  aria-hidden: "true"
+                children: []
               - type: container
                 props:
-                  className: 'relative rounded-panel bg-white p-3 sm:p-5 shadow-md'
+                  className: "relative rounded-panel bg-white p-3 sm:p-5 shadow-md"
                 children:
                   - type: image
                     props:
-                      src: /images/pages/accueil/hero.webp
-                      alt: $t:home.hero.imageAlt
-                      className: 'w-full h-auto rounded-tile'
-
+                      src: "/images/pages/accueil/hero.webp"
+                      alt: $t:accueil.hero.imageAlt
+                      width: 1392
+                      height: 478
+                      className: "w-full h-auto rounded-tile"
   - type: container
     element: section
     props:
-      className: 'bg-background'
+      className: bg-white
+      aria-labelledby: accueil-numbers
     children:
-      # ── Key numbers ───────────────────────────────────────────────────
       - type: container
-        element: section
         props:
-          className: 'bg-white'
-          'aria-labelledby': home-numbers-title
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16"
         children:
-          - type: container
-            props:
-              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20'
-            children:
-              - type: text
-                element: h2
-                content: $t:home.numbers.title
-                props:
-                  id: home-numbers-title
-                  className: 'sr-only'
-              - type: grid
-                props:
-                  className: 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'
-                children:
-                  - type: container
-                    props: { className: 'border-l-4 border-navy pl-4' }
-                    children:
-                      - { type: text, element: p, content: '600 m²+', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
-                      - { type: text, element: p, content: $t:home.numbers.area, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
-                  - type: container
-                    props: { className: 'border-l-4 border-blue pl-4' }
-                    children:
-                      - { type: text, element: p, content: '52', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
-                      - { type: text, element: p, content: $t:home.numbers.fixed, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
-                  - type: container
-                    props: { className: 'border-l-4 border-orange pl-4' }
-                    children:
-                      - { type: text, element: p, content: '30', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
-                      - { type: text, element: p, content: $t:home.numbers.flex, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
-                  - type: container
-                    props: { className: 'border-l-4 border-magenta pl-4' }
-                    children:
-                      - { type: text, element: p, content: '4', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
-                      - { type: text, element: p, content: $t:home.numbers.rooms, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
-                  - type: container
-                    props: { className: 'border-l-4 border-sage pl-4' }
-                    children:
-                      - { type: text, element: p, content: '23', props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] font-bold text-navy' } }
-                      - { type: text, element: p, content: $t:home.numbers.companies, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted' } }
-
-      # ── Offers ────────────────────────────────────────────────────────
-      - type: container
-        element: section
-        props:
-          className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
-          'aria-labelledby': home-offers-title
-        children:
-          - type: text
-            element: p
-            content: $t:home.offers.eyebrow
-            props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
           - type: text
             element: h2
-            content: $t:home.offers.title
+            content: $t:accueil.numbers.title
             props:
-              id: home-offers-title
-              className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl'
+              className: sr-only
+              id: accueil-numbers
+          - type: grid
+            props:
+              className: "grid grid-cols-2 lg:grid-cols-4 gap-6"
+            children:
+              - type: container
+                props:
+                  className: "border-l-4 border-navy pl-4"
+                children:
+                  - type: text
+                    element: p
+                    content: "600 m²"
+                    props:
+                      className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:accueil.numbers.area
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted"
+              - type: container
+                props:
+                  className: "border-l-4 border-blue pl-4"
+                children:
+                  - type: text
+                    element: p
+                    content: "50"
+                    props:
+                      className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:accueil.numbers.fixed
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted"
+              - type: container
+                props:
+                  className: "border-l-4 border-orange pl-4"
+                children:
+                  - type: text
+                    element: p
+                    content: "30"
+                    props:
+                      className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:accueil.numbers.flex
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted"
+              - type: container
+                props:
+                  className: "border-l-4 border-magenta pl-4"
+                children:
+                  - type: text
+                    element: p
+                    content: "4"
+                    props:
+                      className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:accueil.numbers.rooms
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted"
+  - type: container
+    element: section
+    props:
+      className: bg-background
+      aria-labelledby: accueil-offers
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
           - type: text
             element: p
-            content: $t:home.offers.lead
+            content: $t:accueil.offers.eyebrow
             props:
-              className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4'
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:accueil.offers.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: accueil-offers
+          - type: text
+            element: p
+            content: $t:accueil.offers.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4"
           - type: grid
             props:
-              className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12'
+              className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12"
             children:
               - type: link
                 props:
-                  href: $t:home.href.fixe
-                  className: 'group flex flex-col h-full bg-white rounded-panel shadow-md border-t-4 border-navy p-6 hover:-translate-y-1 hover:shadow-lg transition'
+                  href: $t:href.pricing.flex
+                  className: "group flex flex-col h-full bg-white rounded-panel shadow-md border-t-4 border-orange p-6 hover:-translate-y-1 hover:shadow-lg transition"
                 children:
-                  - { type: text, element: h3, content: $t:home.offers.fixe.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
-                  - { type: text, element: p, content: $t:home.offers.fixe.price, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] font-bold text-navy mt-3' } }
-                  - { type: text, element: p, content: $t:home.offers.fixe.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3 flex-1' } }
-                  - { type: text, element: span, content: $t:home.offers.more, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline' } }
+                  - type: text
+                    element: h3
+                    content: $t:offer.flex.name
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:offer.flex.price
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-3"
+                  - type: text
+                    element: p
+                    content: $t:offer.flex.ttc
+                    props:
+                      className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-1"
+                  - type: text
+                    element: p
+                    content: $t:accueil.offers.flex
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-4 flex-1"
+                  - type: text
+                    element: span
+                    content: $t:offer.more
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline"
               - type: link
                 props:
-                  href: $t:home.href.nomade
-                  className: 'group flex flex-col h-full bg-white rounded-panel shadow-md border-t-4 border-blue p-6 hover:-translate-y-1 hover:shadow-lg transition'
+                  href: $t:href.pricing.nomade
+                  className: "group flex flex-col h-full bg-white rounded-panel shadow-md border-t-4 border-blue p-6 hover:-translate-y-1 hover:shadow-lg transition"
                 children:
-                  - { type: text, element: h3, content: $t:home.offers.nomade.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
-                  - { type: text, element: p, content: $t:home.offers.nomade.price, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] font-bold text-navy mt-3' } }
-                  - { type: text, element: p, content: $t:home.offers.nomade.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3 flex-1' } }
-                  - { type: text, element: span, content: $t:home.offers.more, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline' } }
+                  - type: text
+                    element: h3
+                    content: $t:offer.nomade.name
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:offer.nomade.price
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-3"
+                  - type: text
+                    element: p
+                    content: $t:offer.nomade.ttc
+                    props:
+                      className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-1"
+                  - type: text
+                    element: p
+                    content: $t:accueil.offers.nomade
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-4 flex-1"
+                  - type: text
+                    element: span
+                    content: $t:offer.more
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline"
               - type: link
                 props:
-                  href: $t:home.href.flex
-                  className: 'group flex flex-col h-full bg-white rounded-panel shadow-md border-t-4 border-orange p-6 hover:-translate-y-1 hover:shadow-lg transition'
+                  href: $t:href.pricing.fixe
+                  className: "group flex flex-col h-full bg-white rounded-panel shadow-md border-t-4 border-navy p-6 hover:-translate-y-1 hover:shadow-lg transition"
                 children:
-                  - { type: text, element: h3, content: $t:home.offers.flex.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
-                  - { type: text, element: p, content: $t:home.offers.flex.price, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] font-bold text-navy mt-3' } }
-                  - { type: text, element: p, content: $t:home.offers.flex.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3 flex-1' } }
-                  - { type: text, element: span, content: $t:home.offers.more, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline' } }
+                  - type: text
+                    element: h3
+                    content: $t:offer.fixe.name
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:offer.fixe.price
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-3"
+                  - type: text
+                    element: p
+                    content: $t:offer.fixe.ttc
+                    props:
+                      className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-1"
+                  - type: text
+                    element: p
+                    content: $t:accueil.offers.fixe
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-4 flex-1"
+                  - type: text
+                    element: span
+                    content: $t:offer.more
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline"
               - type: link
                 props:
-                  href: $t:home.href.reunion
-                  className: 'group flex flex-col h-full bg-white rounded-panel shadow-md border-t-4 border-magenta p-6 hover:-translate-y-1 hover:shadow-lg transition'
+                  href: $t:href.pricing.domiciliation
+                  className: "group flex flex-col h-full bg-white rounded-panel shadow-md border-t-4 border-magenta p-6 hover:-translate-y-1 hover:shadow-lg transition"
                 children:
-                  - { type: text, element: h3, content: $t:home.offers.reunion.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
-                  - { type: text, element: p, content: $t:home.offers.reunion.price, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] font-bold text-navy mt-3' } }
-                  - { type: text, element: p, content: $t:home.offers.reunion.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3 flex-1' } }
-                  - { type: text, element: span, content: $t:home.offers.more, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline' } }
+                  - type: text
+                    element: h3
+                    content: $t:offer.dom.name
+                    props:
+                      className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                  - type: text
+                    element: p
+                    content: $t:offer.dom.price
+                    props:
+                      className: "[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy mt-3"
+                  - type: text
+                    element: p
+                    content: $t:offer.dom.ttc
+                    props:
+                      className: "[font-size:var(--text-caption)] [line-height:var(--text-caption--line-height)] text-text-muted mt-1"
+                  - type: text
+                    element: p
+                    content: $t:accueil.offers.dom
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-4 flex-1"
+                  - type: text
+                    element: span
+                    content: $t:offer.more
+                    props:
+                      className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] font-bold text-navy mt-6 group-hover:underline"
+          - type: text
+            element: p
+            content: $t:offer.membership
+            props:
+              className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-8 max-w-[70ch]"
           - type: link
-            content: $t:home.offers.cta
+            content: $t:accueil.offers.cta
             props:
-              href: $t:href.pricing
-              className: 'inline-flex items-center px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-10'
-
-      # ── More than a coworking ─────────────────────────────────────────
+              href: $t:href.pricing.compare
+              className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-8"
+  - type: container
+    element: section
+    props:
+      className: bg-sand
+      aria-labelledby: accueil-community
+    children:
       - type: container
-        element: section
         props:
-          className: 'bg-sand'
-          'aria-labelledby': home-community-title
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
         children:
-          - type: grid
+          - type: container
             props:
-              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'
+              className: ""
             children:
-              - type: container
-                children:
-                  - type: text
-                    element: p
-                    content: $t:home.community.eyebrow
-                    props:
-                      className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3'
-                  - type: text
-                    element: h2
-                    content: $t:home.community.title
-                    props:
-                      id: home-community-title
-                      className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy'
-                  - type: text
-                    element: p
-                    content: $t:home.community.lead
-                    props:
-                      className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted mt-4'
-                  - type: container
-                    props:
-                      className: 'mt-8 space-y-4'
-                    children:
-                      - type: flex
-                        props: { className: 'flex gap-4 items-start' }
-                        children:
-                          - { type: container, props: { className: 'mt-2 w-2.5 h-2.5 shrink-0 bg-navy', 'aria-hidden': 'true' } }
-                          - { type: text, element: p, content: $t:home.community.item1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text' } }
-                      - type: flex
-                        props: { className: 'flex gap-4 items-start' }
-                        children:
-                          - { type: container, props: { className: 'mt-2 w-2.5 h-2.5 shrink-0 bg-blue', 'aria-hidden': 'true' } }
-                          - { type: text, element: p, content: $t:home.community.item2, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text' } }
-                      - type: flex
-                        props: { className: 'flex gap-4 items-start' }
-                        children:
-                          - { type: container, props: { className: 'mt-2 w-2.5 h-2.5 shrink-0 bg-orange', 'aria-hidden': 'true' } }
-                          - { type: text, element: p, content: $t:home.community.item3, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text' } }
-                      - type: flex
-                        props: { className: 'flex gap-4 items-start' }
-                        children:
-                          - { type: container, props: { className: 'mt-2 w-2.5 h-2.5 shrink-0 bg-magenta', 'aria-hidden': 'true' } }
-                          - { type: text, element: p, content: $t:home.community.item4, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text' } }
-                  - type: link
-                    content: $t:home.community.cta
-                    props:
-                      href: $t:href.activities
-                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-10'
+              - type: text
+                element: p
+                content: $t:accueil.community.eyebrow
+                props:
+                  className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+              - type: text
+                element: h2
+                content: $t:accueil.community.title
+                props:
+                  className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+                  id: accueil-community
+              - type: text
+                element: p
+                content: $t:accueil.community.p1
+                props:
+                  className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-6"
+              - type: text
+                element: p
+                content: $t:accueil.community.p2
+                props:
+                  className: "[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-4"
               - type: container
                 props:
-                  className: 'relative'
+                  className: "mt-6 space-y-3"
                 children:
-                  - type: container
+                  - type: flex
                     props:
-                      className: 'absolute inset-0 -translate-x-3 translate-y-3 sm:-translate-x-5 sm:translate-y-5 rounded-panel bg-magenta'
-                      'aria-hidden': 'true'
+                      className: "flex gap-3 items-start"
+                    children:
+                      - type: container
+                        props:
+                          className: "mt-2 w-2.5 h-2.5 shrink-0 bg-navy"
+                          aria-hidden: "true"
+                        children: []
+                      - type: text
+                        element: p
+                        content: $t:accueil.community.i1
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                  - type: flex
+                    props:
+                      className: "flex gap-3 items-start"
+                    children:
+                      - type: container
+                        props:
+                          className: "mt-2 w-2.5 h-2.5 shrink-0 bg-blue"
+                          aria-hidden: "true"
+                        children: []
+                      - type: text
+                        element: p
+                        content: $t:accueil.community.i2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                  - type: flex
+                    props:
+                      className: "flex gap-3 items-start"
+                    children:
+                      - type: container
+                        props:
+                          className: "mt-2 w-2.5 h-2.5 shrink-0 bg-orange"
+                          aria-hidden: "true"
+                        children: []
+                      - type: text
+                        element: p
+                        content: $t:accueil.community.i3
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+                  - type: flex
+                    props:
+                      className: "flex gap-3 items-start"
+                    children:
+                      - type: container
+                        props:
+                          className: "mt-2 w-2.5 h-2.5 shrink-0 bg-magenta"
+                          aria-hidden: "true"
+                        children: []
+                      - type: text
+                        element: p
+                        content: $t:accueil.community.i4
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text"
+              - type: link
+                content: $t:accueil.community.cta
+                props:
+                  href: $t:href.thirdPlace
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors mt-8"
+          - type: container
+            props:
+              className: relative
+            children:
+              - type: container
+                props:
+                  className: "absolute inset-0 translate-x-3 translate-y-3 rounded-panel bg-magenta"
+                  aria-hidden: "true"
+                children: []
+              - type: image
+                props:
+                  src: "/images/pages/nos-activites/meetups.webp"
+                  alt: $t:accueil.community.imageAlt
+                  width: 1024
+                  height: 1024
+                  className: "relative w-full h-auto aspect-[4/3] object-cover rounded-panel shadow-md"
+                  loading: lazy
+  - type: container
+    element: section
+    props:
+      className: bg-background
+      aria-labelledby: accueil-people
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: p
+            content: $t:accueil.people.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:accueil.people.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: accueil-people
+          - type: grid
+            props:
+              className: "grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"
+            children:
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy"
+                children:
                   - type: image
                     props:
-                      src: /images/pages/nos-activites/meetups.webp
-                      alt: $t:home.community.imageAlt
+                      src: "/images/pages/nos-cowork/caroline-bosc.webp"
+                      alt: $t:coworkers.caroline.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
                       loading: lazy
-                      className: 'relative w-full h-auto aspect-[4/3] object-cover rounded-panel shadow-md'
-
-      # ── Supporters ────────────────────────────────────────────────────
-      - type: container
-        element: section
-        props:
-          className: 'bg-white'
-          'aria-labelledby': home-supporters-title
-        children:
-          - type: container
-            props:
-              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20'
-            children:
-              - type: text
-                element: h2
-                content: $t:home.supporters.title
-                props:
-                  id: home-supporters-title
-                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-text-muted text-center mb-10'
-              - type: grid
-                props:
-                  className: 'grid grid-cols-2 lg:grid-cols-4 gap-8 items-center'
-                children:
-                  - { type: image, props: { src: /images/pages/nos-soutiens/region-grand-est.webp, alt: Région Grand Est, loading: lazy, className: 'h-16 w-full object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' } }
-                  - { type: image, props: { src: /images/pages/nos-soutiens/eurometropole-strasbourg.webp, alt: Eurométropole de Strasbourg, loading: lazy, className: 'h-12 w-full object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' } }
-                  - { type: image, props: { src: /images/pages/nos-soutiens/tiers-lieux-grand-est.webp, alt: Tiers-Lieux Grand Est, loading: lazy, className: 'h-16 w-full object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' } }
-                  - { type: image, props: { src: /images/pages/nos-soutiens/centre-collaboratif-connecte.webp, alt: Centre Collaboratif Connecté, loading: lazy, className: 'h-16 w-full object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition' } }
-              - type: container
-                props:
-                  className: 'text-center mt-10'
-                children:
-                  - type: link
-                    content: $t:home.supporters.cta
+                  - type: container
                     props:
-                      href: $t:href.supporters
-                      className: 'inline-flex items-center font-bold text-navy hover:underline'
-
-      # ── Final CTA ─────────────────────────────────────────────────────
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Caroline Bosc"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: "Impact Positif"
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.caroline.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-cowork/frederic-fuchs.webp"
+                      alt: $t:coworkers.frederic.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Frédéric Fuchs"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: OpenClassrooms
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.frederic.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange"
+                children:
+                  - type: image
+                    props:
+                      src: "/images/pages/nos-cowork/bastien-remy.webp"
+                      alt: $t:coworkers.bastien.alt
+                      width: 1600
+                      height: 1600
+                      className: "w-full aspect-square object-cover"
+                      loading: lazy
+                  - type: container
+                    props:
+                      className: "flex flex-col flex-1 p-6"
+                    children:
+                      - type: text
+                        element: h3
+                        content: "Bastien Remy"
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.bastien.company
+                        props:
+                          className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mt-1"
+                      - type: text
+                        element: p
+                        content: $t:coworkers.bastien.p2
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-3"
+          - type: link
+            content: $t:accueil.people.cta
+            props:
+              href: $t:href.thirdPlace.people
+              className: "font-bold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy inline-block mt-8"
+  - type: container
+    element: section
+    props:
+      className: bg-white
+      aria-labelledby: accueil-rooms
+    children:
       - type: container
-        element: section
         props:
-          className: 'bg-magenta text-white'
-          'aria-labelledby': home-cta-title
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24"
+        children:
+          - type: text
+            element: p
+            content: $t:accueil.rooms.eyebrow
+            props:
+              className: "[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-magenta mb-3"
+          - type: text
+            element: h2
+            content: $t:accueil.rooms.title
+            props:
+              className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl"
+              id: accueil-rooms
+          - type: text
+            element: p
+            content: $t:accueil.rooms.lead
+            props:
+              className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4"
+          - type: grid
+            props:
+              className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12"
+            children:
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: container
+                    props:
+                      className: p-5
+                    children:
+                      - type: text
+                        element: h3
+                        content: Crevette
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:room.crevette.cap
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1"
+                      - type: text
+                        element: p
+                        content: $t:room.crevette.price
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: container
+                    props:
+                      className: p-5
+                    children:
+                      - type: text
+                        element: h3
+                        content: Requin
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:room.requin.cap
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1"
+                      - type: text
+                        element: p
+                        content: $t:room.requin.price
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: container
+                    props:
+                      className: p-5
+                    children:
+                      - type: text
+                        element: h3
+                        content: Baleine
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:room.baleine.cap
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1"
+                      - type: text
+                        element: p
+                        content: $t:room.baleine.price
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-3"
+              - type: container
+                element: article
+                props:
+                  className: "bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta"
+                children:
+                  - type: container
+                    props:
+                      className: p-5
+                    children:
+                      - type: text
+                        element: h3
+                        content: Narval
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy"
+                      - type: text
+                        element: p
+                        content: $t:room.narval.cap
+                        props:
+                          className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-text-muted mt-1"
+                      - type: text
+                        element: p
+                        content: $t:room.narval.price
+                        props:
+                          className: "[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-3"
+          - type: flex
+            props:
+              className: "flex flex-wrap gap-3 mt-8"
+            children:
+              - type: link
+                content: $t:cta.room
+                props:
+                  href: "mailto:contact@laplagedigitale.fr?subject=Salle%20de%20r%C3%A9union"
+                  className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold bg-navy text-white hover:bg-navy-700 transition-colors"
+              - type: link
+                content: $t:accueil.rooms.more
+                props:
+                  href: $t:href.pricing.rooms
+                  className: "font-bold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy self-center"
+  - type: container
+    element: section
+    props:
+      className: "bg-magenta text-white"
+      aria-labelledby: accueil-contact-title
+    children:
+      - type: container
+        props:
+          className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
         children:
           - type: container
             props:
-              className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 text-center'
+              className: ""
             children:
               - type: text
-                element: p
-                content: 'Coworking · Tiers-lieu · Événements'
-                props:
-                  className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-white mb-4'
-              - type: text
                 element: h2
-                content: $t:home.cta.title
+                content: $t:accueil.contact.title
                 props:
-                  id: home-cta-title
-                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-white max-w-3xl mx-auto'
+                  className: "[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-white"
+                  id: accueil-contact-title
               - type: text
                 element: p
-                content: $t:home.cta.lead
+                content: $t:contact.band.lead
                 props:
-                  className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-white max-w-2xl mx-auto mt-4'
+                  className: "[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-white mt-4 max-w-xl"
+          - type: container
+            props:
+              className: space-y-6
+            children:
               - type: flex
                 props:
-                  className: 'flex flex-wrap justify-center gap-3 mt-10'
+                  className: "flex flex-wrap gap-3"
                 children:
                   - type: link
-                    content: $t:home.cta.visit
+                    content: $t:cta.visit
                     props:
-                      href: $t:href.contact
-                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
+                      href: "mailto:contact@laplagedigitale.fr?subject=Visite%20de%20la%20Plage"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold text-magenta bg-white hover:bg-navy-100 transition-colors"
                   - type: link
-                    content: $t:home.cta.join
+                    content: $t:cta.call
                     props:
-                      href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
-                      target: _blank
-                      rel: 'noopener noreferrer'
-                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-magenta transition-colors'
-
+                      href: "tel:+33977425929"
+                      className: "inline-flex items-center justify-center min-h-11 px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors"
+              - type: text
+                element: p
+                content: $t:contact.band.where
+                props:
+                  className: "[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-white"
   - component: site-footer

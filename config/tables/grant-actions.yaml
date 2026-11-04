@@ -1,0 +1,28 @@
+# Table: grant_actions — « Nous prévoyons les événements suivants » : one row
+# per action of a demande (a cycle de conférences, the fail clubs, the
+# freelance programme…), with its description, partners and « Fréquence
+# prévue ». `events_per_year` is the figure a logistics cost item can be
+# multiplied by. `in_scope` off keeps an action in the list without
+# describing it (an action that belongs to another funder's demande).
+id: 27
+name: grant_actions
+aiAccess:
+  description: "Planned actions and events of a grant application, with description, partners and frequency."
+  operations: [read, list]
+fields:
+  - { id: 1, name: action_key, label: Clé, type: single-line-text, indexed: true }
+  - { id: 2, name: application, label: Demande, type: relationship, relatedTable: grant_applications, relationType: many-to-one, displayField: title, onDelete: cascade, required: true }
+  - { id: 3, name: title, label: Action, type: single-line-text, required: true }
+  - { id: 4, name: description, label: Description, type: long-text }
+  - { id: 5, name: partners, label: Partenaires, type: single-line-text }
+  - { id: 6, name: frequency_label, label: Fréquence prévue, type: single-line-text }
+  - { id: 7, name: events_per_year, label: Événements par an, type: integer }
+  - { id: 8, name: in_scope, label: Décrite dans le dossier, type: checkbox, default: true }
+  - { id: 9, name: sort_order, label: Ordre, type: integer, default: 100 }
+indexes:
+  - { name: idx_grant_actions_app_order, fields: [application, sort_order] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

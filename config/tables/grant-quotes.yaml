@@ -1,0 +1,35 @@
+# Table: grant_quotes — the devis of an « investissement » demande: works,
+# furniture, equipment. They are the dépenses of its plan de financement
+# (grant-budget-compute), each with its file (the quote itself, uploaded in
+# the grant-files bucket).
+id: 30
+name: grant_quotes
+aiAccess:
+  description: "Quotes (devis) of an investment grant application: supplier, item, amounts excluding and including VAT."
+  operations: [read, list]
+fields:
+  - { id: 1, name: application, label: Demande, type: relationship, relatedTable: grant_applications, relationType: many-to-one, displayField: title, onDelete: cascade, required: true }
+  - { id: 2, name: label, label: Dépense, type: single-line-text, required: true }
+  - { id: 3, name: supplier, label: Fournisseur, type: single-line-text }
+  - id: 4
+    name: category
+    label: Nature
+    type: single-select
+    default: equipement
+    options:
+      - { value: travaux, label: Travaux, color: '#f59e0b' }
+      - { value: mobilier, label: Mobilier, color: '#14b8a6' }
+      - { value: equipement, label: Équipement informatique et audiovisuel, color: '#3b82f6' }
+      - { value: autre, label: Autre, color: '#94a3b8' }
+  - { id: 5, name: amount_ht, label: Montant HT, type: currency, currency: EUR, precision: 2 }
+  - { id: 6, name: amount_ttc, label: Montant TTC, type: currency, currency: EUR, precision: 2 }
+  - { id: 7, name: quote_date, label: Date du devis, type: date }
+  - { id: 8, name: file, label: Devis, type: single-attachment, bucket: grant-files }
+  - { id: 9, name: notes, label: Précisions, type: long-text }
+  - { id: 10, name: sort_order, label: Ordre, type: integer, default: 100 }
+  - { id: 11, name: updated_at, label: Modifié le, type: updated-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

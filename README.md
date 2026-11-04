@@ -394,6 +394,35 @@ Run `sovrium validate app.yaml` before every commit. Since v0.22.0 an
 unrecognised property fails the config rather than being ignored, so the
 validator names anything that no longer exists.
 
+## Going live on the real domain
+
+Requests 813 and 814. Not done yet: it waits for the go-ahead of the president
+and the operations director, after the Article feature has been tested and the
+new photos are in. In order:
+
+1. **Domain.** Add the domain to the Scalingo app (`scalingo --app <app> domains-add www.laplagedigitale.fr`),
+   point the DNS at Scalingo, then `scalingo --app <app> env-set BASE_URL=https://www.laplagedigitale.fr`
+   (secure cookies, CSRF and every absolute link follow it).
+2. **Indexing.** Remove `noindex: true` (and its « pre-launch » comment) from the
+   public pages only: `home`, `formules-et-tarifs`, `tiers-lieu`,
+   `infos-pratiques`, `flex`, `blog`, `blog-post`, `mentions-legales`,
+   `confidentialite`. The signed-in spaces, `/connexion`, `/app` and `/404` stay
+   `noindex`. A `noindex` page is left out of `/sitemap.xml` — that is why the
+   sitemap is empty before launch.
+3. **Check.** `curl https://www.laplagedigitale.fr/sitemap.xml` lists the pages
+   with their `hreflang` alternates; `/robots.txt` points at it; `/llms.txt`
+   answers; the old WordPress addresses answer 301 (`config/redirects.yaml`).
+4. **Search engines.** Add the property in Google Search Console and Bing
+   Webmaster Tools (Bing also feeds ChatGPT search) and submit
+   `https://www.laplagedigitale.fr/sitemap.xml` in both.
+5. **Blog.** The 208 WordPress posts are in `seed/posts.yaml` but were never
+   loaded in production: `sovrium seed --table posts --mode upsert` against
+   the production database before launch, or the blog stays empty.
+
+`public/llms.txt` is the plain-text summary for AI search engines, linked from
+the footer. Its links are root-relative, so it needs no change at launch; update
+its prices when the formules change.
+
 ## Deployment
 
 Scalingo builds with buildpacks, and four files drive it:

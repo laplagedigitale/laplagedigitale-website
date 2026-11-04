@@ -30,6 +30,15 @@
 # archived one, or a line that no longer exists. $dryRun logs and writes
 # nothing; $purge first deletes the scenario's computed rows (a line was
 # renamed or removed).
+#
+# A scenario for a year still to come (2027 planned in 2026) is all
+# forecast: its averages read the last twelve closed months, « même mois
+# l'an dernier » falls back to them for a month not closed yet, and it opens
+# on the year-end cash of `opening_from` (else of the baseline when the
+# baseline plans the year before). A line with `cash_effect` off (68
+# dotations) is projected from its budget cells only, written to
+# forecast_months for the CERFA lens (`cerfa_row`) and kept out of the
+# balances and the grid.
 name: treasury-forecast-compute
 variables:
   scenarioId: ''
@@ -92,6 +101,8 @@ action:
           const edited = Date.parse(changedAt)
           scenarios = scenarios.filter((s: any) => !(has(s.computed_at) && Number.isFinite(edited) && Date.parse(String(s.computed_at)) > edited))
         }
+        // Earlier years first: a future plan opens on the year-end cash of the one before it.
+        scenarios.sort((x: any, y: any) => num(x.year) - num(y.year))
         if (scenarios.length === 0) {
           context.log.info(onlyId ? `scénario ${onlyId} : rien à recalculer (déjà calculé après la modification, ou inactif)` : 'aucun scénario actif')
           return { computed: [], skipped: true }
@@ -143,10 +154,12 @@ action:
           const Y = num(sc.year) || Number(today.slice(0, 4))
           const todayY = Number(today.slice(0, 4))
           const cur = todayY === Y ? Number(today.slice(5, 7)) : todayY > Y ? 13 : 0
+          const future = todayY < Y
           const w = has(sc.weight_recent) ? num(sc.weight_recent) : 0.33
           const haircut = 1 - num(sc.income_haircut_pct) / 100
           const probable = isTrue(sc.include_probable_income)
-          const anchor = `${Y}-${pad(Math.min(Math.max(cur, 1), 12))}`
+          // A future year averages the last twelve closed months, not the empty months before its own January.
+          const anchor = future ? ym(today) : `${Y}-${pad(Math.min(Math.max(cur, 1), 12))}`
           const t12 = (code: string) => { let s = 0; for (let i = 1; i <= 12; i++) s += actual(code, addMonths(anchor, -i)); return s / 12 }
           const ytd = (code: string): number | null => { if (cur <= 1) return null; let s = 0; for (let m = 1; m < Math.min(cur, 13); m++) s += actual(code, firstOf(Y, m).slice(0, 7)); return s / (Math.min(cur, 13) - 1) }
           const cells = new Map<string, number>()
@@ -155,7 +168,12 @@ action:
             const k = firstOf(Y, m).slice(0, 7)
             const method = String(line.projection_method ?? 'blend')
             if (method === 'none' || method === 'zero') return 0
-            if (method === 'shift_year') return Math.max(0, actual(line.code, `${Y - 1}-${pad(m)}`))
+            if (method === 'shift_year') {
+              const prevK = `${Y - 1}-${pad(m)}`
+              // A month of last year not closed yet (a future plan): the trailing average instead.
+              if (future && prevK >= ym(today)) return Math.max(0, t12(line.code))
+              return Math.max(0, actual(line.code, prevK))
+            }
             if (method === 'vat_estimate') {
               // The VAT of the previous month, debited this month (the 24th): collected on the VAT lines less deductible on the flagged charges.
               const prev = addMonths(k, -1)
@@ -199,10 +217,16 @@ action:
             .filter((p: any) => p.direction === 'out' || p.certainty === 'certain' || (p.certainty === 'probable' && probable))
             .reduce((s: number, p: any) => s + num(p.amount), 0)
 
-          // Opening balance: today's Pennylane balance less the net flows since 1 January of the plan year.
+          // Opening balance: today's Pennylane balance less the net flows since 1 January of the plan year;
+          // a future year opens on the year-end cash of the plan before it.
           let sinceJan = 0
           for (const [k, v] of netByM.entries()) if (k >= `${Y}-01` && k <= ym(today)) sinceJan += v
-          const opening = currentCash - sinceJan
+          let opening = currentCash - sinceJan
+          if (future) {
+            const from = has(sc.opening_from) ? allScenarios.find((x: any) => String(x.id) === String(sc.opening_from)) : (baselineRow && num(baselineRow.year) === Y - 1 ? baselineRow : null)
+            const fromEnd = from ? (results[String(from.scenario_key)]?.kpi?.year_end_cash ?? (has(from.year_end_cash) ? num(from.year_end_cash) : null)) : null
+            opening = fromEnd !== null ? fromEnd : currentCash
+          }
           let closing = opening
           let lowest = Infinity
           let lowestMonth = ''
@@ -214,15 +238,16 @@ action:
             let inc = 0, exp = 0, trOut = 0, vat = 0, incA = 0, expA = 0
             for (const line of lines) {
               const code = String(line.code)
-              const a = actual(code, k)
-              const proj = isActual ? 0 : project(line, m)
+              const cashLine = line.cash_effect !== false && line.cash_effect !== 'false'
+              const a = cashLine ? actual(code, k) : 0
+              const proj = isActual || !cashLine ? 0 : project(line, m)
               const entry = entryOf(code)
               const cell = entry ? entry[`m${pad(m)}`] : undefined
               const budget: number | null = has(cell) ? num(cell) : null
               const adj = isActual ? 0 : adjOf(code, k)
               const pl = isActual ? 0 : plannedOf(code, k)
               const base = budget !== null ? budget : proj
-              const forecast = isActual ? a : m === cur ? Math.max(a, base) + adj + pl : base + adj + pl
+              const forecast = !cashLine ? (budget ?? 0) + adj : isActual ? a : m === cur ? Math.max(a, base) + adj + pl : base + adj + pl
               cells.set(`${code}|${k}`, forecast)
               const r = num(line.vat_rate) / 100
               const ht = r > 0 && (line.kind === 'income' || isTrue(line.vat_deductible)) ? forecast / (1 + r) : forecast
@@ -233,7 +258,9 @@ action:
                 pcg_account: line.pcg_account ?? '', pnl_group: line.pnl_group ?? null, line_order: num(line.line_order), is_dated: isTrue(line.is_dated),
                 actual: r2(a), projection: r2(proj), planned: r2(pl), adjustments: r2(adj), budget: budget === null ? null : r2(budget), forecast: r2(forecast),
                 variance: isActual && budget !== null ? r2(a - budget) : null, amount_ht: r2(ht), computed_at: nowIso,
+                cerfa_row: String(line.cerfa_row ?? ''), cash_effect: cashLine,
               })
+              if (!cashLine) continue
               if (line.kind === 'income') { inc += forecast; incA += a }
               else if (line.kind === 'expense') { exp += forecast; expA += a }
               else if (line.kind === 'tax') { vat += forecast; exp += forecast; expA += a }
@@ -288,7 +315,7 @@ action:
           }
           const sumOf = (rows: any[], key: string) => rows.reduce((t: number, r: any) => t + num(r[key]), 0)
           // Per poste: the twelve monthly figures and the year totals, from the rows computed above.
-          const posts = lines.filter((l: any) => l.kind !== 'transfer').map((l: any) => {
+          const posts = lines.filter((l: any) => l.kind !== 'transfer' && l.cash_effect !== false && l.cash_effect !== 'false').map((l: any) => {
             const rows = monthRows.filter((r: any) => r.line_code === String(l.code)).sort((a: any, b: any) => a.month_index - b.month_index)
             const values = Array.from({ length: 12 }, (_, i) => num(rows.find((r: any) => r.month_index === i + 1)?.forecast))
             const hasBudget = rows.some((r: any) => r.budget !== null)
@@ -343,7 +370,7 @@ action:
             : lastActual >= 12 ? "Toute l'année est réalisée"
             : `Réalisé ${lastActual === 1 ? 'en janvier' : `de janvier à ${MONTHS[lastActual - 1]}`} · prévu ${lastActual === 11 ? 'en décembre' : `${/^[aeiouyéèêàâîôû]/i.test(MONTHS[lastActual]) ? "d'" : 'de '}${MONTHS[lastActual]} à décembre`}`
           results[String(sc.scenario_key)] = {
-            monthRows, balanceRows, gridRows,
+            year: Y, monthRows, balanceRows, gridRows,
             kpi: {
               scenario_key: String(sc.scenario_key), computed_at: nowIso, opening_cash: r2(opening), current_cash: r2(currentCash), reserve: r2(reserve),
               year_end_cash: r2(closing), year_end_cash_with_reserve: r2(closing + reserve), lowest_balance: r2(lowest), lowest_month: lowestMonth || null,
@@ -357,7 +384,9 @@ action:
         // 4. Gap to the baseline — the one just computed, or the stored figure of the baseline row.
         const baseKey = baselineRow ? String(baselineRow.scenario_key) : ''
         const baseYearEnd = results[baseKey]?.kpi?.year_end_cash ?? (baselineRow && has(baselineRow.year_end_cash) ? num(baselineRow.year_end_cash) : null)
-        for (const k of Object.keys(results)) results[k].kpi.delta_vs_baseline = baseYearEnd === null ? null : r2(results[k].kpi.year_end_cash - baseYearEnd)
+        const baseYear = baselineRow ? num(baselineRow.year) : null
+        // A plan of another year than the baseline's is not compared to it.
+        for (const k of Object.keys(results)) results[k].kpi.delta_vs_baseline = baseYearEnd === null || results[k].year !== baseYear ? null : r2(results[k].kpi.year_end_cash - baseYearEnd)
 
         const summary = Object.fromEntries(Object.entries(results).map(([k, v]: [string, any]) => [k, v.kpi]))
         if (dryRun) {

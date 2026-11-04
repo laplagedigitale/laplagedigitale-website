@@ -10,7 +10,7 @@
 # Two audiences, one shell. A sidebar group cannot be gated on its own, so the
 # navigation is declared twice, each sidebar gated on a role (and left out of
 # the HTML for the other):
-# - admin — Pilotage, Communauté, Finances, Contenu, and Compte, which below lg
+# - admin — Pilotage, Communauté, Finances, Subventions, Contenu, and Compte, which below lg
 #   sits in the drawer and from lg up in the pinned footer (always in view);
 # - editor — Contenu and Compte only (the pages behind the other groups refuse
 #   them anyway: access is admin only).
@@ -82,6 +82,10 @@ children:
               - { label: Prévisionnel, href: /administration/finances/previsionnel, icon: chart-line, activeMatch: prefix }
               - { label: Opérations, href: /administration/finances/operations, icon: arrow-left-right, activeMatch: prefix }
               - { label: Facturation, href: /administration/finances/facturation, icon: receipt, activeMatch: prefix }
+          - label: Subventions
+            items:
+              - { label: Demandes de subvention, href: /administration/subventions, icon: hand-coins, activeMatch: prefix }
+              - { label: Fiche association, href: /administration/association, icon: building-2 }
           - label: Contenu
             items:
               - { label: Blog, href: /administration/contenu, icon: newspaper }

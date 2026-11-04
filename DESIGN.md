@@ -123,6 +123,13 @@ components:
     padding: "10px 20px"
   button-magenta-hover:
     backgroundColor: "{colors.plage-magenta-300}"
+  button-outline:
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.ink-navy}"
+    rounded: "{rounded.full}"
+    padding: "10px 20px"
+  button-outline-hover:
+    backgroundColor: "{colors.sand}"
   chip:
     backgroundColor: "{colors.seaside-blue-100}"
     textColor: "{colors.ink-navy}"
@@ -143,6 +150,11 @@ components:
     textColor: "{colors.ink-navy}"
     rounded: "{rounded.panel}"
     padding: "12px"
+  note-warning:
+    backgroundColor: "{colors.sun-orange-100}"
+    textColor: "{colors.ink-navy}"
+    rounded: "{rounded.panel}"
+    padding: "16px"
   site-header:
     backgroundColor: "{colors.card-white}"
     textColor: "{colors.ink-navy}"
@@ -275,7 +287,8 @@ Friendly, confident pills with bold labels.
 - **Primary (orange):** sun orange fill, navy label; hover to orange-300. The main call to act on every surface.
 - **Navy:** navy fill, white label; hover to navy-deep. The call to act on light ground when orange is already used nearby.
 - **Outline inverse:** 2px white border, white label, on navy; hover fills white with a navy label. The secondary choice in a navy hero.
-- **Magenta:** magenta fill, white label; hover to magenta-300. « Rejoindre », community actions.
+- **Magenta:** magenta fill, white label; hover to magenta-300. « Rejoindre », community actions, and the one primary action of an Administration workspace page.
+- **Outline (Administration):** white fill, 1px navy-100 (`border`) border, navy semibold `text-sm` label, `px-5 py-2.5` (`px-4 py-2` beside a table title); hover to sand. Every secondary action in the Administration: « Recalculer », « Ajouter … », a link to a sibling page.
 - **Hover / Focus:** colour transition (`transition-colors`). Focus uses the engine's ring in seaside blue.
 
 ### Chips
@@ -287,6 +300,7 @@ Friendly, confident pills with bold labels.
 - **Offer / room card:** a pinned card with a 4px coloured top edge (the Colour Tab Rule) and `overflow-hidden` so photos run edge to edge under it.
 - **Logo tile:** a square white panel, centred logo, `p-4`/`p-5`, lifts on hover.
 - **Note:** a seaside-blue-100 panel with navy `text-sm` and 1.5rem corners; the warning variant is orange-100 with an amber border.
+- **Warning note:** orange-100 fill, 1px amber border, navy `text-sm`, panel corners, `p-4`, held to `max-w-3xl`. It shows only while its condition holds (a record `visibility` gate: the CERFA budget does not balance, no scenario is chosen) and says what to change, never just that something is wrong.
 
 ### Inputs / Fields
 The engine's shadcn fields, re-coloured by the tokens: white field, ink-navy-200 (`input`) border, navy text, seaside blue focus ring, coral red error. Forms sit inside a pinned card.
@@ -296,6 +310,22 @@ The engine's shadcn fields, re-coloured by the tokens: white field, ink-navy-200
 - **Espace Membre sidebar:** on sand, navy entries, overline group headings, the current page in white with semibold text.
 - **Administration sidebar:** on navy, white logo, orange « Administration » overline, navy-100 entries hovering to navy-deep, the current page navy-deep in white semibold; from `lg` a pinned footer with the account links and, for an admin who is also a coworker, a white-outlined « Mon Espace Membre → » pill. See Administration (Operate).
 - **Footer:** a navy band (navy-100 text) under the charte stripe, with the white logo and four link columns from `lg`.
+
+### Administration workspace page
+The page of one record the admin works in (a demande de subvention, a scénario du prévisionnel). On paper, beside the navy sidebar, `px-4 py-8` to `lg:px-12 lg:py-10`, blocks `space-y-8`.
+- **Head:** a muted `text-sm` back link to the list, then the title (`text-3xl` bold navy) over a meta line of record fields in `text-sm` muted, the status and type selects rendering as the engine's chips and the funder in semibold navy. The actions sit right of the title from `xl`: one magenta pill for the action that produces something, outline pills for the rest.
+- **Status strip:** four tiles in a grid (1, 2 from `sm`, 4 from `xl`, `gap-4`) saying what is left to do. Each is an engine `kpi` reading the page's own record and polling every 5 s (an automation button cannot reload the page); a figure no aggregate can show (« Dernier export ») is a plain card tile of the same build, `p-5`, a `text-sm` medium muted label over a `text-2xl` bold navy value.
+- **Tabs:** `line` tabs under the strip, one per stage of the work, each with a short description; the open tab is the page's `?onglet=` query parameter, so every tab has its own address. A list page of the same records (Demandes de subvention, Fiche association) uses the same line tabs and query.
+- **Blocks inside a tab:** a white card `p-4 sm:p-6`, an h2 at `text-xl` semibold navy and a `text-sm` muted explanation (`max-w-3xl`); a table's « Ajouter » outline pill sits on the h2's row, flush right.
+
+### Computed-versus-typed money table
+Where the app computes a figure the admin may file differently (the CERFA budget), the table shows both and which one counts, in this column order: **Poste** (frozen), **Retenu** (the figure filed, semibold navy when above zero, read-only), **Calculé** (read-only), **Montant saisi** (the only editable amount; empty means « use the computation »), **Précisions** (editable text), then the account code and the origin of the figure, both read-only and narrow. Amounts are currency, right-aligned. One table per side (Charges, then Produits, each under an h3 at `text-lg`), stacked full width, never side by side.
+
+### Copy-ready récapitulatif
+A read-only page laid out in the order of an outside portal's screens, one card per screen (h2 and a `text-sm` muted line saying which screen). Each value is a row: the label in a `sm:w-64` muted `text-sm` column, the value in navy medium `text-sm` (line breaks kept, long words wrapped), and a « Copier » pill (seaside-blue-100 fill, navy semibold `text-xs`, `px-3 py-1`, hover to sand) running a clipboard action and hidden while the value is empty. Rows are `py-3` separated by a navy-100 hairline, the last one without; below `sm` label, value and pill stack. Values from another record sit in a bordered `rounded-panel` group inside the card.
+
+### Side sheet for long text
+A row whose text is long (a section of a dossier, an action's description) opens a sheet from the right at `lg` width on click, never an inline cell editor. The sheet has a title, a one-line writing instruction, and edits the row in place. The row's clickable column is medium navy and underlined. Creating a row is a declared form in a dialog instead, its parent prefilled and locked.
 
 ### Hero band (signature)
 A full-width navy section: orange overline eyebrow, a white Display/Headline title held to `max-w-4xl`, a navy-100 Lead, then a row of pills (orange primary, then outline inverse). Beside it, a real photograph of the place pinned like a print: a white panel (`p-3`, `p-5` from `sm`, md shadow) holding the photo with tile corners, over an orange panel offset 12px (20px from `sm`) down and to the right.
@@ -312,7 +342,7 @@ The Administration is a tool for a few volunteers. Each page answers one questio
 - **Head:** h1 `text-3xl font-bold text-navy`, intro `text-text-muted mt-2 max-w-2xl`, and the page's primary action beside them (`flex flex-col sm:flex-row sm:items-end justify-between gap-4`, button `self-start sm:self-auto`). A section title (h2) is `text-xl font-semibold text-navy`.
 
 ### Sidebar IA
-- **Groups, in order:** Pilotage (Tableau de bord, Calendrier, Demandes), Communauté (Membres, Inscriptions Flex), Finances, Contenu. A new domain gets its own group: **Lieu** between Communauté and Finances, **Gouvernance** after Finances. Each entry is a place where a queue gets worked, not a table.
+- **Groups, in order:** Pilotage (Tableau de bord, Calendrier, Demandes), Communauté (Membres, Inscriptions Flex), Finances, Subventions (Demandes de subvention, Fiche association), Contenu. A new domain gets its own group: **Lieu** between Communauté and Finances, **Gouvernance** after Finances. Each entry is a place where a queue gets worked, not a table.
 - **Compte** (Mon compte, Console Sovrium, Voir le site) is a sidebar group below `lg` only (`lg:[&_[data-sidebar-group=Compte]]:hidden`). From `lg` up the same links sit in the pinned footer (`rounded-lg px-3 py-2 text-navy-100 hover:text-white hover:bg-navy-700`), above the white-outlined « Mon Espace Membre → » pill.
 - **On navy:** group labels `navy-150` (7.0:1, because `navy-200` is 4.1:1), entries `navy-100`, hover and current entry `navy-700` with white text (the current one semibold), icons `navy-200`.
 - **One entry, many pages:** a section with several pages gets ONE sidebar entry on its route prefix (`activeMatch: prefix`), plus a pill sub-nav at the top of each page: a `nav` with the entry's `aria-label` and `flex flex-wrap gap-2 -mt-4`. Every pill is `inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors`. The current page is the navy pill with `aria-current: page`; the others are outline pills. Copy `admin-finances-transactions.yaml` (Opérations) or `admin-finances-invoices.yaml` (Facturation). An address that moves gets a redirect in `config/redirects.yaml`.

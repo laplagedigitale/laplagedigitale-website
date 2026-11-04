@@ -1,0 +1,49 @@
+{
+  "signed_on": "4 novembre 2026",
+  "org": { "legal_name": "La Plage Digitale", "city": "Strasbourg", "footer": "LA PLAGE DIGITALE, association de droit local (Bas-Rhin, Haut-Rhin et Moselle), Volume 97, Folio 232, 13 rue Jacques Peirotes 67000 Strasbourg — SIRET 878 301 712 00021" },
+  "app": { "title": "EMS 2027 — Soutien à l'événementiel", "exercise_year": "2027", "type_label": "Fonctionnement", "addressed_to": "Eurométropole de Strasbourg — Enseignement supérieur, recherche et innovation", "amount_requested_label": "71 791,20 €", "share_label": "75 %", "scenario_name": "2027 — avec embauche" },
+  "has_preambule": true,
+  "preambule": [
+    { "title": "Qu'est-ce que la Plage Digitale ?", "show_title": true, "paragraphs": [ { "text": "La Plage Digitale est un tiers-lieu dédié au numérique et à l'innovation & à l'entrepreneuriat.", "plain": true, "bullet": false } ] },
+    { "title": "Les valeurs de la Plage Digitale", "show_title": true, "paragraphs": [ { "text": "Nos valeurs sont :", "plain": true, "bullet": false }, { "text": "la collaboration", "plain": false, "bullet": true }, { "text": "l'innovation", "plain": false, "bullet": true } ] }
+  ],
+  "objet": [ { "title": "Objet de la demande", "show_title": false, "paragraphs": [ { "text": "Nous souhaitons encore plus développer l'activité événementielle au sein de notre espace.", "plain": true, "bullet": false } ] } ],
+  "has_principes": true,
+  "principes": [ { "title": "Mise en réseau et partenariats", "show_title": true, "paragraphs": [ { "text": "Notre association n'a pas vocation à travailler seule.", "plain": true, "bullet": false } ] } ],
+  "calcul": [ { "title": "Modalités de calcul de la demande", "show_title": false, "paragraphs": [ { "text": "La Plage Digitale a une activité commerciale (mise à disposition de bureaux).", "plain": true, "bullet": false } ] } ],
+  "autres": [],
+  "has_actions": true,
+  "actions": [ { "title": "Fail clubs" }, { "title": "Cycle de conférences en partenariat avec le R2E" } ],
+  "actions_described": [ { "title": "Fail clubs", "paragraphs": [ { "text": "Les fail clubs sont des moments d'échanges suite à un témoignage d'échec.", "plain": true, "bullet": false } ], "partners": "", "frequency_label": "5 réunions par an" } ],
+  "has_costs": true,
+  "cost_rows": [
+    { "label": "Chargé·e de mission (nouveau recrutement)", "cost": "60 484,00 €", "commercial": "6 048,40 €", "event": "54 435,60 €", "split": "10 % / 90 %" },
+    { "label": "    · Salaire brut", "cost": "38 000,00 €", "commercial": "", "event": "", "split": "" }
+  ],
+  "costs_total": { "cost": "139 468,00 €", "commercial": "65 286,40 €", "event": "74 181,60 €" },
+  "request_rows": [ { "label": "Ressources humaines et fonctionnement", "cost": "74 181,60 €", "requested": "55 636,20 €" } ],
+  "request_total": { "cost": "95 721,60 €", "requested": "71 791,20 €" },
+  "budget_charges": [
+    { "code": "60", "label": "60 — ACHATS", "amount": "33 210,00 €", "precisions": "" },
+    { "code": "606", "label": "Achats matières et fournitures", "amount": "33 210,00 €", "precisions": "Achats et prestations liés aux événements : 18 500" },
+    { "code": "", "label": "TOTAL DES CHARGES", "amount": "292 856,35 €", "precisions": "" }
+  ],
+  "budget_produits": [
+    { "code": "74", "label": "Eurométropole de Strasbourg", "amount": "99 241,20 €", "precisions": "Fonctionnement : 71 791,20 ; Investissement : 27 450" },
+    { "code": "", "label": "TOTAL DES PRODUITS", "amount": "292 856,35 €", "precisions": "" }
+  ],
+  "budget": { "charges": "292 856,35 €", "produits": "292 856,35 €", "gap": "0,00 €", "unbalanced": false },
+  "xlsx_charges": [
+    { "code": "60", "label": "60 — Achats", "precisions": "", "line_amount": null, "chapter_amount": 33210 },
+    { "code": "606", "label": "Achats matières et fournitures", "precisions": "Événements : 18 500", "line_amount": 33210, "chapter_amount": null }
+  ],
+  "xlsx_produits": [
+    { "code": "74", "label": "74 — Subventions d'exploitation", "precisions": "", "line_amount": null, "chapter_amount": 99241.2 },
+    { "code": "74", "label": "Eurométropole de Strasbourg", "precisions": "", "line_amount": 99241.2, "chapter_amount": null }
+  ],
+  "xlsx_costs": [ { "group": "Ressources humaines et fonctionnement", "poste": "Chargé·e de mission", "label": "Salaire brut", "amount": 38000, "commercial_pct": 10, "event_amount": 34200, "eligible_pct": 75, "requested_amount": 25650 } ],
+  "hr": { "staff_count": "1", "staff_fte": "1", "volunteers_count": "13", "volunteers_fte": "1", "recruitment_planned": true, "recruitment_fte": "1" },
+  "has_attachments": true,
+  "attachments": [ { "title": "Statuts (16/05/2025)" }, { "title": "Comptes annuels 2025" } ],
+  "signatory": { "name": "Simon THIERRY", "role": "Président" }
+}

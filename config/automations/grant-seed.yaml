@@ -1,0 +1,345 @@
+# Automation: grant-seed — the one-off seed of the Subventions, run once after
+# the deploy (and again, harmlessly: it creates what is absent and never
+# overwrites what an admin wrote):
+#
+#   POST /api/automations/grant-seed/trigger {"dryRun": "true"}   then without
+#
+# What it loads, as read on 2026-11-04:
+# - the association (organization_profile) and its people (org_people), from
+#   the récapitulatif of the 2026 Portail des aides deposit (2025-10-03); the
+#   trésorier is Thomas JEANNEAU (confirmed 2026-11-04 — the récapitulatif
+#   still named Kevin BLENNER). The IBAN, the people's
+#   home addresses and phone numbers are NOT seeded: this repository is
+#   public. They are typed on /administration/association, from « RIB LPD
+#   signé.pdf » in Drive (19gl-cOR5o3G7rPwC1rkAzso_4DhxHPKy) and the
+#   récapitulatif of the 2025-10-03 deposit;
+# - the amounts received, read in Pennylane on 2026-11-04: EMS 2025 and
+#   2026, 9 000 € each; nothing for the 2026 investissement nor the Ville — and Drive holds no
+#   attribution letter for either (read 2026-11-04);
+# - the funders (Eurométropole, Ville de Strasbourg, Région Grand Est);
+# - the pièces the funders ask for, as a checklist without files
+#   (org_documents), each with the Drive link of the current file in its
+#   notes: download it and upload it on /administration/association;
+# - the Notion « Suivi des subventions » database, one demande per card
+#   (status, deadline, amount granted, link back to the card);
+# - the 2026 EMS fonctionnement demande in full (« 2025-10-Dossier de demande
+#   de subvention EMS-Fonctionnement »: actions, modalités de calcul —
+#   71 791,20 € at 75 % —, the CERFA figures and précisions of the deposit),
+#   the reference the next ones are copied from;
+# - the 2027 EMS demande, en rédaction, with the text of Mathieu's draft
+#   (Google Doc « 2026 - Dossier demande de subvention EMS - Fonctionnement »,
+#   2026-11-03), the 2026 actions and cost items to update, and the 2027
+#   scenario « Prévisionnel 2027 » (a copy of the baseline, opening on its
+#   year-end cash) as its budget.
+#
+# A demande it creates carries an application_key, so grant-application-init
+# only files its deadline in the Calendrier de gestion and computes it.
+name: grant-seed
+label: Initialiser les Subventions (association, financeurs, demandes)
+trigger:
+  type: manual
+  label: Initialiser les Subventions
+  requiredRole: admin
+  inputSchema:
+    dryRun: { type: string }
+timeout: 300000
+concurrency:
+  limit: 1
+actions:
+  - name: seed
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 240000
+      inputData:
+        dryRun: '{{trigger.input.dryRun}}'
+      code: |
+        async function execute(context) {
+          const dryRun = String(context.inputData?.dryRun ?? '').toLowerCase() === 'true'
+          const has = (v: unknown) => !(v === null || v === undefined || v === '')
+          const list = async (table: string, filter?: any): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, ...(filter ? { filter } : {}), limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          const eq = (field: string, value: unknown) => ({ conditions: [{ field, operator: 'equals', value }] })
+          const stats: Record<string, number> = {}
+          const count = (k: string, n = 1) => { stats[k] = (stats[k] ?? 0) + n }
+          const create = async (table: string, data: any): Promise<string> => {
+            count(table)
+            if (dryRun) return `dry-${table}-${stats[table]}`
+            const r: any = await context.actions.record.create({ table, data })
+            return String(r?.id ?? '')
+          }
+          const createMany = async (table: string, items: any[]) => {
+            if (items.length === 0) return
+            count(table, items.length)
+            if (!dryRun) await context.actions.record.batchCreate({ table, items, continueOnItemError: true })
+          }
+          const P = (...lines: string[]) => lines.join('\n')
+
+          // 1. The association.
+          if ((await list('organization_profile')).length === 0) {
+            await create('organization_profile', {
+              profile_key: 'lpd', legal_name: 'La Plage Digitale', acronym: 'LPD', siret: '878 301 712 00021', siren: '878 301 712',
+              registry_date: '2019-10-03', registry_volume: '97', registry_folio: '232', registry_court: 'Tribunal judiciaire de Strasbourg, 45 rue du Fossé des Treize, 67008 Strasbourg',
+              naf_code: '94.99Z — Autres organisations fonctionnant par adhésion volontaire', legal_form: '9260 — Association de droit local (Bas-Rhin, Haut-Rhin et Moselle)',
+              created_on: '2019-10-04', address_street: '13 rue Jacques Peirotes', address_postal_code: '67000', address_city: 'Strasbourg',
+              email: 'presidence@laplagedigitale.fr', website: 'https://www.laplagedigitale.fr',
+              purpose: P(
+                "L'Association a pour objet de :",
+                "- gérer et animer des tiers-lieux en portant une attention particulière aux valeurs de partage, de collaboration, de respect mutuel, de convivialité et de non-discrimination qui ont inspiré la création de cette association ;",
+                "- proposer des services d'hébergement à des personnes morales ou physiques pour leurs activités professionnelles, en particulier à des startups, freelances et petites entreprises ;",
+                "- mutualiser des ressources et partager des expériences ;",
+                "- rompre l'isolement, faciliter l'accès à la formation et au numérique, instaurer de nouvelles solidarités professionnelles ;",
+                "- héberger des réunions ou manifestations organisées par des associations ou collectifs à but non lucratif, particulièrement dans le domaine du numérique.",
+                "",
+                "L'Association ne poursuit aucun but lucratif."),
+              networks: 'Réseau des Tiers-Lieux Grand Est, French Tech Est',
+              legal_entity_members: 'La moitié de nos membres sont des personnes morales (entreprises, associations).',
+              is_sports_association: false, premises_area_m2: 600, desks_count: 60, rooms_count: 5,
+              bank_holder: 'ASSOC. LA PLAGE DIGITALE', bic: 'AGRIFRPP872',
+              legal_footer: "LA PLAGE DIGITALE, association de droit local (Bas-Rhin, Haut-Rhin et Moselle), Volume 97, Folio 232, 13 rue Jacques Peirotes 67000 Strasbourg — SIRET 878 301 712 00021 — contact@laplagedigitale.fr",
+            })
+          }
+
+          // 2. The people the dossiers name.
+          const people = await list('org_people')
+          const personId = new Map<string, string>(people.map((p: any) => [String(p.full_name), String(p.id)]))
+          const person = async (full_name: string, data: any) => {
+            if (personId.has(full_name)) return
+            personId.set(full_name, await create('org_people', { full_name, active: true, ...data }))
+          }
+          await person('Simon THIERRY', { role: 'president', profession: 'Formateur', email: 'presidence@laplagedigitale.fr', is_legal_rep: true, sort_order: 10 })
+          await person('Bastien REMY', { role: 'secretaire', profession: 'Développeur', email: 'secretariat@laplagedigitale.fr', sort_order: 20 })
+          await person('Thomas JEANNEAU', { role: 'tresorier', email: 'tresorerie@laplagedigitale.fr', sort_order: 30, notes: "Trésorier (confirmé le 2026-11-04). Profession et adresse à compléter pour le portail." })
+          await person('Mathieu MAPPS', { role: 'directeur', college: 'salaries', profession: 'Directeur', address: '13 rue Jacques Peirotes, 67000 Strasbourg', email: 'mathieu@laplagedigitale.fr', is_contact: true, sort_order: 40 })
+
+          // 3. Funders.
+          const funders = await list('grant_funders')
+          const funderId = new Map<string, string>(funders.map((f: any) => [String(f.name), String(f.id)]))
+          const funder = async (name: string, data: any) => { if (!funderId.has(name)) funderId.set(name, await create('grant_funders', { name, ...data })) }
+          await funder('Eurométropole de Strasbourg', { short_name: 'EMS', level: 'epci', portal_url: 'https://aides.strasbourg.eu/aides', service_email: 'VieAssociative@strasbourg.eu' })
+          await funder('Ville de Strasbourg', { short_name: 'Ville', level: 'commune', portal_url: 'https://aides.strasbourg.eu/aides', service_email: 'VieAssociative@strasbourg.eu' })
+          await funder('Région Grand Est', { short_name: 'Région', level: 'region', portal_url: 'https://aides.grandest.fr' })
+          const EMS = funderId.get('Eurométropole de Strasbourg') ?? '', VILLE = funderId.get('Ville de Strasbourg') ?? '', REGION = funderId.get('Région Grand Est') ?? ''
+
+          // 4. The pièces, as a checklist (files uploaded by hand).
+          const docs = await list('org_documents')
+          const docId = new Map<string, string>(docs.map((d: any) => [String(d.title), String(d.id)]))
+          const doc = async (title: string, data: any) => { if (!docId.has(title)) docId.set(title, await create('org_documents', { title, ...data })) }
+          await doc('Statuts (16/05/2025)', { kind: 'statuts', document_date: '2025-05-16', notes: "Le dernier exemplaire signé trouvé dans Drive est celui du 13/09/2023 (https://drive.google.com/file/d/1-Z-aOzFHUaZ3zmX8mDappueBIUqAG3W2/view). Vérifier qu'il n'y a pas de version 2025." })
+          await doc("Récépissé d'inscription au tribunal (26/09/2019)", { kind: 'recepisse', document_date: '2019-09-26', notes: "Drive : https://drive.google.com/file/d/1EYmdPHypcA8n1BReDj6xgS0BuNPa4DdJ/view. Plus récent : certificat d'inscription au greffe des associations, avril 2026 (https://drive.google.com/file/d/18yQ3fkOQdPgPcVKzxNj3MhOl61U2jOIE/view)." })
+          await doc("Composition du Conseil d'administration", { kind: 'composition_ca', notes: "La dernière dans Drive date du 24/09/2024 (https://drive.google.com/file/d/157GWK7p9Hkf_GMfLxLL2uOW64XuoELza/view) : à refaire depuis les AG du 16/05/2025 et du 25/03/2026." })
+          await doc('Avis de situation au répertoire SIRENE', { kind: 'sirene', notes: "Celui de 2025 datait du 29/03/2024 : en télécharger un récent sur avis-situation-sirene.insee.fr." })
+          await doc('Comptes annuels 2025', { kind: 'comptes_annuels', year: 2025, notes: "Drive : https://drive.google.com/file/d/1YmaIbFJawonmi4iTF9iQ6bK7RTmHqCqA/view" })
+          await doc('Rapport du commissaire aux comptes 2025', { kind: 'rapport_cac', year: 2025, notes: "Drive : https://drive.google.com/file/d/1qpj3ny7BDor2gO8GC5TTLhKH59SbfTVN/view (rapport spécial : https://drive.google.com/file/d/1qp1eVtybLUZkAVZsc9YaVnpeIdvsrAzd/view)" })
+          await doc("Rapport d'activité 2025", { kind: 'rapport_activite', year: 2025, notes: "Pas de rapport d'activité 2025 dans Drive. Le bilan moral 2025 est dans le diaporama de l'AG du 25/03/2026 (https://drive.google.com/file/d/1hmSsjOTtU7t_8URZFudwanb3ZmN0U-7e/view)." })
+          await doc('RIB du compte courant', { kind: 'rib', notes: "Drive : https://drive.google.com/file/d/19gl-cOR5o3G7rPwC1rkAzso_4DhxHPKy/view (RIB signé, Crédit Agricole Alsace Vosges)" })
+          const allDocs = [...docId.values()].filter((d) => !d.startsWith('dry-'))
+
+          // 5. The demandes: the Notion tracker, then the two dossiers in full.
+          const apps = await list('grant_applications')
+          const appId = new Map<string, string>(apps.filter((a: any) => has(a.application_key)).map((a: any) => [String(a.application_key), String(a.id)]))
+          const app = async (key: string, data: any) => {
+            if (!appId.has(key)) appId.set(key, await create('grant_applications', { application_key: key, ...data }))
+            return { id: appId.get(key) ?? '', fresh: !apps.some((a: any) => String(a.application_key) === key) }
+          }
+          const contact = personId.get('Mathieu MAPPS')
+          const N = (id: string) => `https://app.notion.com/p/${id}`
+          await app('ems-fonctionnement-2024', { title: "Subvention de fonctionnement 2024 — Eurométropole", funder: EMS, exercise_year: 2024, aid_type: 'fonctionnement', status: 'validee', deadline: '2024-03-31', amount_granted: 10000, notion_url: N('3f16e67669d08116bdf4f282a5add3e1'), notes: "Affectation décidée : 7 500 € de ressources humaines (≈ 40 % du salaire chargé de la chargée de communication), 500 € de frais généraux, 2 000 € de frais de convivialité." })
+          await app('ems-fonctionnement-2025', { title: "Subvention de fonctionnement 2025 — Eurométropole", funder: EMS, exercise_year: 2025, aid_type: 'fonctionnement', status: 'validee', deadline: '2025-03-31', amount_granted: 9000, notion_url: N('3f16e67669d081aeb2f5eb1a044200c9'), notes: "9 000 € reçus le 2025-12-09 (virement « SGC Strasbourg et Eurométropole — Fonctionnement 2025 », Pennylane)." })
+          await app('climaxion-2025', { title: 'Climaxion', funder: REGION, exercise_year: 2025, aid_type: 'investissement', status: 'refusee', deadline: '2025-06-30', notion_url: N('3f16e67669d081abbf3ffa8f3ae31d2c') })
+          await app('ami-tiers-lieux-2026', { title: "AMI Tiers-lieux — Soutien à l'ancrage et au développement", funder: REGION, exercise_year: 2026, aid_type: 'projet', status: 'refusee', deadline: '2025-10-03', notion_url: N('3f16e67669d081338503c93b640861e0') })
+          await app('emploi-vie-associative-2026', { title: 'Grand Est Emploi Vie Associative', funder: REGION, exercise_year: 2026, aid_type: 'projet', status: 'refusee', deadline: '2025-10-20', notion_url: N('3f16e67669d081e8b440e332c4240923') })
+          await app('aap-ess-region-2026', { title: 'Appel à projets Économie sociale & solidaire — Région Grand Est', funder: REGION, exercise_year: 2026, aid_type: 'projet', status: 'a_candidater', deadline: '2026-03-20', notion_url: N('3f16e67669d08192bd70fc7d090953d1'), notes: 'Date limite passée : à passer « Abandonnée » ou à reporter.' })
+          await app('ems-investissement-2026', { title: 'Investissement 2026 — Eurométropole (salle des freelances)', funder: EMS, exercise_year: 2026, aid_type: 'investissement', status: 'envoyee', submitted_at: '2025-10-03', amount_requested_override: 27450, contact_person: contact, notes: "Montant repris du budget du dossier de fonctionnement 2026 (Eurométropole, investissement : 27 450 €). Au 2026-11-04, aucun versement dans Pennylane : le seul virement de l'Eurométropole pour 2026 est les 9 000 € « Fonctionnement 2026 global » du 2026-09-17. Drive (dossier « 2026_SUBVENTION INVESTISSEMENT ») : deux dépôts du 2025-10-03 (réf. 00024503 et 00024504), aucun courrier d'attribution, et un sous-dossier « 2026_05_20_Nouveau Dépôt » resté vide. Statut à confirmer (refusée, redéposée en mai 2026, ou en attente)." })
+          await app('ville-participation-2026', { title: 'Ville de Strasbourg 2026 — Participation citoyenne', funder: VILLE, exercise_year: 2026, aid_type: 'fonctionnement', status: 'envoyee', submitted_at: '2025-10-03', portal_reference: '00024505', amount_requested_override: 23930.4, dispositif: 'Demande de subventions — Ville de Strasbourg', thematique: 'Ville — Participation citoyenne', sous_thematique: 'Engagement citoyen', contact_person: contact, notes: "Au 2026-11-04, aucun versement de la Ville de Strasbourg dans Pennylane depuis 2025 : aucun courrier dans Drive. Au CA du 17/11/2025 : « pas de réponse en 2024 ni en 2025 » à la Ville. Statut à confirmer (refusée ou en attente)." })
+
+          const HR = { staff_count: 1, staff_fte: 1, volunteers_count: 13, volunteers_fte: 1, volunteer_hours: 550, volunteer_hourly_value: 13, recruitment_planned: true, recruitment_fte: 1, territory: 'Eurométropole de Strasbourg — Strasbourg', publics: ['jeunes_adultes', 'adultes', 'aines'], contact_person: contact, welcomes_minors: false }
+          const DESCRIPTION_2026 = "L'objectif pour l'année 2026 est d'augmenter le nombre d'événements organisés au sein de notre espace, dans le domaine du numérique et de l'entrepreneuriat. Pour cela, nous voulons recruter un·e chargé·e de mission qui aidera le directeur dans l'événementiel et portera un projet d'accompagnement des freelances. Un dossier détaillant les objectifs est joint."
+          const OBJECTIVES = P(
+            "1) Continuer à accueillir gratuitement des associations et collectifs œuvrant dans les domaines du numérique et de l'entrepreneuriat.",
+            "2) Organiser des permanences sur l'entrepreneuriat et la création d'entreprise, un cycle de conférences avec le réseau R2E, des témoignages sur les réalités des PME, des fail clubs, des ateliers d'échanges entre créateurs et créatrices d'entreprise (avec la French Tech Est), des rencontres entre développeurs et développeuses freelance, des ateliers sur les outils numériques, sur LinkedIn, sur la cybersécurité, sur l'impact des IA génératives et sur le numérique responsable.",
+            "3) Proposer un programme d'accompagnement des nouveaux et nouvelles freelances.")
+          const ems26 = await app('ems-fonctionnement-2026', {
+            title: "Fonctionnement 2026 — Eurométropole (soutien à l'événementiel)", funder: EMS, exercise_year: 2026, aid_type: 'fonctionnement', request_kind: 'renouvellement', status: 'validee',
+            dispositif: "Demande de subventions — Eurométropole de Strasbourg", thematique: 'EMS — Enseignement supérieur recherche et innovation', sous_thematique: 'Numérique',
+            submitted_at: '2025-10-03', portal_reference: '00024497', amount_granted: 9000, amount_n1: 9000, eligible_share_pct: 75, notes: "Attribuée par délibération du 26/06/2026, courrier du 06/08/2026 (Drive : https://drive.google.com/file/d/1EZO4HfIbajfMtiwrxHrRtTuVztEX20dD/view) ; 9 000 € reçus le 2026-09-17.",
+            description: DESCRIPTION_2026, objectives: OBJECTIVES, notion_url: N('3f16e67669d081cf8b24ed67b8acb3b7'), ...HR,
+          })
+
+          // The 2027 scenario the 2027 demandes are built from: a copy of the baseline, opening on its year-end cash.
+          const scenarios = await list('scenarios')
+          let sc27 = scenarios.find((s: any) => String(s.scenario_key) === 'previsionnel-2027')
+          const baseline = scenarios.find((s: any) => s.is_baseline === true || s.is_baseline === 'true')
+          let sc27Id = sc27 ? String(sc27.id) : ''
+          if (!sc27) sc27Id = await create('scenarios', { scenario_key: 'previsionnel-2027', name: 'Prévisionnel 2027', year: 2027, is_baseline: false, status: 'active', ...(baseline ? { copy_from: String(baseline.id), opening_from: String(baseline.id) } : {}), weight_recent: 0.33, income_haircut_pct: 0, include_probable_income: false, notes: "Le budget 2027 des demandes de subvention. Ajoutez l'embauche du ou de la chargé·e de mission (ajustement « Embauche » sur la rémunération) et les dotations aux amortissements." })
+
+          const ems27 = await app('ems-fonctionnement-2027', {
+            title: "EMS 2027 — Soutien à l'événementiel", funder: EMS, exercise_year: 2027, aid_type: 'fonctionnement', request_kind: 'renouvellement', status: 'en_redaction',
+            dispositif: "Demande de subventions — Eurométropole de Strasbourg", thematique: 'EMS — Enseignement supérieur recherche et innovation', sous_thematique: 'Numérique',
+            deadline: '2026-11-19', amount_n1: 9000, eligible_share_pct: 75, copy_from: ems26.id, scenario: sc27Id || null,
+            description: "L'objectif pour l'année 2027 est de développer encore l'activité événementielle de notre espace, dans le domaine du numérique, de l'entrepreneuriat et de l'innovation. Pour cela, nous souhaitons recruter un·e chargé·e de mission qui viendra en soutien du directeur dans l'événementiel et animera les communautés qui organisent des événements chez nous. Un dossier détaillant les objectifs est joint.",
+            objectives: OBJECTIVES, notion_url: N('3f16e67669d08167994fc621dc8261b8'),
+            notes: P("Notes de la réunion (Notion) :", "- Reprendre les éléments de 2026 et mettre à jour les éléments budgétaires avec la réalité de cette année.", "- Mettre à jour les personnes et associations qui viennent chez nous.", "- Mise en réseau & partenariats : à mettre en évidence (StartUpéro, soirées du président).", "- Les chiffres sont plutôt bons, ne pas hésiter à les reprendre.", "- Évoquer la réunion d'Arnaud Guittard pour BeeCome.", "- Fiche de poste et projection budgétaire : voir avec Sylvana Teissier ?"),
+            ...HR,
+          })
+          const ville27 = await app('ville-fonctionnement-2027', {
+            title: 'Ville de Strasbourg 2027 — Fonctionnement', funder: VILLE, exercise_year: 2027, aid_type: 'fonctionnement', request_kind: 'renouvellement', status: 'a_candidater',
+            dispositif: 'Demande de subventions — Ville de Strasbourg', deadline: '2026-11-04', eligible_share_pct: 25, scenario: sc27Id || null,
+            notion_url: N('4016e67669d080fa81dfd1159fe339d2'), notes: "Les événements qui font vivre le quartier (l'autre part de l'activité événementielle). Part demandée à ajuster.", ...HR,
+          })
+
+          // 6. Content of the three open dossiers, written only when the demande has none.
+          const PREAMBULE_2027: [string, string][] = [
+            ["Qu'est-ce que la Plage Digitale ?", P(
+              "La Plage Digitale est un tiers-lieu dédié au numérique et à l'innovation. L'association a été créée en 2019 afin de porter les travaux puis de gérer l'espace situé au 13 rue Jacques Peirotes : un espace d'un peu plus de 600 m², anciens locaux de la Coop, qui abrite cinq salles de travail ou de réunion.",
+              "",
+              "L'association est gérée par un Conseil d'Administration composé des usagers et usagères du lieu (un collège des coworkeur·euses et un collège des organisateur·rices d'événements) et emploie un directeur en CDI à temps plein depuis juillet 2025. Depuis lors, poussée par une envie commune de continuer à développer ses activités, l'association a étendu son champ d'action au domaine de l'entrepreneuriat.")],
+            ['Nos activités actuelles', P(
+              "Nous avons principalement deux activités : la mise à disposition de bureaux dans un espace de coworking, et l'accueil d'événements non commerciaux.",
+              "",
+              "L'espace de coworking dispose de 60 bureaux, que nous mettons à disposition de petites entreprises, d'indépendant·es ou d'associations, pour des formules au mois ou des formules flexibles à la demi-journée. Cette activité commerciale est faite dans le respect de la règle des 4P afin d'être une association à but non lucratif.",
+              "",
+              "Les événements que nous accueillons sont principalement des conférences ou des ateliers de partage de pratique, organisés par des communautés du numérique du territoire de l'Eurométropole de Strasbourg : Data Science Strasbourg, Strasbourg JS, Software Crafters Strasbourg, Dev with AI Meetup, Strasbourg Games Community, etc.")],
+            ['Les valeurs de la Plage Digitale', P(
+              "La Plage Digitale est un tiers-lieu auto-géré, porté et géré par ses utilisateurs et utilisatrices. Le Conseil d'Administration est composé de sept personnes représentant les coworkeurs et coworkeuses et de cinq personnes représentant les communautés organisant des événements.",
+              "",
+              "Nos valeurs sont :",
+              "- la collaboration : encourager la coopération, le partage des connaissances et la création de synergies entre les membres,",
+              "- l'innovation : stimuler la créativité, soutenir les nouvelles idées et favoriser l'innovation au sein de la communauté,",
+              "- l'inclusivité : créer un environnement accueillant et respectueux pour toutes et tous, indépendamment de l'origine, du genre, de l'orientation ou de toute autre caractéristique personnelle,",
+              "- la flexibilité : offrir des solutions flexibles en termes d'espace, d'horaires et de services pour répondre aux besoins de chaque membre,",
+              "- la communauté : fournir un lieu où les membres se sentent partie prenante d'une communauté avec des opportunités de réseautage et de socialisation,",
+              "- le respect de l'environnement : adopter des pratiques écologiques et durables pour minimiser l'impact environnemental,",
+              "- l'apprentissage continu : encourager le développement professionnel et personnel à travers des ateliers, des conférences et d'autres activités éducatives,",
+              "- le soutien entrepreneurial : apporter un soutien aux entrepreneur·euses et aux startups, en leur offrant des ressources et des opportunités pour développer leurs projets,",
+              "- la bienveillance : cultiver une atmosphère de soutien mutuel, où les membres se respectent et se soutiennent les un·es les autres,",
+              "- la transparence : être transparent sur les politiques, les tarifs et les décisions prises au sein de l'organisation de l'association.")],
+          ]
+          const OBJET_2027 = P(
+            "Nous souhaitons encore plus développer l'activité événementielle au sein de notre espace. Pour cela, nous souhaitons d'une part améliorer les services que nous rendons aux communautés et associations qui organisent des événements chez nous (meilleure communication, réseautage entre les communautés, faire perdurer une ambiance conviviale) et d'autre part organiser des événements complémentaires à ceux que nous accueillons.",
+            "",
+            "Afin d'assister les bénévoles de l'association et de venir en soutien de notre directeur opérationnel, nous souhaitons recruter en 2027 un·e chargé·e de mission. Son poste consisterait à coordonner l'organisation des événements en collaboration avec notre directeur, à prêter main forte aux bénévoles dans l'organisation logistique, à animer les communautés qui organisent des événements dans notre espace et à communiquer sur les événements. L'embauche se ferait en CDI, sur la base d'un temps plein.",
+            "",
+            "Les événements que nous comptons organiser seront aussi bien des événements à destination des acteurs et actrices de l'entrepreneuriat, du numérique et de l'innovation (objet de la présente demande) que des événements ayant pour vocation de faire vivre le quartier (objet d'une demande de subvention à la Ville de Strasbourg).")
+          const PRINCIPES_2027: [string, string][] = [
+            ["Animation de l'écosystème numérique", "Nos actions permettent de fédérer les acteurs et actrices du numérique, soit par communautés thématiques (meetups), soit de façon plus transverse (rencontres entre freelances ou entre entrepreneur·euses, fail clubs, ateliers de sensibilisation). Nous accueillons des événements dédiés aux rencontres des communautés. Nous invitons les membres des communautés à nos événements internes, où des rencontres se font. Quand nous sommes sollicités par les services de la Ville et de l'Eurométropole de Strasbourg, nous les accueillons avec plaisir pour rendre notre partenariat effectif et réel : c'est ainsi que nous avons reçu dans notre espace un atelier BeeCome, mais aussi une réunion de la DT de notre territoire."],
+            ['Événementiel', P("Nous accueillons des événements de structures tierces (French Tech Est, Alsace Business Angels, EdTech Strasbourg, Association Freelances de Strasbourg…) et de collectifs travaillant dans le numérique et l'innovation (voir la liste des communautés dans « Nos activités actuelles »).", '', 'Nous prévoyons de compléter cette offre événementielle avec des événements que nous organisons, décrits dans les sections précédentes.')],
+            ["Favorisation de l'entrepreneuriat et de l'innovation", P('Nos actions dans ce domaine sont multiples :', "- organisation d'événements favorisant l'entrepreneuriat (rencontres entre gérant·es, fail clubs, conférences sur la recherche concernant l'entrepreneuriat),", "- accueil de permanences sur la création et le développement d'entreprises,", "- animation d'un programme d'aide au lancement des freelances.")],
+            ["Réduction de l'impact environnemental", P("Nos actions s'inscrivent dans une dynamique de réflexion sur la réduction de l'impact humain sur l'environnement. Nous comptons organiser plusieurs événements qui vont dans le sens de réduire l'impact environnemental ou de favoriser une sensibilité écologique (fresque du climat, conférences sur l'impact environnemental des activités). Nous prévoyons d'organiser des ateliers portant spécifiquement sur la réduction de l'impact environnemental des activités numériques et d'intégrer cet aspect dans les ateliers thématiques que nous organiserons (par exemple sur l'IA générative).", '', "Par exemple, nous sommes actuellement en contact avec les équipes de la CCI pour START-RSE, mais aussi pour développer des actions communes avec l'association Zéro Déchet.", '', "Dans l'organisation de nos événements, nous sommes attentifs·ives aux actions qui permettent de réduire notre impact environnemental.")],
+            ['Inclusion numérique professionnelle', P("Nous prévoyons d'organiser plusieurs séries d'événements favorisant la connaissance des enjeux du numérique par les entreprises du territoire métropolitain :", "- ateliers de découverte d'outils numériques utiles à une entreprise (nous le faisons déjà de manière informelle, pour nos coworkeur·euses, sur des outils que nous utilisons comme Notion ou Claude),", "- cycle d'ateliers sur l'utilisation de LinkedIn pour les entreprises,", "- cycle d'ateliers sur la cybersécurité,", "- cycle de témoignages sur les évolutions professionnelles liées à l'IA générative.")],
+            ['Mise en réseau et partenariats', P("Notre association n'a pas vocation à travailler seule. Nous avons mis en place de nombreux partenariats pour héberger des événements et activités d'autres structures : Alsace Réseau Neutre, Alsace Business Angels, la DDEA de l'Eurométropole de Strasbourg, la French Tech Est, Capitale.Dev, le Réseau Tiers-Lieux Grand Est (dont font partie la Cybergrange et Kaléidoscoop).", '', "Nous prévoyons de continuer à co-organiser des événements avec plusieurs de ces partenaires : ateliers sur la cybersécurité avec Capitale.Dev, ateliers d'échange entre entrepreneur·euses avec la French Tech Est, install-parties avec ARN. Notre principe n'est pas d'être en concurrence avec d'autres structures du territoire, mais de collaborer avec elles pour rendre notre territoire toujours plus attractif dans notre secteur, en créant un maillage de compétences et de ressources performant et identifiable.", '', "D'autres pistes de collaborations et de partenariats sont déjà dans les tuyaux : nous souhaitons renforcer notre attractivité en nous appuyant sur des offres commerciales à destination des freelances, jeunes entrepreneur·euses et indépendant·es, et nous rapprocher d'incubateurs comme SEMIA, La Lucarne ou Singha.", '', "Nous participons activement aux événements organisés par l'écosystème régional (StartUpéro, La Ruche SXB, Bizz&Buzz, Super Tech a Drink de la French Tech Est, etc.).")],
+          ]
+          const CALCUL = P(
+            "La Plage Digitale a une activité commerciale (mise à disposition de bureaux). La subvention que nous demandons ne peut alimenter cette activité. Nous avons donc estimé des pourcentages d'activité pour chaque personne salariée, afin de déterminer pour quelle part leur travail concourt à l'activité commerciale et pour quelle part il relève d'activités non commerciales.",
+            "",
+            "Nous prévoyons également des frais généraux spécifiquement liés à l'organisation d'événements, et des frais de logistique des événements eux-mêmes : frais de convivialité (boissons, snacks, sur la base de 7 € par personne pour des groupes de 35 personnes en moyenne) et frais de déplacement d'intervenant·es.",
+            "",
+            "Les trois quarts des événements que nous voulons organiser et accueillir portent sur l'entrepreneuriat, le numérique et l'innovation : nous demandons donc une subvention couvrant 75 % de ces dépenses.")
+
+          // [title, description, frequency 2026, frequency 2027, events per year, partners]
+          const ACTIONS: [string, string, string, string, number | null, string][] = [
+            ["Accueil des événements des communautés actuelles et élargissement à d'autres communautés", '', '', '', null, 'Communautés du numérique de l’Eurométropole'],
+            ["Permanences sur des thématiques utiles à l'entrepreneuriat et à la création d'entreprise", P("Les permanences déjà organisées dans nos locaux traitent de la propriété intellectuelle (INPI, cabinet Bleger-Rhein-Poupon), de la création d'entreprise (CCI Alsace Eurométropole) et du growth hacking. Nous les organisons désormais sous la forme de petits-déjeuners conviviaux, comme avec l'INPI sur la propriété intellectuelle : épisodiques dans l'année, ouverts au public extérieur et gratuits.", '', "Nous continuerons sur ces thématiques et identifierons des intervenant·es sur d'autres sujets : financement de la R&D, développement d'une activité freelance, étude de marché, prévoyance et retraite des indépendant·es…"), '1 à 2 permanences par mois', 'Plusieurs petits-déjeuners dans l’année', 6, 'INPI, CCI Alsace Eurométropole'],
+            ['Cycle de conférences en partenariat avec le R2E', P("Le réseau « Recherche et Expertise sur l'Entrepreneuriat » (R2E) réunit des chercheur·euses, des entrepreneur·euses et des structures d'accompagnement du Grand-Est, fondé par l'Université de Lorraine, l'Université de Strasbourg, l'Université de Reims Champagne-Ardenne, Yschools et Neoma Business School. Nous organisons avec lui un cycle de conférences à deux voix, réunissant un chercheur ou une chercheuse et un·e responsable d'entreprise témoignant du terrain :", "- les biais cognitifs des entrepreneur·euses,", "- les (nouvelles) formes de financement des entreprises,", "- la vocation à l'entrepreneuriat,", "- le degré de connaissance en économie et le « permis d'entreprendre ».", '', "Le R2E aide à identifier les expert·es ; la Plage Digitale organise les soirées, couvre leurs frais de déplacement et assure la communication."), '4 à 5 conférences par an', '4 à 5 conférences par an', 5, 'Réseau R2E'],
+            ['Témoignages sur les réalités quotidiennes des PME', P("Des acteurs et actrices de terrain (freelances, créateurs et créatrices d'entreprises, cadres dans des PME) témoignent de pratiques ou de réactions à des difficultés, suivies d'une discussion :", "- la semaine de 4 jours,", "- la prise de décision dans une PME non pyramidale,", "- la lutte contre les discriminations dans le recrutement,", "- le risque de la dépendance à un ou deux clients,", "- la réduction de son impact environnemental."), '4 à 5 témoignages par an', '4 à 5 témoignages par an', 5, ''],
+            ['Fail clubs', P("Des moments d'échanges suite à un témoignage d'échec, pour valoriser les difficultés comme des moments d'apprentissage : la personne présente le contexte, les choix faits, les difficultés successives et ce qu'elle en retient, puis la discussion s'ouvre.", '', "En 2026, nous avons accueilli 7 éditions, avec Rémy Perla (ÉPOPIA), Sylvaine Gross (MU.SE), Stevens Naud (GLÜCKY), Séverine Sigrist (DEFYMED), Adrien Jussak (WASCARDEV) et Hadrien Collot (NIU)."), '3 réunions par an', '5 réunions par an', 5, ''],
+            ["Ateliers de partage de pratique entre créateurs et créatrices d'entreprise", P("Co-construits avec la French Tech Est : des temps d'échanges non thématiques entre porteurs et porteuses de start-ups et de PME. En 2026 est né CTRL+Share, un déjeuner apprenant à la Plage Digitale où les entrepreneur·euses échangent librement sur leurs points bloquants, accompagnés par les deux associations.", '', "Ces ateliers ont lieu pour partie à la Plage Digitale, pour partie dans d'autres lieux de l'Eurométropole."), '1 atelier par mois', '1 atelier par mois', 12, 'French Tech Est'],
+            ['Rencontres entre développeurs et développeuses freelance', P("À l'initiative d'un coworkeur, des déjeuners entre développeur·euses freelances pour échanger sur le rapport au client, l'organisation quotidienne, la place du networking, les cadres législatifs et d'accompagnement — et, avec l'arrivée rapide de l'IA dans tous les secteurs, sur l'avenir de leurs métiers.", '', "La communauté grandit par cooptation ; une vingtaine de personnes participent régulièrement, toutes les deux semaines, voire chaque semaine selon les périodes."), '2 rencontres par mois', '2 rencontres par mois', 24, ''],
+            ["Programme d'accompagnement des nouveaux et nouvelles freelances", P("Un programme pour les personnes qui se lancent comme freelances, population qui échappe à la plupart des dispositifs d'accompagnement pensés pour des personnes morales :", '- des tarifs réduits pour un bureau fixe à la Plage Digitale,', '- des ateliers et des conférences sur les défis des freelances,', "- des temps d'échanges dédiés entre elles et eux,", '- des rendez-vous individuels avec des freelances expérimenté·es et des spécialistes.', '', "Sur 5 à 6 mois, un événement toutes les 3 semaines environ et un rendez-vous individuel mensuel, évalué par ses bénéficiaires. Une salle inutilisée depuis juillet 2024 lui sera dédiée (isolation, mobilier, équipement : objet d'une demande d'investissement)."), 'Un événement toutes les 3 semaines', 'Un événement toutes les 3 semaines', 17, ''],
+            ['Ateliers sur les outils numériques pour les entreprises', P("Chaque atelier part du témoignage d'un utilisateur ou d'une utilisatrice sur un logiciel ou une fonctionnalité utile à une entreprise :", '- les logiciels comptables et la facturation électronique,', '- les outils de suivi de projet (Kanban),', '- les plateformes de conception de site web,', '- les automatisations avec le no-code,', "- les outils d'IA générative,", '- les méthodes de fouille de données,', '- la sobriété numérique.'), '1 atelier par mois', '1 atelier par mois', 12, ''],
+            ["Cycle d'ateliers sur l'utilisation de LinkedIn pour les entreprises", P("Un cycle de 3 ateliers, reproduit selon la demande, pour les responsables d'entreprise et de communication de PME :", '- définir ses objectifs et sa stratégie éditoriale,', '- optimiser son profil personnel,', '- écrire des posts optimisés.'), '1 atelier par mois', '1 atelier par mois', 12, ''],
+            ['Ateliers de sensibilisation à la cybersécurité', P("Une série d'événements très concrets pour les entreprises encore peu sensibilisées :", '- tour d’horizon des enjeux,', '- se prémunir des prises en otage des données,', '- sensibiliser ses équipes au phishing et au hacking social,', "- l'OpenData présente-t-il des risques ?", '- logiciel libre et cybersécurité,', '- logiciels et plateformes malveillants,', '- IA générative et cybersécurité.'), '1 atelier toutes les 5 à 6 semaines', '1 atelier toutes les 5 à 6 semaines', 9, 'Capitale.Dev'],
+            ['Témoignages sur les IA génératives', P("Des soirées où une ou deux personnes expliquent comment elles utilisent l'IA générative dans leur profession, ce que cela change à leur modèle d'affaires et les perspectives qu'elles perçoivent : développeur·euses, graphistes, juristes et clercs de notaires, formateur·rices, rédacteur·rices de contenus."), '4 témoignages par an', '4 témoignages par an', 4, ''],
+            ['Événements sur le numérique responsable', P("Un cycle de trois ateliers : sensibilisation aux enjeux, réduction de la dépendance aux grands acteurs du numérique, alternatives low-tech, en partenariat avec un membre du collectif des CHATONS. Et des événements pendant la semaine du Numérique responsable."), '3 ateliers et la semaine du Numérique responsable', '3 ateliers et la semaine du Numérique responsable', 4, 'CHATONS'],
+          ]
+          // [group, poste, détail, unit cost, quantity, amount, commercial %, CERFA]
+          const COSTS: [string, string, string, number | null, number | null, number | null, number, string][] = [
+            ['personnel', 'Chargé·e de mission (nouveau recrutement)', 'Salaire brut', null, null, 38000, 10, '641'],
+            ['personnel', 'Chargé·e de mission (nouveau recrutement)', 'Cotisations sociales', null, null, 15200, 10, '645'],
+            ['personnel', 'Chargé·e de mission (nouveau recrutement)', 'Titres restaurant (part employeur)', null, null, 4284, 10, '647'],
+            ['personnel', 'Chargé·e de mission (nouveau recrutement)', "Mise à disposition d'un bureau", null, null, 3000, 10, '613'],
+            ['personnel', 'Frais généraux', 'Sous-traitance', null, null, 12500, 75, '604'],
+            ['personnel', 'Frais généraux', 'Papeterie et consommables', null, null, 4000, 75, '606'],
+            ['personnel', 'Frais généraux', 'Équipement', null, null, 2000, 75, '606'],
+            ['personnel', 'Directeur', 'Salaire brut', null, null, 38000, 75, '641'],
+            ['personnel', 'Directeur', 'Cotisations sociales', null, null, 15200, 75, '645'],
+            ['personnel', 'Directeur', 'Titres restaurant (part employeur)', null, null, 4284, 75, '647'],
+            ['personnel', 'Directeur', "Mise à disposition d'un bureau", null, null, 3000, 75, '613'],
+            ['frais_generaux', "Frais généraux liés à l'événementiel", 'Équipement et entretien', null, null, 200, 0, '615'],
+            ['frais_generaux', "Frais généraux liés à l'événementiel", 'Fournitures administratives', null, null, 300, 0, '606'],
+            ['frais_generaux', "Frais généraux liés à l'événementiel", 'Annonces et insertions', null, null, 3000, 0, '623'],
+            ['logistique', 'Frais de logistique', 'Frais de convivialité (7 € × 35 personnes par événement, 6 événements par mois)', 245, 72, null, 0, '606'],
+            ['logistique', 'Frais de logistique', 'Déplacements des intervenant·es', null, null, 400, 0, '625'],
+          ]
+
+          const fill = async (id: string, year: number, opts: { sections: boolean, actions: boolean, costs: boolean }) => {
+            if (!id || id.startsWith('dry-')) { if (dryRun) { count('grant_sections', 12); count('grant_actions', ACTIONS.length); count('grant_cost_items', COSTS.length) } return }
+            if (opts.sections && (await list('grant_sections', eq('application', id))).length === 0) {
+              const rows: any[] = []
+              let o = 0
+              for (const [t, b] of PREAMBULE_2027) rows.push({ part: 'preambule', title: t, body: b, sort_order: (o += 10) })
+              rows.push({ part: 'objet', title: 'Objet de la demande', body: year === 2027 ? OBJET_2027 : OBJET_2027.replace('en 2027', 'à partir du 01/01/2026').replace("et de venir en soutien de notre directeur opérationnel, ", ''), sort_order: (o += 10) })
+              for (const [t, b] of PRINCIPES_2027) rows.push({ part: 'principes', title: t, body: b, sort_order: (o += 10) })
+              rows.push({ part: 'calcul', title: 'Modalités de calcul de la demande', body: CALCUL, sort_order: (o += 10) })
+              await createMany('grant_sections', rows.map((r, i) => ({ section_key: `${id}:s${i + 1}`, application: id, in_export: true, ...r })))
+            }
+            if (opts.actions && (await list('grant_actions', eq('application', id))).length === 0) {
+              await createMany('grant_actions', ACTIONS.map(([title, description, f26, f27, n, partners], i) => ({
+                action_key: `${id}:a${i + 1}`, application: id, title, description, frequency_label: year === 2027 ? f27 : f26, events_per_year: n, partners, in_scope: true, sort_order: (i + 1) * 10,
+              })))
+            }
+            if (opts.costs && (await list('grant_cost_items', eq('application', id))).length === 0) {
+              await createMany('grant_cost_items', COSTS.map(([calc_group, poste, label, unit_cost, quantity, amount_input, commercial_pct, cerfa_code], i) => ({
+                item_key: `${id}:c${i + 1}`, application: id, calc_group, poste, label, unit_cost, quantity, amount_input, commercial_pct, cerfa_code, sort_order: (i + 1) * 10,
+              })))
+            }
+          }
+          await fill(ems26.id, 2026, { sections: true, actions: true, costs: true })
+          await fill(ems27.id, 2027, { sections: true, actions: true, costs: true })
+          await fill(ville27.id, 2027, { sections: true, actions: false, costs: false })
+
+          // The figures and précisions of the 2026 deposit (CERFA rows), typed over the computed ones.
+          const DEPOSIT_2026: [string, string, string, string, number | null, string][] = [
+            ['charges', '606', 'Achats matières et fournitures', '60', 33210, "Achats matières et fournitures : 9 010,40 ; achats et prestations liés aux événements objets de la demande : 18 500 ; investissement en équipement : 5 700"],
+            ['charges', '615', 'Entretien et réparation', '61', 35812.56, "Contrats de maintenance : 14 062,56 ; travaux d'isolation : 21 750"],
+            ['charges', '616', 'Assurance', '61', 637.65, ''],
+            ['charges', '622', 'Rémunérations intermédiaires et honoraires', '62', 8968.58, ''],
+            ['charges', '625', 'Déplacements, missions', '62', 1668, ''],
+            ['charges', '627', 'Services bancaires, autres', '62', 2420.56, ''],
+            ['charges', '631', 'Impôts et taxes sur rémunération', '63', 10750, ''],
+            ['charges', '641', 'Rémunération des personnels', '64', 76000, 'Salaires actuels : 38 000 ; embauche supplémentaire envisagée : 38 000'],
+            ['charges', '645', 'Charges sociales', '64', 30400, 'Cotisations sociales actuelles : 15 200 ; cotisations relatives à l’embauche envisagée : 15 200'],
+            ['charges', '647', 'Autres charges de personnel', '64', 4284, ''],
+            ['charges', '65', 'Autres charges de gestion courante', '65', 45, ''],
+            ['charges', '66', 'Charges financières', '66', 1283, ''],
+            ['charges', '68', 'Dotation aux amortissements, provisions et engagements', '68', 80977, ''],
+            ['charges', '69', 'Impôts sur les bénéfices (IS), participation des salariés', '69', 6400, ''],
+            ['produits', '70', 'Vente de produits finis, prestations de services, marchandises', '70', 169089.75, ''],
+            ['produits', '756', 'Cotisations', '75', 595, ''],
+          ]
+          const precisions = async (id: string, withAmounts: boolean) => {
+            if (!id || id.startsWith('dry-')) { count('grant_budget_rows', DEPOSIT_2026.length); return }
+            const existing = await list('grant_budget_rows', eq('application', id))
+            if (existing.some((r: any) => has(r.amount_override) || has(r.precisions))) return
+            const rows = DEPOSIT_2026.filter((d) => withAmounts || d[5]).map(([side, code, label, sec, amount, text]) => ({
+              row_key: `${id}:${code}`, application: id, side, cerfa_code: code, label, level: 'row', section_code: sec,
+              ...(withAmounts ? { amount_override: amount } : {}), ...(text ? { precisions: text } : {}),
+            }))
+            rows.push({ row_key: `${id}:74:${EMS}`, application: id, side: 'produits', cerfa_code: '74', label: 'Eurométropole de Strasbourg', level: 'row', section_code: '74', funder: EMS, precisions: 'Fonctionnement : 71 791,20 ; investissement : 27 450' } as any)
+            count('grant_budget_rows', rows.length)
+            if (!dryRun) await context.actions.record.batchUpsert({ table: 'grant_budget_rows', items: rows, matchField: 'row_key', continueOnItemError: true })
+          }
+          await precisions(ems26.id, true)
+          await precisions(ems27.id, false)
+
+          // The pièces, linked to the open dossiers.
+          if (!dryRun && allDocs.length > 0) for (const a of [ems26, ems27, ville27]) {
+            const row = (await list('grant_applications', eq('id', a.id)))[0]
+            if (row && (!Array.isArray(row.attachments) || row.attachments.length === 0)) await context.actions.record.update({ table: 'grant_applications', id: a.id, data: { attachments: allDocs } })
+          }
+
+          context.log.info(`${dryRun ? 'DRY RUN — ' : ''}${JSON.stringify(stats)}`)
+          return { dryRun, written: stats, applications: Object.fromEntries(appId) }
+        }

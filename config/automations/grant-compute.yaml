@@ -1,0 +1,29 @@
+# Automation: grant-compute — « Recalculer » on a demande de subvention: the
+# manual run of the Subventions engine (config/actions/grant-budget-compute.yaml)
+# from the buttons of /administration/subventions/:id, or the trigger
+# endpoint:
+#
+#   POST /api/automations/grant-compute/trigger
+#     {"applicationId": "3"}     one demande (and the others of its exercise)
+#     {}                         every open demande
+#     {"dryRun": "true"}         logs the figures, writes nothing
+#
+# Same sign-in as the other admin triggers (CLAUDE.md « Run it on demand »).
+name: grant-compute
+label: Recalculer la demande de subvention
+trigger:
+  type: manual
+  label: Recalculer la demande de subvention
+  requiredRole: admin
+  inputSchema:
+    applicationId: { type: string }
+    dryRun: { type: string }
+timeout: 180000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: grant-budget-compute
+    $vars:
+      applicationId: '{{trigger.input.applicationId}}'
+      dryRun: '{{trigger.input.dryRun}}'

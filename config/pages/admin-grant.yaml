@@ -1,0 +1,831 @@
+# Page: admin-grant — one demande de subvention, the place its dossier is
+# written, computed and exported. Under the title, the status strip says what
+# is left: the montant sollicité, the base it is computed from, the gap of
+# the CERFA budget (0 when it balances) and the last export. Then five tabs
+# in the order of the dossier, each with its own address (?onglet=…):
+#
+# - Demande: the fields the funder's portal asks for, and the moyens humains;
+# - Projet: the sections of the dossier and the actions with their frequency
+#   (a row opens a side panel to write the text);
+# - Modalités de calcul: the costs, their commercial share and the share
+#   asked of the funder, which make the montant sollicité; the quotes of an
+#   investissement;
+# - Budget CERFA: the scenario's year rolled up by CERFA row, each figure
+#   typed over where the computation is not the one to file, with its
+#   précisions; the chapters and totals, and the gap to balance;
+# - Pièces & export: the pièces sent, the Word dossier and the Excel budget.
+#
+# Every edit saves on its own and its record trigger recomputes the demande
+# (grant-compute-on-*); « Recalculer » does it on demand. An automation
+# button cannot reload the page, so the computed parts poll every five
+# seconds. A new section, action, cost or quote is a declared form in a
+# dialog (a page form never creates a row), the demande prefilled and locked.
+name: admin-grant
+path: /administration/subventions/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: demande
+    enum: [demande, projet, calcul, budget, pieces]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "$record.title — Subventions"
+  description: "Une demande de subvention : dossier, modalités de calcul, budget CERFA, pièces et export."
+  noindex: true
+dataSource: { table: grant_applications, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Demandes de subvention', props: { href: /administration/subventions, className: 'text-sm text-text-muted hover:text-navy' } }
+
+          # Title, what the demande is, and the three actions.
+          - type: flex
+            props:
+              className: 'flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4'
+            children:
+              - type: container
+                props: { className: 'min-w-0' }
+                children:
+                  - { type: text, element: h1, content: $record.title, props: { className: 'text-3xl font-bold text-navy [overflow-wrap:anywhere]' } }
+                  - type: flex
+                    props:
+                      className: 'flex flex-wrap items-center gap-x-3 gap-y-2 mt-3 text-sm text-text-muted'
+                    children:
+                      - { type: record-field, props: { field: status } }
+                      - { type: record-field, props: { field: aid_type } }
+                      - { type: record-field, props: { field: funder, className: 'font-semibold text-navy' } }
+                      - { type: text, element: span, content: 'Exercice $record.exercise_year' }
+                      - type: flex
+                        visibility: { record: { field: deadline, isNotEmpty: true } }
+                        props: { className: 'inline-flex items-baseline gap-1.5' }
+                        children:
+                          - { type: text, element: span, content: 'Date limite :' }
+                          - { type: record-field, format: long-date, props: { field: deadline, className: 'font-semibold text-navy' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap gap-3 xl:justify-end'
+                children:
+                  - type: button
+                    content: Générer le dossier
+                    props:
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white hover:text-white bg-navy hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+                    action:
+                      type: automation
+                      name: grant-export
+                      await: true
+                      inputData:
+                        applicationId: $param.id
+                      onSuccess:
+                        toast: { variant: success, message: "Dossier Word et budget Excel générés : ils sont dans l'onglet « Pièces & export »." }
+                      onError:
+                        toast: { variant: error, message: "Le dossier n'a pas pu être généré. Relancez « Recalculer », puis réessayez." }
+                  - type: button
+                    content: Recalculer
+                    props:
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
+                    action:
+                      type: automation
+                      name: grant-compute
+                      await: true
+                      inputData:
+                        applicationId: $param.id
+                      onSuccess:
+                        toast: { variant: success, message: "Demande recalculée : les montants se mettent à jour dans quelques secondes." }
+                      onError:
+                        toast: { variant: error, message: "La demande n'a pas pu être recalculée." }
+                  - type: link
+                    content: Récapitulatif pour le portail
+                    props:
+                      href: '/administration/subventions/$record.id/portail'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
+
+          # The status strip: what is asked, from what, whether the budget balances, when it was last exported.
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
+            children:
+              - type: kpi
+                label: Montant sollicité
+                icon: hand-coins
+                dataSource:
+                  table: grant_applications
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                  refreshMode: poll
+                  pollIntervalMs: 5000
+                kpiAggregate: { function: sum, field: amount_requested }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                visibility: { record: { field: aid_type, eq: investissement } }
+                label: Total des devis
+                icon: receipt
+                dataSource:
+                  table: grant_applications
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                  refreshMode: poll
+                  pollIntervalMs: 5000
+                kpiAggregate: { function: sum, field: budget_total_charges }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                visibility: { record: { field: aid_type, neq: investissement } }
+                label: Base subventionnable
+                icon: calculator
+                dataSource:
+                  table: grant_applications
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                  refreshMode: poll
+                  pollIntervalMs: 5000
+                kpiAggregate: { function: sum, field: eligible_base }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Écart du budget CERFA
+                icon: scale
+                dataSource:
+                  table: grant_applications
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                  refreshMode: poll
+                  pollIntervalMs: 5000
+                kpiAggregate: { function: sum, field: budget_gap }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+                thresholds:
+                  - { value: -100000000, color: red }
+                  - { value: -0.5, color: green }
+                  - { value: 0.5, color: red }
+              - type: card
+                props:
+                  className: 'p-5 space-y-1'
+                children:
+                  - { type: text, element: p, content: Dernier export, props: { className: 'text-sm font-medium text-text-muted' } }
+                  - { type: record-field, format: relative-time, visibility: { record: { field: exported_at, isNotEmpty: true } }, props: { field: exported_at, className: 'block text-2xl font-bold text-navy' } }
+                  - { type: text, element: p, content: Jamais, visibility: { record: { field: exported_at, isEmpty: true } }, props: { className: 'text-2xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "« Générer le dossier » le produit en Word et en Excel.", visibility: { record: { field: exported_at, isEmpty: true } }, props: { className: 'text-sm text-text-muted' } }
+
+          - type: tabs
+            tabsVariant: line
+            defaultTab: $query.onglet
+            panels:
+              - { id: demande, label: Demande, description: Portail et moyens humains }
+              - { id: projet, label: Projet, description: Textes et actions }
+              - { id: calcul, label: Modalités de calcul, description: Le montant sollicité }
+              - { id: budget, label: Budget CERFA, description: Charges et produits }
+              - { id: pieces, label: Pièces & export, description: "Word, Excel, pièces jointes" }
+            children:
+              # ---------------------------------------------------------------- Demande
+              - type: container
+                props: { className: 'space-y-6 pt-2' }
+                children:
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 2xl:grid-cols-2 gap-6 items-start' }
+                    children:
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: La demande, props: { className: 'text-xl font-semibold text-navy' } }
+                          - { type: text, element: p, content: "Ce que le portail du financeur demande en premier. Chaque champ s'enregistre dès qu'il est modifié.", props: { className: 'text-sm text-text-muted' } }
+                          - type: form
+                            dataSource: { table: grant_applications, mode: single, param: id }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: grant_applications }
+                            fields:
+                              - { field: title }
+                              - { field: status, description: "« En relecture » quand le dossier est prêt pour Simon ; « Envoyée » une fois déposé." }
+                              - { field: funder }
+                              - { field: dispositif }
+                              - { field: thematique }
+                              - { field: sous_thematique }
+                              - { field: exercise_year }
+                              - { field: aid_type, description: "Fonctionnement : le budget de toute l'association (le scénario). Projet : celui du projet (ses coûts). Investissement : le plan de financement des devis." }
+                              - { field: request_kind }
+                              - { field: deadline }
+                              - { field: amount_n1, description: "Ce que ce financeur a accordé l'an dernier." }
+                              - { field: submitted_at }
+                              - { field: portal_reference, description: "La référence que le portail donne une fois la demande transmise." }
+                              - { field: amount_granted, description: "Une fois la notification reçue." }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Description et publics, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: form
+                            dataSource: { table: grant_applications, mode: single, param: id }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: grant_applications }
+                            fields:
+                              - { field: description, control: textarea, description: "Le résumé que le portail affiche : trois ou quatre phrases." }
+                              - { field: objectives, control: textarea }
+                              - { field: publics }
+                              - { field: territory }
+                              - { field: welcomes_minors }
+                              - { field: contact_person, description: "La personne que le financeur contacte (Fiche association)." }
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 2xl:grid-cols-2 gap-6 items-start' }
+                    children:
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Moyens humains, props: { className: 'text-xl font-semibold text-navy' } }
+                          - { type: text, element: p, content: "Les personnes et les ETPT (équivalents temps plein travaillés) de l'exercice. Les heures de bénévolat, valorisées à l'heure, remplissent les lignes 864 et 870 du budget.", props: { className: 'text-sm text-text-muted' } }
+                          - type: form
+                            dataSource: { table: grant_applications, mode: single, param: id }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: grant_applications }
+                            fields:
+                              - { field: staff_count }
+                              - { field: staff_fte }
+                              - { field: volunteers_count }
+                              - { field: volunteers_fte }
+                              - { field: volunteer_hours }
+                              - { field: volunteer_hourly_value }
+                              - { field: recruitment_planned }
+                              - { field: recruitment_fte }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Notes internes, props: { className: 'text-xl font-semibold text-navy' } }
+                          - { type: text, element: p, content: "Ce qui reste à faire, les remarques de relecture. Rien de ce champ ne part dans le dossier.", props: { className: 'text-sm text-text-muted' } }
+                          - type: form
+                            dataSource: { table: grant_applications, mode: single, param: id }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: grant_applications }
+                            fields:
+                              - { field: notes, control: textarea }
+                              - { field: notion_url }
+
+              # ---------------------------------------------------------------- Projet
+              - type: container
+                props: { className: 'space-y-8 pt-2' }
+                children:
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-3' }
+                    children:
+                      - type: flex
+                        props: { className: 'flex flex-wrap items-center justify-between gap-3' }
+                        children:
+                          - { type: text, element: h2, content: Sections du dossier, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: button
+                            content: '+ Section'
+                            props:
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
+                              interactions:
+                                click:
+                                  modal: new-section
+                      - { type: text, element: p, content: "Le texte du dossier, partie par partie, dans l'ordre où il s'imprime. Cliquez sur une section pour l'écrire. Pas de mise en forme : une ligne vide entre deux paragraphes, « - » en début de ligne pour une puce ; le modèle Word fait la mise en page.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6' }
+                        children:
+                          - type: table
+                            readOnly: true
+                            rowHeight: short
+                            props: { aria-label: Sections du dossier }
+                            dataSource:
+                              table: grant_sections
+                              filter:
+                                - { field: application, operator: eq, value: $param.id }
+                              sort:
+                                - { field: sort_order, direction: asc }
+                              pagination: { pageSize: 50 }
+                              refreshMode: poll
+                              pollIntervalMs: 5000
+                            onRowClick: { action: openSheet, component: section-sheet }
+                            emptyMessage: "Aucune section : « + Section » ajoute la première, ou recréez la demande en reprenant celle de l'an dernier."
+                            columns:
+                              - { field: part, label: Partie }
+                              - { field: title, label: Titre, frozen: true, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
+                              - { field: in_export, label: Dans le dossier, format: check-cross }
+                              - { field: sort_order, label: Ordre, align: right }
+                              - { field: updated_at, label: Modifiée, format: relative-time }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-3' }
+                    children:
+                      - type: flex
+                        props: { className: 'flex flex-wrap items-center justify-between gap-3' }
+                        children:
+                          - { type: text, element: h2, content: Actions prévues, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: button
+                            content: '+ Action'
+                            props:
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
+                              interactions:
+                                click:
+                                  modal: new-action
+                      - { type: text, element: p, content: "« Nous prévoyons ainsi les actions suivantes » : la liste s'imprime sous l'objet de la demande, puis chaque action décrite avec sa fréquence. Une action sans description n'apparaît que dans la liste.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6' }
+                        children:
+                          - type: table
+                            rowHeight: short
+                            props: { aria-label: Actions prévues }
+                            dataSource:
+                              table: grant_actions
+                              filter:
+                                - { field: application, operator: eq, value: $param.id }
+                              sort:
+                                - { field: sort_order, direction: asc }
+                              pagination: { pageSize: 50 }
+                              refreshMode: poll
+                              pollIntervalMs: 5000
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                            emptyMessage: "Aucune action : « + Action » ajoute la première."
+                            columns:
+                              - { field: title, label: Action, frozen: true, width: 320 }
+                              - { field: frequency_label, label: Fréquence prévue, width: 240 }
+                              - { field: events_per_year, label: Par an, align: right }
+                              - { field: partners, label: Partenaires }
+                              - { field: in_scope, label: Décrite }
+                              - { field: sort_order, label: Ordre, align: right }
+                              - type: actions
+                                actions:
+                                  - label: Écrire
+                                    action: { action: openSheet, component: action-sheet }
+                                  - label: Supprimer
+                                    variant: destructive
+                                    action:
+                                      type: crud
+                                      operation: delete
+                                      table: grant_actions
+                                      confirm: true
+                                      confirmMessage: "Supprimer cette action du dossier ?"
+
+              # ---------------------------------------------------------------- Modalités de calcul
+              - type: container
+                props: { className: 'space-y-8 pt-2' }
+                children:
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start' }
+                    children:
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-3 xl:col-span-2' }
+                        children:
+                          - { type: text, element: h2, content: Comment se calcule le montant, props: { className: 'text-xl font-semibold text-navy' } }
+                          - { type: text, element: p, content: "La subvention ne peut pas financer la location des bureaux. Chaque coût porte donc la part qui sert l'activité commerciale ; le reste est la part subventionnable, dont on demande au financeur la part de la demande (ou celle du coût, quand elle diffère). La somme fait le montant calculé.", props: { className: 'text-sm text-navy max-w-3xl' } }
+                          - { type: text, element: p, content: "Un coût se modifie dans le tableau ; les colonnes « Coût », « Part subventionnable » et « Montant demandé » se recalculent seules.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-3' }
+                        children:
+                          - type: form
+                            dataSource: { table: grant_applications, mode: single, param: id }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: grant_applications }
+                            fields:
+                              - { field: eligible_share_pct, description: "La part des dépenses subventionnables demandée à ce financeur : 75 % quand les trois quarts des événements relèvent de son domaine." }
+                              - { field: amount_requested_override, description: "Laissez vide pour demander le montant calculé." }
+                          - type: flex
+                            props: { className: 'flex items-baseline justify-between gap-3 border-t border-border pt-3 text-sm' }
+                            children:
+                              - { type: text, element: span, content: Montant calculé, props: { className: 'text-text-muted' } }
+                              - { type: record-field, props: { field: amount_calculated, className: 'font-semibold text-navy tabular-nums' } }
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-3' }
+                    children:
+                      - type: flex
+                        props: { className: 'flex flex-wrap items-center justify-between gap-3' }
+                        children:
+                          - { type: text, element: h2, content: Coûts, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: button
+                            content: '+ Coût'
+                            props:
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
+                              interactions:
+                                click:
+                                  modal: new-cost-item
+                      - type: card
+                        props: { className: 'p-4 sm:p-6' }
+                        children:
+                          - type: table
+                            rowHeight: short
+                            props: { aria-label: Coûts de la base de calcul }
+                            dataSource:
+                              table: grant_cost_items
+                              filter:
+                                - { field: application, operator: eq, value: $param.id }
+                              sort:
+                                - { field: sort_order, direction: asc }
+                              pagination: { pageSize: 100 }
+                              refreshMode: poll
+                              pollIntervalMs: 5000
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                            emptyMessage: "Aucun coût : « + Coût » ajoute le premier (un salaire, une quote-part de frais, des frais par événement)."
+                            columns:
+                              - { field: poste, label: Poste, frozen: true, width: 220 }
+                              - { field: label, label: Détail, width: 240 }
+                              - { field: amount_input, label: Montant saisi, format: currency, align: right }
+                              - { field: unit_cost, label: Coût unitaire, format: currency, align: right }
+                              - { field: quantity, label: Quantité, align: right }
+                              - { field: amount, label: Coût, format: currency, align: right, editable: false }
+                              - { field: commercial_pct, label: '% commercial', align: right }
+                              - { field: event_amount, label: Part subventionnable, format: currency, align: right, editable: false }
+                              - { field: eligible_pct, label: '% demandé', align: right }
+                              - { field: requested_amount, label: Montant demandé, format: currency, align: right, editable: false }
+                              - { field: calc_group, label: Groupe }
+                              - { field: cerfa_code, label: Ligne CERFA }
+                              - { field: sort_order, label: Ordre, align: right }
+                              - type: actions
+                                actions:
+                                  - label: Supprimer
+                                    variant: destructive
+                                    action:
+                                      type: crud
+                                      operation: delete
+                                      table: grant_cost_items
+                                      confirm: true
+                                      confirmMessage: "Supprimer ce coût ? Le montant sollicité est recalculé sans lui."
+                            summary:
+                              - { field: amount, function: sum, label: Coûts }
+                              - { field: event_amount, function: sum, label: Subventionnable }
+                              - { field: requested_amount, function: sum, label: Demandé }
+                  # An investissement: its quotes are the dépenses of the plan de financement.
+                  - type: container
+                    element: section
+                    visibility: { record: { field: aid_type, eq: investissement } }
+                    props: { className: 'space-y-3' }
+                    children:
+                      - type: flex
+                        props: { className: 'flex flex-wrap items-center justify-between gap-3' }
+                        children:
+                          - { type: text, element: h2, content: Devis, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: button
+                            content: '+ Devis'
+                            props:
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
+                              interactions:
+                                click:
+                                  modal: new-quote
+                      - { type: text, element: p, content: "Les dépenses du plan de financement, au montant HT quand il est connu. L'autofinancement équilibre le plan après les subventions.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6' }
+                        children:
+                          - type: table
+                            rowHeight: short
+                            props: { aria-label: "Devis de l'investissement" }
+                            dataSource:
+                              table: grant_quotes
+                              filter:
+                                - { field: application, operator: eq, value: $param.id }
+                              sort:
+                                - { field: sort_order, direction: asc }
+                              pagination: { pageSize: 50 }
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                            emptyMessage: "Aucun devis : « + Devis » ajoute le premier."
+                            columns:
+                              - { field: label, label: Dépense, frozen: true, width: 260 }
+                              - { field: supplier, label: Fournisseur }
+                              - { field: category, label: Nature }
+                              - { field: amount_ht, label: HT, format: currency, align: right }
+                              - { field: amount_ttc, label: TTC, format: currency, align: right }
+                              - { field: quote_date, label: Date, format: short-date }
+                              - { field: file, label: Devis, editable: false }
+                              - type: actions
+                                actions:
+                                  - label: Supprimer
+                                    variant: destructive
+                                    action:
+                                      type: crud
+                                      operation: delete
+                                      table: grant_quotes
+                                      confirm: true
+                                      confirmMessage: "Supprimer ce devis du plan de financement ?"
+                            summary:
+                              - { field: amount_ht, function: sum, label: Total HT }
+                              - { field: amount_ttc, function: sum, label: Total TTC }
+
+              # ---------------------------------------------------------------- Budget CERFA
+              - type: container
+                props: { className: 'space-y-6 pt-2' }
+                children:
+                  - type: card
+                    props: { className: 'p-4 sm:p-6 space-y-3' }
+                    children:
+                      - type: flex
+                        props: { className: 'flex flex-col md:flex-row md:items-start md:justify-between gap-4' }
+                        children:
+                          - type: container
+                            props: { className: 'space-y-1 max-w-3xl' }
+                            children:
+                              - { type: text, element: h2, content: Budget prévisionnel de l'exercice, props: { className: 'text-xl font-semibold text-navy' } }
+                              - { type: text, element: p, content: "Calculé depuis le scénario du prévisionnel (montants HT, rangés par ligne CERFA), les subventions demandées pour l'exercice et le bénévolat. Tapez un montant dans « Montant saisi » quand celui à déposer diffère du calcul ; videz la case pour revenir au calcul.", props: { className: 'text-sm text-text-muted' } }
+                          - type: form
+                            dataSource: { table: grant_applications, mode: single, param: id }
+                            showHeader: false
+                            props: { className: 'md:w-80' }
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: grant_applications }
+                            fields:
+                              - { field: scenario, description: "Le scénario dont l'exercice fait le budget." }
+                      - type: link
+                        content: Ouvrir le scénario pour le modifier →
+                        visibility: { record: { field: scenario, isNotEmpty: true } }
+                        props:
+                          href: '/administration/finances/previsionnel/$record.scenario'
+                          className: 'inline-flex text-sm font-semibold text-navy underline underline-offset-2 hover:text-magenta'
+                  # The two states a budget is not yet what it should be.
+                  - type: container
+                    visibility: { record: { field: scenario, isEmpty: true } }
+                    children:
+                      - { type: text, element: p, content: "Aucun scénario choisi : le budget ne reprend que les subventions et le bénévolat. Choisissez le scénario de l'exercice ci-dessus, ou créez-le dans Prévisionnel (« Nouveau scénario », exercice à venir).", visibility: { record: { field: aid_type, eq: fonctionnement } }, props: { className: 'text-sm text-navy p-4 rounded-panel bg-orange-100 border border-amber max-w-3xl' } }
+                  - type: container
+                    visibility: { record: { field: budget_gap, gt: 0.5 } }
+                    children:
+                      - { type: text, element: p, content: "Le budget ne s'équilibre pas : les charges dépassent les produits de $record.budget_gap. Ajustez une ligne de produits (ventes, subventions attendues) ou une charge, jusqu'à un écart nul.", props: { className: 'text-sm text-navy p-4 rounded-panel bg-orange-100 border border-amber max-w-3xl' } }
+                  - type: container
+                    visibility: { record: { field: budget_gap, lt: -0.5 } }
+                    children:
+                      - { type: text, element: p, content: "Le budget ne s'équilibre pas : les produits dépassent les charges, écart de $record.budget_gap à ramener à 0. Réduisez un produit ou complétez une charge — pour un investissement, ajoutez les devis dans « Modalités de calcul ».", props: { className: 'text-sm text-navy p-4 rounded-panel bg-orange-100 border border-amber max-w-3xl' } }
+
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 gap-6 items-start' }
+                    children:
+                      - type: container
+                        element: section
+                        props: { className: 'space-y-3 min-w-0' }
+                        children:
+                          - { type: text, element: h3, content: Charges, props: { className: 'text-lg font-semibold text-navy' } }
+                          - type: card
+                            props: { className: 'p-4 sm:p-6' }
+                            children:
+                              - type: table
+                                rowHeight: short
+                                props: { aria-label: 'Charges du budget CERFA, ligne par ligne' }
+                                dataSource:
+                                  table: grant_budget_rows
+                                  filter:
+                                    - { field: application, operator: eq, value: $param.id }
+                                    - { field: side, operator: eq, value: charges }
+                                    - { field: level, operator: eq, value: row }
+                                  sort:
+                                    - { field: sort_order, direction: asc }
+                                  pagination: { pageSize: 100 }
+                                  refreshMode: poll
+                                  pollIntervalMs: 5000
+                                autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                                emptyMessage: "Pas encore de budget : lancez « Recalculer »."
+                                columns:
+                                  - { field: label, label: Poste, editable: false, frozen: true, width: 280 }
+                                  - { field: amount, label: Retenu, format: currency, align: right, editable: false, cellStyle: [{ when: { gt: 0 }, className: 'font-semibold text-navy' }] }
+                                  - { field: amount_computed, label: Calculé, format: currency, align: right, editable: false }
+                                  - { field: amount_override, label: Montant saisi, format: currency, align: right }
+                                  - { field: precisions, label: Précisions, width: 340 }
+                                  - { field: cerfa_code, label: Compte, editable: false, width: 80 }
+                                  - { field: source_note, label: Origine, editable: false, width: 160 }
+                      - type: container
+                        element: section
+                        props: { className: 'space-y-3 min-w-0' }
+                        children:
+                          - { type: text, element: h3, content: Produits, props: { className: 'text-lg font-semibold text-navy' } }
+                          - type: card
+                            props: { className: 'p-4 sm:p-6' }
+                            children:
+                              - type: table
+                                rowHeight: short
+                                props: { aria-label: 'Produits du budget CERFA, ligne par ligne' }
+                                dataSource:
+                                  table: grant_budget_rows
+                                  filter:
+                                    - { field: application, operator: eq, value: $param.id }
+                                    - { field: side, operator: eq, value: produits }
+                                    - { field: level, operator: eq, value: row }
+                                  sort:
+                                    - { field: sort_order, direction: asc }
+                                  pagination: { pageSize: 100 }
+                                  refreshMode: poll
+                                  pollIntervalMs: 5000
+                                autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                                emptyMessage: "Pas encore de budget : lancez « Recalculer »."
+                                columns:
+                                  - { field: label, label: Poste, editable: false, frozen: true, width: 280 }
+                                  - { field: amount, label: Retenu, format: currency, align: right, editable: false, cellStyle: [{ when: { gt: 0 }, className: 'font-semibold text-navy' }] }
+                                  - { field: amount_computed, label: Calculé, format: currency, align: right, editable: false }
+                                  - { field: amount_override, label: Montant saisi, format: currency, align: right }
+                                  - { field: precisions, label: Précisions, width: 340 }
+                                  - { field: cerfa_code, label: Compte, editable: false, width: 80 }
+                                  - { field: source_note, label: Origine, editable: false, width: 160 }
+
+                  # Chapters and totals, as the portal's budget screen lists them.
+                  - type: container
+                    element: section
+                    props: { className: 'space-y-3' }
+                    children:
+                      - { type: text, element: h3, content: Chapitres et totaux, props: { className: 'text-lg font-semibold text-navy' } }
+                      - { type: text, element: p, content: "Les totaux du CERFA laissent de côté les contributions volontaires en nature (86 et 87), comme le portail ; les deux dernières lignes les ajoutent.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6' }
+                        children:
+                          - type: container
+                            element: div
+                            props:
+                              role: toolbar
+                              aria-label: Outils du tableau
+                              className: 'mb-4 flex flex-wrap items-center gap-2'
+                            children:
+                              - type: button
+                                label: Exporter le budget en CSV
+                                variant: outline
+                                size: sm
+                                props: { className: 'sm:ml-auto' }
+                                action: { type: fetch, mode: download, url: '/api/tables/grant_budget_rows/export?format=csv&filterField=application&filterValue=$param.id', filename: budget-cerfa.csv }
+                          - type: table
+                            readOnly: true
+                            rowHeight: short
+                            props: { aria-label: Chapitres et totaux du budget CERFA }
+                            dataSource:
+                              table: grant_budget_rows
+                              filter:
+                                - { field: application, operator: eq, value: $param.id }
+                                - { field: level, operator: in, value: [section, total] }
+                              sort:
+                                - { field: side, direction: asc }
+                                - { field: sort_order, direction: asc }
+                              pagination: { pageSize: 100 }
+                              refreshMode: poll
+                              pollIntervalMs: 5000
+                            emptyMessage: "Pas encore de budget : lancez « Recalculer »."
+                            columns:
+                              - { field: side, label: Côté }
+                              - { field: level, label: Niveau }
+                              - { field: label, label: Chapitre, frozen: true, width: 380 }
+                              - { field: amount, label: Montant, format: currency, align: right, cellStyle: [{ when: { gt: 0 }, className: 'font-semibold text-navy' }] }
+
+              # ---------------------------------------------------------------- Pièces & export
+              - type: container
+                props: { className: 'space-y-6 pt-2' }
+                children:
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 xl:grid-cols-2 gap-6 items-start' }
+                    children:
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Le dossier exporté, props: { className: 'text-xl font-semibold text-navy' } }
+                          - { type: text, element: p, content: "« Générer le dossier » remplit le modèle Word avec les textes, les actions, les modalités de calcul et le budget, et le classeur Excel avec le budget CERFA et la base de calcul. Ouvrez le .docx dans LibreOffice pour l'enregistrer en ODT ou en PDF. Lancez « Recalculer » avant, si vous venez de modifier un chiffre.", props: { className: 'text-sm text-text-muted' } }
+                          - type: container
+                            props: { className: 'space-y-3 rounded-panel bg-background p-4' }
+                            children:
+                              - type: flex
+                                props: { className: 'flex flex-wrap items-baseline justify-between gap-2' }
+                                children:
+                                  - { type: text, element: span, content: Dossier Word, props: { className: 'text-sm font-semibold text-navy' } }
+                                  - { type: record-field, props: { field: dossier_docx, className: 'text-sm font-medium text-navy underline underline-offset-2 [overflow-wrap:anywhere]' } }
+                              - type: flex
+                                props: { className: 'flex flex-wrap items-baseline justify-between gap-2' }
+                                children:
+                                  - { type: text, element: span, content: Budget Excel, props: { className: 'text-sm font-semibold text-navy' } }
+                                  - { type: record-field, props: { field: budget_xlsx, className: 'text-sm font-medium text-navy underline underline-offset-2 [overflow-wrap:anywhere]' } }
+                              - type: flex
+                                props: { className: 'flex flex-wrap items-baseline justify-between gap-2 text-sm text-text-muted' }
+                                children:
+                                  - { type: text, element: span, content: Généré }
+                                  - { type: record-field, format: datetime, props: { field: exported_at } }
+                          - type: button
+                            content: Générer le dossier
+                            props:
+                              className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white hover:text-white bg-navy hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+                            action:
+                              type: automation
+                              name: grant-export
+                              await: true
+                              inputData:
+                                applicationId: $param.id
+                              onSuccess:
+                                toast: { variant: success, message: "Dossier Word et budget Excel générés : les liens se mettent à jour dans quelques secondes." }
+                              onError:
+                                toast: { variant: error, message: "Le dossier n'a pas pu être généré. Relancez « Recalculer », puis réessayez." }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Pièces jointes, props: { className: 'text-xl font-semibold text-navy' } }
+                          - { type: text, element: p, content: "Les pièces que cette demande envoie, choisies dans la bibliothèque de la Fiche association, où chaque fichier se dépose une fois pour toutes. Elles sont listées à la fin du dossier Word.", props: { className: 'text-sm text-text-muted' } }
+                          - type: form
+                            dataSource: { table: grant_applications, mode: single, param: id }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: grant_applications }
+                            fields:
+                              - { field: attachments }
+                          - type: link
+                            content: Déposer ou mettre à jour une pièce →
+                            props:
+                              href: /administration/association?onglet=pieces
+                              className: 'inline-flex text-sm font-semibold text-navy underline underline-offset-2 hover:text-magenta'
+                  - type: card
+                    props: { className: 'p-4 sm:p-6 space-y-3' }
+                    children:
+                      - { type: text, element: h2, content: La bibliothèque de pièces, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: table
+                        readOnly: true
+                        rowHeight: short
+                        props: { aria-label: "Bibliothèque des pièces de l'association" }
+                        dataSource:
+                          table: org_documents
+                          sort:
+                            - { field: kind, direction: asc }
+                            - { field: year, direction: desc }
+                          pagination: { pageSize: 50 }
+                        emptyMessage: "Aucune pièce : déposez-les sur la Fiche association."
+                        columns:
+                          - { field: title, label: Pièce, frozen: true, width: 280 }
+                          - { field: kind, label: Type }
+                          - { field: year, label: Exercice }
+                          - { field: valid_until, label: Valable jusqu'au, format: short-date }
+                          - { field: file, label: Fichier }
+
+  # The side panels where a section or an action is written.
+  - type: sheet
+    id: section-sheet
+    title: Section du dossier
+    description: "Une ligne vide entre deux paragraphes ; « - » en début de ligne pour une puce."
+    drawerSide: right
+    drawerSize: lg
+    dataSource: { table: grant_sections }
+    canEdit: true
+    recordFields:
+      - { name: title, type: single-line-text, label: Titre }
+      - { name: part, type: single-select, label: Partie du dossier }
+      - { name: body, type: long-text, label: Texte }
+      - { name: sort_order, type: integer, label: Ordre }
+      - { name: in_export, type: checkbox, label: Dans le dossier }
+  - type: sheet
+    id: action-sheet
+    title: Action prévue
+    description: "La description s'imprime sous le titre de l'action, puis sa fréquence."
+    drawerSide: right
+    drawerSize: lg
+    dataSource: { table: grant_actions }
+    canEdit: true
+    recordFields:
+      - { name: title, type: single-line-text, label: Action }
+      - { name: description, type: long-text, label: Description }
+      - { name: frequency_label, type: single-line-text, label: Fréquence prévue }
+      - { name: events_per_year, type: integer, label: Événements par an }
+      - { name: partners, type: single-line-text, label: Partenaires }
+      - { name: in_scope, type: checkbox, label: Décrite dans le dossier }
+      - { name: sort_order, type: integer, label: Ordre }
+
+  # The four dialogs: a declared form each, the demande prefilled and locked.
+  - type: dialog
+    props:
+      id: new-section
+      title: Nouvelle section
+      description: "Une partie du dossier de cette demande."
+    children:
+      - type: form
+        formRef: grant-section-new
+        showHeader: false
+        inlinePrefill:
+          prefill: { application: $record.id }
+          lockPrefill: true
+  - type: dialog
+    props:
+      id: new-action
+      title: Nouvelle action
+      description: "Un événement ou une série que cette demande soutient."
+    children:
+      - type: form
+        formRef: grant-action-new
+        showHeader: false
+        inlinePrefill:
+          prefill: { application: $record.id }
+          lockPrefill: true
+  - type: dialog
+    props:
+      id: new-cost-item
+      title: Nouveau coût
+      description: "Un coût de la base de calcul de cette demande."
+    children:
+      - type: form
+        formRef: grant-cost-item-new
+        showHeader: false
+        inlinePrefill:
+          prefill: { application: $record.id }
+          lockPrefill: true
+  - type: dialog
+    props:
+      id: new-quote
+      title: Nouveau devis
+      description: "Une dépense du plan de financement de cet investissement."
+    children:
+      - type: form
+        formRef: grant-quote-new
+        showHeader: false
+        inlinePrefill:
+          prefill: { application: $record.id }
+          lockPrefill: true

@@ -348,6 +348,43 @@
       "description": "The Three Pills Rule: orange creates, navy acts on the record, outline navigates. Each sets its hover text colour explicitly.",
       "html": "<div class=\"ds-adm-pills\"><a href=\"#\" class=\"ds-adm-pill ds-adm-create\">+ Nouvelle échéance</a><button class=\"ds-adm-pill ds-adm-act\">Marquer comme fait</button><a href=\"#\" class=\"ds-adm-pill ds-adm-nav\">Voir le prévisionnel →</a></div>",
       "css": ".ds-adm-pills{display:flex;flex-wrap:wrap;gap:12px;font-family:SUSE,system-ui,sans-serif;}.ds-adm-pill{display:inline-flex;align-items:center;padding:10px 20px;border-radius:9999px;font-size:.875rem;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background-color .15s;}.ds-adm-pill:focus-visible{outline:2px solid #273a61;outline-offset:2px;}.ds-adm-create{font-weight:700;color:#1c2b4a;background:#f08137;}.ds-adm-create:hover{color:#1c2b4a;background:#f6a66b;}.ds-adm-act{font-weight:700;color:#fff;background:#273a61;}.ds-adm-act:hover{color:#fff;background:#1c2b4a;}.ds-adm-nav{font-weight:600;color:#273a61;background:#fff;border-color:#929caf;}.ds-adm-nav:hover{color:#273a61;background:#e4e6eb;}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action in the Administration: white pill, hairline border, navy label.",
+      "html": "<button class=\"ds-btn-outline\">Recalculer</button>",
+      "css": ".ds-btn-outline{font-family:SUSE,system-ui,sans-serif;display:inline-flex;align-items:center;padding:10px 20px;border-radius:9999px;border:1px solid #e4e6eb;background:#fff;color:#273a61;font-size:.875rem;font-weight:600;cursor:pointer;transition:background-color .15s;}.ds-btn-outline:hover{background:#f4ede4;}.ds-btn-outline:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Warning Note",
+      "kind": "card",
+      "refersTo": "note-warning",
+      "description": "Conditional warning: orange-100 fill, amber border, navy text, says what to change.",
+      "html": "<p class=\"ds-note-warn\">Le budget ne s'équilibre pas : les charges dépassent les produits de 1 250 €. Ajustez une ligne de produits ou une charge, jusqu'à un écart nul.</p>",
+      "css": ".ds-note-warn{font-family:SUSE,system-ui,sans-serif;margin:0;max-width:48rem;background:#fde3cc;border:1px solid #f9af25;color:#273a61;border-radius:1.5rem;padding:16px;font-size:.875rem;line-height:1.55;}"
+    },
+    {
+      "name": "Status Tile",
+      "kind": "card",
+      "description": "One tile of a workspace page's four-tile status strip.",
+      "html": "<div class=\"ds-tile\"><p class=\"ds-tile-label\">Dernier export</p><p class=\"ds-tile-value\">il y a 2 jours</p></div>",
+      "css": ".ds-tile{font-family:SUSE,system-ui,sans-serif;background:#fff;color:#273a61;border-radius:1.5rem;padding:20px;box-shadow:0 8px 24px -8px rgb(39 58 97 / 0.18);max-width:16rem;}.ds-tile-label{margin:0 0 4px;font-size:.875rem;font-weight:500;color:#5d6a88;}.ds-tile-value{margin:0;font-size:1.5rem;font-weight:700;}"
+    },
+    {
+      "name": "Copy Row",
+      "kind": "custom",
+      "description": "Récapitulatif row: muted label, navy value, « Copier » pill (clipboard), hairline between rows.",
+      "html": "<div class=\"ds-copy\"><div class=\"ds-copy-row\"><span class=\"ds-copy-label\">Thématique</span><span class=\"ds-copy-value\">Économie sociale et solidaire</span><button class=\"ds-copy-btn\" aria-label=\"Copier : Thématique\">Copier</button></div><div class=\"ds-copy-row\"><span class=\"ds-copy-label\">Exercice</span><span class=\"ds-copy-value\">2027</span><button class=\"ds-copy-btn\" aria-label=\"Copier : Exercice\">Copier</button></div></div>",
+      "css": ".ds-copy{font-family:SUSE,system-ui,sans-serif;background:#fff;border-radius:1.5rem;padding:8px 24px;max-width:40rem;}.ds-copy-row{display:flex;align-items:flex-start;gap:16px;padding:12px 0;border-bottom:1px solid #e4e6eb;}.ds-copy-row:last-child{border-bottom:0;}.ds-copy-label{flex:none;width:16rem;font-size:.875rem;color:#5d6a88;}.ds-copy-value{flex:1;min-width:0;font-size:.875rem;font-weight:500;color:#273a61;overflow-wrap:anywhere;}.ds-copy-btn{font-family:SUSE,system-ui,sans-serif;display:inline-flex;align-items:center;padding:4px 12px;border:0;border-radius:9999px;background:#e3ecf5;color:#273a61;font-size:.75rem;font-weight:600;cursor:pointer;transition:background-color .15s;}.ds-copy-btn:hover{background:#f4ede4;}.ds-copy-btn:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Computed vs Typed Table",
+      "kind": "custom",
+      "description": "Money table: Poste, Retenu (semibold), Calculé, Montant saisi (the editable one), Précisions, code, origin.",
+      "html": "<table class=\"ds-money\"><thead><tr><th>Poste</th><th>Retenu</th><th>Calculé</th><th>Montant saisi</th><th>Précisions</th><th>Compte</th><th>Origine</th></tr></thead><tbody><tr><td>Locations</td><td class=\"ds-r\">12 400 €</td><td class=\"ds-n\">11 900 €</td><td class=\"ds-n ds-edit\" tabindex=\"0\">12 400 €</td><td class=\"ds-edit\" tabindex=\"0\">Hausse du loyer</td><td>613</td><td>Scénario</td></tr><tr><td>Achats</td><td class=\"ds-r\">3 200 €</td><td class=\"ds-n\">3 200 €</td><td class=\"ds-n ds-edit\" tabindex=\"0\"></td><td class=\"ds-edit\" tabindex=\"0\"></td><td>60</td><td>Scénario</td></tr></tbody></table>",
+      "css": ".ds-money{font-family:SUSE,system-ui,sans-serif;border-collapse:collapse;font-size:.875rem;color:#273a61;background:#fff;}.ds-money th{text-align:left;font-weight:600;color:#5d6a88;padding:8px 12px;border-bottom:1px solid #e4e6eb;}.ds-money td{padding:8px 12px;border-bottom:1px solid #e4e6eb;}.ds-money .ds-n,.ds-money .ds-r{text-align:right;font-variant-numeric:tabular-nums;}.ds-money .ds-r{font-weight:600;}.ds-money .ds-edit:hover{background:#e3ecf5;}.ds-money .ds-edit:focus-visible{outline:2px solid #6290bc;outline-offset:-2px;}"
     }
   ],
   "narrative": {

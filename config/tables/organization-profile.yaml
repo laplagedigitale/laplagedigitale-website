@@ -1,0 +1,49 @@
+# Table: organization_profile — the association as a grant application
+# describes it: identity, registration, address, objet social, networks and
+# bank details. One row (the seed creates it; `profile_key` is `lpd`), edited
+# on /administration/association and read by grant-export and the « Portail »
+# page of a demande, so the SIRET, the folio or the IBAN are typed once.
+#
+# Admin only: it carries the IBAN.
+id: 22
+name: organization_profile
+aiAccess:
+  description: "The association's identity for grant applications: legal name, SIRET, registration, NAF, address, objet social, networks, bank details."
+  operations: [read, list]
+fields:
+  - { id: 1, name: profile_key, label: Clé, type: single-line-text, required: true, unique: true, default: lpd }
+  - { id: 2, name: legal_name, label: Nom de l'association, type: single-line-text, required: true }
+  - { id: 3, name: acronym, label: Sigle, type: single-line-text }
+  - { id: 4, name: siret, label: SIRET, type: single-line-text }
+  - { id: 5, name: siren, label: SIREN, type: single-line-text }
+  - { id: 6, name: rna, label: N° RNA, type: single-line-text, description: "Vide pour une association de droit local : elle est inscrite au registre du tribunal." }
+  - { id: 7, name: registry_date, label: Date d'inscription au registre, type: date }
+  - { id: 8, name: registry_volume, label: Volume, type: single-line-text }
+  - { id: 9, name: registry_folio, label: Folio, type: single-line-text }
+  - { id: 10, name: registry_court, label: Tribunal d'inscription, type: single-line-text }
+  - { id: 11, name: naf_code, label: Code NAF, type: single-line-text }
+  - { id: 12, name: legal_form, label: Forme juridique, type: single-line-text }
+  - { id: 13, name: created_on, label: Date de création, type: date }
+  - { id: 14, name: address_street, label: Adresse, type: single-line-text }
+  - { id: 15, name: address_postal_code, label: Code postal, type: single-line-text }
+  - { id: 16, name: address_city, label: Ville, type: single-line-text }
+  - { id: 17, name: phone, label: Téléphone, type: phone-number }
+  - { id: 18, name: email, label: E-mail, type: email }
+  - { id: 19, name: website, label: Site web, type: url }
+  - { id: 20, name: purpose, label: Objet social, type: long-text }
+  - { id: 21, name: networks, label: Réseaux et fédérations, type: long-text }
+  - { id: 22, name: legal_entity_members, label: Adhérents personnes morales, type: long-text }
+  - { id: 23, name: is_sports_association, label: Association sportive agréée, type: checkbox, default: false }
+  - { id: 24, name: premises_area_m2, label: Surface des locaux (m²), type: integer }
+  - { id: 25, name: desks_count, label: Nombre de bureaux, type: integer }
+  - { id: 26, name: rooms_count, label: Nombre de salles, type: integer }
+  - { id: 27, name: bank_holder, label: Titulaire du compte, type: single-line-text }
+  - { id: 28, name: iban, label: IBAN, type: single-line-text }
+  - { id: 29, name: bic, label: BIC, type: single-line-text }
+  - { id: 30, name: legal_footer, label: Mention légale (pied de page des dossiers), type: long-text }
+  - { id: 31, name: updated_at, label: Modifié le, type: updated-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]
