@@ -1,4 +1,9 @@
 # Built-in analytics.
+#
+# No `profile`: deliberately the 0.46 default, `audience-only` — a page view
+# keeps no title, full referrer, UTM values, screen size or query string, and
+# reports read rounded counts. The first start on 0.46 rewrote the events
+# stored before to match; `profile: full` would apply to new events only.
 retentionDays: 365
 respectDoNotTrack: true
 excludedPaths: ['/mentions-legales', '/confidentialite', '/administration', '/connexion', '/espace-membre', '/app']
