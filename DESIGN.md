@@ -308,7 +308,7 @@ The engine's shadcn fields, re-coloured by the tokens: white field, ink-navy-200
 ### Navigation
 - **Site header:** sticky white bar, logo in colour (48px tall) on the left, navigation menu at `text-md` in navy, language switcher and a pill call to act on the right.
 - **Espace Membre sidebar:** on sand, navy entries, overline group headings, the current page in white with semibold text.
-- **Administration sidebar:** on navy, white logo, orange « Administration » overline, navy-100 entries hovering to navy-deep, the current page navy-deep in white semibold, an orange pill at the foot.
+- **Administration sidebar:** on navy, white logo, orange « Administration » overline, navy-100 entries hovering to navy-deep, the current page navy-deep in white semibold; from `lg` a pinned footer with the account links and, for an admin who is also a coworker, a white-outlined « Mon Espace Membre → » pill. See Administration (Operate).
 - **Footer:** a navy band (navy-100 text) under the charte stripe, with the white logo and four link columns from `lg`.
 
 ### Administration workspace page
@@ -333,6 +333,55 @@ A full-width navy section: orange overline eyebrow, a white Display/Headline tit
 ### Charte stripe (signature)
 An 8px band at the top of the footer, cut in four equal blocks: seaside blue, plage magenta, sun orange, sage. It is the charte's colour sequence; use it as a divider at the edge of the site, not as decoration inside content.
 
+## Administration (Operate)
+
+The Administration is a tool for a few volunteers. Each page answers one question: what is waiting, and where do I act on it? New domains (Lieu, Communauté › Contacts & adhésions, Gouvernance) copy the four patterns below and do not invent their own. Markup is Sovrium YAML; the class strings below are the ones the pages ship with.
+
+### Shell and page head
+- **Shell:** a `flex` with `min-h-screen flex flex-col lg:flex-row bg-background` holds `component: admin-nav` and a `section` with `flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8` (`space-y-12` on the dashboard, `space-y-6` on a form page).
+- **Head:** h1 `text-3xl font-bold text-navy`, intro `text-text-muted mt-2 max-w-2xl`, and the page's primary action beside them (`flex flex-col sm:flex-row sm:items-end justify-between gap-4`, button `self-start sm:self-auto`). A section title (h2) is `text-xl font-semibold text-navy`.
+
+### Sidebar IA
+- **Groups, in order:** Pilotage (Tableau de bord, Calendrier, Demandes), Communauté (Membres, Inscriptions Flex), Finances, Subventions (Demandes de subvention, Fiche association), Contenu. A new domain gets its own group: **Lieu** between Communauté and Finances, **Gouvernance** after Finances. Each entry is a place where a queue gets worked, not a table.
+- **Compte** (Mon compte, Console Sovrium, Voir le site) is a sidebar group below `lg` only (`lg:[&_[data-sidebar-group=Compte]]:hidden`). From `lg` up the same links sit in the pinned footer (`rounded-lg px-3 py-2 text-navy-100 hover:text-white hover:bg-navy-700`), above the white-outlined « Mon Espace Membre → » pill.
+- **On navy:** group labels `navy-150` (7.0:1, because `navy-200` is 4.1:1), entries `navy-100`, hover and current entry `navy-700` with white text (the current one semibold), icons `navy-200`.
+- **One entry, many pages:** a section with several pages gets ONE sidebar entry on its route prefix (`activeMatch: prefix`), plus a pill sub-nav at the top of each page: a `nav` with the entry's `aria-label` and `flex flex-wrap gap-2 -mt-4`. Every pill is `inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors`. The current page is the navy pill with `aria-current: page`; the others are outline pills. Copy `admin-finances-transactions.yaml` (Opérations) or `admin-finances-invoices.yaml` (Facturation). An address that moves gets a redirect in `config/redirects.yaml`.
+
+### Actions
+**The Three Pills Rule.** A pill's colour says what it does. All three share `inline-flex items-center px-5 py-2.5 rounded-full text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors`.
+- **Orange creates, or is the page's one primary action:** `font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300`. The label is navy-700 because that is 5.3:1 on orange; plain navy is 4.24:1. Use at most one per page (« + Nouvelle échéance » in `admin-calendar.yaml`, the invitation in `admin-members.yaml`).
+- **Navy acts on this record:** `font-bold text-white hover:text-white bg-navy hover:bg-navy-700` (« Marquer comme fait » in `admin-calendar-deadline.yaml`, « Valider » in `admin-flex-signup.yaml`).
+- **Outline navigates, or is the secondary choice:** `font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100` (« Voir le prévisionnel → » in `admin-finances-treasury.yaml`, « Refuser »).
+- **Row actions** inside a table use the engine's `type: actions` (`outline`, `ghost`, `destructive`), not pills.
+
+**The Explicit Hover Text Rule.** Every pill sets its hover text colour explicitly (`hover:text-white`, `hover:text-navy`, `hover:text-navy-700`). Without it, the engine's link hover colour lands on the label at 2.4:1.
+
+### Pattern A: list
+Copy `admin-members.yaml` (one table) or `admin-finances-transactions.yaml` (tabs).
+- **Toolbar:** the table sits in a card (`p-4 sm:p-6`). Above it goes a `div` with `role: toolbar`, `aria-label: Outils du tableau` and `mb-4 flex flex-wrap items-center gap-2`. It holds a `search-input` (`h-9 w-full sm:w-72`, with an `aria-label`), a `filter-bar` (`fieldsFrom`), and « Exporter en CSV » (`variant: outline`, `size: sm`, `sm:ml-auto`). The shared-filter channel is the page name.
+- **Tables are `readOnly: true`,** so the engine adds no « Nouvel enregistrement » button. To create, use the orange pill in the page head.
+- **Queues are tabs with an address:** `defaultTab: $query.onglet` plus a `query.onglet` enum, so the dashboard can link straight to a tab. Where a queue exists, « À traiter » (`a-traiter`) comes first, then « Toutes » (`admin-flex-signups.yaml`, `admin-demandes.yaml`).
+- **Seven columns at most:** only what is needed to decide. The rest goes on the detail page, which a row click opens (`onRowClick: { type: navigate, path: /administration/<x>/$record.id }`; a Pennylane mirror opens its source in a new tab instead).
+- **Empty messages teach.** An `emptyMessage` says what the empty state means or what will fill it (« Aucune échéance pour le moment : ajoutez la première avec « Nouvelle échéance ». »).
+
+### Pattern B: detail
+Copy `admin-flex-signup.yaml` (read, then decide) or `admin-calendar-deadline.yaml` (edit in place).
+- **Binding:** the page binds `dataSource: { table, mode: single, param: id }` on an `:id` route.
+- **Back link first:** `← <Liste>` with `inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy`.
+- **Head row:** `flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4`. On the left, the record's name as h1 over a meta row (`flex flex-wrap items-center gap-3 mt-2 text-text-muted`: the date in `font-semibold text-navy`, the status as a chip, `inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100`). On the right, the actions.
+- **Actions that need `$record.id`** sit in a `list` bound to the row: `id eq $param.id` plus the state they apply to, `limit: 1`, `hideWhenEmpty`. A button fills `$record.id` only from a list item, and the state filter removes the buttons once the decision is made.
+- **Body:** a grid of cards, `grid grid-cols-1 xl:grid-cols-2 gap-6 items-start` (or `xl:grid-cols-3` with an `autoSave` form spanning two). Each card is `p-4 sm:p-6 space-y-4` with an h2, then label/value rows: `grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm`, with the label in `text-text-muted` and the value a `record-field` in `text-navy`.
+
+### Pattern C: new record
+Copy `admin-calendar-new.yaml`. The route is `<liste>/nouvelle` (or `nouveau`), `$ref`'d in `app.yaml` before the `:id` page. The page is the back link, then one card (`p-6 sm:p-8 max-w-2xl`) holding a declared form (`formRef`, `headingLevel: h1`) that creates the row.
+
+### Pattern D: dashboard
+Copy `config/pages/admin.yaml`.
+- **« À faire » comes first:** one `kpi` per queue a person works (`kpiAggregate: count`), in `grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4`. Each tile is wrapped in a link, with an `aria-label`, to where that queue is worked (to the right tab through `?onglet=`): `block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full` (the Lift Means Link Rule). `thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]`: an empty queue is green, a waiting one yellow, never red.
+- **Then sections:** an h2 with « Voir … → » on the right (`flex items-center justify-between gap-4`; the link is `inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy`), and the content in a card. The « Chiffres » tiles are there to watch, so they are not links.
+
+**The No Red Zero Rule.** Show a figure an automation computes through a `list` bound to its computed row (`computed_at isNotEmpty`, `limit: 1`). Its `listDisplay.emptyMessage` says what to run. A KPI over no row reads 0 in red, which says the association is broke when the figure simply hasn't been computed yet.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -345,7 +394,7 @@ An 8px band at the top of the footer, cut in four equal blocks: seaside blue, pl
 
 ### Don't:
 - **Don't** set orange or amber text on white or paper (the charte's rule).
-- **Don't** use seaside blue as text on white: it is 3.4:1. The small semibold `text-blue` links (partner and venue names, links in the Administration's calendar, content and finance pages) do it today and fail AA; they should move to navy or magenta. The header's « Espace membre » link turning orange on hover breaks the orange rule the same way.
+- **Don't** use seaside blue as text on white: it is 3.4:1. The small semibold `text-blue` links (partner and venue names on the public pages) do it today and fail AA; they should move to navy or magenta. The header's « Espace membre » link turning orange on hover breaks the orange rule the same way.
 - **Don't** add more navy-on-orange at body size: it is 4.24:1, just under AA. The orange pills use it today with 16px bold labels, and so does the orange 13px eyebrow on navy; both need orange-300 (5.7:1 with navy) or a larger label to pass.
 - **Don't** rely on the ink-navy-200 field border alone to show a field: it is 2.8:1 against white, under the 3:1 non-text minimum.
 - **Don't** use grey or black shadows, square corners on cards, or a pure white page ground.

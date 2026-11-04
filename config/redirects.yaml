@@ -1001,3 +1001,9 @@
 - { from: "/de/contact/", to: "/de/praktische-infos" }
 - { from: "/contact", to: "/infos-pratiques" }
 - { from: "/contact/", to: "/infos-pratiques" }
+# Administration › Finances regrouped into Opérations and Facturation (2026-11).
+- { from: "/administration/finances/transactions", to: "/administration/finances/operations" }
+- { from: "/administration/finances/rapprochements", to: "/administration/finances/operations/rapprochements" }
+- { from: "/administration/finances/factures", to: "/administration/finances/facturation" }
+- { from: "/administration/finances/flex", to: "/administration/finances/facturation/flex" }
+- { from: "/administration/finances/prelevements", to: "/administration/finances/facturation/prelevements" }

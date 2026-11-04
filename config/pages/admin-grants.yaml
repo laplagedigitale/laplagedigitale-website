@@ -47,12 +47,12 @@ components:
                     content: Fiche association
                     props:
                       href: /administration/association
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
                   - type: link
                     content: '+ Nouvelle demande'
                     props:
                       href: /administration/subventions/nouvelle
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
 
           - type: grid
             props:

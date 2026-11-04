@@ -8,7 +8,7 @@
 # monthly subscriptions with an active mandate are moved to direct debit by
 # pennylane-direct-debit.
 name: admin-finances-direct-debit
-path: /administration/finances/prelevements
+path: /administration/finances/facturation/prelevements
 sitemap: false
 access: { require: [admin], redirectTo: /connexion }
 meta:
@@ -33,6 +33,18 @@ components:
             children:
               - { type: text, element: h1, content: Prélèvements, props: { className: 'text-3xl font-bold text-navy' } }
               - { type: text, element: p, content: "Les mandats de prélèvement des membres sur le Compte Pro Pennylane, recopiés de Pennylane, et les demandes envoyées depuis l'Espace Membre. Les abonnements mensuels dont le mandat est actif passent automatiquement en prélèvement, quel que soit leur montant. Cliquez sur un mandat signé pour ouvrir son PDF.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+
+          # Sub-navigation of Facturation: the sidebar marks « Facturation », these pills say which page.
+          - type: container
+            element: nav
+            props:
+              aria-label: Facturation
+              className: 'flex flex-wrap gap-2 -mt-4'
+            children:
+              - { type: link, content: Factures, props: { href: /administration/finances/facturation, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+              - { type: link, content: Facturation Flex, props: { href: /administration/finances/facturation/flex, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+              - { type: link, content: Prélèvements, props: { href: /administration/finances/facturation/prelevements, 'aria-current': page, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-white hover:text-white bg-navy' } }
 
           - type: grid
             props:

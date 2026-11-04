@@ -46,7 +46,31 @@ components:
                 content: '+ Nouvelle échéance'
                 props:
                   href: /administration/calendrier/nouvelle
-                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+
+          # En retard — only when something is: the past dates nobody marked done.
+          # Nothing rolls a date forward by itself, so these stay until « Fait ».
+          - type: list
+            dataSource:
+              table: management_deadlines
+              filter:
+                - { field: active, operator: eq, value: true }
+                - { field: due_date, operator: lt, value: $today }
+              sort:
+                - { field: due_date, direction: asc }
+              limit: 10
+            props:
+              className: 'rounded-panel border border-amber bg-orange-100 p-4 sm:p-6'
+              aria-label: Échéances en retard
+            listDisplay:
+              hideWhenEmpty: true
+            children:
+              - type: flex
+                props: { className: 'flex flex-wrap items-baseline gap-x-3 gap-y-1 py-1' }
+                children:
+                  - { type: text, element: span, content: En retard, props: { className: 'inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold text-navy-700 bg-amber' } }
+                  - { type: link, content: $record.title, props: { href: '/administration/calendrier/$record.id', className: 'font-semibold text-navy underline decoration-amber underline-offset-4 hover:decoration-navy' } }
+                  - { type: record-field, format: long-date, props: { field: due_date, className: 'text-sm text-navy' } }
 
           - type: card
             props:
@@ -101,7 +125,7 @@ components:
                       - { field: recurrence, label: Récurrence }
                       - { field: notice_days, label: Prévenir (j), align: right }
                       - { field: owner_email, label: Responsable }
-                      - { field: active, label: Active }
+                      - { field: active, label: Active, format: check-cross }
                       - type: actions
                         actions:
                           # Refreshes the grid, so the row shows its new date.

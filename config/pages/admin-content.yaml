@@ -29,13 +29,13 @@ components:
             children:
               - type: container
                 children:
-                  - { type: text, element: h1, content: "Bonjour[, $session.name]", props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: h1, content: Blog, props: { className: 'text-3xl font-bold text-navy' } }
                   - { type: text, element: p, content: "Le tableau de bord de la rédaction.", props: { className: 'text-text-muted mt-1' } }
               - type: link
                 content: '+ Nouvel article'
                 props:
                   href: /administration/contenu/articles/nouveau
-                  className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                  className: 'inline-flex items-center self-start sm:self-auto px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
 
           - type: grid
             props:
@@ -73,6 +73,7 @@ components:
               className: 'p-4 sm:p-6'
             children:
               - type: table
+                readOnly: true
                 dataSource:
                   table: posts
                   filter:
@@ -103,6 +104,7 @@ components:
               className: 'p-4 sm:p-6'
             children:
               - type: table
+                readOnly: true
                 dataSource:
                   table: posts
                   filter:

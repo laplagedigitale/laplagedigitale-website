@@ -10,7 +10,8 @@
 # Two audiences, one shell. A sidebar group cannot be gated on its own, so the
 # navigation is declared twice, each sidebar gated on a role (and left out of
 # the HTML for the other):
-# - admin — Pilotage, Membres, Finances, Subventions, Contenu, Compte;
+# - admin — Pilotage, Communauté, Finances, Subventions, Contenu, and Compte, which below lg
+#   sits in the drawer and from lg up in the pinned footer (always in view);
 # - editor — Contenu and Compte only (the pages behind the other groups refuse
 #   them anyway: access is admin only).
 #
@@ -63,46 +64,38 @@ children:
         visibility: { roles: [admin] }
         drawer: { below: lg, label: Menu }
         props:
-          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200'
+          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200 lg:[&_[data-sidebar-group=Compte]]:hidden'
         groups:
-          - label: Au quotidien
+          - label: Pilotage
             items:
               - { label: Tableau de bord, href: /administration, icon: layout-dashboard }
               - { label: Calendrier, href: /administration/calendrier, icon: calendar-clock, activeMatch: prefix }
               - { label: Demandes, href: /administration/demandes, icon: inbox }
-          - label: Membres
+          - label: Communauté
             items:
               - { label: Membres, href: /administration/membres, icon: users, activeMatch: prefix }
-              - { label: Inscriptions Flex, href: /administration/inscriptions-flex, icon: user-plus }
-          # Finances in two: what comes in (billing work, weekly), and the cash
-          # picture (planning, monthly).
-          - label: Encaissements
-            items:
-              - { label: Factures, href: /administration/finances/factures, icon: receipt }
-              - { label: Facturation Flex, href: /administration/finances/flex, icon: calendar-days }
-              - { label: Prélèvements, href: /administration/finances/prelevements, icon: landmark }
-              - { label: Rapprochements, href: /administration/finances/rapprochements, icon: git-compare-arrows }
-          - label: Trésorerie
+              - { label: Inscriptions Flex, href: /administration/inscriptions-flex, icon: user-plus, activeMatch: prefix }
+          - label: Finances
             items:
               - { label: Vue d'ensemble, href: /administration/finances, icon: chart-pie }
               - { label: Trésorerie, href: /administration/finances/tresorerie, icon: piggy-bank }
               - { label: Prévisionnel, href: /administration/finances/previsionnel, icon: chart-line, activeMatch: prefix }
-              - { label: Transactions, href: /administration/finances/transactions, icon: arrow-left-right }
+              - { label: Opérations, href: /administration/finances/operations, icon: arrow-left-right, activeMatch: prefix }
+              - { label: Facturation, href: /administration/finances/facturation, icon: receipt, activeMatch: prefix }
           - label: Subventions
             items:
               - { label: Demandes de subvention, href: /administration/subventions, icon: hand-coins, activeMatch: prefix }
               - { label: Fiche association, href: /administration/association, icon: building-2 }
           - label: Contenu
             items:
-              - { label: Tableau de bord, href: /administration/contenu, icon: newspaper }
-              - { label: Tous les articles, href: /administration/contenu/articles, icon: files }
-              - { label: Brouillons, href: /administration/contenu/articles/brouillons, icon: pencil-line }
-              - { label: Publiés, href: /administration/contenu/articles/publies, icon: globe }
+              - { label: Blog, href: /administration/contenu, icon: newspaper }
+              - { label: Articles, href: /administration/contenu/articles, icon: files, activeMatch: prefix }
+          # Below lg only: from lg up the same three links sit in the pinned footer.
           - label: Compte
             items:
               - { label: Mon compte, href: /administration/compte, icon: user-round }
-              - { label: Voir le site, href: /, icon: external-link }
               - { label: Console Sovrium, href: /_admin, icon: settings }
+              - { label: Voir le site, href: /, icon: external-link }
 
       # Editors: the blog and their account.
       - type: sidebar
@@ -123,13 +116,23 @@ children:
               - { label: Mon compte, href: /administration/compte, icon: user-round }
               - { label: Voir le blog, href: /blog, icon: external-link }
 
-  # The footer, pinned under the navigation from lg up; hidden below lg,
-  # where the dashboard carries the same link.
+  # The footer, pinned under the navigation from lg up; hidden below lg, where
+  # the drawer carries the Compte group and the dashboard the Espace Membre link.
   - type: container
     element: div
     props:
-      className: 'hidden lg:block lg:flex-none'
+      className: 'hidden lg:flex lg:flex-none lg:flex-col lg:gap-1 lg:mx-3 lg:mt-4 lg:border-t lg:border-navy-700 lg:pt-4'
     children:
+      - type: container
+        element: nav
+        visibility: { roles: [admin] }
+        props:
+          aria-label: Compte
+          className: 'flex flex-col gap-0.5 text-sm'
+        children:
+          - { type: link, content: Mon compte, props: { href: /administration/compte, className: 'rounded-lg px-3 py-2 text-navy-100 hover:text-white hover:bg-navy-700 transition-colors' } }
+          - { type: link, content: Console Sovrium, props: { href: /_admin, className: 'rounded-lg px-3 py-2 text-navy-100 hover:text-white hover:bg-navy-700 transition-colors' } }
+          - { type: link, content: Voir le site, props: { href: /, className: 'rounded-lg px-3 py-2 text-navy-100 hover:text-white hover:bg-navy-700 transition-colors' } }
       # An admin who is also a coworker: the way to their own Espace Membre.
       - type: list
         visibility: { roles: [admin] }
@@ -140,7 +143,7 @@ children:
             - { field: pennylane_customer_id, operator: isNotEmpty }
           limit: 1
         props:
-          className: 'lg:mx-3 lg:mt-4 lg:border-t lg:border-navy-700 lg:pt-4'
+          className: 'mt-3'
         listDisplay:
           hideWhenEmpty: true
         children:
@@ -148,4 +151,4 @@ children:
             content: Mon Espace Membre →
             props:
               href: /espace-membre
-              className: 'flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
+              className: 'flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-semibold text-white hover:text-white border border-white/40 hover:bg-navy-700 transition-colors'

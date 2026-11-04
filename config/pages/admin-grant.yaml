@@ -79,7 +79,7 @@ components:
                   - type: button
                     content: Générer le dossier
                     props:
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white hover:text-white bg-navy hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
                     action:
                       type: automation
                       name: grant-export
@@ -93,7 +93,7 @@ components:
                   - type: button
                     content: Recalculer
                     props:
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
                     action:
                       type: automation
                       name: grant-compute
@@ -108,7 +108,7 @@ components:
                     content: Récapitulatif pour le portail
                     props:
                       href: '/administration/subventions/$record.id/portail'
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
 
           # The status strip: what is asked, from what, whether the budget balances, when it was last exported.
           - type: grid
@@ -283,7 +283,7 @@ components:
                           - type: button
                             content: '+ Section'
                             props:
-                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
                               interactions:
                                 click:
                                   modal: new-section
@@ -323,7 +323,7 @@ components:
                           - type: button
                             content: '+ Action'
                             props:
-                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
                               interactions:
                                 click:
                                   modal: new-action
@@ -405,7 +405,7 @@ components:
                           - type: button
                             content: '+ Coût'
                             props:
-                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
                               interactions:
                                 click:
                                   modal: new-cost-item
@@ -467,7 +467,7 @@ components:
                           - type: button
                             content: '+ Devis'
                             props:
-                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                              className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-border hover:bg-sand transition-colors'
                               interactions:
                                 click:
                                   modal: new-quote
@@ -698,7 +698,7 @@ components:
                           - type: button
                             content: Générer le dossier
                             props:
-                              className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                              className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white hover:text-white bg-navy hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
                             action:
                               type: automation
                               name: grant-export

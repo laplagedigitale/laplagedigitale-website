@@ -52,7 +52,7 @@ components:
                     children:
                       - type: search-input
                         placeholder: Rechercher…
-                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        props: { aria-label: Rechercher, className: 'h-9 w-full sm:w-72' }
                         publishes: { bindTo: admin-demandes, param: q }
                       - type: button
                         label: Exporter en CSV
@@ -130,7 +130,7 @@ components:
                     children:
                       - type: search-input
                         placeholder: Rechercher…
-                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        props: { aria-label: Rechercher, className: 'h-9 w-full sm:w-72' }
                         publishes: { bindTo: admin-demandes-2, param: q }
                       - type: button
                         label: Exporter en CSV

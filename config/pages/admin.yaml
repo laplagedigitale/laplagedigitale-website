@@ -1,12 +1,24 @@
 # Page: admin — the dashboard of the Administration de l'association, where an
-# admin lands after sign-in (/app): what is waiting in each section — the
-# « À faire » strip first (the five counts that need someone), then each
-# section — deadlines, members, finances, content — and the way into it.
+# admin lands after sign-in (/app). It answers « qu'est-ce qui m'attend ? »:
+#
+# - À faire — one tile per queue that needs a person (overdue deadlines, Flex
+#   sign-ups, contact requests, payment matches to check, accounting points,
+#   late invoices, members not linked to Pennylane). Each tile is a link to the
+#   place where the queue is worked (the Lift Means Link rule: a tile that
+#   rises on hover opens something). 0 is green: nothing waiting.
+# - Échéances à venir — the Calendrier de gestion's next 60 days.
+# - Chiffres — the figures to keep an eye on, not to act on.
+#
+# The forecast figure (« Autonomie ») is drawn only once the baseline scenario
+# has been computed: a list bound to that one row (computed_at not empty) holds
+# the KPI, and its empty message says what to do instead. Before that, a KPI
+# over no row read 0 in red while the bank held tens of thousands of euros.
 #
 # An admin bypasses row-level rules, so every count covers every member. The
-# « Mon Espace Membre » card is the sidebar's link for a phone (the sidebar's
-# one is hidden below lg): drawn only when the admin's own members row is
-# linked to Pennylane, i.e. they are a coworker too.
+# « Mon Espace Membre » link is the sidebar's one for a phone (the sidebar's
+# footer is hidden below lg): drawn only when the admin's own members row is
+# linked to Pennylane, i.e. they are a coworker too. The blog's figures live on
+# /administration/contenu.
 name: admin
 path: /administration
 sitemap: false
@@ -27,154 +39,136 @@ components:
       - type: container
         element: section
         props:
-          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-10'
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-12'
         children:
-          - type: container
+          - type: flex
+            props: { className: 'flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between' }
             children:
-              - { type: text, element: h1, content: "Bonjour[, $session.name]", props: { className: 'text-3xl font-bold text-navy' } }
-              - { type: text, element: p, content: "L'administration de l'association : les échéances, les membres, les finances et le contenu du site.", props: { className: 'text-text-muted mt-1' } }
-
-          - type: list
-            dataSource:
-              table: members
-              filter:
-                - { field: email, operator: eq, value: $currentUser.email }
-                - { field: pennylane_customer_id, operator: isNotEmpty }
-              limit: 1
-            props:
-              className: 'lg:hidden'
-            listDisplay:
-              hideWhenEmpty: true
-            children:
-              - type: link
-                content: Mon Espace Membre →
+              - type: container
+                children:
+                  - { type: text, element: h1, content: "Bonjour[, $session.name]", props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Ce qui attend quelqu'un aujourd'hui, puis les échéances et les chiffres de l'association.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: list
+                dataSource:
+                  table: members
+                  filter:
+                    - { field: email, operator: eq, value: $currentUser.email }
+                    - { field: pennylane_customer_id, operator: isNotEmpty }
+                  limit: 1
                 props:
-                  href: /espace-membre
-                  className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
-
-          # À faire — what is waiting, one tile per thing to handle, each opening the
-          # page where it is handled. The sections below keep the context; these
-          # five counts live only here.
-          - type: container
-            element: section
-            props: { className: 'space-y-4', 'aria-labelledby': admin-todo }
-            children:
-              - { type: text, element: h2, content: À faire, props: { id: admin-todo, className: 'text-xl font-semibold text-navy' } }
-              - type: grid
-                props: { className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4' }
+                  className: 'lg:hidden'
+                listDisplay:
+                  hideWhenEmpty: true
                 children:
                   - type: link
-                    props: { href: /administration/calendrier, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Échéances en retard : voir' }
+                    content: Mon Espace Membre →
+                    props:
+                      href: /espace-membre
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 transition-colors'
+
+          # À faire — every tile opens the list where its queue is worked.
+          - type: container
+            element: section
+            props: { className: 'space-y-4', aria-labelledby: a-faire }
+            children:
+              - { type: text, element: h2, content: À faire, props: { id: a-faire, className: 'text-xl font-semibold text-navy' } }
+              - type: grid
+                props: { className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4' }
+                children:
+                  - type: link
+                    props: { href: /administration/calendrier, 'aria-label': 'Échéances en retard : ouvrir le calendrier de gestion', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
                     children:
                       - type: kpi
                         label: Échéances en retard
-                        description: Passées sans être marquées « faites »
+                        description: Pas encore marquées « faites »
                         icon: alarm-clock
                         dataSource:
                           table: management_deadlines
                           filter:
-                          - { field: active, operator: eq, value: true }
-                          - { field: due_date, operator: lt, value: $today }
+                            - { field: active, operator: eq, value: true }
+                            - { field: due_date, operator: lt, value: $today }
                         kpiAggregate: { function: count }
-                        thresholds:
-                          - { value: 0, color: green }
-                          - { value: 1, color: red }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
                   - type: link
-                    props: { href: /administration/demandes, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Demandes à traiter : voir' }
+                    props: { href: /administration/inscriptions-flex, 'aria-label': 'Inscriptions Flex à valider', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
                     children:
                       - type: kpi
-                        label: Demandes à traiter
-                        description: Messages du formulaire de contact
-                        icon: inbox
-                        dataSource:
-                          table: leads
-                          filter:
-                          - { field: status, operator: eq, value: new }
-                        kpiAggregate: { function: count }
-                        thresholds:
-                          - { value: 0, color: green }
-                          - { value: 1, color: yellow }
-                  - type: link
-                    props: { href: /administration/inscriptions-flex, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Inscriptions Flex : voir' }
-                    children:
-                      - type: kpi
-                        label: Inscriptions Flex
-                        description: À valider ou à refuser
+                        label: Inscriptions Flex à valider
+                        description: Premières visites à accepter ou refuser
                         icon: user-plus
                         dataSource:
                           table: flex_signups
                           filter:
-                          - { field: status, operator: eq, value: new }
+                            - { field: status, operator: eq, value: new }
                         kpiAggregate: { function: count }
-                        thresholds:
-                          - { value: 0, color: green }
-                          - { value: 1, color: yellow }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
                   - type: link
-                    props: { href: /administration/finances/factures, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Factures en retard : voir' }
+                    props: { href: /administration/demandes, 'aria-label': 'Demandes de contact à traiter', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
                     children:
                       - type: kpi
-                        label: Factures en retard
-                        description: Échéance passée, pas encore payées
-                        icon: receipt
+                        label: Demandes à traiter
+                        description: Formulaire de contact, pas encore « Traité »
+                        icon: inbox
                         dataSource:
-                          table: invoices
+                          table: leads
                           filter:
-                          - { field: status, operator: eq, value: late }
+                            - { field: status, operator: eq, value: new }
                         kpiAggregate: { function: count }
-                        thresholds:
-                          - { value: 0, color: green }
-                          - { value: 1, color: red }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
                   - type: link
-                    props: { href: /administration/finances/rapprochements, className: 'flex h-full rounded-panel ring-1 ring-transparent hover:ring-navy focus-visible:ring-navy transition [&>*]:w-full', 'aria-label': 'Rapprochements : voir' }
+                    props: { href: /administration/finances/operations/rapprochements, 'aria-label': 'Rapprochements à vérifier', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
                     children:
                       - type: kpi
-                        label: Rapprochements
-                        description: À vérifier ou en échec
+                        label: Rapprochements à vérifier
+                        description: Paiements à relier à une facture
                         icon: git-compare-arrows
                         dataSource:
                           table: payment_matches
                           filter:
-                          - { field: status, operator: in, value: [review, failed] }
+                            - { field: status, operator: in, value: [review, failed] }
                         kpiAggregate: { function: count }
-                        thresholds:
-                          - { value: 0, color: green }
-                          - { value: 1, color: yellow }
-
-          # Échéances — the Calendrier de gestion: what is overdue (nobody marked
-          # it done) and what comes in the next 60 days.
-          - type: container
-            element: section
-            props: { className: 'space-y-4' }
-            children:
-              - type: flex
-                props: { className: 'flex items-center justify-between gap-4' }
-                children:
-                  - { type: text, element: h2, content: Échéances, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Voir le calendrier →', props: { href: /administration/calendrier, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
-              - type: grid
-                props: { className: 'grid grid-cols-1 gap-4 items-start' }
-                children:
-                  - type: card
-                    props: { className: 'p-4 sm:p-6' }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
+                  - type: link
+                    props: { href: '/administration/finances/operations?onglet=justificatifs', 'aria-label': 'Points comptables à traiter : ouvrir les transactions', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
                     children:
-                      - type: list
+                      - type: kpi
+                        label: Points comptables
+                        description: Justificatif, catégorie ou lettrage manquant
+                        icon: receipt-text
                         dataSource:
-                          table: management_deadlines
+                          table: transactions
                           filter:
-                            - { field: active, operator: eq, value: true }
-                            - { field: due_date, operator: gte, value: $today }
-                            - { field: due_date, operator: lte, value: $today+60d }
-                          sort:
-                            - { field: due_date, direction: asc }
-                          limit: 5
-                        listDisplay:
-                          emptyMessage: Aucune échéance dans les 60 prochains jours.
-                          itemTemplate:
-                            title: $record.title
-                            subtitle: $record.due_date
-                            badge: $record.category
+                            - { field: needs_attention, operator: eq, value: true }
+                        kpiAggregate: { function: count }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
+                  - type: link
+                    props: { href: /administration/finances/facturation, 'aria-label': 'Factures en retard', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                    children:
+                      - type: kpi
+                        label: Factures en retard
+                        description: Échéance passée, pas encore payées
+                        icon: alarm-clock
+                        dataSource:
+                          table: invoices
+                          filter:
+                            - { field: status, operator: eq, value: late }
+                        kpiAggregate: { function: count }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: red }]
+                  - type: link
+                    props: { href: /administration/membres, 'aria-label': 'Membres non reliés à Pennylane', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                    children:
+                      - type: kpi
+                        label: Membres à relier
+                        description: Sans client Pennylane retrouvé
+                        icon: unlink
+                        dataSource:
+                          table: members
+                          filter:
+                            - { field: match_status, operator: in, value: [pending, not_found] }
+                        kpiAggregate: { function: count }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
 
-          # Membres
+          # Échéances — the Calendrier de gestion's next 60 days.
           - type: container
             element: section
             props: { className: 'space-y-4' }
@@ -182,11 +176,41 @@ components:
               - type: flex
                 props: { className: 'flex items-center justify-between gap-4' }
                 children:
-                  - { type: text, element: h2, content: Membres, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Gérer les membres →', props: { href: /administration/membres, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: text, element: h2, content: Échéances à venir, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Voir le calendrier →', props: { href: /administration/calendrier, className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+              - type: card
+                props: { className: 'p-4 sm:p-6' }
+                children:
+                  - type: list
+                    dataSource:
+                      table: management_deadlines
+                      filter:
+                        - { field: active, operator: eq, value: true }
+                        - { field: due_date, operator: gte, value: $today }
+                        - { field: due_date, operator: lte, value: $today+60d }
+                      sort:
+                        - { field: due_date, direction: asc }
+                      limit: 5
+                    listDisplay:
+                      emptyMessage: Aucune échéance dans les 60 prochains jours.
+                      itemTemplate:
+                        title: $record.title
+                        subtitle: $record.due_date
+                        badge: $record.category
+
+          # Chiffres — to keep an eye on, not to act on.
+          - type: container
+            element: section
+            props: { className: 'space-y-4' }
+            children:
+              - type: flex
+                props: { className: 'flex items-center justify-between gap-4' }
+                children:
+                  - { type: text, element: h2, content: Chiffres, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: link, content: 'Voir les finances →', props: { href: /administration/finances, className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: grid
                 props:
-                  className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
                 children:
                   - type: kpi
                     label: Membres
@@ -194,30 +218,14 @@ components:
                     dataSource: { table: members }
                     kpiAggregate: { function: count }
                   - type: kpi
-                    label: Non reliés à Pennylane
-                    icon: unlink
+                    label: Trésorerie totale
+                    icon: piggy-bank
                     dataSource:
-                      table: members
+                      table: bank_accounts
                       filter:
-                        - { field: match_status, operator: in, value: [pending, not_found] }
-                    kpiAggregate: { function: count }
-                    thresholds:
-                      - { value: 1, color: yellow }
-
-          # Finances
-          - type: container
-            element: section
-            props: { className: 'space-y-4' }
-            children:
-              - type: flex
-                props: { className: 'flex items-center justify-between gap-4' }
-                children:
-                  - { type: text, element: h2, content: Finances, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Voir les finances →', props: { href: /administration/finances, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
-              - type: grid
-                props:
-                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
-                children:
+                        - { field: include_in_cash, operator: eq, value: true }
+                    kpiAggregate: { function: sum, field: balance }
+                    kpiFormat: { type: currency, options: { currency: EUR } }
                   - type: kpi
                     label: Reste à encaisser (TTC)
                     icon: wallet
@@ -228,7 +236,7 @@ components:
                     kpiAggregate: { function: sum, field: remaining_amount }
                     kpiFormat: { type: currency, options: { currency: EUR } }
                   - type: kpi
-                    label: Flex à facturer (HT)
+                    label: Flex à facturer le 1er (HT)
                     icon: calendar-days
                     dataSource:
                       table: checkins
@@ -236,60 +244,30 @@ components:
                         - { field: status, operator: eq, value: to_invoice }
                     kpiAggregate: { function: sum, field: amount }
                     kpiFormat: { type: currency, options: { currency: EUR } }
-                  - type: kpi
-                    label: Trésorerie totale
-                    icon: piggy-bank
-                    dataSource:
-                      table: bank_accounts
-                      filter:
-                        - { field: include_in_cash, operator: eq, value: true }
-                    kpiAggregate: { function: sum, field: balance }
-                    kpiFormat: { type: currency, options: { currency: EUR } }
-                  # The baseline scenario's runway, as treasury-forecast last computed it.
-                  - type: kpi
-                    label: Autonomie (mois)
-                    icon: hourglass
+                  # The baseline scenario's runway, only once it has been computed.
+                  - type: list
                     dataSource:
                       table: scenarios
                       filter:
                         - { field: is_baseline, operator: eq, value: true }
-                    kpiAggregate: { function: min, field: runway_months }
-                    kpiFormat: { type: number, options: { maximumFractionDigits: '1' } }
-                    thresholds:
-                      - { value: 0, color: red }
-                      - { value: 3, color: yellow }
-                      - { value: 6, color: green }
-
-          # Contenu
-          - type: container
-            element: section
-            props: { className: 'space-y-4' }
-            children:
-              - type: flex
-                props: { className: 'flex items-center justify-between gap-4' }
-                children:
-                  - { type: text, element: h2, content: Contenu du site, props: { className: 'text-xl font-semibold text-navy' } }
-                  - type: flex
-                    props: { className: 'flex flex-wrap items-center gap-x-5 gap-y-2' }
+                        - { field: computed_at, operator: isNotEmpty }
+                      limit: 1
+                    props:
+                      className: 'sm:col-span-2 xl:col-span-1'
+                    listDisplay:
+                      emptyMessage: "Autonomie : le prévisionnel n'est pas encore calculé. Ouvre Prévisionnel et lance « Recalculer »."
                     children:
-                      - { type: link, content: 'Gérer le blog →', props: { href: /administration/contenu, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
-              - type: grid
-                props:
-                  className: 'grid grid-cols-1 sm:grid-cols-2 gap-4'
-                children:
-                  - type: kpi
-                    label: Articles publiés
-                    icon: globe
-                    dataSource:
-                      table: posts
-                      filter:
-                        - { field: status, operator: eq, value: published }
-                    kpiAggregate: { function: count }
-                  - type: kpi
-                    label: Brouillons
-                    icon: pencil-line
-                    dataSource:
-                      table: posts
-                      filter:
-                        - { field: status, operator: eq, value: draft }
-                    kpiAggregate: { function: count }
+                      - type: kpi
+                        label: Autonomie (mois)
+                        description: Scénario de référence
+                        icon: hourglass
+                        dataSource:
+                          table: scenarios
+                          filter:
+                            - { field: is_baseline, operator: eq, value: true }
+                        kpiAggregate: { function: min, field: runway_months }
+                        kpiFormat: { type: number, options: { maximumFractionDigits: '1' } }
+                        thresholds:
+                          - { value: 0, color: red }
+                          - { value: 3, color: yellow }
+                          - { value: 6, color: green }

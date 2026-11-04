@@ -11,7 +11,7 @@
 # The monthly invoicing runs by itself on the 1st; to preview it, trigger
 # flex-invoicing with {"dryRun": true} (see config/automations/flex-invoicing.yaml).
 name: admin-finances-flex
-path: /administration/finances/flex
+path: /administration/finances/facturation/flex
 access: { require: [admin], redirectTo: /connexion }
 meta:
   favicons:
@@ -35,6 +35,18 @@ components:
             children:
               - { type: text, element: h1, content: $t:admin.flex.title, props: { className: 'text-3xl font-bold text-navy' } }
               - { type: text, element: p, content: $t:admin.flex.intro, props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+
+          # Sub-navigation of Facturation: the sidebar marks « Facturation », these pills say which page.
+          - type: container
+            element: nav
+            props:
+              aria-label: Facturation
+              className: 'flex flex-wrap gap-2 -mt-4'
+            children:
+              - { type: link, content: Factures, props: { href: /administration/finances/facturation, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+              - { type: link, content: Facturation Flex, props: { href: /administration/finances/facturation/flex, 'aria-current': page, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-white hover:text-white bg-navy' } }
+              - { type: link, content: Prélèvements, props: { href: /administration/finances/facturation/prelevements, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
 
           - type: grid
             props:
