@@ -1,0 +1,36 @@
+# Page: admin-grants-new — create a demande de subvention. The declared form
+# grant-new creates the row and opens it on its own page; grant-application-
+# init then copies last year's dossier into it and computes it.
+#
+# Declared before admin-grant in app.yaml, so « nouvelle » is this page and
+# never read as an :id.
+name: admin-grants-new
+path: /administration/subventions/nouvelle
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Nouvelle demande — Administration"
+  description: "Créer une demande de subvention."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - { type: link, content: '← Demandes de subvention', props: { href: /administration/subventions, className: 'text-sm text-text-muted hover:text-navy' } }
+          - type: card
+            props:
+              className: 'p-6 sm:p-8 max-w-2xl'
+            children:
+              - type: form
+                formRef: grant-new
+                props: { headingLevel: h1 }

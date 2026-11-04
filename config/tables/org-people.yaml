@@ -1,0 +1,47 @@
+# Table: org_people — the people a grant application names: the légal
+# representative, the bureau (président, secrétaire, trésorier), the director,
+# the CA members, each with the profession, address and contacts the Portail
+# des aides asks for. `is_legal_rep` marks the signatory, `is_contact` the
+# person the funder writes to. Edited on /administration/association.
+id: 23
+name: org_people
+aiAccess:
+  description: "Board members, legal representative and staff the grant applications name, with role, profession and contacts."
+  operations: [read, list]
+fields:
+  - { id: 1, name: full_name, label: Nom, type: single-line-text, required: true }
+  - id: 2
+    name: role
+    label: Fonction
+    type: single-select
+    required: true
+    options:
+      - { value: president, label: Président·e, color: '#1e3a8a' }
+      - { value: vice_president, label: Vice-président·e, color: '#3b82f6' }
+      - { value: secretaire, label: Secrétaire, color: '#14b8a6' }
+      - { value: tresorier, label: Trésorier·e, color: '#10b981' }
+      - { value: directeur, label: Directeur·rice, color: '#f59e0b' }
+      - { value: salarie, label: Salarié·e, color: '#fb923c' }
+      - { value: membre_ca, label: Membre du CA, color: '#94a3b8' }
+  - id: 3
+    name: college
+    label: Collège
+    type: single-select
+    options:
+      - { value: coworkers, label: Coworkeur·euses, color: '#3b82f6' }
+      - { value: evenements, label: Organisateur·rices d'événements, color: '#f59e0b' }
+      - { value: salaries, label: Salarié·es, color: '#94a3b8' }
+  - { id: 4, name: profession, label: Profession, type: single-line-text }
+  - { id: 5, name: address, label: Adresse, type: single-line-text }
+  - { id: 6, name: phone, label: Téléphone, type: phone-number }
+  - { id: 7, name: email, label: E-mail, type: email }
+  - { id: 8, name: is_legal_rep, label: Représentant légal, type: checkbox, default: false }
+  - { id: 9, name: is_contact, label: Contact des dossiers, type: checkbox, default: false }
+  - { id: 10, name: active, label: En fonction, type: checkbox, default: true }
+  - { id: 11, name: sort_order, label: Ordre, type: integer, default: 100 }
+  - { id: 12, name: notes, label: Notes, type: long-text }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

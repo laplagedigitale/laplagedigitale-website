@@ -1,0 +1,17 @@
+# Automation: grant-compute-on-quote — a quote of an investissement demande
+# was added, changed or removed: recompute its plan de financement.
+name: grant-compute-on-quote
+trigger:
+  type: record
+  table: grant_quotes
+  events: [create, update, delete]
+  watchFields: [label, supplier, amount_ht, amount_ttc, sort_order]
+timeout: 180000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: grant-budget-compute
+    $vars:
+      applicationId: '{{trigger.data.record.application}}'
+      changedAt: '{{trigger.data.record.updated_at}}'

@@ -1,0 +1,27 @@
+# Form: grant-cost-item-new — add a cost to a demande's modalités de calcul,
+# in a dialog on /administration/subventions/:id. Saving it recomputes the
+# montant sollicité (grant-compute-on-cost-item).
+id: 12
+name: grant-cost-item-new
+title: Nouveau coût
+description: "Un coût de la base de calcul : un salaire, une quote-part de frais, des frais par événement."
+display:
+  submitLabel: Ajouter le coût
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: grant_cost_items
+fields:
+  - { kind: table-field, column: application, hidden: true }
+  - { kind: table-field, column: calc_group, label: Groupe, defaultValue: personnel, required: true }
+  - { kind: table-field, column: poste, label: Poste, placeholder: "Chargé·e de mission", helpText: "Les coûts d'un même poste s'additionnent dans le tableau du dossier.", required: true }
+  - { kind: table-field, column: label, label: Détail, placeholder: "Salaire brut" }
+  - { kind: table-field, column: amount_input, label: Montant, helpText: "Ou un coût unitaire et une quantité ci-dessous (245 € × 72 événements)." }
+  - { kind: table-field, column: unit_cost, label: Coût unitaire }
+  - { kind: table-field, column: quantity, label: Quantité }
+  - { kind: table-field, column: commercial_pct, label: "Part activité commerciale (%)", defaultValue: 0, helpText: "La part du coût qui sert la location des bureaux : la subvention ne la finance pas." }
+  - { kind: table-field, column: eligible_pct, label: "Part demandée (%)", helpText: "Vide : la part de la demande." }
+  - { kind: table-field, column: cerfa_code, label: Ligne du budget CERFA, helpText: "Pour une demande « projet », dont le budget est la somme de ses coûts." }
+  - { kind: table-field, column: sort_order, label: Ordre, defaultValue: 500 }
+onSuccess:
+  type: message
+  message: "Coût ajouté : le montant sollicité se recalcule."

@@ -1,0 +1,266 @@
+# Automation: grant-export — « Générer le dossier » on a demande de
+# subvention: fills the Word dossier (templates/grant-dossier.docx) and the
+# Excel budget (templates/grant-budget.xlsx) from what was edited online, and
+# attaches them to the demande (`dossier_docx`, `budget_xlsx`), where the page
+# offers them for download. Simon opens the .docx in LibreOffice to save it
+# as ODT or PDF; the portal's budget screens are typed from the .xlsx.
+#
+#   POST /api/automations/grant-export/trigger {"applicationId": "3"}
+#
+# The `gather` step reads the demande and everything it hangs off (the
+# association's profile and people, the sections, actions, cost items, CERFA
+# rows and pièces) and shapes them for the templates: the amounts already
+# formatted in French, each text split into paragraphs and bullets (a blank
+# line starts a paragraph, a line starting with « - » is a bullet). A
+# template sees `data` and nothing else; each of its keys is passed one by
+# one (templates/grant-sample.json has the same shape). Run « Recalculer » first: the export
+# reads the figures as they were last computed.
+name: grant-export
+label: Générer le dossier de subvention
+trigger:
+  type: manual
+  label: Générer le dossier de subvention
+  requiredRole: admin
+  inputSchema:
+    applicationId: { type: string, required: true }
+timeout: 240000
+concurrency:
+  limit: 1
+actions:
+  - name: gather
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 60000
+      inputData:
+        applicationId: '{{trigger.input.applicationId}}'
+      code: |
+        async function execute(context) {
+          const id = String(context.inputData?.applicationId ?? '')
+          const has = (v: unknown) => !(v === null || v === undefined || v === '' || (Array.isArray(v) && v.length === 0))
+          const num = (v: unknown) => (has(v) ? Number(v) || 0 : 0)
+          const list = async (table: string, filter?: any): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, ...(filter ? { filter } : {}), limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          const eq = (field: string, value: unknown) => ({ conditions: [{ field, operator: 'equals', value }] })
+          const euro = (n: number) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(Math.round(n * 100) / 100)
+          const pct = (n: number) => `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(n)} %`
+          const dec = (n: unknown) => has(n) ? new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(Number(n)) : '0'
+          const byOrder = (a: any, b: any) => num(a.sort_order) - num(b.sort_order)
+          // A text as the templates read it: paragraphs, and bullets for lines starting with « - » or « • ».
+          const paragraphs = (text: unknown) => {
+            const out: any[] = []
+            for (const block of String(text ?? '').replace(/\r/g, '').split(/\n\s*\n/)) {
+              const lines = block.split('\n').map((l) => l.trim()).filter(Boolean)
+              let buf: string[] = []
+              const flush = () => { if (buf.length) { out.push({ text: buf.join(' '), plain: true, bullet: false }); buf = [] } }
+              for (const l of lines) {
+                const m = l.match(/^[-•–*]\s+(.*)$/)
+                if (m) { flush(); out.push({ text: m[1], plain: false, bullet: true }) } else buf.push(l)
+              }
+              flush()
+            }
+            return out
+          }
+
+          const app = (await list('grant_applications', eq('id', id)))[0]
+          if (!app) throw new Error(`Demande ${id} introuvable`)
+          const org = (await list('organization_profile'))[0] ?? {}
+          const people = (await list('org_people')).filter((p: any) => p.active !== false).sort(byOrder)
+          const funder = has(app.funder) ? (await list('grant_funders', eq('id', String(app.funder))))[0] : null
+          const scenario = has(app.scenario) ? (await list('scenarios', eq('id', String(app.scenario))))[0] : null
+          const sections = (await list('grant_sections', eq('application', id))).filter((s: any) => s.in_export !== false).sort(byOrder)
+          const actions = (await list('grant_actions', eq('application', id))).sort(byOrder)
+          const items = (await list('grant_cost_items', eq('application', id))).sort(byOrder)
+          const budget = (await list('grant_budget_rows', eq('application', id))).sort(byOrder)
+          const docs = await list('org_documents')
+          const attached = new Set<string>((Array.isArray(app.attachments) ? app.attachments : has(app.attachments) ? [app.attachments] : []).map(String))
+
+          const ROLES: Record<string, string> = { president: 'Président', vice_president: 'Vice-président', secretaire: 'Secrétaire', tresorier: 'Trésorier', directeur: 'Directeur', salarie: 'Salarié', membre_ca: 'Membre du CA' }
+          const TYPES: Record<string, string> = { fonctionnement: 'Fonctionnement', projet: 'Projet', investissement: 'Investissement' }
+          const GROUPS: Record<string, string> = { personnel: 'Ressources humaines et fonctionnement', frais_generaux: "Frais généraux liés à l'activité", logistique: 'Frais de logistique', investissement: 'Investissement', autre: 'Autres coûts' }
+          const rep = people.find((p: any) => p.is_legal_rep === true) ?? people.find((p: any) => p.role === 'president')
+          const share = has(app.eligible_share_pct) ? num(app.eligible_share_pct) : 75
+          const requested = has(app.amount_requested_override) ? num(app.amount_requested_override) : num(app.amount_requested)
+
+          // Sections by part; a section titled as its part prints no subtitle.
+          const sec = (part: string) => sections.filter((s: any) => String(s.part) === part).map((s: any) => ({
+            title: s.title, paragraphs: paragraphs(s.body),
+            show_title: !(/^(objet de la demande|modalités de calcul)/i.test(String(s.title ?? '').trim())),
+          }))
+
+          // Modalités de calcul: one row per poste, its details under it; then one row per group.
+          const amountOf = (it: any) => has(it.amount) ? num(it.amount) : has(it.unit_cost) && has(it.quantity) ? num(it.unit_cost) * num(it.quantity) : num(it.amount_input)
+          const eventOf = (it: any) => has(it.event_amount) ? num(it.event_amount) : amountOf(it) * (100 - num(it.commercial_pct)) / 100
+          const costRows: any[] = []
+          const postes: string[] = []
+          for (const it of items) if (!postes.includes(String(it.poste))) postes.push(String(it.poste))
+          let tCost = 0, tEvent = 0
+          for (const p of postes) {
+            const its = items.filter((it: any) => String(it.poste) === p)
+            const cost = its.reduce((s: number, it: any) => s + amountOf(it), 0)
+            const ev = its.reduce((s: number, it: any) => s + eventOf(it), 0)
+            tCost += cost; tEvent += ev
+            const pcts = [...new Set(its.map((it: any) => num(it.commercial_pct)))]
+            costRows.push({ label: p, cost: euro(cost), commercial: euro(cost - ev), event: euro(ev), split: pcts.length === 1 ? `${pct(pcts[0])} / ${pct(100 - pcts[0])}` : 'variable' })
+            if (its.length > 1 || has(its[0]?.label)) for (const it of its) {
+              const detail = has(it.unit_cost) && has(it.quantity) ? `${it.label || p} (${euro(num(it.unit_cost))} × ${dec(it.quantity)})` : String(it.label || p)
+              costRows.push({ label: `    · ${detail}`, cost: euro(amountOf(it)), commercial: '', event: '', split: '' })
+            }
+          }
+          const requestRows: any[] = []
+          let rCost = 0, rReq = 0
+          for (const g of Object.keys(GROUPS)) {
+            const its = items.filter((it: any) => String(it.calc_group) === g)
+            if (its.length === 0) continue
+            const ev = its.reduce((s: number, it: any) => s + eventOf(it), 0)
+            const req = its.reduce((s: number, it: any) => s + num(it.requested_amount), 0)
+            rCost += ev; rReq += req
+            requestRows.push({ label: GROUPS[g], cost: euro(ev), requested: euro(req) })
+          }
+
+          // The CERFA budget: the rows with a figure or a précision, and their chapters.
+          const visible = (r: any) => r.level === 'total' || Math.abs(num(r.amount)) > 0.004 || has(r.precisions)
+          const docRow = (r: any) => ({
+            code: r.level === 'total' ? '' : String(r.cerfa_code ?? ''), label: r.level === 'section' || r.level === 'total' ? String(r.label).toUpperCase() : String(r.label),
+            amount: euro(num(r.amount)), precisions: String(r.precisions ?? ''),
+          })
+          const side = (s: string) => budget.filter((r: any) => r.side === s && visible(r))
+          const xRow = (r: any) => ({
+            code: String(r.cerfa_code ?? ''), label: String(r.label), precisions: String(r.precisions ?? ''),
+            line_amount: r.level === 'row' ? Math.round(num(r.amount) * 100) / 100 : null, chapter_amount: r.level === 'section' ? Math.round(num(r.amount) * 100) / 100 : null,
+          })
+          const gap = num(app.budget_gap)
+          const today = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())
+          const preambule = sec('preambule'), objet = sec('objet'), principes = sec('principes'), calcul = sec('calcul')
+          const autres = sections.filter((s: any) => String(s.part) === 'projet').map((s: any) => ({ title: s.title, paragraphs: paragraphs(s.body) }))
+          const safe = (t: string) => t.replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim()
+
+          const data = {
+            signed_on: today,
+            org: {
+              legal_name: org.legal_name ?? 'La Plage Digitale', city: org.address_city ?? 'Strasbourg',
+              footer: org.legal_footer ?? `${org.legal_name ?? ''}, ${org.address_street ?? ''} ${org.address_postal_code ?? ''} ${org.address_city ?? ''} — SIRET ${org.siret ?? ''}`,
+            },
+            app: {
+              title: app.title, exercise_year: String(app.exercise_year ?? ''), type_label: TYPES[String(app.aid_type)] ?? '',
+              addressed_to: [funder?.name, app.thematique || (String(app.dispositif ?? '').includes(String(funder?.name ?? '§')) ? '' : app.dispositif)].filter(has).join(' — ') || 'à préciser',
+              amount_requested_label: euro(requested), share_label: pct(share), scenario_name: scenario?.name ?? 'non choisi',
+            },
+            has_preambule: preambule.length > 0, preambule, objet, has_principes: principes.length > 0, principes, calcul, autres,
+            has_actions: actions.length > 0,
+            actions: actions.map((a: any) => ({ title: a.title })),
+            actions_described: actions.filter((a: any) => a.in_scope !== false && (has(a.description) || has(a.frequency_label))).map((a: any) => ({
+              title: a.title, paragraphs: paragraphs(a.description), partners: a.partners ?? '', frequency_label: a.frequency_label ?? '',
+            })),
+            has_costs: items.length > 0,
+            cost_rows: costRows, costs_total: { cost: euro(tCost), commercial: euro(tCost - tEvent), event: euro(tEvent) },
+            request_rows: requestRows, request_total: { cost: euro(rCost), requested: euro(rReq) },
+            budget_charges: side('charges').map(docRow), budget_produits: side('produits').map(docRow),
+            budget: { charges: euro(num(app.budget_total_charges)), produits: euro(num(app.budget_total_produits)), gap: euro(Math.abs(gap)), unbalanced: Math.abs(gap) > 0.5 },
+            xlsx_charges: side('charges').filter((r: any) => r.level !== 'total').map(xRow), xlsx_produits: side('produits').filter((r: any) => r.level !== 'total').map(xRow),
+            xlsx_costs: items.map((it: any) => ({
+              group: GROUPS[String(it.calc_group)] ?? '', poste: it.poste, label: it.label ?? '', amount: Math.round(amountOf(it) * 100) / 100,
+              commercial_pct: num(it.commercial_pct), event_amount: Math.round(eventOf(it) * 100) / 100, eligible_pct: has(it.eligible_pct) ? num(it.eligible_pct) : share,
+              requested_amount: num(it.requested_amount),
+            })),
+            hr: {
+              staff_count: dec(app.staff_count), staff_fte: dec(app.staff_fte), volunteers_count: dec(app.volunteers_count), volunteers_fte: dec(app.volunteers_fte),
+              recruitment_planned: app.recruitment_planned === true, recruitment_fte: dec(app.recruitment_fte),
+            },
+            has_attachments: attached.size > 0,
+            attachments: docs.filter((d: any) => attached.has(String(d.id))).map((d: any) => ({ title: d.title })),
+            signatory: { name: rep?.full_name ?? '', role: rep ? (ROLES[String(rep.role)] ?? '') : '' },
+          }
+          const base = safe(`${app.exercise_year ?? ''} - ${app.title}`)
+          context.log.info(`${app.title} : ${sections.length} sections, ${actions.length} actions, ${items.length} coûts, ${budget.length} lignes de budget`)
+          return { data, docxName: `${base} - Dossier.docx`, xlsxName: `${base} - Budget.xlsx`, applicationId: id }
+        }
+
+  - name: dossier
+    type: document
+    operator: generateDocx
+    props:
+      template: { asset: templates/grant-dossier.docx }
+      data:
+        signed_on: '{{steps.gather.data.signed_on}}'
+        org: '{{steps.gather.data.org}}'
+        app: '{{steps.gather.data.app}}'
+        has_preambule: '{{steps.gather.data.has_preambule}}'
+        preambule: '{{steps.gather.data.preambule}}'
+        objet: '{{steps.gather.data.objet}}'
+        has_principes: '{{steps.gather.data.has_principes}}'
+        principes: '{{steps.gather.data.principes}}'
+        calcul: '{{steps.gather.data.calcul}}'
+        autres: '{{steps.gather.data.autres}}'
+        has_actions: '{{steps.gather.data.has_actions}}'
+        actions: '{{steps.gather.data.actions}}'
+        actions_described: '{{steps.gather.data.actions_described}}'
+        has_costs: '{{steps.gather.data.has_costs}}'
+        cost_rows: '{{steps.gather.data.cost_rows}}'
+        costs_total: '{{steps.gather.data.costs_total}}'
+        request_rows: '{{steps.gather.data.request_rows}}'
+        request_total: '{{steps.gather.data.request_total}}'
+        budget_charges: '{{steps.gather.data.budget_charges}}'
+        budget_produits: '{{steps.gather.data.budget_produits}}'
+        budget: '{{steps.gather.data.budget}}'
+        xlsx_charges: '{{steps.gather.data.xlsx_charges}}'
+        xlsx_produits: '{{steps.gather.data.xlsx_produits}}'
+        xlsx_costs: '{{steps.gather.data.xlsx_costs}}'
+        hr: '{{steps.gather.data.hr}}'
+        has_attachments: '{{steps.gather.data.has_attachments}}'
+        attachments: '{{steps.gather.data.attachments}}'
+        signatory: '{{steps.gather.data.signatory}}'
+      locale: fr
+      output:
+        filename: '{{steps.gather.docxName}}'
+        attachTo: { table: grant_applications, record: '{{trigger.input.applicationId}}', field: dossier_docx }
+
+  - name: workbook
+    type: document
+    operator: generateXlsx
+    props:
+      template: { asset: templates/grant-budget.xlsx }
+      data:
+        signed_on: '{{steps.gather.data.signed_on}}'
+        org: '{{steps.gather.data.org}}'
+        app: '{{steps.gather.data.app}}'
+        has_preambule: '{{steps.gather.data.has_preambule}}'
+        preambule: '{{steps.gather.data.preambule}}'
+        objet: '{{steps.gather.data.objet}}'
+        has_principes: '{{steps.gather.data.has_principes}}'
+        principes: '{{steps.gather.data.principes}}'
+        calcul: '{{steps.gather.data.calcul}}'
+        autres: '{{steps.gather.data.autres}}'
+        has_actions: '{{steps.gather.data.has_actions}}'
+        actions: '{{steps.gather.data.actions}}'
+        actions_described: '{{steps.gather.data.actions_described}}'
+        has_costs: '{{steps.gather.data.has_costs}}'
+        cost_rows: '{{steps.gather.data.cost_rows}}'
+        costs_total: '{{steps.gather.data.costs_total}}'
+        request_rows: '{{steps.gather.data.request_rows}}'
+        request_total: '{{steps.gather.data.request_total}}'
+        budget_charges: '{{steps.gather.data.budget_charges}}'
+        budget_produits: '{{steps.gather.data.budget_produits}}'
+        budget: '{{steps.gather.data.budget}}'
+        xlsx_charges: '{{steps.gather.data.xlsx_charges}}'
+        xlsx_produits: '{{steps.gather.data.xlsx_produits}}'
+        xlsx_costs: '{{steps.gather.data.xlsx_costs}}'
+        hr: '{{steps.gather.data.hr}}'
+        has_attachments: '{{steps.gather.data.has_attachments}}'
+        attachments: '{{steps.gather.data.attachments}}'
+        signatory: '{{steps.gather.data.signatory}}'
+      locale: fr
+      output:
+        filename: '{{steps.gather.xlsxName}}'
+        attachTo: { table: grant_applications, record: '{{trigger.input.applicationId}}', field: budget_xlsx }
+
+  - name: stamp
+    type: record
+    operator: update
+    props:
+      table: grant_applications
+      id: '{{trigger.input.applicationId}}'
+      data:
+        exported_at: '{{now}}'

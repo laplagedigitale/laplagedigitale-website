@@ -1,0 +1,99 @@
+# Table: grant_cost_items — the « Modalités de calcul » of a demande: what
+# the requested amount is computed from. One row per cost (a salary, its
+# social charges, a share of the overheads, the per-event logistics), grouped
+# under a `poste` (« Chargé·e de mission », « Directeur ») and a `calc_group`,
+# the line of the dossier's second table (Ressources humaines, Frais généraux
+# liés à l'événementiel, Frais de logistique…).
+#
+# The association has a commercial activity (the desks) the grant may not
+# fund, so each cost carries the share that serves it (`commercial_pct`);
+# the rest serves the subsidised activity (`event_amount`), and the funder is
+# asked for `eligible_pct` of it (blank: the demande's own share, 75 % by
+# default). `amount` is `unit_cost × quantity` (245 € × 72 événements) or the
+# amount typed. The three amounts are formulas, so the grid recomputes as it
+# is typed in; grant-budget-compute adds them up into the demande. The
+# divisions are written `100.0`: on SQLite an integer amount over an integer
+# percentage divides as integers (3 855,6 € would read 3 855 €).
+#
+# `cerfa_code` places the cost in the CERFA budget of a « projet » demande
+# (whose budget is its cost items, not the whole structure's).
+id: 28
+name: grant_cost_items
+aiAccess:
+  description: "Cost basis of a grant application (modalités de calcul): each cost, its commercial share, the subsidised share and the amount asked of the funder."
+  operations: [read, list]
+fields:
+  - { id: 1, name: item_key, label: Clé, type: single-line-text, indexed: true }
+  - { id: 2, name: application, label: Demande, type: relationship, relatedTable: grant_applications, relationType: many-to-one, displayField: title, onDelete: cascade, required: true }
+  - id: 3
+    name: calc_group
+    label: Groupe
+    type: single-select
+    required: true
+    default: personnel
+    options:
+      - { value: personnel, label: Personnel et fonctionnement, color: '#3b82f6' }
+      - { value: frais_generaux, label: Frais généraux liés à l'activité, color: '#14b8a6' }
+      - { value: logistique, label: Frais de logistique, color: '#f59e0b' }
+      - { value: investissement, label: Investissement, color: '#8b5cf6' }
+      - { value: autre, label: Autres coûts, color: '#94a3b8' }
+  - { id: 4, name: poste, label: Poste, type: single-line-text, required: true }
+  - { id: 5, name: label, label: Détail, type: single-line-text }
+  - { id: 6, name: unit_cost, label: Coût unitaire, type: currency, currency: EUR, precision: 2 }
+  - { id: 7, name: quantity, label: Quantité, type: decimal, precision: 2 }
+  - { id: 8, name: amount_input, label: Montant saisi, type: currency, currency: EUR, precision: 2 }
+  - { id: 9, name: amount, label: Coût, type: formula, formula: 'COALESCE(unit_cost * quantity, amount_input, 0) * 1.0', resultType: number, format: currency, currency: EUR }
+  - { id: 10, name: commercial_pct, label: "Part activité commerciale (%)", type: decimal, precision: 2, default: 0 }
+  - { id: 11, name: event_amount, label: Part subventionnable, type: formula, formula: 'COALESCE(unit_cost * quantity, amount_input, 0) * (100.0 - COALESCE(commercial_pct, 0)) / 100.0', resultType: number, format: currency, currency: EUR }
+  - { id: 12, name: eligible_pct, label: "Part demandée (%)", type: decimal, precision: 2, description: "Vide : la part de la demande (75 % par défaut)." }
+  - { id: 13, name: requested_amount, label: Montant demandé, type: currency, currency: EUR, precision: 2, description: "Calculé : part subventionnable × part demandée." }
+  - id: 14
+    name: cerfa_code
+    label: Ligne du budget CERFA
+    type: single-select
+    options:
+      - { value: '604', label: "604 — Prestations de services" }
+      - { value: '606', label: "606 — Achats matières et fournitures" }
+      - { value: '613', label: "613 — Locations" }
+      - { value: '615', label: "615 — Entretien et réparation" }
+      - { value: '616', label: "616 — Assurance" }
+      - { value: '618', label: "618 — Documentation" }
+      - { value: '622', label: "622 — Rémunérations intermédiaires et honoraires" }
+      - { value: '623', label: "623 — Publicité, publication" }
+      - { value: '625', label: "625 — Déplacements, missions" }
+      - { value: '627', label: "627 — Services bancaires, autres" }
+      - { value: '631', label: "631 — Impôts et taxes sur rémunération" }
+      - { value: '635', label: "635 — Autres impôts et taxes" }
+      - { value: '641', label: "641 — Rémunération des personnels" }
+      - { value: '645', label: "645 — Charges sociales" }
+      - { value: '647', label: "647 — Autres charges de personnel" }
+      - { value: '65', label: "65 — Autres charges de gestion courante" }
+      - { value: '66', label: "66 — Charges financières" }
+      - { value: '67', label: "67 — Charges exceptionnelles" }
+      - { value: '68', label: "68 — Dotation aux amortissements et provisions" }
+      - { value: '69', label: "69 — Impôt sur les bénéfices" }
+      - { value: '861', label: "861 — Mise à disposition gratuite de biens et services" }
+      - { value: '862', label: "862 — Prestations en nature" }
+      - { value: '864', label: "864 — Personnel bénévole" }
+      - { value: '70', label: "70 — Ventes, prestations de services" }
+      - { value: '73', label: "73 — Dotations et produits de tarification" }
+      - { value: '74', label: "74 — Subventions d'exploitation" }
+      - { value: '756', label: "756 — Cotisations" }
+      - { value: '758', label: "758 — Dons manuels, mécénat, autres produits" }
+      - { value: '76', label: "76 — Produits financiers" }
+      - { value: '77', label: "77 — Produits exceptionnels" }
+      - { value: '78', label: "78 — Reprises sur amortissements et provisions" }
+      - { value: '79', label: "79 — Transferts de charges" }
+      - { value: '870', label: "870 — Bénévolat" }
+      - { value: '871', label: "871 — Prestations en nature" }
+      - { value: '875', label: "875 — Dons en nature" }
+  - { id: 15, name: notes, label: Précisions, type: long-text }
+  - { id: 16, name: sort_order, label: Ordre, type: integer, default: 100 }
+  - { id: 17, name: updated_at, label: Modifié le, type: updated-at }
+indexes:
+  - { name: idx_grant_cost_items_app_order, fields: [application, sort_order] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

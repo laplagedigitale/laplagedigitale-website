@@ -80,6 +80,10 @@ fields:
   - { id: 24, name: variance, label: Écart, type: currency, currency: EUR, precision: 2 }
   - { id: 25, name: amount_ht, label: Montant HT, type: currency, currency: EUR, precision: 2 }
   - { id: 26, name: computed_at, label: Calculé le, type: datetime }
+  # Text copy of budget_lines.cerfa_row, the row of a demande's CERFA budget
+  # (grant-budget-compute sums amount_ht by it); empty outside the result.
+  - { id: 27, name: cerfa_row, label: Ligne CERFA, type: single-line-text, indexed: true }
+  - { id: 28, name: cash_effect, label: Mouvement de trésorerie, type: checkbox, default: true }
 indexes:
   - { name: idx_forecast_months_scenario_month, fields: [scenario_key, year, month] }
   - { name: idx_forecast_months_line_month, fields: [line_code, month] }

@@ -9,3 +9,12 @@
     upload: [admin, editor]
     download: all
     delete: [admin, editor]
+# Subventions: the pièces of the dossiers (statuts, comptes, RIB, devis) and
+# the Word and Excel files grant-export generates. Private: admins only.
+- name: grant-files
+  public: false
+  maxFileSize: 20971520
+  permissions:
+    upload: [admin]
+    download: [admin]
+    delete: [admin]

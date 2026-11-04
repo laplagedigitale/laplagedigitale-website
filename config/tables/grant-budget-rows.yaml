@@ -1,0 +1,57 @@
+# Table: grant_budget_rows — the budget prévisionnel of a demande in the
+# CERFA layout the Portail des aides asks for: charges (60 to 69, then 86
+# contributions volontaires) and produits (70 to 79, then 87), section rows
+# carrying their total, one row per funder under 74.
+#
+# grant-budget-compute writes `amount_computed` (the scenario's year rolled
+# up by CERFA row for a « fonctionnement » demande, the cost items for a
+# « projet », the quotes for an « investissement ») and keeps what the admin
+# typed: `amount_override` replaces the figure, `precisions` is the text the
+# portal prints under the row. `amount` (a formula) is what counts: the
+# override when there is one, else the computed figure. Section rows sum the
+# `amount` of their rows. `row_key` is `<application id>:<code>`.
+id: 29
+name: grant_budget_rows
+aiAccess:
+  description: "CERFA budget of a grant application: one row per account class (60–69, 86, 70–79, 87) and per funder, with the computed amount, the admin's override and the précisions."
+  operations: [read, list]
+fields:
+  - { id: 1, name: row_key, label: Clé, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: application, label: Demande, type: relationship, relatedTable: grant_applications, relationType: many-to-one, displayField: title, onDelete: cascade, required: true }
+  - id: 3
+    name: side
+    label: Côté
+    type: single-select
+    required: true
+    options:
+      - { value: charges, label: Charges, color: '#ef4444' }
+      - { value: produits, label: Produits, color: '#10b981' }
+  - { id: 4, name: cerfa_code, label: Compte, type: single-line-text, required: true }
+  - { id: 5, name: label, label: Poste, type: single-line-text, required: true }
+  - id: 6
+    name: level
+    label: Niveau
+    type: single-select
+    required: true
+    default: row
+    options:
+      - { value: section, label: Chapitre, color: '#1e3a8a' }
+      - { value: row, label: Ligne, color: '#94a3b8' }
+      - { value: total, label: Total, color: '#f59e0b' }
+  - { id: 7, name: section_code, label: Chapitre, type: single-line-text }
+  - { id: 8, name: sort_order, label: Ordre, type: integer }
+  - { id: 9, name: amount_computed, label: Calculé, type: currency, currency: EUR, precision: 2 }
+  - { id: 10, name: amount_override, label: Montant saisi, type: currency, currency: EUR, precision: 2 }
+  - { id: 11, name: amount, label: Montant, type: formula, formula: 'COALESCE(amount_override, amount_computed, 0)', resultType: number, format: currency, currency: EUR }
+  - { id: 12, name: is_overridden, label: Saisi, type: formula, formula: 'amount_override IS NOT NULL', resultType: boolean }
+  - { id: 13, name: precisions, label: Précisions, type: long-text }
+  - { id: 14, name: source_note, label: Origine du calcul, type: single-line-text }
+  - { id: 15, name: funder, label: Financeur, type: relationship, relatedTable: grant_funders, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 16, name: computed_at, label: Calculé le, type: datetime }
+indexes:
+  - { name: idx_grant_budget_rows_app_side_order, fields: [application, side, sort_order] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

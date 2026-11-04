@@ -58,6 +58,10 @@ fields:
   - { id: 26, name: created_at, type: created-at }
   - { id: 27, name: actual_through, label: Réalisé jusqu'au, type: date }
   - { id: 28, name: period_label, label: Période, type: single-line-text }
+  # A plan for a year still to come opens on the year-end cash of another
+  # scenario (the plan of the year before); empty, the baseline's when it
+  # plans the year before, else today's bank balance.
+  - { id: 29, name: opening_from, label: Trésorerie d'ouverture reprise de, type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: set-null }
 permissions:
   read: [admin]
   create: [admin]

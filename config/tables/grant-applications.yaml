@@ -1,0 +1,124 @@
+# Table: grant_applications — one row per demande de subvention: the tracker
+# (status, deadline, amounts) the Notion « Suivi des subventions » was, and
+# the content of the dossier (the Portail des aides fields, the moyens
+# humains) the other grant tables hang off.
+#
+# A demande is built from a scenario of the prévisionnel (`scenario`): its
+# CERFA budget is the scenario's year rolled up by CERFA row
+# (grant-budget-compute). `copy_from` names last year's demande, whose
+# sections, actions, cost items and précisions grant-application-init copies
+# into the new row. `aid_type` decides which budget the engine builds:
+# `fonctionnement` the whole structure's, `projet` the project's (its cost
+# items), `investissement` the quotes' (plan de financement).
+#
+# Everything from `amount_requested` to `computed_at` is written by
+# grant-budget-compute, so the KPIs read one row. `application_key` is the
+# seed's handle on its rows (`ems-fonctionnement-2026`); a demande created
+# on the page has none. `dossier_docx` / `budget_xlsx` are written by grant-export.
+# `funder_level` and `scenario_key` are text copies (a filter cannot
+# traverse a relationship).
+id: 25
+name: grant_applications
+aiAccess:
+  description: "Grant applications (demandes de subvention): funder, exercise, type, status, deadline, amounts requested and granted, the human resources and the computed budget totals."
+  operations: [read, list]
+fields:
+  - { id: 1, name: application_key, label: Clé, type: single-line-text, indexed: true }
+  - { id: 2, name: title, label: Demande, type: single-line-text, required: true }
+  - { id: 3, name: funder, label: Financeur, type: relationship, relatedTable: grant_funders, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 4, name: funder_level, label: Niveau du financeur, type: single-line-text }
+  - { id: 5, name: dispositif, label: Dispositif / appel à projets, type: single-line-text }
+  - { id: 6, name: thematique, label: Thématique, type: single-line-text }
+  - { id: 7, name: sous_thematique, label: Sous-thématique, type: single-line-text }
+  - { id: 8, name: exercise_year, label: Exercice, type: integer, required: true, indexed: true }
+  - id: 9
+    name: aid_type
+    label: Type d'aide
+    type: single-select
+    required: true
+    default: fonctionnement
+    options:
+      - { value: fonctionnement, label: Fonctionnement, color: '#3b82f6' }
+      - { value: projet, label: Projet spécifique, color: '#f59e0b' }
+      - { value: investissement, label: Investissement, color: '#8b5cf6' }
+  - id: 10
+    name: request_kind
+    label: Demande
+    type: single-select
+    default: renouvellement
+    options:
+      - { value: premiere, label: Première demande, color: '#14b8a6' }
+      - { value: renouvellement, label: Renouvellement, color: '#3b82f6' }
+  - id: 11
+    name: status
+    label: Statut
+    type: single-select
+    required: true
+    default: a_candidater
+    options:
+      - { value: a_candidater, label: À candidater, color: '#94a3b8' }
+      - { value: en_redaction, label: En rédaction, color: '#3b82f6' }
+      - { value: relecture, label: En relecture, color: '#8b5cf6' }
+      - { value: envoyee, label: Envoyée, color: '#f59e0b' }
+      - { value: validee, label: Accordée, color: '#10b981' }
+      - { value: refusee, label: Refusée, color: '#ef4444' }
+      - { value: abandonnee, label: Abandonnée, color: '#64748b' }
+  - { id: 12, name: deadline, label: Date limite, type: date, indexed: true }
+  - { id: 13, name: submitted_at, label: Envoyée le, type: date }
+  - { id: 14, name: portal_reference, label: Référence du dépôt, type: single-line-text }
+  - { id: 15, name: scenario, label: Scénario du prévisionnel, type: relationship, relatedTable: scenarios, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 16, name: scenario_key, label: Clé du scénario, type: single-line-text }
+  - { id: 17, name: copy_from, label: Reprise de, type: relationship, relatedTable: grant_applications, relationType: many-to-one, displayField: title, onDelete: set-null }
+  - { id: 18, name: eligible_share_pct, label: "Part demandée au financeur (%)", type: decimal, precision: 2, default: 75 }
+  - { id: 19, name: amount_n1, label: Montant alloué N-1, type: currency, currency: EUR, precision: 2 }
+  - { id: 20, name: amount_granted, label: Montant accordé, type: currency, currency: EUR, precision: 2 }
+  - { id: 21, name: description, label: Description de la demande, type: long-text }
+  - { id: 22, name: objectives, label: Objectifs, type: long-text }
+  - id: 23
+    name: publics
+    label: Publics bénéficiaires
+    type: multi-select
+    options:
+      - { value: tous_publics, label: Tous publics }
+      - { value: petite_enfance, label: Jeunes enfants (moins de 6 ans) }
+      - { value: enfants, label: Enfants (6-12 ans) }
+      - { value: adolescents, label: Adolescents (12-18 ans) }
+      - { value: jeunes_adultes, label: Jeunes adultes (18-25 ans) }
+      - { value: adultes, label: Adultes (25-60 ans) }
+      - { value: aines, label: Aînés (plus de 60 ans) }
+  - { id: 24, name: contact_person, label: Contact du dossier, type: relationship, relatedTable: org_people, relationType: many-to-one, displayField: full_name, onDelete: set-null }
+  - { id: 25, name: welcomes_minors, label: Accueil de mineurs, type: checkbox, default: false }
+  - { id: 26, name: territory, label: Territoire d'intervention, type: single-line-text, default: "Eurométropole de Strasbourg — Strasbourg" }
+  - { id: 27, name: staff_count, label: Salariés (personnes), type: decimal, precision: 1 }
+  - { id: 28, name: staff_fte, label: Salariés (ETPT), type: decimal, precision: 2 }
+  - { id: 29, name: volunteers_count, label: Bénévoles (personnes), type: integer }
+  - { id: 30, name: volunteers_fte, label: Bénévoles (ETPT), type: decimal, precision: 2 }
+  - { id: 31, name: volunteer_hours, label: Heures de bénévolat sur l'année, type: integer }
+  - { id: 32, name: volunteer_hourly_value, label: Valorisation horaire du bénévolat, type: currency, currency: EUR, precision: 2, default: 13 }
+  - { id: 33, name: recruitment_planned, label: Recrutement envisagé, type: checkbox, default: false }
+  - { id: 34, name: recruitment_fte, label: Recrutement (ETPT), type: decimal, precision: 2 }
+  - { id: 35, name: attachments, label: Pièces jointes, type: relationship, relatedTable: org_documents, relationType: many-to-many, displayField: title }
+  - { id: 36, name: amount_requested, label: Montant sollicité, type: currency, currency: EUR, precision: 2, description: "Ce qui est demandé : le montant saisi s'il y en a un, sinon le calcul des modalités." }
+  - { id: 37, name: amount_requested_override, label: Montant sollicité (saisi), type: currency, currency: EUR, precision: 2, description: "Laissez vide pour reprendre le calcul des modalités ; un montant saisi le remplace partout." }
+  - { id: 38, name: eligible_base, label: Base éligible, type: currency, currency: EUR, precision: 2 }
+  - { id: 39, name: budget_total_charges, label: Total des charges, type: currency, currency: EUR, precision: 2 }
+  - { id: 40, name: budget_total_produits, label: Total des produits, type: currency, currency: EUR, precision: 2 }
+  - { id: 41, name: budget_gap, label: Écart à équilibrer, type: currency, currency: EUR, precision: 2 }
+  - { id: 42, name: computed_at, label: Calculé le, type: datetime }
+  - { id: 43, name: dossier_docx, label: Dossier Word, type: single-attachment, bucket: grant-files, allowedFileTypes: [application/vnd.openxmlformats-officedocument.wordprocessingml.document] }
+  - { id: 44, name: budget_xlsx, label: Budget Excel, type: single-attachment, bucket: grant-files, allowedFileTypes: [application/vnd.openxmlformats-officedocument.spreadsheetml.sheet] }
+  - { id: 45, name: exported_at, label: Exporté le, type: datetime }
+  - { id: 46, name: notion_url, label: Fiche Notion, type: url }
+  - { id: 47, name: notes, label: Notes internes, type: long-text }
+  - { id: 48, name: created_at, type: created-at }
+  - { id: 49, name: updated_at, type: updated-at }
+  # The Calendrier de gestion reminder grant-application-init creates for the deadline.
+  - { id: 50, name: deadline_reminder, label: Rappel du calendrier, type: relationship, relatedTable: management_deadlines, relationType: many-to-one, displayField: title, onDelete: set-null }
+  - { id: 51, name: amount_calculated, label: Montant calculé, type: currency, currency: EUR, precision: 2, description: "La somme des modalités de calcul (part subventionnable × part demandée)." }
+indexes:
+  - { name: idx_grant_applications_year_status, fields: [exercise_year, status] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

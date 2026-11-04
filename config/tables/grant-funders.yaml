@@ -1,0 +1,35 @@
+# Table: grant_funders — who a demande is addressed to. `level` decides the
+# sub-row of the CERFA « 74 — Subventions d'exploitation » the requested
+# amount lands on (État, Région, Département, Intercommunalité, Commune,
+# Europe, private).
+id: 24
+name: grant_funders
+aiAccess:
+  description: "Grant funders (Eurométropole, Ville de Strasbourg, Région Grand Est…), their level and portal."
+  operations: [read, list]
+fields:
+  - { id: 1, name: name, label: Financeur, type: single-line-text, required: true, unique: true }
+  - { id: 2, name: short_name, label: Abréviation, type: single-line-text }
+  - id: 3
+    name: level
+    label: Niveau
+    type: single-select
+    required: true
+    options:
+      - { value: etat, label: État, color: '#1e3a8a' }
+      - { value: region, label: Région, color: '#3b82f6' }
+      - { value: departement, label: Département, color: '#14b8a6' }
+      - { value: epci, label: Intercommunalité (EPCI), color: '#10b981' }
+      - { value: commune, label: Commune, color: '#f59e0b' }
+      - { value: europe, label: Fonds européens, color: '#8b5cf6' }
+      - { value: organismes_sociaux, label: Organismes sociaux, color: '#fb923c' }
+      - { value: prive, label: Aides privées (fondations), color: '#94a3b8' }
+      - { value: autre_public, label: Autres établissements publics, color: '#64748b' }
+  - { id: 4, name: portal_url, label: Portail de dépôt, type: url }
+  - { id: 5, name: service_email, label: E-mail du service, type: email }
+  - { id: 6, name: notes, label: Notes, type: long-text }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

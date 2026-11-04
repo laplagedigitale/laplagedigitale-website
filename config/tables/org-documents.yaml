@@ -1,0 +1,39 @@
+# Table: org_documents — the pièces every funder asks for, uploaded once and
+# linked from each demande (`grant_applications.attachments`): statuts,
+# récépissé d'inscription, composition du CA, avis SIRENE, comptes annuels
+# and rapport du commissaire aux comptes, rapport d'activité, RIB. `year` and
+# `valid_until` tell an out-of-date piece from the current one.
+id: 31
+name: org_documents
+aiAccess:
+  description: "Library of the association's supporting documents for grant applications (statuts, comptes annuels, RIB…), with year and validity."
+  operations: [read, list]
+fields:
+  - { id: 1, name: title, label: Pièce, type: single-line-text, required: true }
+  - id: 2
+    name: kind
+    label: Type
+    type: single-select
+    required: true
+    options:
+      - { value: statuts, label: Statuts, color: '#1e3a8a' }
+      - { value: recepisse, label: Récépissé d'inscription, color: '#3b82f6' }
+      - { value: composition_ca, label: Composition du CA, color: '#14b8a6' }
+      - { value: sirene, label: Avis de situation SIRENE, color: '#10b981' }
+      - { value: comptes_annuels, label: Comptes annuels, color: '#f59e0b' }
+      - { value: rapport_cac, label: Rapport du commissaire aux comptes, color: '#fb923c' }
+      - { value: rapport_activite, label: Rapport d'activité, color: '#8b5cf6' }
+      - { value: rib, label: RIB, color: '#64748b' }
+      - { value: budget, label: Budget voté, color: '#ef4444' }
+      - { value: autre, label: Autre, color: '#94a3b8' }
+  - { id: 3, name: year, label: Exercice, type: integer }
+  - { id: 4, name: document_date, label: Date du document, type: date }
+  - { id: 5, name: valid_until, label: Valable jusqu'au, type: date }
+  - { id: 6, name: file, label: Fichier, type: single-attachment, bucket: grant-files }
+  - { id: 7, name: notes, label: Notes, type: long-text }
+  - { id: 8, name: updated_at, label: Modifié le, type: updated-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

@@ -1,0 +1,39 @@
+# Table: grant_sections — the narrative of a demande, section by section, in
+# the order of the dossier: Préambule (qui sommes-nous, nos activités, nos
+# valeurs), Objet de la demande, Principes directeurs, the introduction of
+# the Modalités de calcul, any free section. Plain text, one paragraph per
+# blank line, a line starting with « - » is a bullet: the dossier is written
+# « avec zéro mise en page » and laid out by the Word template on export.
+# `section_key` is `<application id>:<code>`, so a copy and the seed upsert.
+id: 26
+name: grant_sections
+aiAccess:
+  description: "Narrative sections of a grant application's dossier (préambule, objet, principes directeurs…), in order."
+  operations: [read, list]
+fields:
+  - { id: 1, name: section_key, label: Clé, type: single-line-text, indexed: true }
+  - { id: 2, name: application, label: Demande, type: relationship, relatedTable: grant_applications, relationType: many-to-one, displayField: title, onDelete: cascade, required: true }
+  - id: 3
+    name: part
+    label: Partie
+    type: single-select
+    required: true
+    default: projet
+    options:
+      - { value: preambule, label: Préambule, color: '#3b82f6' }
+      - { value: objet, label: Objet de la demande, color: '#f59e0b' }
+      - { value: principes, label: Principes directeurs, color: '#14b8a6' }
+      - { value: calcul, label: Modalités de calcul, color: '#8b5cf6' }
+      - { value: projet, label: Autre section, color: '#94a3b8' }
+  - { id: 4, name: title, label: Titre, type: single-line-text, required: true }
+  - { id: 5, name: body, label: Texte, type: long-text }
+  - { id: 6, name: sort_order, label: Ordre, type: integer, default: 100 }
+  - { id: 7, name: in_export, label: Dans le dossier, type: checkbox, default: true }
+  - { id: 8, name: updated_at, label: Modifié le, type: updated-at }
+indexes:
+  - { name: idx_grant_sections_app_order, fields: [application, sort_order] }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

@@ -1,0 +1,23 @@
+# Form: grant-action-new — add an action (an event series, a programme) to a
+# demande, in a dialog on /administration/subventions/:id (tab Projet).
+id: 11
+name: grant-action-new
+title: Nouvelle action
+description: "Un événement ou une série que la subvention soutient, avec sa fréquence."
+display:
+  submitLabel: Ajouter l'action
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: grant_actions
+fields:
+  - { kind: table-field, column: application, hidden: true }
+  - { kind: table-field, column: title, label: Action, placeholder: "Fail clubs", required: true }
+  - { kind: table-field, column: description, label: Description, helpText: "Une ligne vide entre deux paragraphes ; « - » en début de ligne pour une puce." }
+  - { kind: table-field, column: frequency_label, label: Fréquence prévue, placeholder: "1 atelier par mois" }
+  - { kind: table-field, column: events_per_year, label: Événements par an }
+  - { kind: table-field, column: partners, label: Partenaires }
+  - { kind: table-field, column: sort_order, label: Ordre, defaultValue: 200 }
+  - { kind: table-field, column: in_scope, defaultValue: true, hidden: true }
+onSuccess:
+  type: message
+  message: "Action ajoutée."

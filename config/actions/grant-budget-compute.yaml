@@ -1,0 +1,286 @@
+# Action template: grant-budget-compute — the engine of the Subventions, one
+# code step shared by every automation that recomputes a demande: grant-
+# compute (the « Recalculer » button and the trigger endpoint), grant-
+# application-init and the on-edit triggers (a cost item, a budget row's
+# typed amount, a quote, the demande's own settings).
+#
+# For the demande in $applicationId (or every open one), and every other
+# demande of the same exercise — the 74 rows of each name the others — it:
+#
+# 1. computes the modalités de calcul: per cost item, the subsidised share
+#    (`event_amount`, a formula) × the share asked of the funder
+#    (`eligible_pct`, else the demande's) → `requested_amount`; the demande's
+#    `amount_requested` is their sum, unless `amount_requested_override` is
+#    typed;
+# 2. builds the CERFA budget (grant_budget_rows), by type of demande:
+#    - fonctionnement: the scenario's exercise year, `forecast_months.amount_ht`
+#      summed by CERFA row (`cerfa_row`, else the line's), the whole
+#      structure's budget;
+#    - projet: the cost items' subsidised share, by their `cerfa_code`;
+#    - investissement: the quotes (HT when known) as dépenses, the subsidies
+#      asked for them and the autofinancement that balances the plan;
+#    then 74 one row per funder (what each demande of the exercise asks, or
+#    what was granted), « Autres subventions attendues » for what the
+#    scenario counts beyond them, 864 / 870 from the bénévolat hours, the
+#    chapter totals and the totals (without the contributions en nature, as
+#    the CERFA counts them, then with them);
+# 3. writes the totals and the gap (charges − produits: a CERFA budget must
+#    balance) on the demande.
+#
+# What an admin typed is never overwritten: `amount_override` and
+# `precisions` survive every run, and a row the computation no longer
+# produces is deleted only when nobody wrote in it. Nothing watches the
+# fields written here (the on-edit triggers watch the typed ones), so these
+# writes start no run. $changedAt debounces a burst of edits: a demande
+# computed after that instant is skipped. $dryRun logs and writes nothing.
+name: grant-budget-compute
+variables:
+  applicationId: ''
+  dryRun: 'false'
+  changedAt: ''
+action:
+  type: code
+  operator: runTypescript
+  props:
+    timeout: 120000
+    inputData:
+      applicationId: '$applicationId'
+      dryRun: '$dryRun'
+      changedAt: '$changedAt'
+    code: |
+      async function execute(context) {
+        const inp: any = context.inputData ?? {}
+        const dryRun = String(inp.dryRun ?? '').toLowerCase() === 'true'
+        const onlyId = String(inp.applicationId ?? '').trim()
+        const changedAt = String(inp.changedAt ?? '').trim()
+        const nowIso = new Date().toISOString()
+        const r2 = (n: number) => Math.round((Number(n) || 0) * 100) / 100
+        const has = (v: unknown) => !(v === null || v === undefined || v === '')
+        const num = (v: unknown) => (has(v) ? Number(v) || 0 : 0)
+        const list = async (table: string, filter?: any): Promise<any[]> => {
+          const res: any = await context.actions.record.list({ table, ...(filter ? { filter } : {}), limit: 10000 })
+          return (res?.records ?? []) as any[]
+        }
+        const eq = (field: string, value: unknown) => ({ conditions: [{ field, operator: 'equals', value }] })
+        const CLOSED = new Set(['refusee', 'abandonnee'])
+
+        // The CERFA layout: chapter, then its rows. `c` is the code a figure lands on.
+        type Row = { c: string, l: string, s: 'charges' | 'produits', lv: 'section' | 'row' | 'total', sec: string }
+        const CHARGES: [string, string, [string, string][]][] = [
+          ['60', '60 — Achats', [['604', 'Prestations de services'], ['606', 'Achats matières et fournitures']]],
+          ['61', '61 — Services extérieurs', [['613', 'Locations'], ['615', 'Entretien et réparation'], ['616', 'Assurance'], ['618', 'Documentation']]],
+          ['62', '62 — Autres services extérieurs', [['622', 'Rémunérations intermédiaires et honoraires'], ['623', 'Publicité, publication'], ['625', 'Déplacements, missions'], ['627', 'Services bancaires, autres']]],
+          ['63', '63 — Impôts et taxes', [['631', 'Impôts et taxes sur rémunération'], ['635', 'Autres impôts et taxes']]],
+          ['64', '64 — Charges de personnel', [['641', 'Rémunération des personnels'], ['645', 'Charges sociales'], ['647', 'Autres charges de personnel']]],
+          ['65', '65 — Autres charges de gestion courante', [['65', 'Autres charges de gestion courante']]],
+          ['66', '66 — Charges financières', [['66', 'Charges financières']]],
+          ['67', '67 — Charges exceptionnelles', [['67', 'Charges exceptionnelles']]],
+          ['68', '68 — Dotation aux amortissements, provisions et engagements', [['68', 'Dotation aux amortissements, provisions et engagements']]],
+          ['69', '69 — Impôts sur les bénéfices (IS), participation des salariés', [['69', 'Impôts sur les bénéfices (IS), participation des salariés']]],
+          ['86', '86 — Emplois des contributions volontaires en nature', [['861', 'Mise à disposition gratuite de biens et services'], ['862', 'Prestations'], ['864', 'Personnel bénévole']]],
+        ]
+        const PRODUITS: [string, string, [string, string][]][] = [
+          ['70', '70 — Vente de produits finis, prestations de services', [['70', 'Vente de produits finis, prestations de services, marchandises']]],
+          ['73', '73 — Dotations et produits de tarification', [['73', 'Dotations et produits de tarification']]],
+          ['74', "74 — Subventions d'exploitation", []],
+          ['75', '75 — Autres produits de gestion courante', [['756', 'Cotisations'], ['758', 'Dons manuels, mécénat, autres produits']]],
+          ['76', '76 — Produits financiers', [['76', 'Produits financiers']]],
+          ['77', '77 — Produits exceptionnels', [['77', 'Produits exceptionnels']]],
+          ['78', '78 — Reprises sur amortissements et provisions', [['78', 'Reprises sur amortissements et provisions']]],
+          ['79', '79 — Transferts de charges', [['79', 'Transferts de charges']]],
+          ['87', '87 — Contributions volontaires en nature', [['870', 'Bénévolat'], ['871', 'Prestations en nature'], ['875', 'Dons en nature']]],
+        ]
+        const sectionOf = new Map<string, string>()
+        for (const [sec, , rows] of [...CHARGES, ...PRODUITS]) for (const [c] of rows) sectionOf.set(c, sec)
+
+        // 1. The demandes: the one asked for (and the others of its exercise), or every open one.
+        const all = await list('grant_applications')
+        let targets = onlyId ? all.filter((a: any) => String(a.id) === onlyId) : all.filter((a: any) => !CLOSED.has(String(a.status)))
+        if (onlyId && changedAt && targets[0]) {
+          const edited = Date.parse(changedAt)
+          if (has(targets[0].computed_at) && Number.isFinite(edited) && Date.parse(String(targets[0].computed_at)) > edited) {
+            context.log.info(`demande ${onlyId} : déjà calculée après la modification`)
+            return { computed: [], skipped: true }
+          }
+        }
+        if (targets.length === 0) { context.log.info(onlyId ? `demande ${onlyId} introuvable` : 'aucune demande ouverte'); return { computed: [] } }
+        const years = new Set<number>(targets.map((a: any) => num(a.exercise_year)))
+        const apps = all.filter((a: any) => years.has(num(a.exercise_year)))
+
+        const funders = await list('grant_funders')
+        const funderById = new Map<string, any>(funders.map((f: any) => [String(f.id), f]))
+        const lines = await list('budget_lines')
+        const cerfaOfLine = new Map<string, string>(lines.map((l: any) => [String(l.code), String(l.cerfa_row ?? '')]))
+        const scenarios = await list('scenarios')
+        const scenarioById = new Map<string, any>(scenarios.map((s: any) => [String(s.id), s]))
+
+        // 2. Modalités de calcul, for every demande of the exercise: the 74 rows of each read the others' amounts.
+        const itemsByApp = new Map<string, any[]>()
+        const requested = new Map<string, number>()
+        const itemWrites: any[] = []
+        const kpis = new Map<string, any>()
+        for (const app of apps) {
+          const items = await list('grant_cost_items', eq('application', String(app.id)))
+          itemsByApp.set(String(app.id), items)
+          const share = has(app.eligible_share_pct) ? num(app.eligible_share_pct) : 75
+          let sum = 0, base = 0
+          for (const it of items) {
+            const amount = has(it.amount) ? num(it.amount) : has(it.unit_cost) && has(it.quantity) ? num(it.unit_cost) * num(it.quantity) : num(it.amount_input)
+            const ev = has(it.event_amount) ? num(it.event_amount) : amount * (100 - num(it.commercial_pct)) / 100
+            const pct = has(it.eligible_pct) ? num(it.eligible_pct) : share
+            const req = r2(ev * pct / 100)
+            sum += req; base += ev
+            if (!has(it.requested_amount) || Math.abs(num(it.requested_amount) - req) > 0.004) itemWrites.push({ id: String(it.id), requested_amount: req })
+          }
+          const eff = has(app.amount_requested_override) ? num(app.amount_requested_override) : r2(sum)
+          requested.set(String(app.id), eff)
+          kpis.set(String(app.id), { id: String(app.id), amount_requested: r2(eff), amount_calculated: r2(sum), eligible_base: r2(base) })
+        }
+        // What a demande brings to the 74 rows: what was granted once accorded, else what it asks.
+        const contribution = (a: any) => String(a.status) === 'validee' && has(a.amount_granted) ? num(a.amount_granted) : (requested.get(String(a.id)) ?? 0)
+
+        // 3. The CERFA budget of each targeted demande.
+        const budgetWrites: any[] = []
+        const deletions: string[] = []
+        const summary: any[] = []
+        const typeLabel: Record<string, string> = { fonctionnement: 'Fonctionnement', projet: 'Projet', investissement: 'Investissement' }
+        for (const app of apps) {
+          if (!targets.some((t: any) => String(t.id) === String(app.id)) && CLOSED.has(String(app.status))) continue
+          const id = String(app.id)
+          const Y = num(app.exercise_year)
+          const kind = String(app.aid_type ?? 'fonctionnement')
+          const existing = await list('grant_budget_rows', eq('application', id))
+          const prior = new Map<string, any>(existing.map((r: any) => [String(r.row_key), r]))
+          const figures = new Map<string, number>()
+          const notes = new Map<string, string>()
+          const add = (c: string, v: number, note?: string) => { figures.set(c, (figures.get(c) ?? 0) + v); if (note) notes.set(c, note) }
+          const extra: { s: 'charges' | 'produits', sec: string, key: string, l: string, v: number, funder?: string, note?: string }[] = []
+
+          const sc = has(app.scenario) ? scenarioById.get(String(app.scenario)) : null
+          let scenario74 = 0
+          if (kind === 'fonctionnement' && sc) {
+            const months = await list('forecast_months', { conditions: [{ field: 'scenario_key', operator: 'equals', value: String(sc.scenario_key) }, { field: 'year', operator: 'equals', value: Y }] })
+            for (const m of months) {
+              const c = has(m.cerfa_row) ? String(m.cerfa_row) : (cerfaOfLine.get(String(m.line_code)) ?? '')
+              if (!c) continue
+              if (c === '74') { scenario74 += num(m.amount_ht); continue }
+              add(c, num(m.amount_ht), `Scénario « ${sc.name} », ${Y}`)
+            }
+            if (months.length === 0) context.log.warn(`${app.title} : le scénario « ${sc.name} » n'a pas de prévisionnel ${Y} (lancez « Recalculer le prévisionnel » sur le scénario)`)
+          }
+          if (kind === 'projet') {
+            for (const it of itemsByApp.get(id) ?? []) {
+              if (!has(it.cerfa_code)) continue
+              const amount = has(it.amount) ? num(it.amount) : has(it.unit_cost) && has(it.quantity) ? num(it.unit_cost) * num(it.quantity) : num(it.amount_input)
+              const ev = has(it.event_amount) ? num(it.event_amount) : amount * (100 - num(it.commercial_pct)) / 100
+              add(String(it.cerfa_code), ev, 'Modalités de calcul (part affectée au projet)')
+            }
+          }
+          let investTotal = 0
+          if (kind === 'investissement') {
+            const quotes = (await list('grant_quotes', eq('application', id))).sort((a: any, b: any) => num(a.sort_order) - num(b.sort_order))
+            for (const q of quotes) {
+              const v = has(q.amount_ht) ? num(q.amount_ht) : num(q.amount_ttc)
+              investTotal += v
+              extra.push({ s: 'charges', sec: '21', key: `${id}:inv:${q.id}`, l: [q.label, q.supplier].filter(has).join(' — '), v, note: has(q.amount_ht) ? 'Devis, HT' : 'Devis, TTC' })
+            }
+          }
+          // Bénévolat, both sides: hours × hourly value.
+          if (has(app.volunteer_hours)) {
+            const v = num(app.volunteer_hours) * (has(app.volunteer_hourly_value) ? num(app.volunteer_hourly_value) : 13)
+            add('864', v, `${num(app.volunteer_hours)} h × ${has(app.volunteer_hourly_value) ? num(app.volunteer_hourly_value) : 13} €`)
+            add('870', v, `${num(app.volunteer_hours)} h × ${has(app.volunteer_hourly_value) ? num(app.volunteer_hourly_value) : 13} €`)
+          }
+          // 74: one row per funder. A fonctionnement budget is the structure's: every demande of the exercise counts.
+          // A projet counts itself; an investissement the investment demandes of the exercise.
+          const peers = kind === 'fonctionnement' ? apps.filter((a: any) => !CLOSED.has(String(a.status)))
+            : kind === 'investissement' ? apps.filter((a: any) => !CLOSED.has(String(a.status)) && String(a.aid_type) === 'investissement')
+            : [app]
+          const byFunder = new Map<string, { v: number, parts: string[] }>()
+          for (const p of peers) {
+            const f = has(p.funder) ? String(p.funder) : 'none'
+            const e = byFunder.get(f) ?? { v: 0, parts: [] }
+            const v = contribution(p)
+            e.v += v
+            e.parts.push(`${typeLabel[String(p.aid_type)] ?? p.aid_type} : ${r2(v).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €${String(p.status) === 'validee' ? ' (accordé)' : ''}`)
+            byFunder.set(f, e)
+          }
+          let listed74 = 0
+          for (const [f, e] of byFunder) {
+            listed74 += e.v
+            const funder = funderById.get(f)
+            extra.push({ s: 'produits', sec: '74', key: `${id}:74:${f}`, l: funder ? String(funder.name) : 'Financeur à préciser', v: e.v, funder: funder ? f : undefined, note: e.parts.join(' ; ') })
+          }
+          // Subsidies the scenario counts that no demande of the app names.
+          const other74 = kind === 'fonctionnement' ? Math.max(0, scenario74 - listed74) : 0
+          extra.push({ s: 'produits', sec: '74', key: `${id}:74:autres`, l: 'Autres subventions attendues', v: other74, note: kind === 'fonctionnement' ? 'Subventions du scénario au-delà des demandes listées' : '' })
+
+          // Build the rows in CERFA order; amounts per row = override, else computed.
+          let order = 0
+          const rows: any[] = []
+          const amountOf = (key: string, computed: number) => { const p = prior.get(key); return p && has(p.amount_override) ? num(p.amount_override) : computed }
+          const push = (key: string, s: string, c: string, l: string, lv: string, sec: string, computed: number, extraFields: any = {}) => {
+            order += 10
+            rows.push({ row_key: key, application: id, side: s, cerfa_code: c, label: l, level: lv, section_code: sec, sort_order: order, amount_computed: r2(computed), computed_at: nowIso, ...extraFields })
+            return amountOf(key, computed)
+          }
+          // The CERFA totals leave the contributions volontaires en nature (86 / 87) out; the grand total adds them.
+          const totals = { charges: 0, produits: 0 }
+          const inKind = { charges: 0, produits: 0 }
+          for (const [side, chapters] of [['charges', CHARGES], ['produits', PRODUITS]] as ['charges' | 'produits', any][]) {
+            if (side === 'charges' && kind === 'investissement') {
+              let t = 0
+              const sectionKey = `${id}:sec:21`
+              const idx = rows.length
+              push(sectionKey, side, '21', '21 — Investissements (devis)', 'section', '21', 0)
+              for (const x of extra.filter((x) => x.s === side && x.sec === '21')) t += push(x.key, side, '21', x.l, 'row', '21', x.v, { source_note: x.note ?? '' })
+              rows[idx].amount_computed = r2(t)
+              totals.charges += t
+            }
+            for (const [sec, secLabel, secRows] of chapters) {
+              const sectionKey = `${id}:sec:${sec}`
+              const idx = rows.length
+              push(sectionKey, side, sec, secLabel, 'section', sec, 0)
+              let t = 0
+              for (const [c, l] of secRows) t += push(`${id}:${c}`, side, c, l, 'row', sec, figures.get(c) ?? 0, { source_note: notes.get(c) ?? '' })
+              for (const x of extra.filter((x) => x.s === side && x.sec === sec)) t += push(x.key, side, '74', x.l, 'row', sec, x.v, { source_note: x.note ?? '', ...(x.funder ? { funder: x.funder } : {}) })
+              rows[idx].amount_computed = r2(t)
+              if (sec === '86' || sec === '87') inKind[side] += t
+              else totals[side] += t
+            }
+            if (side === 'produits' && kind === 'investissement') {
+              const gap = Math.max(0, totals.charges - totals.produits)
+              const sectionKey = `${id}:sec:autofinancement`
+              const idx = rows.length
+              push(sectionKey, side, 'AF', 'Autofinancement', 'section', 'AF', 0)
+              const v = push(`${id}:autofinancement`, side, 'AF', 'Fonds propres de l’association', 'row', 'AF', gap, { source_note: 'Ce qui reste à financer après les subventions' })
+              rows[idx].amount_computed = r2(v)
+              totals.produits += v
+            }
+            push(`${id}:total:${side}`, side, 'TOTAL', side === 'charges' ? 'TOTAL DES CHARGES' : 'TOTAL DES PRODUITS', 'total', 'TOTAL', totals[side])
+            if (Math.abs(inKind[side]) > 0.004) push(`${id}:grandtotal:${side}`, side, 'TOTAL', side === 'charges' ? 'TOTAL DES CHARGES AVEC LES CONTRIBUTIONS EN NATURE' : 'TOTAL DES PRODUITS AVEC LES CONTRIBUTIONS EN NATURE', 'total', 'TOTAL', totals[side] + inKind[side])
+          }
+          budgetWrites.push(...rows)
+          const keep = new Set(rows.map((r: any) => r.row_key))
+          for (const r of existing) if (!keep.has(String(r.row_key)) && !has(r.amount_override) && !has(r.precisions)) deletions.push(String(r.id))
+          const k = kpis.get(id)
+          Object.assign(k, {
+            budget_total_charges: r2(totals.charges), budget_total_produits: r2(totals.produits), budget_gap: r2(totals.charges - totals.produits), computed_at: nowIso,
+            scenario_key: sc ? String(sc.scenario_key) : '', funder_level: has(app.funder) ? String(funderById.get(String(app.funder))?.level ?? '') : '',
+          })
+          summary.push({ demande: app.title, sollicite: requested.get(id), charges: r2(totals.charges), produits: r2(totals.produits), ecart: r2(totals.charges - totals.produits) })
+        }
+
+        if (dryRun) {
+          context.log.info(`DRY RUN — ${JSON.stringify(summary)}`)
+          return { dryRun: true, summary }
+        }
+        const chunks = (items: any[], size: number) => { const out: any[][] = []; for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size)); return out }
+        for (const w of itemWrites) await context.actions.record.update({ table: 'grant_cost_items', id: w.id, data: { requested_amount: w.requested_amount } })
+        for (const part of chunks(budgetWrites, 200)) await context.actions.record.batchUpsert({ table: 'grant_budget_rows', items: part, matchField: 'row_key', continueOnItemError: true })
+        for (const rid of deletions) await context.actions.record.delete({ table: 'grant_budget_rows', filter: { conditions: [{ field: 'id', operator: 'equals', value: rid }] } })
+        const kpiRows = [...kpis.values()].filter((k: any) => has(k.computed_at))
+        for (const k of kpiRows) { const { id, ...data } = k; await context.actions.record.update({ table: 'grant_applications', id, data }) }
+        for (const s of summary) context.log.info(`${s.demande} : sollicité ${s.sollicite} €, charges ${s.charges} €, produits ${s.produits} €, écart ${s.ecart} €`)
+        return { computed: summary.map((s: any) => s.demande), summary }
+      }

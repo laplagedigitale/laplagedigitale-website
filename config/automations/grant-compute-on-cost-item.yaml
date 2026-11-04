@@ -1,0 +1,18 @@
+# Automation: grant-compute-on-cost-item — a cost of the modalités de calcul
+# was added, changed or removed: recompute its demande. It watches the typed
+# fields only; the engine writes `requested_amount`, which starts no run.
+name: grant-compute-on-cost-item
+trigger:
+  type: record
+  table: grant_cost_items
+  events: [create, update, delete]
+  watchFields: [unit_cost, quantity, amount_input, commercial_pct, eligible_pct, cerfa_code, calc_group]
+timeout: 180000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: grant-budget-compute
+    $vars:
+      applicationId: '{{trigger.data.record.application}}'
+      changedAt: '{{trigger.data.record.updated_at}}'

@@ -1,0 +1,194 @@
+# Page: admin-grants — « Subventions » in the Administration: every demande
+# de subvention, the Notion « Suivi des subventions » it replaces. Three tabs:
+# the demandes still to file (à candidater, en rédaction, en relecture),
+# those sent and waiting for an answer, and all of them with a search and
+# filters. A row opens the demande on its own page, where the dossier is
+# written, computed and exported.
+#
+# Admin only. The amounts are what grant-budget-compute last computed.
+name: admin-grants
+path: /administration/subventions
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: a-traiter
+    enum: [a-traiter, envoyees, toutes]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Subventions — Administration"
+  description: "Les demandes de subvention de La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Demandes de subvention, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Chaque demande se prépare ici : les textes du dossier, la base de calcul du montant, le budget CERFA tiré du prévisionnel et les pièces. Une fois prête, elle s'exporte en Word et en Excel, et sa page « Récapitulatif » se recopie champ par champ sur le portail du financeur.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: flex
+                props: { className: 'flex flex-wrap gap-3' }
+                children:
+                  - type: link
+                    content: Fiche association
+                    props:
+                      href: /administration/association
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                  - type: link
+                    content: '+ Nouvelle demande'
+                    props:
+                      href: /administration/subventions/nouvelle
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+            children:
+              - type: kpi
+                label: Demandes à préparer
+                icon: file-pen-line
+                dataSource:
+                  table: grant_applications
+                  filter:
+                    - { field: status, operator: in, value: [a_candidater, en_redaction, relecture] }
+                kpiAggregate: { function: count }
+                kpiFormat: { type: number }
+              - type: kpi
+                label: Sollicité, demandes en cours
+                icon: hand-coins
+                dataSource:
+                  table: grant_applications
+                  filter:
+                    - { field: status, operator: in, value: [a_candidater, en_redaction, relecture, envoyee] }
+                kpiAggregate: { function: sum, field: amount_requested }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+              - type: kpi
+                label: Accordé, toutes années
+                icon: badge-check
+                dataSource:
+                  table: grant_applications
+                  filter:
+                    - { field: status, operator: eq, value: validee }
+                kpiAggregate: { function: sum, field: amount_granted }
+                kpiFormat: { type: currency, options: { currency: EUR } }
+
+          - type: tabs
+            tabsVariant: line
+            defaultTab: $query.onglet
+            panels:
+              - id: a-traiter
+                label: À préparer
+                description: À candidater, en rédaction, en relecture
+                count:
+                  table: grant_applications
+                  filter:
+                    - { field: status, operator: in, value: [a_candidater, en_redaction, relecture] }
+              - { id: envoyees, label: Envoyées, description: En attente de réponse }
+              - { id: toutes, label: Toutes, description: L'historique }
+            children:
+              - type: card
+                props: { className: 'p-4 sm:p-6' }
+                children:
+                  - type: table
+                    readOnly: true
+                    props: { aria-label: Demandes à préparer }
+                    dataSource:
+                      table: grant_applications
+                      filter:
+                        - { field: status, operator: in, value: [a_candidater, en_redaction, relecture] }
+                      sort:
+                        - { field: deadline, direction: asc }
+                      pagination: { pageSize: 50 }
+                    onRowClick: { type: navigate, path: '/administration/subventions/$record.id' }
+                    emptyMessage: "Aucune demande à préparer. « Nouvelle demande » en crée une à partir de celle de l'an dernier."
+                    columns:
+                      - { field: title, label: Demande, frozen: true, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
+                      - { field: deadline, label: Date limite, format: short-date }
+                      - { field: status, label: Statut }
+                      - { field: funder, label: Financeur }
+                      - { field: exercise_year, label: Exercice }
+                      - { field: aid_type, label: Type }
+                      - { field: amount_requested, label: Sollicité, format: currency, align: right }
+                      - { field: budget_gap, label: Écart du budget, format: currency, align: right, cellStyle: [{ when: { lt: -0.5 }, tone: error }, { when: { gt: 0.5 }, tone: error }] }
+              - type: card
+                props: { className: 'p-4 sm:p-6' }
+                children:
+                  - type: table
+                    readOnly: true
+                    props: { aria-label: Demandes envoyées }
+                    dataSource:
+                      table: grant_applications
+                      filter:
+                        - { field: status, operator: eq, value: envoyee }
+                      sort:
+                        - { field: submitted_at, direction: desc }
+                      pagination: { pageSize: 50 }
+                    onRowClick: { type: navigate, path: '/administration/subventions/$record.id' }
+                    emptyMessage: "Aucune demande en attente de réponse."
+                    columns:
+                      - { field: title, label: Demande, frozen: true, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
+                      - { field: submitted_at, label: Envoyée le, format: short-date }
+                      - { field: portal_reference, label: Référence }
+                      - { field: funder, label: Financeur }
+                      - { field: exercise_year, label: Exercice }
+                      - { field: amount_requested, label: Sollicité, format: currency, align: right }
+                      - { field: amount_requested_override, label: Sollicité (saisi), format: currency, align: right }
+              - type: card
+                props: { className: 'p-4 sm:p-6' }
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher une demande…
+                        props: { aria-label: Rechercher une demande, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-grants, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-grants }
+                        fieldsFrom: { table: grant_applications }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/grant_applications/export?format=csv', filename: demandes-de-subvention.csv }
+                  - type: table
+                    readOnly: true
+                    props: { aria-label: Toutes les demandes de subvention }
+                    dataSource:
+                      bindTo: admin-grants
+                      sharedFilter: {}
+                      table: grant_applications
+                      sort:
+                        - { field: exercise_year, direction: desc }
+                        - { field: deadline, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    onRowClick: { type: navigate, path: '/administration/subventions/$record.id' }
+                    emptyMessage: "Aucune demande. Lancez l'initialisation (grant-seed) pour reprendre le suivi Notion."
+                    columns:
+                      - { field: title, label: Demande, frozen: true, cellStyle: [{ when: { isNotEmpty: true }, className: 'font-medium text-navy underline underline-offset-2 cursor-pointer' }] }
+                      - { field: exercise_year, label: Exercice }
+                      - { field: funder, label: Financeur }
+                      - { field: aid_type, label: Type }
+                      - { field: status, label: Statut }
+                      - { field: deadline, label: Date limite, format: short-date }
+                      - { field: amount_requested, label: Sollicité, format: currency, align: right }
+                      - { field: amount_granted, label: Accordé, format: currency, align: right }

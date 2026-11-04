@@ -1,0 +1,22 @@
+# Form: org-person-new — add a person to the association's people (bureau,
+# CA, staff), in a dialog on /administration/association.
+id: 14
+name: org-person-new
+title: Nouvelle personne
+display:
+  submitLabel: Ajouter
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: org_people
+fields:
+  - { kind: table-field, column: full_name, label: Nom, placeholder: "Prénom NOM", required: true }
+  - { kind: table-field, column: role, label: Fonction, defaultValue: membre_ca, required: true }
+  - { kind: table-field, column: college, label: Collège }
+  - { kind: table-field, column: profession, label: Profession }
+  - { kind: table-field, column: email, label: E-mail }
+  - { kind: table-field, column: phone, label: Téléphone }
+  - { kind: table-field, column: address, label: Adresse }
+  - { kind: table-field, column: active, defaultValue: true, hidden: true }
+onSuccess:
+  type: message
+  message: "Personne ajoutée."

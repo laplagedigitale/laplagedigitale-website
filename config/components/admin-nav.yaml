@@ -10,7 +10,7 @@
 # Two audiences, one shell. A sidebar group cannot be gated on its own, so the
 # navigation is declared twice, each sidebar gated on a role (and left out of
 # the HTML for the other):
-# - admin — Pilotage, Membres, Finances, Contenu, Compte;
+# - admin — Pilotage, Membres, Finances, Subventions, Contenu, Compte;
 # - editor — Contenu and Compte only (the pages behind the other groups refuse
 #   them anyway: access is admin only).
 #
@@ -84,6 +84,10 @@ children:
               - { label: Facturation Flex, href: /administration/finances/flex, icon: calendar-days }
               - { label: Prélèvements, href: /administration/finances/prelevements, icon: landmark }
               - { label: Rapprochements, href: /administration/finances/rapprochements, icon: git-compare-arrows }
+          - label: Subventions
+            items:
+              - { label: Demandes de subvention, href: /administration/subventions, icon: hand-coins, activeMatch: prefix }
+              - { label: Fiche association, href: /administration/association, icon: building-2 }
           - label: Contenu
             items:
               - { label: Tableau de bord, href: /administration/contenu, icon: newspaper }

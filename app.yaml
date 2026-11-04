@@ -148,6 +148,19 @@ tables:
   - $ref: ./config/tables/forecast-months.yaml
   - $ref: ./config/tables/forecast-balances.yaml
   - $ref: ./config/tables/forecast-grid.yaml
+  # Subventions: the association's identity, people and pièces, the funders,
+  # and each demande with its narrative, actions, cost basis (modalités de
+  # calcul), CERFA budget and quotes. Admin only, all of them.
+  - $ref: ./config/tables/organization-profile.yaml
+  - $ref: ./config/tables/org-people.yaml
+  - $ref: ./config/tables/org-documents.yaml
+  - $ref: ./config/tables/grant-funders.yaml
+  - $ref: ./config/tables/grant-applications.yaml
+  - $ref: ./config/tables/grant-sections.yaml
+  - $ref: ./config/tables/grant-actions.yaml
+  - $ref: ./config/tables/grant-cost-items.yaml
+  - $ref: ./config/tables/grant-budget-rows.yaml
+  - $ref: ./config/tables/grant-quotes.yaml
 
 buckets:
   $ref: ./config/buckets.yaml
@@ -171,6 +184,15 @@ forms:
   - $ref: ./config/forms/scenario-new.yaml
   - $ref: ./config/forms/adjustment-new.yaml
   - $ref: ./config/forms/planned-item-new.yaml
+  # Subventions: a new demande, the dialogs of a demande's page (a section, an
+  # action, a cost, a quote) and of the Fiche association (a person, a pièce).
+  - $ref: ./config/forms/grant-new.yaml
+  - $ref: ./config/forms/grant-section-new.yaml
+  - $ref: ./config/forms/grant-action-new.yaml
+  - $ref: ./config/forms/grant-cost-item-new.yaml
+  - $ref: ./config/forms/grant-quote-new.yaml
+  - $ref: ./config/forms/org-person-new.yaml
+  - $ref: ./config/forms/org-document-new.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
@@ -215,6 +237,13 @@ pages:
   - $ref: ./config/pages/admin-finances-forecast-new.yaml
   - $ref: ./config/pages/admin-finances-scenario.yaml
   - $ref: ./config/pages/admin-finances-transactions.yaml
+  # Subventions: the demandes, a new one (before :id), one demande, its
+  # récapitulatif for the funder's portal, and the Fiche association.
+  - $ref: ./config/pages/admin-grants.yaml
+  - $ref: ./config/pages/admin-grants-new.yaml
+  - $ref: ./config/pages/admin-grant.yaml
+  - $ref: ./config/pages/admin-grant-portal.yaml
+  - $ref: ./config/pages/admin-association.yaml
   - $ref: ./config/pages/admin-content.yaml
   - $ref: ./config/pages/admin-posts.yaml
   - $ref: ./config/pages/admin-posts-drafts.yaml
@@ -249,11 +278,26 @@ connections:
   # Hand-written: this app's own admin API, for the Flex invitation.
   - $ref: ./config/connections/sovrium-admin.yaml
 
+# Private files the document actions read (never served by any route).
+assets:
+  - path: templates/grant-dossier.docx
+    description: Dossier de demande de subvention, filled by grant-export
+    sampleData: templates/grant-sample.json
+  - path: templates/grant-budget.xlsx
+    description: Budget prévisionnel CERFA and modalités de calcul, filled by grant-export
+    sampleData: templates/grant-sample.json
+  - path: templates/grant-sample.json
+    description: Sample data shaped like grant-export's gather step, for sovrium render
+
 # Reusable action templates ($ref from the automations).
 actions:
   # The forecast engine of the Trésorerie, shared by treasury-forecast, the
   # hourly sync, treasury-scenario-init and the on-edit triggers.
   - $ref: ./config/actions/treasury-forecast-compute.yaml
+  # The Subventions engine: modalités de calcul and CERFA budget of the
+  # demandes, shared by grant-compute, grant-application-init and the on-edit
+  # triggers.
+  - $ref: ./config/actions/grant-budget-compute.yaml
 
 automations:
   - $ref: ./config/automations/member-sign-up.yaml
@@ -293,3 +337,14 @@ automations:
   - $ref: ./config/automations/treasury-forecast-on-planned.yaml
   - $ref: ./config/automations/treasury-scenario-init.yaml
   - $ref: ./config/automations/treasury-seed.yaml
+  # Subventions: « Recalculer » (manual) and the on-edit recomputes, the copy
+  # made when a demande is created, the Word and Excel export, the one-off
+  # seed (association, funders, the Notion tracker, the 2026 and 2027 dossiers).
+  - $ref: ./config/automations/grant-compute.yaml
+  - $ref: ./config/automations/grant-compute-on-cost-item.yaml
+  - $ref: ./config/automations/grant-compute-on-budget-row.yaml
+  - $ref: ./config/automations/grant-compute-on-quote.yaml
+  - $ref: ./config/automations/grant-compute-on-application.yaml
+  - $ref: ./config/automations/grant-application-init.yaml
+  - $ref: ./config/automations/grant-export.yaml
+  - $ref: ./config/automations/grant-seed.yaml

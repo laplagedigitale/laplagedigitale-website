@@ -1,0 +1,18 @@
+# Automation: grant-compute-on-budget-row — an amount was typed over (or
+# cleared from) a row of a demande's CERFA budget: recompute the chapter
+# totals and the gap. The engine writes `amount_computed`, never
+# `amount_override`, so its own writes start no run.
+name: grant-compute-on-budget-row
+trigger:
+  type: record
+  table: grant_budget_rows
+  events: [update]
+  watchFields: [amount_override]
+timeout: 180000
+concurrency:
+  limit: 1
+actions:
+  - name: compute
+    $ref: grant-budget-compute
+    $vars:
+      applicationId: '{{trigger.data.record.application}}'

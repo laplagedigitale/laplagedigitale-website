@@ -1,0 +1,245 @@
+# Page: admin-association — the « Fiche association »: what every grant
+# application asks about the association, typed once and read by every
+# demande, its Word export and its portal récapitulatif. Three tabs:
+# - Identité: the organization_profile row (SIRET, registre, NAF, address,
+#   objet social, networks, bank details), saved field by field;
+# - Personnes: the bureau, the CA and the staff (org_people), edited in the
+#   grid; « + Personne » adds one;
+# - Pièces: the library of documents funders ask for (org_documents), each
+#   uploaded once and linked from the demandes.
+#
+# Admin only (it holds the IBAN). The row is seeded by grant-seed.
+name: admin-association
+path: /administration/association
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: identite
+    enum: [identite, personnes, pieces]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Fiche association — Administration"
+  description: "L'identité de l'association, ses personnes et ses pièces, pour les demandes de subvention."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Demandes de subvention', props: { href: /administration/subventions, className: 'text-sm text-text-muted hover:text-navy' } }
+          - type: container
+            children:
+              - { type: text, element: h1, content: Fiche association, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Ce que chaque financeur demande sur l'association, saisi une seule fois : chaque demande, son dossier Word et son récapitulatif pour le portail le reprennent.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          - type: tabs
+            tabsVariant: line
+            defaultTab: $query.onglet
+            panels:
+              - { id: identite, label: Identité, description: "SIRET, registre, adresse, banque" }
+              - id: personnes
+                label: Personnes
+                description: Bureau, CA, salariés
+                count: { table: org_people, filter: [{ field: active, operator: eq, value: true }] }
+              - id: pieces
+                label: Pièces
+                description: Statuts, comptes, RIB…
+                count: { table: org_documents }
+            children:
+              # Identité: the one row, saved field by field.
+              - type: list
+                dataSource:
+                  table: organization_profile
+                  limit: 1
+                listDisplay:
+                  emptyMessage: "La fiche n'existe pas encore : lancez l'initialisation des Subventions (grant-seed)."
+                props:
+                  className: 'list-none p-0 m-0'
+                children:
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 2xl:grid-cols-2 gap-6 items-start pt-2' }
+                    children:
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Identification, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: form
+                            dataSource: { table: organization_profile, mode: single, filter: [{ field: profile_key, operator: eq, value: lpd }] }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: organization_profile }
+                            fields:
+                              - { field: legal_name }
+                              - { field: acronym }
+                              - { field: siret }
+                              - { field: siren }
+                              - { field: rna }
+                              - { field: registry_date }
+                              - { field: registry_volume }
+                              - { field: registry_folio }
+                              - { field: registry_court }
+                              - { field: naf_code }
+                              - { field: legal_form }
+                              - { field: created_on }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Coordonnées et lieu, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: form
+                            dataSource: { table: organization_profile, mode: single, filter: [{ field: profile_key, operator: eq, value: lpd }] }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: organization_profile }
+                            fields:
+                              - { field: address_street }
+                              - { field: address_postal_code }
+                              - { field: address_city }
+                              - { field: phone }
+                              - { field: email }
+                              - { field: website }
+                              - { field: premises_area_m2 }
+                              - { field: desks_count }
+                              - { field: rooms_count }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Objet et réseaux, props: { className: 'text-xl font-semibold text-navy' } }
+                          - type: form
+                            dataSource: { table: organization_profile, mode: single, filter: [{ field: profile_key, operator: eq, value: lpd }] }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: organization_profile }
+                            fields:
+                              - { field: purpose, control: textarea, description: "Tel que dans les statuts." }
+                              - { field: networks, control: textarea }
+                              - { field: legal_entity_members, control: textarea }
+                              - { field: is_sports_association }
+                              - { field: legal_footer, control: textarea, description: "Imprimée en pied de page du dossier Word." }
+                      - type: card
+                        props: { className: 'p-4 sm:p-6 space-y-4' }
+                        children:
+                          - { type: text, element: h2, content: Domiciliation bancaire, props: { className: 'text-xl font-semibold text-navy' } }
+                          - { type: text, element: p, content: "Le compte où le financeur verse la subvention. Le RIB se dépose aussi dans les pièces.", props: { className: 'text-sm text-text-muted' } }
+                          - type: form
+                            dataSource: { table: organization_profile, mode: single, filter: [{ field: profile_key, operator: eq, value: lpd }] }
+                            showHeader: false
+                            autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                            action: { type: crud, operation: update, table: organization_profile }
+                            fields:
+                              - { field: bank_holder }
+                              - { field: iban }
+                              - { field: bic }
+
+              # Personnes
+              - type: container
+                props: { className: 'space-y-3 pt-2' }
+                children:
+                  - type: flex
+                    props: { className: 'flex flex-wrap items-center justify-between gap-3' }
+                    children:
+                      - { type: text, element: p, content: "Le représentant légal signe les dossiers ; le contact est la personne que le financeur appelle. Décochez « En fonction » pour retirer quelqu'un sans perdre son historique.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+                      - type: button
+                        content: '+ Personne'
+                        props:
+                          className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                          interactions:
+                            click:
+                              modal: new-person
+                  - type: card
+                    props: { className: 'p-4 sm:p-6' }
+                    children:
+                      - type: table
+                        rowHeight: short
+                        props: { aria-label: Personnes de l'association }
+                        dataSource:
+                          table: org_people
+                          sort:
+                            - { field: sort_order, direction: asc }
+                          pagination: { pageSize: 50 }
+                        autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                        emptyMessage: "Personne pour l'instant : « + Personne » ajoute le bureau."
+                        columns:
+                          - { field: full_name, label: Nom, frozen: true, width: 200 }
+                          - { field: role, label: Fonction }
+                          - { field: college, label: Collège }
+                          - { field: profession, label: Profession }
+                          - { field: email, label: E-mail, width: 240 }
+                          - { field: phone, label: Téléphone }
+                          - { field: address, label: Adresse, width: 260 }
+                          - { field: is_legal_rep, label: Représentant légal }
+                          - { field: is_contact, label: Contact }
+                          - { field: active, label: En fonction }
+                          - { field: sort_order, label: Ordre, align: right }
+                          - { field: notes, label: Notes, width: 260 }
+
+              # Pièces
+              - type: container
+                props: { className: 'space-y-3 pt-2' }
+                children:
+                  - type: flex
+                    props: { className: 'flex flex-wrap items-center justify-between gap-3' }
+                    children:
+                      - { type: text, element: p, content: "Chaque pièce se dépose une fois, puis se coche dans les demandes qui l'envoient. Un document qui change (comptes de l'année, nouveau CA) est une nouvelle pièce : gardez l'ancienne pour les demandes déjà déposées.", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+                      - type: button
+                        content: '+ Pièce'
+                        props:
+                          className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-sand transition-colors'
+                          interactions:
+                            click:
+                              modal: new-document
+                  - type: card
+                    props: { className: 'p-4 sm:p-6' }
+                    children:
+                      - type: table
+                        rowHeight: short
+                        props: { aria-label: Bibliothèque des pièces }
+                        dataSource:
+                          table: org_documents
+                          sort:
+                            - { field: kind, direction: asc }
+                            - { field: year, direction: desc }
+                          pagination: { pageSize: 50 }
+                        autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: toolbar }
+                        emptyMessage: "Aucune pièce : « + Pièce » dépose la première."
+                        columns:
+                          - { field: title, label: Pièce, frozen: true, width: 300 }
+                          - { field: kind, label: Type }
+                          - { field: year, label: Exercice }
+                          - { field: document_date, label: Date, format: short-date }
+                          - { field: valid_until, label: Valable jusqu'au, format: short-date }
+                          - { field: file, label: Fichier }
+                          - { field: notes, label: Notes, width: 280 }
+                          - type: actions
+                            actions:
+                              - label: Supprimer
+                                variant: destructive
+                                action:
+                                  type: crud
+                                  operation: delete
+                                  table: org_documents
+                                  confirm: true
+                                  confirmMessage: "Supprimer cette pièce ? Les demandes qui la listent ne la listeront plus."
+
+  - type: dialog
+    props:
+      id: new-person
+      title: Nouvelle personne
+      description: "Un membre du bureau, du CA ou de l'équipe."
+    children:
+      - { type: form, formRef: org-person-new, showHeader: false }
+  - type: dialog
+    props:
+      id: new-document
+      title: Nouvelle pièce
+      description: "Un document que les financeurs demandent."
+    children:
+      - { type: form, formRef: org-document-new, showHeader: false }

@@ -1,0 +1,130 @@
+# Automation: grant-application-init — a demande de subvention was created
+# (the form on /administration/subventions/nouvelle, or the seed).
+#
+# With `copy_from` (last year's demande), it copies what is rewritten rather
+# than rewritten from scratch: the sections of the dossier, the actions with
+# their frequency, the cost items of the modalités de calcul, the précisions
+# of the CERFA budget, and the fields of the demande the new one leaves
+# empty (description, objectifs, publics, contact, moyens humains,
+# bénévolat). Figures typed over the budget are not copied: they belong to
+# last year. Without it, it lays out the empty sections a dossier has.
+#
+# A demande written by grant-seed (it has an application_key) brings its own
+# content, so only the next two things happen to it.
+#
+# Then it puts the deadline of a demande still to file, when it is to come,
+# in the Calendrier de gestion (a « once » row, 10 days' notice), so the morning Slack reminders cover the demande, and
+# computes it. The copies are writes on other tables; the cost items each
+# start grant-compute-on-cost-item, which the engine's debounce turns into
+# no-ops. The demande itself is written with an update, which this create
+# trigger does not match.
+name: grant-application-init
+trigger:
+  type: record
+  table: grant_applications
+  events: [create]
+timeout: 240000
+concurrency:
+  limit: 1
+actions:
+  - name: copy
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 120000
+      inputData:
+        applicationId: '{{trigger.data.record.id}}'
+      code: |
+        async function execute(context) {
+          const id = String(context.inputData?.applicationId ?? '')
+          const has = (v: unknown) => !(v === null || v === undefined || v === '' || (Array.isArray(v) && v.length === 0))
+          const list = async (table: string, filter?: any): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, ...(filter ? { filter } : {}), limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          const eq = (field: string, value: unknown) => ({ conditions: [{ field, operator: 'equals', value }] })
+          const app = (await list('grant_applications', eq('id', id)))[0]
+          if (!app) { context.log.warn(`demande ${id} introuvable`); return { copied: 0 } }
+          // A demande the seed wrote (it carries an application_key) brings its own content: deadline and compute only.
+          const seeded = has(app.application_key)
+          const src = !seeded && has(app.copy_from) ? (await list('grant_applications', eq('id', String(app.copy_from))))[0] : null
+          const stats: Record<string, number> = {}
+
+          // The demande's own fields it leaves empty, from the model.
+          const patch: any = {}
+          if (src) {
+            for (const f of ['funder', 'dispositif', 'thematique', 'sous_thematique', 'request_kind', 'description', 'objectives', 'publics', 'contact_person', 'territory',
+              'staff_count', 'staff_fte', 'volunteers_count', 'volunteers_fte', 'volunteer_hours', 'volunteer_hourly_value', 'recruitment_planned', 'recruitment_fte', 'eligible_share_pct', 'scenario']) {
+              if (!has(app[f]) && has(src[f])) patch[f] = src[f]
+            }
+            if (!has(app.amount_n1) && String(src.status) === 'validee' && has(src.amount_granted)) patch.amount_n1 = src.amount_granted
+            if (String(app.request_kind ?? '') === '' || !has(app.request_kind)) patch.request_kind = 'renouvellement'
+          }
+
+          // Sections, actions, cost items: copied, or the empty frame of a dossier.
+          const existingSections = await list('grant_sections', eq('application', id))
+          if (!seeded && existingSections.length === 0) {
+            const rows = src
+              ? (await list('grant_sections', eq('application', String(src.id)))).map((x: any, i: number) => ({ section_key: `${id}:s${i + 1}`, application: id, part: x.part, title: x.title, body: x.body ?? '', sort_order: x.sort_order, in_export: x.in_export !== false }))
+              : [
+                  ['preambule', "Qu'est-ce que la Plage Digitale ?", 10],
+                  ['preambule', 'Nos activités actuelles', 20],
+                  ['preambule', 'Les valeurs de la Plage Digitale', 30],
+                  ['objet', 'Objet de la demande', 40],
+                  ['principes', 'Principes directeurs de nos actions', 50],
+                  ['calcul', 'Modalités de calcul de la demande', 60],
+                ].map(([part, title, order]: any[], i: number) => ({ section_key: `${id}:s${i + 1}`, application: id, part, title, body: '', sort_order: order, in_export: true }))
+            if (rows.length > 0) await context.actions.record.batchCreate({ table: 'grant_sections', items: rows, continueOnItemError: true })
+            stats.sections = rows.length
+          }
+          if (src && (await list('grant_actions', eq('application', id))).length === 0) {
+            const rows = (await list('grant_actions', eq('application', String(src.id)))).map((x: any, i: number) => ({
+              action_key: `${id}:a${i + 1}`, application: id, title: x.title, description: x.description ?? '', partners: x.partners ?? '', frequency_label: x.frequency_label ?? '',
+              events_per_year: x.events_per_year ?? null, in_scope: x.in_scope !== false, sort_order: x.sort_order,
+            }))
+            if (rows.length > 0) await context.actions.record.batchCreate({ table: 'grant_actions', items: rows, continueOnItemError: true })
+            stats.actions = rows.length
+          }
+          if (src && (await list('grant_cost_items', eq('application', id))).length === 0) {
+            const rows = (await list('grant_cost_items', eq('application', String(src.id)))).map((x: any, i: number) => ({
+              item_key: `${id}:c${i + 1}`, application: id, calc_group: x.calc_group, poste: x.poste, label: x.label ?? '', unit_cost: x.unit_cost ?? null, quantity: x.quantity ?? null,
+              amount_input: x.amount_input ?? null, commercial_pct: x.commercial_pct ?? 0, eligible_pct: x.eligible_pct ?? null, cerfa_code: x.cerfa_code ?? null, notes: x.notes ?? '', sort_order: x.sort_order,
+            }))
+            if (rows.length > 0) await context.actions.record.batchCreate({ table: 'grant_cost_items', items: rows, continueOnItemError: true })
+            stats.cost_items = rows.length
+          }
+          // The précisions of the CERFA rows, keyed by the same code under the new demande; the engine fills the figures.
+          if (src) {
+            const prev = (await list('grant_budget_rows', eq('application', String(src.id)))).filter((r: any) => has(r.precisions))
+            const rows = prev.map((r: any) => ({
+              row_key: String(r.row_key).replace(new RegExp(`^${src.id}:`), `${id}:`), application: id, side: r.side, cerfa_code: r.cerfa_code, label: r.label, level: r.level,
+              section_code: r.section_code ?? '', sort_order: r.sort_order, precisions: r.precisions, ...(has(r.funder) ? { funder: String(r.funder) } : {}),
+            })).filter((r: any) => !String(r.row_key).includes(':inv:'))
+            if (rows.length > 0) await context.actions.record.batchUpsert({ table: 'grant_budget_rows', items: rows, matchField: 'row_key', continueOnItemError: true })
+            stats.precisions = rows.length
+          }
+
+          // The deadline in the Calendrier de gestion.
+          // Only a demande still to file, whose deadline is to come: the tracker's history gets no reminder.
+          const todayIso = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+          const open = ['a_candidater', 'en_redaction', 'relecture'].includes(String(app.status))
+          if (has(app.deadline) && !has(app.deadline_reminder) && open && String(app.deadline).slice(0, 10) >= todayIso) {
+            let owner = ''
+            const contactId = patch.contact_person ?? app.contact_person
+            if (has(contactId)) owner = String((await list('org_people', eq('id', String(contactId))))[0]?.email ?? '')
+            const created: any = await context.actions.record.create({ table: 'management_deadlines', data: {
+              title: `[Subvention] ${app.title}`, due_date: app.deadline, recurrence: 'once', notice_days: 10, category: 'finances',
+              ...(owner ? { owner_email: owner } : {}), create_notion_card: false, active: true,
+              procedure: `Dossier à préparer sur ${String(context.env.BASE_URL ?? '').replace(/\/$/, '')}/administration/subventions/${id} : textes, modalités de calcul, budget CERFA, pièces, puis « Générer le dossier Word ».`,
+            } })
+            if (created?.id) patch.deadline_reminder = String(created.id)
+            stats.deadline = 1
+          }
+          if (Object.keys(patch).length > 0) await context.actions.record.update({ table: 'grant_applications', id, data: patch })
+          context.log.info(`${app.title} : ${JSON.stringify(stats)}${src ? ` depuis « ${src.title} »` : ''}`)
+          return { copied: stats }
+        }
+  - name: compute
+    $ref: grant-budget-compute
+    $vars:
+      applicationId: '{{trigger.data.record.id}}'

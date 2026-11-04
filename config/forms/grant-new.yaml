@@ -1,0 +1,55 @@
+# Form: grant-new — create a demande de subvention, placed on
+# /administration/subventions/nouvelle. A declared form because a page form
+# never creates a row. « Reprendre » names last year's demande: grant-
+# application-init copies its sections, actions, cost items and précisions
+# into the new one, and puts the deadline in the Calendrier de gestion. The
+# redirect opens the demande on its own page, where everything is edited.
+id: 9
+name: grant-new
+title: Nouvelle demande de subvention
+description: "Partez de la demande de l'an dernier : ses textes, ses actions, ses modalités de calcul et les précisions du budget sont repris, à mettre à jour. Le reste se remplit sur la page de la demande."
+display:
+  submitLabel: Créer la demande
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: grant_applications
+fields:
+  - { kind: table-field, column: title, label: Intitulé, placeholder: "EMS 2028 — Soutien à l'événementiel", required: true }
+  - kind: table-field
+    column: copy_from
+    label: Reprendre la demande
+    helpText: "Vide : une demande vierge, avec les sections habituelles d'un dossier."
+    optionsSource:
+      table: grant_applications
+      displayField: title
+      sort:
+        - { field: exercise_year, direction: desc }
+        - { field: title, direction: asc }
+  - kind: table-field
+    column: funder
+    label: Financeur
+    helpText: "Vide en reprenant une demande : le financeur de celle-ci."
+    optionsSource:
+      table: grant_funders
+      displayField: name
+      sort:
+        - { field: name, direction: asc }
+  - { kind: table-field, column: aid_type, label: Type d'aide, defaultValue: fonctionnement, required: true }
+  - { kind: table-field, column: exercise_year, label: Exercice, defaultValue: 2027, helpText: "L'année que la subvention finance.", required: true }
+  - { kind: table-field, column: deadline, label: Date limite de dépôt, helpText: "Un rappel est ajouté au Calendrier de gestion, dix jours avant." }
+  - kind: table-field
+    column: scenario
+    label: Scénario du prévisionnel
+    helpText: "Le budget CERFA d'une demande de fonctionnement est celui de ce scénario, pour l'exercice. Il se choisit aussi plus tard."
+    optionsSource:
+      table: scenarios
+      displayField: name
+      filter:
+        - { field: status, operator: eq, value: active }
+      sort:
+        - { field: year, direction: desc }
+  - { kind: table-field, column: status, defaultValue: en_redaction, hidden: true }
+onSuccess:
+  type: redirect
+  url: /administration/subventions/$record.id
+  delaySeconds: 0

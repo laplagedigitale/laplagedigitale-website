@@ -1,0 +1,22 @@
+# Form: grant-section-new — add a section to a demande's dossier, in a dialog
+# on /administration/subventions/:id (tab Projet). The demande is prefilled
+# and locked by the page.
+id: 10
+name: grant-section-new
+title: Nouvelle section
+description: "Une partie du dossier : un paragraphe de présentation, un principe directeur, une section libre."
+display:
+  submitLabel: Ajouter la section
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: grant_sections
+fields:
+  - { kind: table-field, column: application, hidden: true }
+  - { kind: table-field, column: part, label: Partie du dossier, defaultValue: principes, required: true }
+  - { kind: table-field, column: title, label: Titre, required: true }
+  - { kind: table-field, column: body, label: Texte, helpText: "Une ligne vide entre deux paragraphes ; une ligne qui commence par « - » devient une puce." }
+  - { kind: table-field, column: sort_order, label: Ordre, defaultValue: 100, helpText: "Les sections se suivent par ordre croissant, à l'intérieur de leur partie." }
+  - { kind: table-field, column: in_export, defaultValue: true, hidden: true }
+onSuccess:
+  type: message
+  message: "Section ajoutée."

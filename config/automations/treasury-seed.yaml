@@ -67,7 +67,18 @@ actions:
             L('transfer_livret', 'Virements vers / depuis le Livret A', 'transfer', 'transferts', '58', 'hors_resultat', 0, false, 'none', 'certain'),
             L('transfer_internal', 'Virements entre comptes Pennylane', 'transfer', 'transferts', '58', 'hors_resultat', 0, false, 'none', 'certain'),
           ]
+          // The non-cash charge of the compte de résultat: no transaction, its budget cells only (cash_effect off).
+          lines.push({ ...L('68_dotations', 'Dotations aux amortissements et provisions', 'expense', 'achats', '681', 'amortissements', 0, false, 'none', 'certain', false, true), cash_effect: false })
           lines.forEach((l, i) => { l.line_order = (i + 1) * 10 })
+          // The CERFA lens of each line (the budget prévisionnel of a demande de subvention); none for TVA, loan, transfers.
+          const CERFA: Record<string, string> = {
+            '70_ca': '70', '756_cotisations': '756', '74_subventions': '74', '77_indemnites': '77', '75_autres': '758',
+            '604_sous_traitance': '604', '605_mobilier': '606', '6061_energie': '606', '6063_fournitures_entretien': '606', '6064_admin_logiciels': '606',
+            '613_loyer': '613', '614_charges_locatives': '613', '615_entretien_nettoyage': '615', '616_assurances': '616',
+            '622_honoraires': '622', '627_frais_bancaires': '627', '628_divers': '627', '631_impots_taxes': '631',
+            '641_remuneration': '641', '645_charges_sociales': '645', '648_tickets_restaurant': '647', '68_dotations': '68',
+          }
+          for (const l of lines) { l.cerfa_row = CERFA[l.code] ?? null; if (l.cash_effect === undefined) l.cash_effect = true }
 
           // Manual rules: category-label regexes first (priority 10-50), bank-label regexes after (60-90), internal transfers before everything (1).
           const R = (key: string, match_type: string, pattern: string, code: string, priority: number, direction = 'any', is_internal_transfer = false, notes = '') =>
