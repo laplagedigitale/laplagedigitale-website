@@ -12,6 +12,15 @@
 # follows the visitor's OS and paints the engine's default dark palette.
 colorScheme: light
 
+# The square mark: the rosette of public/brand/logo-couleurs.svg without the
+# wordmark (the favicon). The /_admin console draws it on its sign-in card and
+# at the head of its sidebar, beside the app's name — a square mark, because
+# the name is already written next to it. Coral and sage read on both
+# surfaces, so no srcDark.
+logo:
+  src: /favicon.svg
+  alt: La Plage Digitale
+
 colors:
   # Palette principale
   navy: '#273a61'
