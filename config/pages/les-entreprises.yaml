@@ -24,13 +24,13 @@ components:
         props:
           className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
         children:
-          - { type: text, element: p, content: $t:companies.eyebrow, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4' } }
+          - { type: text, element: p, content: $t:companies.eyebrow, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4' } }
           - { type: text, element: h1, content: $t:companies.title, props: { className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-4xl' } }
           - { type: text, element: p, content: $t:companies.lead, props: { className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6' } }
 
   # ── Logo wall ──
   - type: container
-    element: main
+    element: section
     props:
       className: 'bg-sand'
     children:
@@ -85,7 +85,7 @@ components:
             props:
               className: 'flex flex-col sm:flex-row gap-4 justify-center mt-10'
             children:
-              - { type: link, content: $t:companies.cta.pricing, props: { href: $t:href.pricing, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:companies.cta.pricing, props: { href: $t:href.pricing, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors' } }
               - { type: link, content: $t:companies.cta.contact, props: { href: $t:href.contact, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors' } }
 
   - component: site-footer

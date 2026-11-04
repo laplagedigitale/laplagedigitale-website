@@ -24,7 +24,7 @@ scripts:
         if (spaces.length === 1) location.replace(spaces[0].getAttribute('href'))
 components:
   - type: container
-    element: main
+    element: section
     props:
       className: 'min-h-screen flex items-center justify-center bg-background p-6'
     children:

@@ -29,7 +29,7 @@ components:
       - component: admin-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -45,7 +45,7 @@ components:
                 content: $t:admin.members.invite
                 visibility: { capability: administer-accounts }
                 props:
-                  className: 'self-start sm:self-auto w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                  className: 'self-start sm:self-auto w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
                   interactions:
                     click:
                       modal: invite-member

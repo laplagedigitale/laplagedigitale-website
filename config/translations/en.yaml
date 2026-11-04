@@ -60,8 +60,7 @@ blog.meta.title: News — La Plage Digitale
 blog.meta.description: "Events, newsletters and news from La Plage Digitale, Strasbourg's third place for innovation, since 2012."
 blog.eyebrow: News
 blog.title: Life at La Plage
-blog.lead: "Events, meetups, monthly newsletters and portraits: more than ten years of Strasbourg's digital scene."
-blog.languageNote: "Our articles are published in French."
+blog.lead: "Events, meetups, monthly newsletters and portraits: more than ten years of Strasbourg's digital scene. Our articles are published in French."
 blog.empty: No articles yet.
 post.back: "← All news"
 post.more: More articles
@@ -180,10 +179,10 @@ contact.map.lead: "La Plage Digitale occupies the former Coop premises at 13 rue
 contact.map.iframeTitle: "Map: La Plage Digitale, 13 rue Jacques Peirotes, 67000 Strasbourg"
 contact.form.eyebrow: "Write to us"
 contact.form.title: "Send us a message"
-contact.form.lead: "Drop us a line and we will get back to you quickly — usually within two working days."
+contact.form.lead: "Drop us a line and the team will reply by email."
 contact.form.submit: "Send message"
 contact.form.success.title: "Thank you, your message has been received!"
-contact.form.success.message: "The La Plage Digitale team will reply very soon. For anything urgent, call us on +33 9 77 42 59 29."
+contact.form.success.message: "Thank you, your message has arrived. For anything urgent, call us on +33 9 77 42 59 29."
 contact.form.error: "Your message could not be sent. Please try again, or email us directly at contact@laplagedigitale.fr."
 contact.form.name.label: "Full name"
 contact.form.name.placeholder: "Alex Smith"
@@ -287,10 +286,6 @@ home.community.item3: "Hack SXB — on the last Friday of the month, an evening 
 home.community.item4: "Shared library, Bidouillothèque, advice sessions — resources shared between members."
 home.community.cta: Discover our activities
 home.community.imageAlt: A developer meetup in the Flex area of La Plage Digitale
-home.news.eyebrow: News
-home.news.title: The latest from the Plage
-home.news.cta: All news →
-home.news.empty: No news yet.
 home.supporters.title: With the support of
 home.supporters.cta: Our supporters and networks →
 home.cta.title: Fancy joining the Plage?
@@ -729,7 +724,7 @@ flex.how.4.title: "One invoice a month"
 flex.how.4.text: "On the 1st of the month, the invoice for last month's days is issued. It shows in your Member Area, with direct debit as an option."
 flex.signup.eyebrow: "First visit"
 flex.signup.title: "Sign up for Flex"
-flex.signup.lead: "A few details, just once: we create your account and send you your Member Area access, usually within one working day. Any question? contact+flex@laplagedigitale.fr"
+flex.signup.lead: "A few details, just once: we create your account and send you your Member Area access. Any question? contact+flex@laplagedigitale.fr"
 flex.signup.form.title: "Your details"
 flex.signup.first_name: "First name"
 flex.signup.last_name: "Last name"
@@ -871,7 +866,7 @@ member.formule.referral.title: "Refer someone"
 member.formule.referral.text: "Someone you know is looking for a desk? If they join La Plage, they get €50 off their first 3 months, and you get your choice of a month's discount or a gift of equal value (chocolates, a potted plant, a gift card…). They just give your name when they sign up."
 member.formule.referral.cta: "See the referral offer"
 member.formule.change.title: "Change plan or leave"
-member.formule.change.text: "Switch plans, add a desk or end your contract: write to us and we will reply within a few working days."
+member.formule.change.text: "Switch plans, add a desk or end your contract: write to us."
 member.formule.change.cta: "Write to La Plage"
 member.formule.change.href: "mailto:contact@laplagedigitale.fr?subject=My%20plan"
 member.formule.all: "See all plans →"
@@ -1001,3 +996,11 @@ member.partners.dollinger: "Fruit and vegetable baskets delivered to La Plage ev
 member.partners.yse: "Returnable-packaging products delivered to La Plage (drinks, cereals, compotes…), and 5% off with the code LAPLAGEDIGITALE."
 member.partners.emma: "Wellbeing-at-work workshops, pay what you like."
 member.partners.vivant: "Workshops in Strasbourg’s parks and green spaces."
+
+# 404 page (config/pages/not-found.yaml)
+notFound.meta.title: "Page not found — La Plage Digitale"
+notFound.title: "This page doesn’t exist (any more)"
+notFound.lead: "The link may be old, or the address may have a typo."
+notFound.member: "Are you a coworker coming from your Member Space? Your account is probably not linked to your member record yet: write to us and we’ll sort it out."
+notFound.home: "Back to the home page"
+notFound.contact: "Write to the team"

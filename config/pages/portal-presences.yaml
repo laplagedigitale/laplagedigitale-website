@@ -33,7 +33,7 @@ components:
       - component: espace-membre-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -97,7 +97,7 @@ components:
                   - { type: text, element: p, content: $t:flex.presences.how.2, props: { className: 'text-sm text-navy' } }
                   - { type: text, element: p, content: $t:flex.presences.how.3, props: { className: 'text-sm text-navy' } }
                   - { type: text, element: p, content: $t:flex.presences.billing, props: { className: 'text-sm text-navy pt-2 border-t border-blue' } }
-                  - { type: link, content: $t:flex.presences.billing.cta, props: { href: 'mailto:contact+flex@laplagedigitale.fr?subject=Flex%20%E2%80%94%20infos%20de%20facturation', className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: $t:flex.presences.billing.cta, props: { href: 'mailto:contact+flex@laplagedigitale.fr?subject=Flex%20%E2%80%94%20infos%20de%20facturation', className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
 
           - type: grid
             props:

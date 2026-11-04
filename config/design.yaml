@@ -18,6 +18,8 @@ colors:
   navy-700: '#1c2b4a'
   navy-300: '#5d6a88'
   navy-200: '#929caf'
+  # Muted text ON navy: navy-200 there is 4.1:1, under AA; this blue-leaning tint is 7.0:1.
+  navy-150: '#bfcde6'
   navy-100: '#e4e6eb'
   blue: '#6290bc'
   blue-300: '#8fb2d6'
@@ -27,6 +29,8 @@ colors:
   orange-300: '#f6a66b'
   orange-200: '#f9c296'
   orange-100: '#fde3cc'
+  # Orange as TEXT on white / paper / sand (≥ 4.5:1). #f08137 stays a fill.
+  orange-700: '#b04f16'
   magenta: '#cf1769'
   magenta-300: '#e0538f'
   magenta-200: '#ec8bb3'
@@ -63,11 +67,12 @@ colors:
   sidebar-border: '#e4e6eb'
   sidebar-ring: '#6290bc'
   # Chart series take these by position: in 0.40 a series `color` naming a
-  # token is not applied, and the default palette is grey.
+  # token is not applied, and the default palette is grey. Each series is
+  # ≥ 3:1 on white (a non-text mark): orange and orange-300 were 2.7 and 2.0.
   chart-1: '#6290bc'
-  chart-2: '#f08137'
+  chart-2: '#d9651c'
   chart-3: '#273a61'
-  chart-4: '#f6a66b'
+  chart-4: '#455b32'
   chart-5: '#cf1769'
   highlight: '#cf1769'
   success: '#92aa58'
@@ -111,6 +116,14 @@ motion:
 # Sidebars: the group headings keep the small capitals they had before 0.38
 # (the shadcn recipe sets them in plain case), and the entries keep their size.
 components:
+  # Public forms: the recipe draws 32px fields in 12px text (iOS zooms on
+  # focus, and 44px is the touch target). 16px text, 44px fields and button.
+  form:
+    parts:
+      input: h-11 text-base
+      body: '[&_textarea]:min-h-32 [&_textarea]:text-base [&_.help-text]:text-sm'
+      submit: h-11 px-5 text-base
+      description: text-sm
   # A card's children sat 0.5rem apart before 0.38 (now 1rem): the pages'
   # cards space their own content.
   card:

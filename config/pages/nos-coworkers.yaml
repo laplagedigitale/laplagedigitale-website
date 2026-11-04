@@ -24,13 +24,13 @@ components:
         props:
           className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
         children:
-          - { type: text, element: p, content: $t:coworkers.eyebrow, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4' } }
+          - { type: text, element: p, content: $t:coworkers.eyebrow, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4' } }
           - { type: text, element: h1, content: $t:coworkers.title, props: { className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] sm:[font-size:var(--text-display)] sm:[line-height:var(--text-display--line-height)] sm:[font-weight:var(--text-display--font-weight)] sm:[letter-spacing:var(--text-display--letter-spacing)] text-white max-w-4xl' } }
           - { type: text, element: p, content: $t:coworkers.lead, props: { className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6' } }
 
   # ── Profiles ──
   - type: container
-    element: main
+    element: section
     props:
       className: 'bg-background'
     children:
@@ -51,7 +51,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/caroline-bosc.webp, alt: $t:coworkers.caroline.alt, className: 'w-full aspect-square object-cover' } }
                   - type: container
@@ -66,7 +65,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/frederic-fuchs.webp, alt: $t:coworkers.frederic.alt, className: 'w-full aspect-square object-cover' } }
                   - type: container
@@ -81,7 +79,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/roland-margelidon.webp, alt: $t:coworkers.roland.alt, className: 'w-full aspect-square object-cover' } }
                   - type: container
@@ -96,7 +93,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/bastien-remy.webp, alt: $t:coworkers.bastien.alt, className: 'w-full aspect-square object-cover' } }
                   - type: container
@@ -111,7 +107,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/sylvaine-gross.webp, alt: $t:coworkers.sylvaine.alt, className: 'w-full aspect-square object-cover' } }
                   - type: container
@@ -126,7 +121,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/nos-cowork/eleonore-greif.webp, alt: $t:coworkers.eleonore.alt, className: 'w-full aspect-square object-cover' } }
                   - type: container
@@ -154,7 +148,7 @@ components:
             props:
               className: 'flex flex-col sm:flex-row gap-4 justify-center mt-10'
             children:
-              - { type: link, content: $t:coworkers.cta.pricing, props: { href: $t:href.pricing, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:coworkers.cta.pricing, props: { href: $t:href.pricing, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors' } }
               - { type: link, content: $t:coworkers.cta.companies, props: { href: $t:href.companies, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors' } }
 
   - component: site-footer

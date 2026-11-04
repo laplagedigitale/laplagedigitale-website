@@ -27,7 +27,7 @@ components:
             element: p
             content: $t:activities.eyebrow
             props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4'
           - type: text
             element: h1
             content: $t:activities.title
@@ -40,7 +40,7 @@ components:
               className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
 
   - type: container
-    element: main
+    element: section
     props:
       className: 'bg-background'
     children:
@@ -77,7 +77,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-activites/conseils-de-la-plage-digitale.webp, alt: $t:activities.council.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
@@ -88,7 +87,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-activites/bibliotheque-partagee.webp, alt: $t:activities.library.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
@@ -99,7 +97,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-activites/startup-ce.webp, alt: $t:activities.startupce.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
@@ -110,7 +107,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-sage' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-activites/demarche-ecologique.webp, alt: $t:activities.ecology.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
@@ -151,7 +147,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-activites/meetups.webp, alt: $t:activities.meetups.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
@@ -162,7 +157,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-activites/permanences-conseil.webp, alt: $t:activities.advice.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
@@ -173,7 +167,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-activites/hack-sxb.webp, alt: $t:activities.hack.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
@@ -191,7 +184,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/nos-activites/bidouillotheque.webp, alt: $t:activities.bidouillo.imageAlt, loading: lazy, className: 'w-full aspect-[4/3] object-cover' } }
                       - type: container
@@ -215,12 +207,12 @@ components:
                 content: $t:activities.cta.title
                 props:
                   id: activities-cta-title
-                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy'
+                  className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy-700'
               - type: text
                 element: p
                 content: $t:activities.cta.lead
                 props:
-                  className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy max-w-2xl mx-auto mt-4'
+                  className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-700 max-w-2xl mx-auto mt-4'
               - type: flex
                 props:
                   className: 'flex flex-wrap justify-center gap-3 mt-10'
@@ -236,6 +228,6 @@ components:
                     content: $t:activities.cta.contact
                     props:
                       href: $t:href.contact
-                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-navy text-navy hover:bg-navy hover:text-white transition-colors'
+                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold border-2 border-navy text-navy-700 hover:bg-navy hover:text-white transition-colors'
 
   - component: site-footer

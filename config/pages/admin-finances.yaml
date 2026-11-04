@@ -29,7 +29,7 @@ components:
       - component: admin-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -125,7 +125,7 @@ components:
                 props: { className: 'flex items-center justify-between gap-4' }
                 children:
                   - { type: text, element: h2, content: Trésorerie prévisionnelle, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Voir le prévisionnel →', props: { href: /administration/finances/previsionnel, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: 'Voir le prévisionnel →', props: { href: /administration/finances/previsionnel, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: card
                 props:
                   className: 'p-4 sm:p-6 space-y-3'
@@ -159,7 +159,7 @@ components:
                 props: { className: 'flex items-center justify-between gap-4' }
                 children:
                   - { type: text, element: h2, content: Factures en retard, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Toutes les factures →', props: { href: /administration/finances/factures, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: 'Toutes les factures →', props: { href: /administration/finances/factures, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: card
                 props:
                   className: 'p-4 sm:p-6'
@@ -191,7 +191,7 @@ components:
                 props: { className: 'flex items-center justify-between gap-4' }
                 children:
                   - { type: text, element: h2, content: Rapprochements à vérifier, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Tous les rapprochements →', props: { href: /administration/finances/rapprochements, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: 'Tous les rapprochements →', props: { href: /administration/finances/rapprochements, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: card
                 props:
                   className: 'p-4 sm:p-6'

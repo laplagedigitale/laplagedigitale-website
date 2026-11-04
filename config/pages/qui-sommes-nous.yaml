@@ -29,7 +29,7 @@ components:
             element: p
             content: $t:about.eyebrow
             props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4'
           - type: text
             element: h1
             content: $t:about.title
@@ -42,7 +42,7 @@ components:
               className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-navy-100 max-w-2xl mt-6'
 
   - type: container
-    element: main
+    element: section
     props:
       className: 'bg-background'
     children:
@@ -113,7 +113,6 @@ components:
                 element: article
                 props:
                   className: 'bg-background rounded-panel border-t-4 border-orange p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: text, element: h2, content: $t:about.project.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy' } }
                   - { type: text, element: p, content: $t:about.project.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-4' } }
@@ -123,7 +122,6 @@ components:
                 element: article
                 props:
                   className: 'bg-background rounded-panel border-t-4 border-magenta p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: text, element: h2, content: $t:about.association.title, props: { className: '[font-size:var(--text-h3)] [line-height:var(--text-h3--line-height)] [font-weight:var(--text-h3--font-weight)] text-navy' } }
                   - { type: text, element: p, content: $t:about.association.p1, props: { className: '[font-size:var(--text-body)] [line-height:var(--text-body--line-height)] [font-weight:var(--text-body--font-weight)] text-text mt-4' } }
@@ -138,7 +136,7 @@ components:
                           href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
                           target: _blank
                           rel: 'noopener noreferrer'
-                          className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                          className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
                       - type: link
                         content: $t:about.cta.call
                         props:
@@ -179,7 +177,6 @@ components:
                   - type: container
                     element: article
                     props: { className: 'bg-white rounded-panel shadow-md border-t-4 border-orange p-6 text-center' }
-                    interactions: { scroll: { animation: fadeInUp, once: true } }
                     children:
                       - { type: image, props: { src: /images/pages/qui-sommes-nous/mathieu-mapps.webp, alt: Mathieu Mapps, loading: lazy, className: 'w-32 h-32 mx-auto rounded-full object-cover ring-4 ring-orange-100' } }
                       - { type: text, element: h3, content: Mathieu MAPPS, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
@@ -211,7 +208,6 @@ components:
               - type: container
                 element: article
                 props: { className: 'bg-white rounded-panel shadow-md border-t-4 border-navy p-6 text-center' }
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/qui-sommes-nous/simon-thierry.webp, alt: Simon Thierry, loading: lazy, className: 'w-32 h-32 mx-auto rounded-full object-cover ring-4 ring-navy-100' } }
                   - { type: text, element: h3, content: Simon THIERRY, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
@@ -220,7 +216,6 @@ components:
               - type: container
                 element: article
                 props: { className: 'bg-white rounded-panel shadow-md border-t-4 border-blue p-6 text-center' }
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/qui-sommes-nous/thomas-jeanneau.webp, alt: Thomas Jeanneau, loading: lazy, className: 'w-32 h-32 mx-auto rounded-full object-cover ring-4 ring-blue-100' } }
                   - { type: text, element: h3, content: Thomas JEANNEAU, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
@@ -229,7 +224,6 @@ components:
               - type: container
                 element: article
                 props: { className: 'bg-white rounded-panel shadow-md border-t-4 border-orange p-6 text-center' }
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/qui-sommes-nous/bastien-remy.webp, alt: Bastien Remy, loading: lazy, className: 'w-32 h-32 mx-auto rounded-full object-cover ring-4 ring-orange-100' } }
                   - { type: text, element: h3, content: Bastien REMY, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy mt-5' } }
@@ -267,7 +261,7 @@ components:
                       href: 'https://www.helloasso.com/associations/la-plage-digitale/adhesions/adhesion-a-la-plage-digitale-2025'
                       target: _blank
                       rel: 'noopener noreferrer'
-                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                      className: 'inline-flex items-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
                   - type: link
                     content: $t:about.cta.callNumber
                     props:

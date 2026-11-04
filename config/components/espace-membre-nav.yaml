@@ -3,7 +3,7 @@
 #
 # Below lg the column becomes a top bar and the navigation folds into a drawer
 # behind its menu button. A template cannot take children, so each page places
-# this column itself, beside its own <main>.
+# this column itself, beside its content section.
 #
 # The entries' hrefs are literal paths, not $t:href.* keys: in Sovrium 0.30
 # the current-entry match (aria-current) runs on the unresolved href, so a
@@ -16,8 +16,10 @@
 # record, so EVERY coworker page binds the signed-in member's row
 # (`dataSource: { table: members, mode: single, filter: email = $currentUser.email }`);
 # on a page with no member record the gate does not apply and the entry shows.
-# Like the admin sidebar, the extra sidebars are hidden below lg — on a phone
-# the dashboard carries the same way in (the Flex « Pointer » card).
+# Like the admin sidebar, the extra sidebars are hidden below lg. On a phone a
+# Flex member gets « Présences » as a pill in the top bar instead (same gate):
+# checking in happens at the door, phone in hand, and a second drawer would
+# put two menu buttons side by side.
 #
 # Since 0.38 a sidebar is a scroll area (flex-1, min-h-0, 48px kept under its
 # entries for a scroll fade): the short extra sidebars are lg:flex-none, or the
@@ -33,6 +35,12 @@ children:
     children:
       - { type: image, props: { src: /brand/logo-couleurs.svg, alt: La Plage Digitale, className: 'h-9 w-auto' } }
       - { type: text, element: span, content: $t:nav.portal, props: { className: 'font-bold text-navy' } }
+  - type: link
+    content: $t:portal.nav.presences
+    visibility: { record: { field: formules, contains: flex } }
+    props:
+      href: /espace-membre/presences
+      className: 'lg:hidden ml-auto inline-flex items-center min-h-11 px-4 rounded-full bg-surface text-sm font-semibold text-navy shadow-sm hover:bg-white'
   - type: sidebar
     drawer: { below: lg, label: $t:portal.nav.menu }
     props:

@@ -30,7 +30,7 @@ components:
             element: p
             content: $t:pricing.eyebrow
             props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4'
           - type: text
             element: h1
             content: $t:pricing.title
@@ -82,7 +82,6 @@ components:
                 props:
                   id: fixe
                   className: 'scroll-mt-28 flex flex-col bg-white rounded-panel shadow-md border-t-8 border-navy p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: text, element: h3, content: $t:pricing.fixe.name, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase tracking-widest text-text-muted' } }
                   - type: flex
@@ -129,7 +128,6 @@ components:
                 props:
                   id: nomade
                   className: 'scroll-mt-28 flex flex-col bg-white rounded-panel shadow-md border-t-8 border-blue p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: text, element: h3, content: $t:pricing.nomade.name, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase tracking-widest text-text-muted' } }
                   - type: flex
@@ -157,7 +155,6 @@ components:
                 props:
                   id: flex
                   className: 'scroll-mt-28 flex flex-col bg-white rounded-panel shadow-md border-t-8 border-orange p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: text, element: h3, content: $t:pricing.flex.name, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase tracking-widest text-text-muted' } }
                   - type: flex
@@ -223,7 +220,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-blue'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/les-formules/salle-crevette.webp, alt: $t:pricing.room.crevette.alt, className: 'w-full aspect-[4/3] object-cover' } }
                   - type: container
@@ -249,7 +245,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-orange'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/les-formules/salle-requin.webp, alt: $t:pricing.room.requin.alt, className: 'w-full aspect-[4/3] object-cover' } }
                   - type: container
@@ -275,7 +270,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-magenta'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/les-formules/salle-baleine.webp, alt: $t:pricing.room.baleine.alt, className: 'w-full aspect-[4/3] object-cover' } }
                   - type: container
@@ -301,7 +295,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md overflow-hidden border-t-4 border-navy'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/les-formules/salle-narval.webp, alt: $t:pricing.room.narval.alt, className: 'w-full aspect-[4/3] object-cover' } }
                   - type: container
@@ -350,7 +343,6 @@ components:
                 element: article
                 props:
                   className: 'bg-white rounded-panel shadow-md border-t-8 border-magenta p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: mailbox, size: 32, className: 'text-magenta' } }
                   - { type: text, element: p, content: $t:pricing.dom.price, props: { className: '[font-size:var(--text-h1)] [line-height:var(--text-h1--line-height)] [font-weight:var(--text-h1--font-weight)] [letter-spacing:var(--text-h1--letter-spacing)] font-extrabold text-navy mt-4 leading-none' } }
@@ -374,7 +366,7 @@ components:
         props:
           className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24'
         children:
-          - { type: text, element: p, content: $t:pricing.referral.eyebrow, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-3' } }
+          - { type: text, element: p, content: $t:pricing.referral.eyebrow, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-700 mb-3' } }
           - { type: text, element: h2, content: $t:pricing.referral.title, props: { className: '[font-size:var(--text-h2)] [line-height:var(--text-h2--line-height)] [font-weight:var(--text-h2--font-weight)] [letter-spacing:var(--text-h2--letter-spacing)] text-navy max-w-3xl' } }
           - { type: text, element: p, content: $t:pricing.referral.text, props: { className: '[font-size:var(--text-lead)] [line-height:var(--text-lead--line-height)] [font-weight:var(--text-lead--font-weight)] text-text-muted max-w-2xl mt-4' } }
           - type: grid
@@ -385,17 +377,15 @@ components:
                 element: article
                 props:
                   className: 'bg-white rounded-panel shadow-md border-t-8 border-orange p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
-                  - { type: icon, props: { name: users, size: 32, className: 'text-orange' } }
+                  - { type: icon, props: { name: users, size: 32, className: 'text-orange-700' } }
                   - { type: text, element: p, content: $t:pricing.referral.referee.title, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-navy mt-4' } }
-                  - { type: text, element: p, content: $t:pricing.referral.referee.amount, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] font-extrabold text-orange mt-2' } }
+                  - { type: text, element: p, content: $t:pricing.referral.referee.amount, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] font-extrabold text-orange-700 mt-2' } }
                   - { type: text, element: p, content: $t:pricing.referral.referee.text, props: { className: '[font-size:var(--text-bodySmall)] [line-height:var(--text-bodySmall--line-height)] text-navy mt-3' } }
               - type: container
                 element: article
                 props:
                   className: 'bg-white rounded-panel shadow-md border-t-8 border-magenta p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: gift, size: 32, className: 'text-magenta' } }
                   - { type: text, element: p, content: $t:pricing.referral.referrer.title, props: { className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-navy mt-4' } }
@@ -419,7 +409,7 @@ components:
             props:
               className: 'flex flex-col sm:flex-row gap-4 justify-center mt-10'
             children:
-              - { type: link, content: $t:pricing.cta.contact, props: { href: $t:href.contact, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:pricing.cta.contact, props: { href: $t:href.contact, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors' } }
               - { type: link, content: $t:pricing.cta.visit, props: { href: $t:href.space, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors' } }
 
   - component: site-footer

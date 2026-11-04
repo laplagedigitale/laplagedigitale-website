@@ -40,7 +40,7 @@ components:
       - component: admin-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -57,7 +57,7 @@ components:
                     props:
                       className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
                     children:
-                      - { type: text, element: span, content: Scénario de référence, visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide text-navy bg-orange' } }
+                      - { type: text, element: span, content: Scénario de référence, visibility: { record: { field: is_baseline, eq: true } }, props: { className: 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide text-navy-700 bg-orange' } }
                       - { type: record-field, props: { field: status } }
                       - { type: record-field, props: { field: comfort } }
                       - { type: text, element: span, content: 'Calculé' }
@@ -85,7 +85,7 @@ components:
                     content: Ajouter un ajustement
                     visibility: { record: { field: is_baseline, eq: false } }
                     props:
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
                       interactions:
                         click:
                           modal: new-adjustment
@@ -428,7 +428,7 @@ components:
                       - type: button
                         content: '+ Ajustement'
                         props:
-                          className: 'text-sm font-semibold text-blue hover:text-navy'
+                          className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
                           interactions:
                             click:
                               modal: new-adjustment
@@ -483,7 +483,7 @@ components:
                       - type: button
                         content: '+ Élément daté'
                         props:
-                          className: 'text-sm font-semibold text-blue hover:text-navy'
+                          className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
                           interactions:
                             click:
                               modal: new-planned-item

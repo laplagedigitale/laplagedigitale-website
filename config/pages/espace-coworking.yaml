@@ -29,7 +29,7 @@ components:
             element: p
             content: $t:space.eyebrow
             props:
-              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange mb-4'
+              className: '[font-size:var(--text-overline)] [line-height:var(--text-overline--line-height)] [font-weight:var(--text-overline--font-weight)] [letter-spacing:var(--text-overline--letter-spacing)] uppercase text-orange-300 mb-4'
           - type: text
             element: h1
             content: $t:space.title
@@ -84,7 +84,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md border-t-4 border-navy p-6'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: door-closed, size: 28, className: 'text-navy mb-4' } }
                   - { type: text, element: p, content: '3', props: { className: '[font-size:var(--text-display)] [line-height:var(--text-display--line-height)] [font-weight:var(--text-display--font-weight)] [letter-spacing:var(--text-display--letter-spacing)] font-extrabold text-navy leading-none' } }
@@ -95,7 +94,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md border-t-4 border-blue p-6'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: monitor, size: 28, className: 'text-blue mb-4' } }
                   - { type: text, element: p, content: '52', props: { className: '[font-size:var(--text-display)] [line-height:var(--text-display--line-height)] [font-weight:var(--text-display--font-weight)] [letter-spacing:var(--text-display--letter-spacing)] font-extrabold text-navy leading-none' } }
@@ -106,7 +104,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md border-t-4 border-orange p-6'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: laptop, size: 28, className: 'text-navy mb-4' } }
                   - { type: text, element: p, content: '30', props: { className: '[font-size:var(--text-display)] [line-height:var(--text-display--line-height)] [font-weight:var(--text-display--font-weight)] [letter-spacing:var(--text-display--letter-spacing)] font-extrabold text-navy leading-none' } }
@@ -117,7 +114,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md border-t-4 border-magenta p-6'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: icon, props: { name: users, size: 28, className: 'text-magenta mb-4' } }
                   - { type: text, element: p, content: '4', props: { className: '[font-size:var(--text-display)] [line-height:var(--text-display--line-height)] [font-weight:var(--text-display--font-weight)] [letter-spacing:var(--text-display--letter-spacing)] font-extrabold text-navy leading-none' } }
@@ -154,7 +150,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/espace-cowork/bouee-violette-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
                   - { type: text, element: h3, content: $t:space.how.fixed.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
@@ -171,7 +166,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/espace-cowork/bouee-bleu-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
                   - { type: text, element: h3, content: $t:space.how.flex.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
@@ -184,7 +178,6 @@ components:
                 element: article
                 props:
                   className: 'flex flex-col bg-white rounded-panel shadow-md p-6 sm:p-8'
-                interactions: { scroll: { animation: fadeInUp, once: true } }
                 children:
                   - { type: image, props: { src: /images/pages/espace-cowork/bouee-orange-1.webp, alt: '', className: 'w-8 h-8 mb-4' } }
                   - { type: text, element: h3, content: $t:space.how.rooms.title, props: { className: '[font-size:var(--text-h4)] [line-height:var(--text-h4--line-height)] [font-weight:var(--text-h4--font-weight)] text-navy' } }
@@ -220,7 +213,7 @@ components:
             props:
               className: 'flex flex-col sm:flex-row gap-4 justify-center mt-10'
             children:
-              - { type: link, content: $t:space.cta.pricing, props: { href: $t:href.pricing, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy bg-orange hover:bg-orange-300 transition-colors' } }
+              - { type: link, content: $t:space.cta.pricing, props: { href: $t:href.pricing, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors' } }
               - { type: link, content: $t:space.cta.contact, props: { href: $t:href.contact, className: 'inline-flex items-center justify-center px-6 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-navy transition-colors' } }
 
   - component: site-footer

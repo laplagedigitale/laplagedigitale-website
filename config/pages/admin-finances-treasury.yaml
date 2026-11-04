@@ -27,7 +27,7 @@ components:
       - component: admin-nav
 
       - type: container
-        element: main
+        element: section
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
@@ -43,7 +43,7 @@ components:
                 content: 'Voir le prévisionnel →'
                 props:
                   href: /administration/finances/previsionnel
-                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy bg-orange hover:bg-orange-300 transition-colors'
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
 
           # The position: what counts as cash, what sits on the current
           # accounts, and the month so far (internal transfers left out).
@@ -144,7 +144,7 @@ components:
                 props: { className: 'flex items-center justify-between gap-4' }
                 children:
                   - { type: text, element: h2, content: Trésorerie prévisionnelle, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Voir le prévisionnel →', props: { href: /administration/finances/previsionnel, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: 'Voir le prévisionnel →', props: { href: /administration/finances/previsionnel, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: card
                 props:
                   className: 'p-4 sm:p-6 space-y-3'
@@ -178,7 +178,7 @@ components:
                 props: { className: 'flex items-center justify-between gap-4' }
                 children:
                   - { type: text, element: h2, content: Points comptables, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Toutes les transactions →', props: { href: /administration/finances/transactions, className: 'text-sm font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: 'Toutes les transactions →', props: { href: /administration/finances/transactions, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - { type: text, element: p, content: "Ce que le cabinet comptable demande chaque mois : une facture pour chaque débit, une catégorie pour chaque opération, et un lettrage pour chaque encaissement. Tout se corrige dans Pennylane.", props: { className: 'text-sm text-text-muted max-w-2xl' } }
               - type: grid
                 props:
@@ -220,9 +220,9 @@ components:
               - type: flex
                 props: { className: 'flex flex-wrap gap-x-6 gap-y-2 text-sm' }
                 children:
-                  - { type: link, content: 'Débits sans justificatif →', props: { href: '/administration/finances/transactions?onglet=justificatifs', className: 'font-semibold text-blue hover:text-navy' } }
-                  - { type: link, content: 'Sans catégorie →', props: { href: '/administration/finances/transactions?onglet=categories', className: 'font-semibold text-blue hover:text-navy' } }
-                  - { type: link, content: 'Encaissements non lettrés →', props: { href: '/administration/finances/transactions?onglet=lettrage', className: 'font-semibold text-blue hover:text-navy' } }
+                  - { type: link, content: 'Débits sans justificatif →', props: { href: '/administration/finances/transactions?onglet=justificatifs', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: 'Sans catégorie →', props: { href: '/administration/finances/transactions?onglet=categories', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: 'Encaissements non lettrés →', props: { href: '/administration/finances/transactions?onglet=lettrage', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: card
                 props:
                   className: 'p-4 sm:p-6 space-y-3'
