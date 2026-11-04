@@ -1,0 +1,164 @@
+# Page: admin-lieu-contract — one contract (pattern B, edit in place): the
+# form saves field by field; the right column shows what it is linked to —
+# the structure and the person (their Communauté pages), the desk or the
+# locker — and opens its documents in a new tab.
+#
+# Changing a date or the desk changes who occupies what from the next
+# morning's lieu-occupancy-refresh (or at once through its trigger endpoint:
+# see CLAUDE.md).
+name: admin-lieu-contract
+path: /administration/lieu/contrats/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Contrat — Administration"
+  description: "Un contrat de bureau, de box, de casier ou de domiciliation."
+  noindex: true
+dataSource: { table: space_contracts, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Contrats', props: { href: /administration/lieu/contrats, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: container
+            children:
+              - { type: text, element: h1, content: $record.occupant_name, props: { className: 'text-3xl font-bold text-navy' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                children:
+                  - { type: record-field, props: { field: kind, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+                  - { type: text, element: span, content: Du }
+                  - { type: record-field, format: long-date, props: { field: start_date, className: 'font-semibold text-navy' } }
+                  - { type: text, element: span, content: au }
+                  - { type: record-field, format: long-date, visibility: { record: { field: end_date, isNotEmpty: true } }, props: { field: end_date, className: 'font-semibold text-navy' } }
+                  - { type: text, element: span, content: '(sans date de fin)', visibility: { record: { field: end_date, isEmpty: true } } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Contrat, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: space_contracts, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: space_contracts
+                    fields:
+                      - { field: kind }
+                      - { field: occupant_name }
+                      - { field: organization }
+                      - { field: contact }
+                      - { field: desk, description: "Pour un contrat de bureau. Le bureau est marqué occupé au recalcul du matin." }
+                      - { field: locker, description: "Pour un contrat de casier." }
+                      - { field: room, description: "Pour un contrat de box : la pièce louée." }
+                      - { field: start_date }
+                      - { field: end_date, description: "Vide tant que le contrat court." }
+                      - { field: billing_email }
+                      - { field: contract_url }
+                      - { field: termination_url }
+                      - { field: info_sheet_url }
+                      - { field: keys_handover_url }
+                      - { field: domiciliation_holder_address, control: textarea, description: "Pour une domiciliation." }
+                      - { field: notes, control: textarea }
+
+              - type: container
+                props:
+                  className: 'space-y-6'
+                children:
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-4'
+                    children:
+                      - { type: text, element: h2, content: Liens, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: container
+                        element: div
+                        props: { className: 'grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm' }
+                        children:
+                          - { type: text, element: span, content: Structure, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: organization, className: 'text-navy' } }
+                          - { type: text, element: span, content: Personne, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: contact, className: 'text-navy' } }
+                          - { type: text, element: span, content: Bureau, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: desk, className: 'text-navy' } }
+                          - { type: text, element: span, content: Casier, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: locker, className: 'text-navy' } }
+                          - { type: text, element: span, content: Box, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: room, className: 'text-navy' } }
+                      - type: link
+                        content: 'Ouvrir la structure →'
+                        visibility: { record: { field: organization, isNotEmpty: true } }
+                        props:
+                          href: /administration/contacts/structures/$record.organization
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Ouvrir la personne →'
+                        visibility: { record: { field: contact, isNotEmpty: true } }
+                        props:
+                          href: /administration/contacts/personnes/$record.contact
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Ouvrir le bureau →'
+                        visibility: { record: { field: desk, isNotEmpty: true } }
+                        props:
+                          href: /administration/lieu/bureaux/$record.desk
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Ouvrir le casier →'
+                        visibility: { record: { field: locker, isNotEmpty: true } }
+                        props:
+                          href: /administration/lieu/casiers/$record.locker
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-4'
+                    children:
+                      - { type: text, element: h2, content: Documents, props: { className: 'text-xl font-semibold text-navy' } }
+                      - { type: text, element: p, content: "Les documents signés, rangés dans le Drive. Ajoute leur lien dans la fiche pour les retrouver ici.", props: { className: 'text-sm text-text-muted' } }
+                      - type: link
+                        content: 'Contrat ↗'
+                        visibility: { record: { field: contract_url, isNotEmpty: true } }
+                        props:
+                          href: $record.contract_url
+                          target: _blank
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Résiliation ↗'
+                        visibility: { record: { field: termination_url, isNotEmpty: true } }
+                        props:
+                          href: $record.termination_url
+                          target: _blank
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Fiche de renseignements ↗'
+                        visibility: { record: { field: info_sheet_url, isNotEmpty: true } }
+                        props:
+                          href: $record.info_sheet_url
+                          target: _blank
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Remise des clés ↗'
+                        visibility: { record: { field: keys_handover_url, isNotEmpty: true } }
+                        props:
+                          href: $record.keys_handover_url
+                          target: _blank
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'

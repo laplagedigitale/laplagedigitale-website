@@ -1,0 +1,122 @@
+# Page: admin-lieu-booking — one meeting-room booking (pattern B, edit in
+# place): the form saves field by field; the right column gives the hours
+# (the row's formula), the links to the structure and the person, and the
+# documents.
+name: admin-lieu-booking
+path: /administration/lieu/salles/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Réservation de salle — Administration"
+  description: "Une mise à disposition de salle de réunion."
+  noindex: true
+dataSource: { table: room_bookings, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Salles de réunion', props: { href: /administration/lieu/salles, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: container
+            children:
+              - { type: text, element: h1, content: $record.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                children:
+                  - { type: record-field, format: datetime, props: { field: starts_at, className: 'font-semibold text-navy' } }
+                  - { type: record-field, props: { field: room, className: 'font-semibold text-navy' } }
+                  - { type: record-field, visibility: { record: { field: mad_type, isNotEmpty: true } }, props: { field: mad_type, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Réservation, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: room_bookings, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: room_bookings
+                    fields:
+                      - { field: title }
+                      - { field: room }
+                      - { field: starts_at }
+                      - { field: ends_at }
+                      - { field: organization }
+                      - { field: booked_by }
+                      - { field: mad_type }
+                      - { field: field_of_action }
+                      - { field: free }
+                      - { field: amount_ht }
+                      - { field: billed }
+                      - { field: billing_email, description: "Si la facture part ailleurs que chez la structure." }
+                      - { field: door_code }
+                      - { field: communication_wanted }
+                      - { field: contract_url }
+                      - { field: safety_sheet_url }
+
+              - type: container
+                props:
+                  className: 'space-y-6'
+                children:
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6 space-y-4'
+                    children:
+                      - { type: text, element: h2, content: En bref, props: { className: 'text-xl font-semibold text-navy' } }
+                      - type: container
+                        element: div
+                        props: { className: 'grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm' }
+                        children:
+                          - { type: text, element: span, content: Heures, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: hours, className: 'text-navy' } }
+                          - { type: text, element: span, content: Fin, props: { className: 'text-text-muted' } }
+                          - { type: record-field, format: datetime, props: { field: ends_at, className: 'text-navy' } }
+                          - { type: text, element: span, content: Structure, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: organization, className: 'text-navy' } }
+                          - { type: text, element: span, content: Réservé par, props: { className: 'text-text-muted' } }
+                          - { type: record-field, props: { field: booked_by, className: 'text-navy' } }
+                      - type: link
+                        content: 'Ouvrir la structure →'
+                        visibility: { record: { field: organization, isNotEmpty: true } }
+                        props:
+                          href: /administration/contacts/structures/$record.organization
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Ouvrir la personne →'
+                        visibility: { record: { field: booked_by, isNotEmpty: true } }
+                        props:
+                          href: /administration/contacts/personnes/$record.booked_by
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Contrat ↗'
+                        visibility: { record: { field: contract_url, isNotEmpty: true } }
+                        props:
+                          href: $record.contract_url
+                          target: _blank
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Fiche sécurité ↗'
+                        visibility: { record: { field: safety_sheet_url, isNotEmpty: true } }
+                        props:
+                          href: $record.safety_sheet_url
+                          target: _blank
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'

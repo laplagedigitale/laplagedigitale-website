@@ -165,6 +165,14 @@ tables:
   - $ref: ./config/tables/organizations.yaml
   - $ref: ./config/tables/contacts.yaml
   - $ref: ./config/tables/memberships.yaml
+  # Lieu: the rooms, desks and lockers of the place, every contract for a
+  # part of it (desk, box, locker, domiciliation) and the meeting-room
+  # bookings, imported from Notion by notion-import-lieu. Admin only.
+  - $ref: ./config/tables/rooms.yaml
+  - $ref: ./config/tables/desks.yaml
+  - $ref: ./config/tables/lockers.yaml
+  - $ref: ./config/tables/space-contracts.yaml
+  - $ref: ./config/tables/room-bookings.yaml
   # Gouvernance: the CA / AG / bureau sittings, the decisions put to the vote
   # and who attended, imported from Notion by notion-import-gouvernance. The
   # people are org_people, the signed PV an org_documents row. Admin only.
@@ -207,6 +215,9 @@ forms:
   - $ref: ./config/forms/contact-new.yaml
   - $ref: ./config/forms/organization-new.yaml
   - $ref: ./config/forms/membership-new.yaml
+  # Lieu: a new contract, a new meeting-room booking.
+  - $ref: ./config/forms/space-contract-new.yaml
+  - $ref: ./config/forms/room-booking-new.yaml
   # Gouvernance: a new sitting, a new decision (its page and the sitting's
   # dialog), a new attendance (the sitting's dialog).
   - $ref: ./config/forms/meeting-new.yaml
@@ -249,6 +260,20 @@ pages:
   - $ref: ./config/pages/admin-memberships.yaml
   - $ref: ./config/pages/admin-membership-new.yaml
   - $ref: ./config/pages/admin-membership.yaml
+  # Lieu: Occupation and its two lists (bureaux, casiers) with their record
+  # pages, then the contracts and the meeting rooms, each new-record page
+  # before the :id page it would otherwise be read as.
+  - $ref: ./config/pages/admin-lieu.yaml
+  - $ref: ./config/pages/admin-lieu-desks.yaml
+  - $ref: ./config/pages/admin-lieu-desk.yaml
+  - $ref: ./config/pages/admin-lieu-lockers.yaml
+  - $ref: ./config/pages/admin-lieu-locker.yaml
+  - $ref: ./config/pages/admin-lieu-contracts.yaml
+  - $ref: ./config/pages/admin-lieu-contract-new.yaml
+  - $ref: ./config/pages/admin-lieu-contract.yaml
+  - $ref: ./config/pages/admin-lieu-bookings.yaml
+  - $ref: ./config/pages/admin-lieu-booking-new.yaml
+  - $ref: ./config/pages/admin-lieu-booking.yaml
   - $ref: ./config/pages/admin-demandes.yaml
   - $ref: ./config/pages/admin-finances.yaml
   - $ref: ./config/pages/admin-finances-invoices.yaml
@@ -332,6 +357,9 @@ actions:
   # demandes, shared by grant-compute, grant-application-init and the on-edit
   # triggers.
   - $ref: ./config/actions/grant-budget-compute.yaml
+  # Lieu: who occupies each desk and locker, from the active contracts;
+  # shared by lieu-occupancy-refresh and notion-import-lieu.
+  - $ref: ./config/actions/lieu-occupancy-compute.yaml
 
 automations:
   - $ref: ./config/automations/member-sign-up.yaml
@@ -360,6 +388,11 @@ automations:
   # Contacts & adhésions: the import of the three Notion databases (manual,
   # dry run unless {"dryRun": "false"})
   - $ref: ./config/automations/notion-import-communaute.yaml
+  # Lieu: the import of the seven Notion databases (manual, dry run unless
+  # {"dryRun": "false"}), and the morning occupancy refresh (05:00
+  # Europe/Paris) of the desks and lockers.
+  - $ref: ./config/automations/notion-import-lieu.yaml
+  - $ref: ./config/automations/lieu-occupancy-refresh.yaml
   # Gouvernance: the import of the CA / AG sittings, decisions and attendance
   # (manual, dry run unless {"dryRun": "false"})
   - $ref: ./config/automations/notion-import-gouvernance.yaml

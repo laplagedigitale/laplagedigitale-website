@@ -1,0 +1,202 @@
+# Page: admin-lieu — « Occupation », the Lieu section's dashboard (pattern D):
+# who is where today, what is free, which contracts end soon.
+#
+# - The tiles link to where each figure is worked: the desks and lockers
+#   lists on their « Libres » / « Occupés » tab, the contracts on their
+#   « À échéance » or « Domiciliations » tab. Occupancy is the one
+#   lieu-occupancy-refresh writes every morning from the active contracts.
+# - « Actif » is never stored: active_from ≤ $today AND active_until ≥ $today
+#   (the contract's dates with the gaps filled), resolved on every read.
+# - The sub-nav pills (Occupation · Bureaux · Casiers) say which of the three
+#   pages is open; the sidebar's « Occupation » entry matches this page only
+#   (a prefix would also mark it on Contrats and Salles de réunion).
+# - The floor plan stays a Google Sheet, opened in a new tab.
+name: admin-lieu
+path: /administration/lieu
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Occupation du lieu — Administration"
+  description: "Les bureaux, casiers et contrats de La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-12'
+        children:
+          - type: flex
+            props: { className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4' }
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Occupation du lieu, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Qui occupe quel bureau et quel casier aujourd'hui, ce qui est libre et les contrats qui se terminent bientôt. L'occupation se recalcule chaque matin d'après les contrats en cours.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: 'Plan des bureaux ↗'
+                props:
+                  href: https://docs.google.com/spreadsheets/d/1-yy1aSggJQlZvw8vfm_ngBuZzhBSJUPfQnGBPpIor10/edit
+                  target: _blank
+                  rel: noopener
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+
+          # Sub-navigation of Occupation: these pills say which of its three pages is open.
+          - type: container
+            element: nav
+            props:
+              aria-label: Occupation
+              className: 'flex flex-wrap gap-2 -mt-8'
+            children:
+              - { type: link, content: Occupation, props: { href: /administration/lieu, 'aria-current': page, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-white hover:text-white bg-navy' } }
+              - { type: link, content: Bureaux, props: { href: /administration/lieu/bureaux, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+              - { type: link, content: Casiers, props: { href: /administration/lieu/casiers, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+
+          # Aujourd'hui — every tile opens the list it counts.
+          - type: container
+            element: section
+            props: { className: 'space-y-4', aria-labelledby: aujourdhui }
+            children:
+              - { type: text, element: h2, content: "Aujourd'hui", props: { id: aujourdhui, className: 'text-xl font-semibold text-navy' } }
+              - type: grid
+                props: { className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4' }
+                children:
+                  - type: link
+                    props: { href: '/administration/lieu/bureaux?onglet=occupes', 'aria-label': 'Bureaux occupés : ouvrir la liste', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                    children:
+                      - type: kpi
+                        label: Bureaux occupés (%)
+                        icon: armchair
+                        dataSource: { table: desks }
+                        kpiAggregate:
+                          function: ratio
+                          numerator: { filter: [{ field: occupied, operator: eq, value: true }] }
+                          denominator: { filter: [{ field: label, operator: isNotEmpty }] }
+                          caption: '{numerator} sur {denominator} bureaux'
+                        kpiFormat: { type: number, options: { maximumFractionDigits: '0' } }
+                  - type: link
+                    props: { href: '/administration/lieu/bureaux?onglet=libres', 'aria-label': 'Bureaux libres : ouvrir la liste', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                    children:
+                      - type: kpi
+                        label: Bureaux libres
+                        description: Sans contrat en cours
+                        icon: square-dashed
+                        dataSource:
+                          table: desks
+                          filter:
+                            - { field: occupied, operator: eq, value: false }
+                        kpiAggregate: { function: count }
+                  - type: link
+                    props: { href: '/administration/lieu/casiers?onglet=libres', 'aria-label': 'Casiers libres : ouvrir la liste', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                    children:
+                      - type: kpi
+                        label: Casiers libres
+                        description: Sans contrat en cours
+                        icon: lock-open
+                        dataSource:
+                          table: lockers
+                          filter:
+                            - { field: occupied, operator: eq, value: false }
+                        kpiAggregate: { function: count }
+                  - type: link
+                    props: { href: '/administration/lieu/contrats?onglet=echeance', 'aria-label': 'Contrats qui se terminent dans les 60 jours', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                    children:
+                      - type: kpi
+                        label: Contrats à échéance
+                        description: Fin dans les 60 jours
+                        icon: calendar-clock
+                        dataSource:
+                          table: space_contracts
+                          filter:
+                            - { field: end_date, operator: gte, value: $today }
+                            - { field: end_date, operator: lte, value: $today+60d }
+                        kpiAggregate: { function: count }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
+                  - type: link
+                    props: { href: '/administration/lieu/contrats?onglet=domiciliation', 'aria-label': 'Domiciliations actives : ouvrir la liste', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                    children:
+                      - type: kpi
+                        label: Domiciliations actives
+                        description: Contrat en cours
+                        icon: mailbox
+                        dataSource:
+                          table: space_contracts
+                          filter:
+                            - { field: kind, operator: eq, value: domiciliation }
+                            - { field: active_from, operator: lte, value: $today }
+                            - { field: active_until, operator: gte, value: $today }
+                        kpiAggregate: { function: count }
+
+          - type: grid
+            props: { className: 'grid grid-cols-1 xl:grid-cols-2 gap-8 items-start' }
+            children:
+              # Bureaux libres
+              - type: container
+                element: section
+                props: { className: 'space-y-4' }
+                children:
+                  - type: flex
+                    props: { className: 'flex items-center justify-between gap-4' }
+                    children:
+                      - { type: text, element: h2, content: Bureaux libres, props: { className: 'text-xl font-semibold text-navy' } }
+                      - { type: link, content: 'Voir les bureaux →', props: { href: '/administration/lieu/bureaux?onglet=libres', className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - type: card
+                    props: { className: 'p-4 sm:p-6' }
+                    children:
+                      - type: table
+                        readOnly: true
+                        rowHeight: short
+                        props: { aria-label: Bureaux libres }
+                        dataSource:
+                          table: desks
+                          filter:
+                            - { field: occupied, operator: eq, value: false }
+                          sort:
+                            - { field: label, direction: asc }
+                          pagination: { pageSize: 15 }
+                        emptyMessage: "Tous les bureaux sont occupés aujourd'hui."
+                        onRowClick: { type: navigate, path: /administration/lieu/bureaux/$record.id }
+                        columns:
+                          - { field: label, label: Bureau }
+                          - { field: room, label: Pièce }
+                          - { field: kind, label: Type }
+
+              # Contrats à échéance (60 j)
+              - type: container
+                element: section
+                props: { className: 'space-y-4' }
+                children:
+                  - type: flex
+                    props: { className: 'flex items-center justify-between gap-4' }
+                    children:
+                      - { type: text, element: h2, content: Contrats à échéance (60 j), props: { className: 'text-xl font-semibold text-navy' } }
+                      - { type: link, content: 'Voir les contrats →', props: { href: '/administration/lieu/contrats?onglet=echeance', className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - type: card
+                    props: { className: 'p-4 sm:p-6' }
+                    children:
+                      - type: table
+                        readOnly: true
+                        rowHeight: short
+                        props: { aria-label: Contrats à échéance dans les 60 jours }
+                        dataSource:
+                          table: space_contracts
+                          filter:
+                            - { field: end_date, operator: gte, value: $today }
+                            - { field: end_date, operator: lte, value: $today+60d }
+                          sort:
+                            - { field: end_date, direction: asc }
+                          pagination: { pageSize: 15 }
+                        emptyMessage: "Aucun contrat ne se termine dans les 60 prochains jours."
+                        onRowClick: { type: navigate, path: /administration/lieu/contrats/$record.id }
+                        columns:
+                          - { field: end_date, label: Fin, format: short-date }
+                          - { field: occupant_name, label: Occupant }
+                          - { field: kind, label: Type }
+                          - { field: desk, label: Bureau }

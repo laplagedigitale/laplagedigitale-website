@@ -1,0 +1,223 @@
+# Page: admin-lieu-bookings — « Salles de réunion », in the Administration's
+# Lieu section: the mises à disposition of Narval, Baleine, Requin, Crevette
+# and Tortue.
+#
+# - A filter bar (channel admin-lieu-bookings) narrows the calendar and both
+#   tables at once: by room, structure, type, champ d'action…
+# - The calendar colours each booking by its type of mise à disposition; a
+#   click opens the booking's page, where it is edited.
+# - « À venir » (from now on) and « Toutes » are tabs with an address
+#   (?onglet=a-venir|toutes).
+# - « 2026 en chiffres »: three aggregate charts over the year's bookings,
+#   one series each (chartAggregate) — by type, by champ d'action, and the
+#   hours per structure (`hours` is the row's formula), ten largest.
+name: admin-lieu-bookings
+path: /administration/lieu/salles
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: a-venir
+    enum: [a-venir, toutes]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Salles de réunion — Administration"
+  description: "Les mises à disposition des salles de réunion de La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Salles de réunion, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Les mises à disposition de Narval, Baleine, Requin, Crevette et Tortue : qui, quand, à quelles conditions, et si c'est facturé. Clique sur une réservation pour la voir et la modifier.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: '+ Nouvelle réservation'
+                props:
+                  href: /administration/lieu/salles/nouvelle
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+
+          - type: card
+            props:
+              className: 'p-4 sm:p-6'
+            children:
+              - type: container
+                element: div
+                props:
+                  role: toolbar
+                  aria-label: Filtrer les réservations
+                  className: 'mb-4 flex flex-wrap items-center gap-2'
+                children:
+                  - type: filter-bar
+                    publishes: { bindTo: admin-lieu-bookings }
+                    fieldsFrom: { table: room_bookings }
+              - type: event-calendar
+                dataSource:
+                  bindTo: admin-lieu-bookings
+                  sharedFilter: {}
+                  table: room_bookings
+                  filter:
+                    - { field: starts_at, operator: isNotEmpty }
+                dateField: starts_at
+                endDateField: ends_at
+                labelField: title
+                colorField: mad_type
+                defaultView: month
+                maxEventsPerDay: 3
+                calendarEvent:
+                  onEventClick: { type: navigate, path: '/administration/lieu/salles/$record.id' }
+
+          - type: tabs
+            defaultTab: $query.onglet
+            panels:
+              - { id: a-venir, label: À venir }
+              - { id: toutes, label: Toutes }
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Réservations à venir
+                    dataSource:
+                      bindTo: admin-lieu-bookings
+                      sharedFilter: {}
+                      table: room_bookings
+                      filter:
+                        - { field: starts_at, operator: gte, value: $now }
+                      sort:
+                        - { field: starts_at, direction: asc }
+                      pagination: { pageSize: 25, style: numbered }
+                    emptyMessage: "Aucune réservation à venir : ajoute la prochaine avec « Nouvelle réservation »."
+                    onRowClick: { type: navigate, path: /administration/lieu/salles/$record.id }
+                    columns:
+                      - { field: starts_at, label: Début, format: datetime }
+                      - { field: title, label: Intitulé }
+                      - { field: room, label: Salle }
+                      - { field: organization, label: Structure }
+                      - { field: mad_type, label: Type }
+                      - { field: door_code, label: Code porte }
+                      - { field: billed, label: Facturée, format: check-cross }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher une réservation…
+                        props: { aria-label: Rechercher une réservation, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-bookings, param: q }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/room_bookings/export?format=csv', filename: salles.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Toutes les réservations
+                    dataSource:
+                      bindTo: admin-lieu-bookings
+                      sharedFilter: {}
+                      table: room_bookings
+                      sort:
+                        - { field: starts_at, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucune réservation pour le moment : l'import Notion (notion-import-lieu) recopie l'historique."
+                    onRowClick: { type: navigate, path: /administration/lieu/salles/$record.id }
+                    columns:
+                      - { field: starts_at, label: Début, format: datetime }
+                      - { field: title, label: Intitulé }
+                      - { field: room, label: Salle }
+                      - { field: organization, label: Structure }
+                      - { field: mad_type, label: Type }
+                      - { field: hours, label: Heures, align: right }
+                      - { field: billed, label: Facturée, format: check-cross }
+
+          # 2026 en chiffres — one series per chart.
+          - type: container
+            element: section
+            props: { className: 'space-y-4' }
+            children:
+              - { type: text, element: h2, content: 2026 en chiffres, props: { className: 'text-xl font-semibold text-navy' } }
+              - { type: text, element: p, content: "Les réservations de l'année, quel que soit le filtre ci-dessus. Une réservation sans type ou sans champ d'action renseigné compte dans « (vide) ».", props: { className: 'text-sm text-text-muted max-w-3xl' } }
+              - type: grid
+                props: { className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start' }
+                children:
+                  - type: card
+                    props: { className: 'p-4 sm:p-6 space-y-3' }
+                    children:
+                      - { type: text, element: h3, content: Par type de mise à disposition, props: { className: 'text-lg font-semibold text-navy' } }
+                      - type: chart
+                        chartType: bar
+                        props: { aria-label: Réservations 2026 par type de mise à disposition }
+                        dataSource:
+                          table: room_bookings
+                          filter:
+                            - { field: starts_at, operator: gte, value: '2026-01-01T00:00:00.000Z' }
+                            - { field: starts_at, operator: lt, value: '2027-01-01T00:00:00.000Z' }
+                        chartAggregate: { function: count, groupBy: mad_type }
+                        xAxis: { field: mad_type, label: Type }
+                        yAxis: { field: id, label: Réservations, gridLines: true }
+                        series: [{ field: mad_type, label: Réservations, color: magenta }]
+                        emptyMessage: Aucune réservation en 2026.
+                  - type: card
+                    props: { className: 'p-4 sm:p-6 space-y-3' }
+                    children:
+                      - { type: text, element: h3, content: Par champ d'action, props: { className: 'text-lg font-semibold text-navy' } }
+                      - type: chart
+                        chartType: bar
+                        props: { aria-label: Réservations 2026 par champ d'action }
+                        dataSource:
+                          table: room_bookings
+                          filter:
+                            - { field: starts_at, operator: gte, value: '2026-01-01T00:00:00.000Z' }
+                            - { field: starts_at, operator: lt, value: '2027-01-01T00:00:00.000Z' }
+                        chartAggregate: { function: count, groupBy: field_of_action, order: value-desc }
+                        xAxis: { field: field_of_action, label: Champ d'action }
+                        yAxis: { field: id, label: Réservations, gridLines: true }
+                        series: [{ field: field_of_action, label: Réservations, color: navy }]
+                        emptyMessage: Aucune réservation en 2026.
+                  - type: card
+                    props: { className: 'p-4 sm:p-6 space-y-3' }
+                    children:
+                      - { type: text, element: h3, content: Heures par structure, props: { className: 'text-lg font-semibold text-navy' } }
+                      - type: chart
+                        chartType: bar
+                        props: { aria-label: 'Heures de salle 2026 par structure, dix premières' }
+                        dataSource:
+                          table: room_bookings
+                          filter:
+                            - { field: starts_at, operator: gte, value: '2026-01-01T00:00:00.000Z' }
+                            - { field: starts_at, operator: lt, value: '2027-01-01T00:00:00.000Z' }
+                            - { field: organization, operator: isNotEmpty }
+                          limit: 1000
+                        chartAggregate: { function: sum, field: hours, groupBy: organization, order: value-desc, limit: 10, otherLabel: Autres }
+                        xAxis: { field: organization, label: Structure }
+                        yAxis: { field: hours, label: Heures, gridLines: true }
+                        series: [{ field: hours, label: Heures, color: blue }]
+                        emptyMessage: Aucune réservation liée à une structure en 2026.

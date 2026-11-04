@@ -1,0 +1,37 @@
+# Table: rooms — the « Pièces » of La Plage: the open spaces where desks
+# stand, the meeting rooms, the boxes (closed offices rented as a whole), the
+# lockers' wall and the common or technical rooms. Imported from Notion by
+# notion-import-lieu, matched on notion_page_id.
+#
+# `kind` is guessed from the name on import (Narval, Baleine, Requin,
+# Crevette, Tortue → meeting room; « … - Box … » → box; Kraken, Corail →
+# shared office…) and only written while empty, so an admin's correction
+# survives a re-run. Admin only.
+id: 35
+name: rooms
+aiAccess:
+  description: "Rooms (pièces) of La Plage Digitale's premises: shared offices, meeting rooms, boxes, lockers, common and technical rooms, with their capacity. Imported from Notion."
+  operations: [read, list]
+fields:
+  - { id: 1, name: name, label: Nom, type: single-line-text, required: true, indexed: true }
+  - id: 2
+    name: kind
+    label: Type
+    type: single-select
+    options:
+      - { value: bureau-partage, label: Bureau partagé, color: '#1e3a8a' }
+      - { value: salle-reunion, label: Salle de réunion, color: '#db2777' }
+      - { value: box, label: Box, color: '#3b82f6' }
+      - { value: casiers, label: Casiers, color: '#f59e0b' }
+      - { value: commun, label: Espace commun, color: '#10b981' }
+      - { value: technique, label: Technique, color: '#64748b' }
+      - { value: autre, label: Autre, color: '#94a3b8' }
+  - { id: 3, name: capacity, label: Capacité (personnes), type: integer }
+  - { id: 4, name: notes, label: Notes, type: long-text }
+  - { id: 5, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 6, name: created_at, label: Créée le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

@@ -1,0 +1,192 @@
+# Page: admin-lieu-lockers — « Casiers », reached from Occupation's pill
+# sub-nav (pattern A): every locker on three tabs with an address
+# (?onglet=libres|occupes|tous), each its own shared-filter channel.
+#
+# « Occupé » and « Occupé par » are written each morning by
+# lieu-occupancy-refresh from the active contracts (kind casier). A row opens
+# the locker's page, with its contracts.
+name: admin-lieu-lockers
+path: /administration/lieu/casiers
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: libres
+    enum: [libres, occupes, tous]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Casiers — Administration"
+  description: "Les casiers de La Plage Digitale, libres et occupés."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Casiers, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Les casiers loués aux coworkers. Un casier est occupé tant qu'un contrat en cours (type Casier) le nomme. Clique sur une ligne pour voir sa fiche.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+          # Sub-navigation of Occupation: these pills say which of its three pages is open.
+          - type: container
+            element: nav
+            props:
+              aria-label: Occupation
+              className: 'flex flex-wrap gap-2 -mt-4'
+            children:
+              - { type: link, content: Occupation, props: { href: /administration/lieu, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+              - { type: link, content: Bureaux, props: { href: /administration/lieu/bureaux, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+              - { type: link, content: Casiers, props: { href: /administration/lieu/casiers, 'aria-current': page, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-white hover:text-white bg-navy' } }
+
+          - type: tabs
+            defaultTab: $query.onglet
+            panels:
+              - { id: libres, label: Libres, description: Sans contrat en cours }
+              - { id: occupes, label: Occupés, description: Un contrat en cours }
+              - { id: tous, label: Tous }
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un casier…
+                        props: { aria-label: Rechercher un casier, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-lockers, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-lockers }
+                        fieldsFrom: { table: lockers }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/lockers/export?format=csv&filterField=occupied&filterValue=false', filename: casiers.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Casiers libres
+                    dataSource:
+                      bindTo: admin-lieu-lockers
+                      sharedFilter: {}
+                      table: lockers
+                      filter:
+                        - { field: occupied, operator: eq, value: false }
+                      sort:
+                        - { field: number, direction: asc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucun casier libre : tous ont un contrat en cours aujourd'hui."
+                    onRowClick: { type: navigate, path: /administration/lieu/casiers/$record.id }
+                    columns:
+                      - { field: label, label: Casier }
+                      - { field: number, label: Numéro, align: right }
+                      - { field: room, label: Pièce }
+                      - { field: occupied, label: Occupé, format: check-cross }
+                      - { field: current_occupant, label: Occupé par }
+                      - { field: notes, label: Notes, truncate: true }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un casier…
+                        props: { aria-label: Rechercher un casier, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-lockers-2, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-lockers-2 }
+                        fieldsFrom: { table: lockers }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/lockers/export?format=csv&filterField=occupied&filterValue=true', filename: casiers.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Casiers occupés
+                    dataSource:
+                      bindTo: admin-lieu-lockers-2
+                      sharedFilter: {}
+                      table: lockers
+                      filter:
+                        - { field: occupied, operator: eq, value: true }
+                      sort:
+                        - { field: number, direction: asc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucun casier occupé : aucun contrat en cours ne nomme de casier."
+                    onRowClick: { type: navigate, path: /administration/lieu/casiers/$record.id }
+                    columns:
+                      - { field: label, label: Casier }
+                      - { field: number, label: Numéro, align: right }
+                      - { field: room, label: Pièce }
+                      - { field: occupied, label: Occupé, format: check-cross }
+                      - { field: current_occupant, label: Occupé par }
+                      - { field: notes, label: Notes, truncate: true }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un casier…
+                        props: { aria-label: Rechercher un casier, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-lockers-3, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-lockers-3 }
+                        fieldsFrom: { table: lockers }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/lockers/export?format=csv', filename: casiers.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Tous les casiers
+                    dataSource:
+                      bindTo: admin-lieu-lockers-3
+                      sharedFilter: {}
+                      table: lockers
+                      sort:
+                        - { field: number, direction: asc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucun casier pour le moment : l'import Notion (notion-import-lieu) recopie la liste."
+                    onRowClick: { type: navigate, path: /administration/lieu/casiers/$record.id }
+                    columns:
+                      - { field: label, label: Casier }
+                      - { field: number, label: Numéro, align: right }
+                      - { field: room, label: Pièce }
+                      - { field: occupied, label: Occupé, format: check-cross }
+                      - { field: current_occupant, label: Occupé par }
+                      - { field: notes, label: Notes, truncate: true }

@@ -10,7 +10,7 @@
 # Two audiences, one shell. A sidebar group cannot be gated on its own, so the
 # navigation is declared twice, each sidebar gated on a role (and left out of
 # the HTML for the other):
-# - admin — Pilotage, Communauté, Finances, Subventions, Gouvernance, Contenu, and Compte, which below lg
+# - admin — Pilotage, Communauté, Lieu, Finances, Subventions, Gouvernance, Contenu, and Compte, which below lg
 #   sits in the drawer and from lg up in the pinned footer (always in view);
 # - editor — Contenu and Compte only (the pages behind the other groups refuse
 #   them anyway: access is admin only).
@@ -77,6 +77,14 @@ children:
               - { label: Adhésions, href: /administration/adhesions, icon: id-card, activeMatch: prefix }
               - { label: Membres, href: /administration/membres, icon: users, activeMatch: prefix }
               - { label: Inscriptions Flex, href: /administration/inscriptions-flex, icon: user-plus, activeMatch: prefix }
+          # Occupation matches exactly: authored entries do not let the longest
+          # href win, so a prefix would also mark it on Contrats and Salles. Its
+          # Bureaux and Casiers pages say where you are with their pill sub-nav.
+          - label: Lieu
+            items:
+              - { label: Occupation, href: /administration/lieu, icon: map }
+              - { label: Contrats, href: /administration/lieu/contrats, icon: file-signature, activeMatch: prefix }
+              - { label: Salles de réunion, href: /administration/lieu/salles, icon: presentation, activeMatch: prefix }
           - label: Finances
             items:
               - { label: Vue d'ensemble, href: /administration/finances, icon: chart-pie }

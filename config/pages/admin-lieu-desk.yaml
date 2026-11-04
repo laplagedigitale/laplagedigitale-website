@@ -1,0 +1,88 @@
+# Page: admin-lieu-desk — one desk (pattern B, edit in place): its label,
+# room, type and notes saved field by field, and every contract that ever
+# named it (newest end first). Free or occupied is lieu-occupancy-refresh's,
+# from the contracts, so it is shown, not edited.
+name: admin-lieu-desk
+path: /administration/lieu/bureaux/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Bureau — Administration"
+  description: "Un bureau du lieu et ses contrats."
+  noindex: true
+dataSource: { table: desks, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Bureaux', props: { href: /administration/lieu/bureaux, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: container
+            children:
+              - { type: text, element: h1, content: $record.label, props: { className: 'text-3xl font-bold text-navy' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                children:
+                  - { type: record-field, props: { field: room, className: 'font-semibold text-navy' } }
+                  - { type: record-field, props: { field: kind, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+                  - { type: text, element: span, content: Libre, visibility: { record: { field: occupied, eq: false } }, props: { className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-forest bg-sage/20' } }
+                  - { type: text, element: span, content: 'Occupé par $record.current_occupant', visibility: { record: { field: occupied, eq: true } }, props: { className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3'
+                children:
+                  - { type: text, element: h2, content: Fiche, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: desks, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: desks
+                    fields:
+                      - { field: label }
+                      - { field: room }
+                      - { field: kind }
+                      - { field: notes, control: textarea }
+                  - { type: text, element: p, content: "« Occupé » se recalcule chaque matin d'après les contrats en cours : pour libérer ou attribuer, modifie le contrat.", props: { className: 'text-sm text-text-muted' } }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Contrats, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: table
+                    readOnly: true
+                    rowHeight: short
+                    props: { aria-label: Contrats }
+                    dataSource:
+                      table: space_contracts
+                      filter:
+                        - { field: desk, operator: eq, value: $param.id }
+                      sort:
+                        - { field: active_until, direction: desc }
+                      pagination: { pageSize: 20 }
+                    emptyMessage: "Aucun contrat ne nomme ce bureau : choisis-le comme « Bureau » sur un contrat."
+                    onRowClick: { type: navigate, path: /administration/lieu/contrats/$record.id }
+                    columns:
+                      - { field: occupant_name, label: Occupant }
+                      - { field: organization, label: Structure }
+                      - { field: start_date, label: Début, format: short-date }
+                      - { field: end_date, label: Fin, format: short-date }

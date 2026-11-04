@@ -1,0 +1,81 @@
+# Action template: lieu-occupancy-compute — sets each desk's and each
+# locker's `occupied` and `current_occupant` from its active contracts in
+# space_contracts. Shared by lieu-occupancy-refresh (every morning, or on
+# demand) and notion-import-lieu (after a real run).
+#
+# A contract is active on today's date in Europe/Paris when start_date is
+# empty or ≤ today and end_date is empty or ≥ today — the rule the pages'
+# views apply. Several active contracts on one desk name every occupant,
+# sorted, joined by « , ».
+#
+# Idempotent: only a row whose flag or occupant changes is written, one
+# record step each, so a run with nothing new writes nothing. $dryRun 'true'
+# counts what it would change and writes nothing.
+name: lieu-occupancy-compute
+variables:
+  dryRun: 'false'
+action:
+  type: code
+  operator: runTypescript
+  props:
+    timeout: 120000
+    inputData:
+      dryRun: '$dryRun'
+    code: |
+      async function execute(context) {
+        const dryRun = String(context.inputData?.dryRun ?? '').trim().toLowerCase() === 'true'
+        const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+        const list = async (table: string): Promise<any[]> => {
+          const res: any = await context.actions.record.list({ table, limit: 10000 })
+          return (res?.records ?? []) as any[]
+        }
+        // A relationship reads as the linked id, or as an object carrying it.
+        const relId = (v: any): string => (v && typeof v === 'object' ? String(v.id ?? '') : v === null || v === undefined ? '' : String(v))
+        const day = (v: any): string => String(v ?? '').slice(0, 10)
+        const truthy = (v: any): boolean => v === true || v === 1 || v === '1' || v === 'true'
+        const active = (c: any): boolean => {
+          const s = day(c.start_date)
+          const e = day(c.end_date)
+          return (!s || s <= today) && (!e || e >= today)
+        }
+        const contracts = (await list('space_contracts')).filter(active)
+        const occupantsOf = (field: string): Map<string, string[]> => {
+          const m = new Map<string, string[]>()
+          for (const c of contracts) {
+            const id = relId(c[field])
+            if (!id) continue
+            const names = m.get(id) ?? []
+            const n = String(c.occupant_name ?? '').trim() || '(sans nom)'
+            if (!names.includes(n)) names.push(n)
+            m.set(id, names)
+          }
+          return m
+        }
+        // Keys of their own: the import's run output merges this step's beside its per-table stats.
+        const result: Record<string, any> = { occupancy_dry_run: dryRun, today, active_contracts: contracts.length }
+        for (const [table, field, key] of [['desks', 'desk', 'desk_occupancy'], ['lockers', 'locker', 'locker_occupancy']] as const) {
+          const occ = occupantsOf(field)
+          const rows = await list(table)
+          let changed = 0, occupied = 0, failed = 0
+          for (const r of rows) {
+            const names = (occ.get(String(r.id)) ?? []).sort((a, b) => a.localeCompare(b, 'fr'))
+            const want = names.length > 0
+            const who = names.join(', ').slice(0, 255)
+            if (want) occupied++
+            if (truthy(r.occupied) === want && String(r.current_occupant ?? '') === who) continue
+            changed++
+            if (dryRun) continue
+            try {
+              await context.actions.record.update({ table, id: String(r.id), data: { occupied: want, current_occupant: who || null } })
+            } catch (e) {
+              failed++
+              context.log.error(`${table} ${r.id} (${r.label}) : ${e?.message ?? String(e)}`)
+            }
+          }
+          result[key] = { total: rows.length, occupied, free: rows.length - occupied, changed, failed }
+        }
+        context.log.info(`${dryRun ? 'DRY RUN — ' : ''}${JSON.stringify(result)}`)
+        const failures = (result.desk_occupancy?.failed ?? 0) + (result.locker_occupancy?.failed ?? 0)
+        if (failures > 0) throw new Error(`${failures} bureau(x) ou casier(s) n'ont pas pu être mis à jour : ${JSON.stringify(result)}`)
+        return result
+      }
