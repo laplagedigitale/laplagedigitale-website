@@ -1,0 +1,372 @@
+# Page: admin-memberships — « Adhésions », in the Administration's Communauté
+# section: the adhésions to the association, one row per person or structure
+# per year (memberships), imported from Notion's « Nos adhérents/bénévoles »
+# and recorded here from now on.
+#
+# One tab per year (?onglet=2026|2025|2024|toutes): a filter cannot name « the
+# current year » ($startOfYear does not exist, and year is an integer), so the
+# years are written out; add the new year's tab (and its channel) each
+# January. Each year opens on its three figures — how many adhérents, the
+# cotisations recorded as paid, those still to chase — then its table on its
+# own shared-filter channel (admin-memberships, -2, -3, -4).
+#
+# Notion holds no payment: every imported adhésion starts unpaid, so
+# « À relancer » counts them until an admin ticks « Payée » on the adhésion's
+# page. members.association_member (the free Flex day) is still ticked by hand
+# on the member's page; nothing here sets it.
+name: admin-memberships
+path: /administration/adhesions
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: '2026'
+    enum: ['2026', '2025', '2024', toutes]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Adhésions — Administration"
+  description: "Les adhésions à l'association La Plage Digitale, année par année."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Adhésions, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Qui adhère à l'association, année par année, et les cotisations encaissées. Une adhésion vaut pour une année : un renouvellement est une nouvelle adhésion.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: '+ Nouvelle adhésion'
+                props:
+                  href: /administration/adhesions/nouvelle
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+
+          - type: tabs
+            defaultTab: $query.onglet
+            panels:
+              - { id: '2026', label: '2026' }
+              - { id: '2025', label: '2025' }
+              - { id: '2024', label: '2024' }
+              - { id: toutes, label: Toutes }
+            children:
+              # 2026
+              - type: container
+                props: { className: 'space-y-6' }
+                children:
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 sm:grid-cols-3 gap-4' }
+                    children:
+                      - type: kpi
+                        label: Adhérents 2026
+                        description: Personnes et structures
+                        icon: users
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2026 }
+                        kpiAggregate: { function: count }
+                      - type: kpi
+                        label: Cotisations encaissées
+                        description: Adhésions 2026 marquées « Payée »
+                        icon: hand-coins
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2026 }
+                            - { field: paid, operator: eq, value: true }
+                        kpiAggregate: { function: sum, field: fee }
+                        kpiFormat: { type: currency, options: { currency: EUR } }
+                      - type: kpi
+                        label: À relancer
+                        description: Cotisation 2026 pas encore payée
+                        icon: bell-ring
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2026 }
+                            - { field: paid, operator: eq, value: false }
+                        kpiAggregate: { function: count }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6'
+                    children:
+                      - type: container
+                        element: div
+                        props:
+                          role: toolbar
+                          aria-label: Outils du tableau
+                          className: 'mb-4 flex flex-wrap items-center gap-2'
+                        children:
+                          - type: search-input
+                            placeholder: Rechercher un adhérent…
+                            props: { aria-label: Rechercher un adhérent, className: 'h-9 w-full sm:w-72' }
+                            publishes: { bindTo: admin-memberships, param: q }
+                          - type: filter-bar
+                            publishes: { bindTo: admin-memberships }
+                            fieldsFrom: { table: memberships }
+                          - type: button
+                            label: Exporter en CSV
+                            variant: outline
+                            size: sm
+                            props: { className: 'sm:ml-auto' }
+                            action: { type: fetch, mode: download, url: '/api/tables/memberships/export?format=csv&filterField=year&filterValue=2026', filename: adhesions.csv }
+                      - type: table
+                        readOnly: true
+                        props:
+                          aria-label: Adhésions 2026
+                        dataSource:
+                          bindTo: admin-memberships
+                          sharedFilter: {}
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2026 }
+                          sort:
+                            - { field: year, direction: desc }
+                            - { field: label, direction: asc }
+                          pagination: { pageSize: 50, style: numbered }
+                        emptyMessage: "Aucune adhésion 2026 pour le moment : ajoute-la avec « Nouvelle adhésion »."
+                        onRowClick: { type: navigate, path: /administration/adhesions/$record.id }
+                        columns:
+                          - { field: label, label: Adhérent }
+                          - { field: kind, label: Type }
+                          - { field: year, label: Année }
+                          - { field: contact, label: Personne }
+                          - { field: organization, label: Structure }
+                          - { field: fee, label: Cotisation, format: currency, align: right }
+                          - { field: paid, label: Payée, format: check-cross }
+              # 2025
+              - type: container
+                props: { className: 'space-y-6' }
+                children:
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 sm:grid-cols-3 gap-4' }
+                    children:
+                      - type: kpi
+                        label: Adhérents 2025
+                        description: Personnes et structures
+                        icon: users
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2025 }
+                        kpiAggregate: { function: count }
+                      - type: kpi
+                        label: Cotisations encaissées
+                        description: Adhésions 2025 marquées « Payée »
+                        icon: hand-coins
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2025 }
+                            - { field: paid, operator: eq, value: true }
+                        kpiAggregate: { function: sum, field: fee }
+                        kpiFormat: { type: currency, options: { currency: EUR } }
+                      - type: kpi
+                        label: À relancer
+                        description: Cotisation 2025 pas encore payée
+                        icon: bell-ring
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2025 }
+                            - { field: paid, operator: eq, value: false }
+                        kpiAggregate: { function: count }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6'
+                    children:
+                      - type: container
+                        element: div
+                        props:
+                          role: toolbar
+                          aria-label: Outils du tableau
+                          className: 'mb-4 flex flex-wrap items-center gap-2'
+                        children:
+                          - type: search-input
+                            placeholder: Rechercher un adhérent…
+                            props: { aria-label: Rechercher un adhérent, className: 'h-9 w-full sm:w-72' }
+                            publishes: { bindTo: admin-memberships-2, param: q }
+                          - type: filter-bar
+                            publishes: { bindTo: admin-memberships-2 }
+                            fieldsFrom: { table: memberships }
+                          - type: button
+                            label: Exporter en CSV
+                            variant: outline
+                            size: sm
+                            props: { className: 'sm:ml-auto' }
+                            action: { type: fetch, mode: download, url: '/api/tables/memberships/export?format=csv&filterField=year&filterValue=2025', filename: adhesions.csv }
+                      - type: table
+                        readOnly: true
+                        props:
+                          aria-label: Adhésions 2025
+                        dataSource:
+                          bindTo: admin-memberships-2
+                          sharedFilter: {}
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2025 }
+                          sort:
+                            - { field: year, direction: desc }
+                            - { field: label, direction: asc }
+                          pagination: { pageSize: 50, style: numbered }
+                        emptyMessage: "Aucune adhésion 2025 pour le moment : ajoute-la avec « Nouvelle adhésion »."
+                        onRowClick: { type: navigate, path: /administration/adhesions/$record.id }
+                        columns:
+                          - { field: label, label: Adhérent }
+                          - { field: kind, label: Type }
+                          - { field: year, label: Année }
+                          - { field: contact, label: Personne }
+                          - { field: organization, label: Structure }
+                          - { field: fee, label: Cotisation, format: currency, align: right }
+                          - { field: paid, label: Payée, format: check-cross }
+              # 2024
+              - type: container
+                props: { className: 'space-y-6' }
+                children:
+                  - type: grid
+                    props: { className: 'grid grid-cols-1 sm:grid-cols-3 gap-4' }
+                    children:
+                      - type: kpi
+                        label: Adhérents 2024
+                        description: Personnes et structures
+                        icon: users
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2024 }
+                        kpiAggregate: { function: count }
+                      - type: kpi
+                        label: Cotisations encaissées
+                        description: Adhésions 2024 marquées « Payée »
+                        icon: hand-coins
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2024 }
+                            - { field: paid, operator: eq, value: true }
+                        kpiAggregate: { function: sum, field: fee }
+                        kpiFormat: { type: currency, options: { currency: EUR } }
+                      - type: kpi
+                        label: À relancer
+                        description: Cotisation 2024 pas encore payée
+                        icon: bell-ring
+                        dataSource:
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2024 }
+                            - { field: paid, operator: eq, value: false }
+                        kpiAggregate: { function: count }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6'
+                    children:
+                      - type: container
+                        element: div
+                        props:
+                          role: toolbar
+                          aria-label: Outils du tableau
+                          className: 'mb-4 flex flex-wrap items-center gap-2'
+                        children:
+                          - type: search-input
+                            placeholder: Rechercher un adhérent…
+                            props: { aria-label: Rechercher un adhérent, className: 'h-9 w-full sm:w-72' }
+                            publishes: { bindTo: admin-memberships-3, param: q }
+                          - type: filter-bar
+                            publishes: { bindTo: admin-memberships-3 }
+                            fieldsFrom: { table: memberships }
+                          - type: button
+                            label: Exporter en CSV
+                            variant: outline
+                            size: sm
+                            props: { className: 'sm:ml-auto' }
+                            action: { type: fetch, mode: download, url: '/api/tables/memberships/export?format=csv&filterField=year&filterValue=2024', filename: adhesions.csv }
+                      - type: table
+                        readOnly: true
+                        props:
+                          aria-label: Adhésions 2024
+                        dataSource:
+                          bindTo: admin-memberships-3
+                          sharedFilter: {}
+                          table: memberships
+                          filter:
+                            - { field: year, operator: eq, value: 2024 }
+                          sort:
+                            - { field: year, direction: desc }
+                            - { field: label, direction: asc }
+                          pagination: { pageSize: 50, style: numbered }
+                        emptyMessage: "Aucune adhésion 2024 pour le moment : ajoute-la avec « Nouvelle adhésion »."
+                        onRowClick: { type: navigate, path: /administration/adhesions/$record.id }
+                        columns:
+                          - { field: label, label: Adhérent }
+                          - { field: kind, label: Type }
+                          - { field: year, label: Année }
+                          - { field: contact, label: Personne }
+                          - { field: organization, label: Structure }
+                          - { field: fee, label: Cotisation, format: currency, align: right }
+                          - { field: paid, label: Payée, format: check-cross }
+              # Toutes
+              - type: container
+                props: { className: 'space-y-6' }
+                children:
+                  - type: card
+                    props:
+                      className: 'p-4 sm:p-6'
+                    children:
+                      - type: container
+                        element: div
+                        props:
+                          role: toolbar
+                          aria-label: Outils du tableau
+                          className: 'mb-4 flex flex-wrap items-center gap-2'
+                        children:
+                          - type: search-input
+                            placeholder: Rechercher un adhérent…
+                            props: { aria-label: Rechercher un adhérent, className: 'h-9 w-full sm:w-72' }
+                            publishes: { bindTo: admin-memberships-4, param: q }
+                          - type: filter-bar
+                            publishes: { bindTo: admin-memberships-4 }
+                            fieldsFrom: { table: memberships }
+                          - type: button
+                            label: Exporter en CSV
+                            variant: outline
+                            size: sm
+                            props: { className: 'sm:ml-auto' }
+                            action: { type: fetch, mode: download, url: '/api/tables/memberships/export?format=csv', filename: adhesions.csv }
+                      - type: table
+                        readOnly: true
+                        props:
+                          aria-label: Toutes les adhésions
+                        dataSource:
+                          bindTo: admin-memberships-4
+                          sharedFilter: {}
+                          table: memberships
+                          sort:
+                            - { field: year, direction: desc }
+                            - { field: label, direction: asc }
+                          pagination: { pageSize: 50, style: numbered }
+                        emptyMessage: "Aucune adhésion pour le moment : l'import Notion (notion-import-communaute) recopie « Nos adhérents/bénévoles », ou ajoute la première avec « Nouvelle adhésion »."
+                        onRowClick: { type: navigate, path: /administration/adhesions/$record.id }
+                        columns:
+                          - { field: label, label: Adhérent }
+                          - { field: kind, label: Type }
+                          - { field: year, label: Année }
+                          - { field: contact, label: Personne }
+                          - { field: organization, label: Structure }
+                          - { field: fee, label: Cotisation, format: currency, align: right }
+                          - { field: paid, label: Payée, format: check-cross }

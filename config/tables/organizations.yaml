@@ -1,0 +1,46 @@
+# Table: organizations — the « Personnes morales » of the association's base:
+# companies, associations, institutions it works with (coworkers' structures,
+# partners, funders, members of the association). Brought out of Notion by
+# notion-import-communaute, matched on notion_page_id; a structure created in
+# the app has none.
+#
+# The import only fills the fields that are still empty on an existing row, so
+# what an admin edits here is never overwritten by a later run.
+# Admin only, like the Administration's other back-office tables.
+id: 32
+name: organizations
+aiAccess:
+  description: "Structures (personnes morales) of La Plage Digitale's community base: companies, associations and institutions, with SIREN, address, contacts and field of action. Imported from Notion."
+  operations: [read, list]
+fields:
+  - { id: 1, name: name, label: Nom, type: single-line-text, required: true, indexed: true }
+  - { id: 2, name: siren, label: SIREN, type: single-line-text }
+  - { id: 3, name: address, label: Adresse du siège social, type: long-text }
+  - { id: 4, name: email, label: E-mail, type: email }
+  - { id: 5, name: billing_email, label: E-mail de facturation, type: email }
+  - { id: 6, name: phone, label: Téléphone, type: phone-number }
+  # The Notion select « Champ d'action principale », option for option.
+  - id: 7
+    name: field_of_action
+    label: Champ d'action principal
+    type: single-select
+    options:
+      - { value: institution, label: Institution & Collectivité, color: '#1e3a8a' }
+      - { value: economie, label: Activité économique, color: '#3b82f6' }
+      - { value: citoyennete, label: Éducation à la citoyenneté, color: '#8b5cf6' }
+      - { value: environnement, label: Environnement & Transitions, color: '#10b981' }
+      - { value: emploi, label: Emploi & Entrepreneuriat, color: '#14b8a6' }
+      - { value: solidarite, label: Solidarité & Action sociale, color: '#f59e0b' }
+      - { value: droits, label: Lutte contre les discriminations & droits humains, color: '#ef4444' }
+      - { value: culture, label: Culture & création artistique, color: '#ec4899' }
+      - { value: numerique, label: Numérique & Inclusion numérique, color: '#6366f1' }
+      - { value: tiers_lieu, label: Animation du Tiers-Lieu / La Plage Digitale, color: '#fb923c' }
+  - { id: 8, name: notes, label: Notes, type: long-text }
+  # The Notion page this row came from; empty for a structure created here.
+  - { id: 9, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 10, name: created_at, label: Créée le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

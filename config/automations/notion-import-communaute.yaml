@@ -1,0 +1,283 @@
+# Automation: notion-import-communaute — brings the community base out of
+# Notion: « Personnes morales » → organizations, « Personnes physiques » →
+# contacts, « Nos adhérents/bénévoles » → memberships (one row per year).
+#
+#   POST /api/automations/notion-import-communaute/trigger {"dryRun": "true"}    first: counts, writes nothing
+#   POST /api/automations/notion-import-communaute/trigger {"dryRun": "false"}   then for real
+#   … add "only": "organizations" | "contacts" | "memberships" to run one table
+#
+# A body without `dryRun: "false"` is a dry run. The three data sources are read
+# through the `notion` connection (token injected, cursor pagination in the
+# body, page size halved whenever an answer passes the 64 KiB cap — the same
+# call as notion-hebdo). Rows are upserted on notion_page_id (memberships on
+# membership_key = `<page id>:<year>`), in the order organizations → contacts →
+# memberships, so each relation resolves through the notion_page_id of a row
+# already written. contacts.member is the members row whose e-mail is the
+# contact's, lower-cased.
+#
+# Never overwrites an admin's edit: an existing row only gets the fields that
+# are still empty on it. A row nobody changed in Notion is « skipped ». The run
+# returns, per table, created / updated / skipped / unresolved (a Notion
+# relation whose target is not in the app) and failed.
+#
+# Production: the Notion integration behind NOTION_TOKEN must be shared with
+# the three databases, or Notion answers 404 object_not_found.
+name: notion-import-communaute
+label: Importer les contacts et adhésions depuis Notion
+description: >-
+  Recopie dans l'app les personnes morales, les personnes physiques et les
+  adhésions de Notion, sans jamais écraser un champ déjà rempli.
+trigger:
+  type: manual
+  label: Importer depuis Notion
+  requiredRole: admin
+  inputSchema:
+    dryRun: { type: string }
+    only: { type: string }
+timeout: 600000
+concurrency:
+  limit: 1
+tags: [notion, communaute, import]
+actions:
+  - name: import
+    label: Lire Notion et écrire les trois tables
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 300000
+      inputData:
+        dryRun: '{{trigger.input.dryRun}}'
+        only: '{{trigger.input.only}}'
+        organizationsDs: a59ad1fc-1739-4bc3-8d26-9e82e20b8142
+        contactsDs: 84982e73-06ed-4379-9465-bc714ee5d1a0
+        membershipsDs: 1dc54295-2320-424e-840d-3480342c261a
+      code: |
+        async function execute(context) {
+          const inp = context.inputData
+          const NOTION = 'https://api.notion.com/v1'
+          const HEADERS = { 'Notion-Version': '2026-03-11' }
+          // Only an explicit "false" writes: a forgotten flag stays harmless.
+          const dryRun = String(inp.dryRun ?? '').trim().toLowerCase() !== 'false'
+          const only = String(inp.only ?? '').trim().toLowerCase()
+          if (only && !['organizations', 'contacts', 'memberships'].includes(only)) throw new Error(`only inconnu : ${only} (organizations, contacts ou memberships)`)
+          const runs = (t: string) => !only || only === t
+
+          // --- Notion over the connection (as notion-hebdo)
+          const notion = async (method: string, path: string, opts: { body?: unknown } = {}): Promise<any> => {
+            let res: any
+            try {
+              res = await context.actions.http[method]({
+                url: NOTION + path,
+                connection: 'notion',
+                headers: HEADERS,
+                timeout: 30000,
+                ...(opts.body !== undefined ? { body: opts.body } : {}),
+              })
+            } catch (e) {
+              throw new Error(`Notion ${method.toUpperCase()} ${path} a échoué : ${e?.message ?? String(e)}`)
+            }
+            if (res?.truncated) throw new Error(`TRUNCATED:${path}`)
+            const body = typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+            if (!body || typeof body !== 'object') throw new Error(`Notion ${path} : réponse illisible`)
+            if (body.object === 'error') throw new Error(`Notion ${path} : ${body.code} ${body.message}`)
+            return body
+          }
+          const readAll = async (ds: string): Promise<any[]> => {
+            const pages: any[] = []
+            let cursor: string | undefined
+            let pageSize = 20
+            for (let guard = 0; guard < 500; guard++) {
+              let page: any
+              try {
+                page = await notion('post', `/data_sources/${ds}/query`, { body: { page_size: pageSize, ...(cursor ? { start_cursor: cursor } : {}) } })
+              } catch (e) {
+                if (String(e?.message).startsWith('TRUNCATED:') && pageSize > 2) { pageSize = Math.max(2, Math.floor(pageSize / 2)); context.log.warn('Réponse > 64 KiB, page_size →', pageSize); continue }
+                throw e
+              }
+              pages.push(...(page.results ?? []))
+              if (!page.has_more || !page.next_cursor) break
+              cursor = page.next_cursor
+            }
+            return pages.filter((p: any) => !p.in_trash && !p.archived && !p.is_archived)
+          }
+
+          // --- property readers
+          const plain = (rt: any): string => (rt ?? []).map((t: any) => t.plain_text ?? '').join('').trim()
+          const prop = (page: any, name: string): any => page.properties?.[name] ?? page.properties?.[name + ' '] ?? page.properties?.[name.trim()]
+          const title = (page: any): string => { const p = Object.values(page.properties ?? {}).find((x: any) => x?.type === 'title') as any; return plain(p?.title) }
+          const text = (page: any, name: string): string => plain(prop(page, name)?.rich_text)
+          const line = (s: string, max = 255): string => s.replace(/\s+/g, ' ').trim().slice(0, max)
+          const emailOf = (page: any, name: string): string => {
+            const v = String(prop(page, name)?.email ?? '').trim().toLowerCase()
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? v : ''
+          }
+          const phoneOf = (page: any, name: string): string => String(prop(page, name)?.phone_number ?? '').trim()
+          const urlOf = (page: any, name: string): string => String(prop(page, name)?.url ?? '').trim()
+          const selectOf = (page: any, name: string): string => String(prop(page, name)?.select?.name ?? '').trim()
+          const multiOf = (page: any, name: string): string[] => (prop(page, name)?.multi_select ?? []).map((o: any) => String(o.name ?? '').trim()).filter(Boolean)
+          const relOf = (page: any, name: string): string[] => (prop(page, name)?.relation ?? []).map((r: any) => String(r.id ?? '')).filter(Boolean)
+          // A phone the field would refuse goes to the notes instead of failing the row.
+          const phoneOk = (s: string): boolean => /^[+0-9 ().\-/]{6,30}$/.test(s)
+
+          // --- the app side
+          const list = async (table: string): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          const empty = (v: any): boolean => v === null || v === undefined || (typeof v === 'string' && v.trim() === '') || (Array.isArray(v) && v.length === 0)
+          const chunks = (items: any[], n = 100): any[][] => { const out: any[][] = []; for (let i = 0; i < items.length; i += n) out.push(items.slice(i, i + n)); return out }
+          type Stats = { notion: number; created: number; updated: number; skipped: number; unresolved: number; failed: number }
+          const stats: Record<string, Stats> = {}
+          const newStats = (): Stats => ({ notion: 0, created: 0, updated: 0, skipped: 0, unresolved: 0, failed: 0 })
+          const failuresOf = (res: any): number => {
+            if (!res || typeof res !== 'object') return 0
+            if (Array.isArray(res.errors)) return res.errors.length
+            if (typeof res.failed === 'number') return res.failed
+            if (Array.isArray(res.failed)) return res.failed.length
+            return 0
+          }
+          // Creates the new rows; on an existing row writes only the fields still empty there.
+          const upsert = async (table: string, keyField: string, rows: any[], st: Stats): Promise<void> => {
+            const existing = new Map<string, any>((await list(table)).filter((r: any) => !empty(r[keyField])).map((r: any) => [String(r[keyField]), r]))
+            const creates: any[] = []
+            const updates: any[] = []
+            for (const row of rows) {
+              const cur = existing.get(String(row[keyField]))
+              // An empty value is left out: '' is no option of a single-select, and the row would fail.
+              if (!cur) { creates.push(Object.fromEntries(Object.entries(row).filter(([, v]) => !empty(v)))); continue }
+              const patch: Record<string, unknown> = {}
+              for (const [k, v] of Object.entries(row)) if (k !== keyField && !empty(v) && empty(cur[k])) patch[k] = v
+              if (Object.keys(patch).length === 0) { st.skipped++; continue }
+              updates.push({ [keyField]: row[keyField], ...patch })
+            }
+            st.created += creates.length
+            st.updated += updates.length
+            if (dryRun) return
+            for (const items of chunks(creates)) {
+              const res: any = await context.actions.record.batchCreate({ table, items, continueOnItemError: true })
+              st.failed += failuresOf(res)
+            }
+            for (const items of chunks(updates)) {
+              const res: any = await context.actions.record.batchUpsert({ table, items, matchField: keyField, continueOnItemError: true })
+              st.failed += failuresOf(res)
+            }
+          }
+          const idsByNotion = async (table: string): Promise<Map<string, string>> =>
+            new Map<string, string>((await list(table)).filter((r: any) => !empty(r.notion_page_id)).map((r: any) => [String(r.notion_page_id), String(r.id)]))
+
+          // --- 1. organizations
+          const FIELD_OF_ACTION: Record<string, string> = {
+            'Institution & Collectivité': 'institution',
+            'Activité économique': 'economie',
+            'Éducation à la citoyenneté': 'citoyennete',
+            'Environnement & Transitions': 'environnement',
+            'Emploi & Entrepreneuriat': 'emploi',
+            'Solidarité & Action sociale': 'solidarite',
+            'Lutte contre les discriminations & droits humains': 'droits',
+            'Culture & création artistique': 'culture',
+            'Numérique & Inclusion numérique': 'numerique',
+            'Animation du Tiers-Lieu / La Plage Digitale': 'tiers_lieu',
+          }
+          const notionOrgIds = new Set<string>()
+          if (runs('organizations')) {
+            const st = (stats.organizations = newStats())
+            const pages = await readAll(String(inp.organizationsDs))
+            st.notion = pages.length
+            const rows = pages.map((p: any) => {
+              notionOrgIds.add(p.id)
+              const phone = phoneOf(p, 'Numéro de téléphone')
+              const foa = selectOf(p, "Champ d'action principale")
+              if (foa && !FIELD_OF_ACTION[foa]) context.log.warn(`Champ d'action inconnu, ignoré : ${foa}`)
+              return {
+                notion_page_id: p.id,
+                name: line(title(p)) || '(sans nom)',
+                siren: line(text(p, 'SIREN')),
+                address: text(p, 'Adresse du siège social'),
+                email: emailOf(p, 'Email'),
+                billing_email: emailOf(p, 'E-mail de facturation'),
+                phone: phoneOk(phone) ? phone : '',
+                field_of_action: FIELD_OF_ACTION[foa] ?? '',
+                notes: phone && !phoneOk(phone) ? `Téléphone (Notion) : ${phone}` : '',
+              }
+            })
+            await upsert('organizations', 'notion_page_id', rows, st)
+          }
+
+          // --- 2. contacts
+          let orgIds = await idsByNotion('organizations')
+          // A dry run has not written the structures yet: a `notion:<id>` stand-in counts the link it would make (never written).
+          const orgResolves = (nid: string): string | null => orgIds.get(nid) ?? (dryRun && notionOrgIds.has(nid) ? `notion:${nid}` : null)
+          const notionContactIds = new Set<string>()
+          if (runs('contacts')) {
+            const st = (stats.contacts = newStats())
+            const pages = await readAll(String(inp.contactsDs))
+            st.notion = pages.length
+            const memberByEmail = new Map<string, string>()
+            for (const m of await list('members')) { const e = String(m.email ?? '').trim().toLowerCase(); if (e) memberByEmail.set(e, String(m.id)) }
+            let linkedMembers = 0
+            let severalOrgs = 0
+            const rows = pages.map((p: any) => {
+              notionContactIds.add(p.id)
+              const email = emailOf(p, 'Adresse e-mail')
+              const phone = phoneOf(p, 'Téléphone')
+              const orgRel = relOf(p, 'Est lié à')
+              if (orgRel.length > 1) severalOrgs++
+              let organization: string | null = null
+              if (orgRel.length > 0) { organization = orgResolves(orgRel[0]); if (!organization) st.unresolved++ }
+              const member = email ? memberByEmail.get(email) ?? null : null
+              if (member) linkedMembers++
+              return {
+                notion_page_id: p.id,
+                name: line(title(p)) || '(sans nom)',
+                email,
+                phone: phoneOk(phone) ? phone : '',
+                activity: line(text(p, 'Activité principal')),
+                info_sheet_url: urlOf(p, 'Fiche de renseignements'),
+                notes: phone && !phoneOk(phone) ? `Téléphone (Notion) : ${phone}` : '',
+                ...(organization ? { organization } : {}),
+                ...(member ? { member } : {}),
+              }
+            })
+            context.log.info(`Contacts reliés à un compte membre : ${linkedMembers} ; liés à plusieurs structures (la première gardée) : ${severalOrgs}`)
+            ;(st as any).linked_members = linkedMembers
+            ;(st as any).several_organizations = severalOrgs
+            await upsert('contacts', 'notion_page_id', rows, st)
+          }
+
+          // --- 3. memberships: one row per year
+          orgIds = await idsByNotion('organizations')
+          const contactIds = await idsByNotion('contacts')
+          const contactResolves = (nid: string): string | null => contactIds.get(nid) ?? (dryRun && notionContactIds.has(nid) ? `notion:${nid}` : null)
+          const KIND: Record<string, string> = { 'Bénévole': 'benevole', 'Communauté': 'communaute', 'Association': 'association', 'Entreprise': 'entreprise' }
+          if (runs('memberships')) {
+            const st = (stats.memberships = newStats())
+            const pages = await readAll(String(inp.membershipsDs))
+            st.notion = pages.length
+            const rows: any[] = []
+            for (const p of pages) {
+              const kind = selectOf(p, "Type d'adhérent")
+              const contactRel = relOf(p, 'Personne physique')
+              const orgRel = relOf(p, 'Personne morale')
+              let contact: string | null = null
+              let organization: string | null = null
+              if (contactRel.length > 0) { contact = contactResolves(contactRel[0]); if (!contact) st.unresolved++ }
+              if (orgRel.length > 0) { organization = orgResolves(orgRel[0]); if (!organization) st.unresolved++ }
+              const years = multiOf(p, 'Années').map((y: string) => Number(y)).filter((y: number) => Number.isInteger(y) && y > 2000)
+              const base = {
+                notion_page_id: p.id,
+                label: line(title(p)) || '(sans nom)',
+                kind: KIND[kind] ?? '',
+                email: emailOf(p, 'E-mail'),
+                ...(contact ? { contact } : {}),
+                ...(organization ? { organization } : {}),
+              }
+              if (years.length === 0) rows.push({ ...base, membership_key: `${p.id}:sans-annee`, paid: false })
+              for (const year of years) rows.push({ ...base, membership_key: `${p.id}:${year}`, year, paid: false })
+            }
+            ;(st as any).rows = rows.length
+            await upsert('memberships', 'membership_key', rows, st)
+          }
+
+          context.log.info(`${dryRun ? 'DRY RUN — ' : ''}${JSON.stringify(stats)}`)
+          return { dryRun, ...stats }
+        }

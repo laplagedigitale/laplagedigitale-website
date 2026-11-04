@@ -73,6 +73,8 @@ children:
               - { label: Demandes, href: /administration/demandes, icon: inbox }
           - label: Communauté
             items:
+              - { label: Contacts, href: /administration/contacts, icon: contact, activeMatch: prefix }
+              - { label: Adhésions, href: /administration/adhesions, icon: id-card, activeMatch: prefix }
               - { label: Membres, href: /administration/membres, icon: users, activeMatch: prefix }
               - { label: Inscriptions Flex, href: /administration/inscriptions-flex, icon: user-plus, activeMatch: prefix }
           - label: Finances

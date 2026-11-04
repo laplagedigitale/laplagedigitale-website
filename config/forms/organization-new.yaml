@@ -1,0 +1,25 @@
+# Form: organization-new — add a structure (personne morale) to the community
+# base, placed on /administration/contacts/structures/nouvelle. The redirect
+# opens its page, where every field stays editable. Admin only.
+id: 17
+name: organization-new
+title: Nouvelle structure
+description: "Une entreprise, une association ou une institution avec qui la Plage travaille."
+display:
+  submitLabel: Ajouter la structure
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: organizations
+fields:
+  - { kind: table-field, column: name, required: true }
+  - { kind: table-field, column: siren, placeholder: 123 456 789 }
+  - { kind: table-field, column: field_of_action }
+  - { kind: table-field, column: email }
+  - { kind: table-field, column: billing_email }
+  - { kind: table-field, column: phone }
+  - { kind: table-field, column: address }
+  - { kind: table-field, column: notes }
+onSuccess:
+  type: redirect
+  url: /administration/contacts/structures/$record.id
+  delaySeconds: 0

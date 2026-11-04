@@ -161,6 +161,12 @@ tables:
   - $ref: ./config/tables/grant-cost-items.yaml
   - $ref: ./config/tables/grant-budget-rows.yaml
   - $ref: ./config/tables/grant-quotes.yaml
+  # Communauté › Contacts & adhésions: the people and structures of the
+  # association's base and the yearly adhésions, imported from Notion by
+  # notion-import-communaute. Admin only.
+  - $ref: ./config/tables/organizations.yaml
+  - $ref: ./config/tables/contacts.yaml
+  - $ref: ./config/tables/memberships.yaml
 
 buckets:
   $ref: ./config/buckets.yaml
@@ -193,6 +199,10 @@ forms:
   - $ref: ./config/forms/grant-quote-new.yaml
   - $ref: ./config/forms/org-person-new.yaml
   - $ref: ./config/forms/org-document-new.yaml
+  # Communauté: a new person, a new structure, a new adhésion.
+  - $ref: ./config/forms/contact-new.yaml
+  - $ref: ./config/forms/organization-new.yaml
+  - $ref: ./config/forms/membership-new.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
@@ -220,6 +230,16 @@ pages:
   - $ref: ./config/pages/admin-member.yaml
   - $ref: ./config/pages/admin-flex-signups.yaml
   - $ref: ./config/pages/admin-flex-signup.yaml
+  # Contacts & adhésions: the two lists, then each new-record page before
+  # the :id page it would otherwise be read as.
+  - $ref: ./config/pages/admin-contacts.yaml
+  - $ref: ./config/pages/admin-contact-new.yaml
+  - $ref: ./config/pages/admin-organization-new.yaml
+  - $ref: ./config/pages/admin-contact.yaml
+  - $ref: ./config/pages/admin-organization.yaml
+  - $ref: ./config/pages/admin-memberships.yaml
+  - $ref: ./config/pages/admin-membership-new.yaml
+  - $ref: ./config/pages/admin-membership.yaml
   - $ref: ./config/pages/admin-demandes.yaml
   - $ref: ./config/pages/admin-finances.yaml
   - $ref: ./config/pages/admin-finances-invoices.yaml
@@ -319,6 +339,9 @@ automations:
   - $ref: ./config/automations/flex-signup-validate.yaml
   # Weekly Notion → Slack digest (Monday 08:30 Europe/Paris)
   - $ref: ./config/automations/notion-hebdo.yaml
+  # Contacts & adhésions: the import of the three Notion databases (manual,
+  # dry run unless {"dryRun": "false"})
+  - $ref: ./config/automations/notion-import-communaute.yaml
   # Calendrier de gestion: the morning Slack reminders (09:00 Europe/Paris),
   # and « Marquer comme fait », which moves a deadline to its next occurrence
   - $ref: ./config/automations/management-reminders.yaml
