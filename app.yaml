@@ -388,6 +388,10 @@ automations:
   # Contacts & adhésions: the import of the three Notion databases (manual,
   # dry run unless {"dryRun": "false"})
   - $ref: ./config/automations/notion-import-communaute.yaml
+  # Flex: the history of « Mise à dispositions FLEX » into flex_signups as
+  # `historique` rows (manual, dry run unless {"dryRun": "false"}; after the
+  # Communauté import, whose contacts and structures it links)
+  - $ref: ./config/automations/notion-import-flex.yaml
   # Lieu: the import of the seven Notion databases (manual, dry run unless
   # {"dryRun": "false"}), and the morning occupancy refresh (05:00
   # Europe/Paris) of the desks and lockers.

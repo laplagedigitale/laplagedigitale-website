@@ -8,6 +8,12 @@
 # runs need the row's id. Each is drawn only while the sign-up is still `new`.
 # Neither can reload the page (an automation button drops onSuccess.navigate),
 # so the toast says to come back to the list, where « Suivi » has changed.
+#
+# A sign-up imported from Notion (source `notion`, status `historique`, see
+# notion-import-flex) offers neither button; its header gives the first
+# sign-up date Notion recorded instead of the import date, and the « Historique
+# Flex » card shows the CGV link, the 2026 cotisation, how they found La Plage
+# and the contact and structure it is linked to, with their Communauté pages.
 name: admin-flex-signup
 path: /administration/inscriptions-flex/:id
 sitemap: false
@@ -44,8 +50,10 @@ components:
                     props:
                       className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
                     children:
-                      - { type: text, element: span, content: 'Reçue le' }
-                      - { type: record-field, format: long-date, props: { field: created_at, className: 'font-semibold text-navy' } }
+                      - { type: text, element: span, content: 'Reçue le', visibility: { record: { field: source, neq: notion } } }
+                      - { type: record-field, format: long-date, visibility: { record: { field: source, neq: notion } }, props: { field: created_at, className: 'font-semibold text-navy' } }
+                      - { type: text, element: span, content: '1ère inscription le', visibility: { record: { field: first_signup_on, isNotEmpty: true } } }
+                      - { type: record-field, format: long-date, visibility: { record: { field: first_signup_on, isNotEmpty: true } }, props: { field: first_signup_on, className: 'font-semibold text-navy' } }
                       - { type: record-field, props: { field: status, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
               - type: list
                 dataSource:
@@ -107,6 +115,51 @@ components:
               className: 'grid grid-cols-1 xl:grid-cols-2 gap-6 items-start'
             children:
               - type: card
+                visibility: { record: { field: source, eq: notion } }
+                props:
+                  className: 'p-4 sm:p-6 space-y-4 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Historique Flex (Notion), props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: "Repris de « Mise à dispositions FLEX » par notion-import-flex : ni client Pennylane créé, ni invitation envoyée.", props: { className: 'text-sm text-text-muted' } }
+                  - type: container
+                    element: div
+                    props: { className: 'grid grid-cols-1 sm:grid-cols-[12rem_1fr] gap-x-4 gap-y-3 text-sm' }
+                    children:
+                      - { type: text, element: span, content: 1ère inscription, props: { className: 'text-text-muted' } }
+                      - { type: record-field, format: long-date, props: { field: first_signup_on, className: 'text-navy' } }
+                      - { type: text, element: span, content: Cotisation 2026, props: { className: 'text-text-muted' } }
+                      - { type: record-field, format: check-cross, props: { field: membership_2026, className: 'text-navy' } }
+                      - { type: text, element: span, content: Journée offerte, props: { className: 'text-text-muted' } }
+                      - { type: record-field, format: long-date, props: { field: free_day_on, className: 'text-navy' } }
+                      - { type: text, element: span, content: Découverte de La Plage, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: discovery, className: 'text-navy' } }
+                      - { type: text, element: span, content: Personne, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: contact, className: 'text-navy' } }
+                      - { type: text, element: span, content: Structure, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: organization, className: 'text-navy' } }
+                  - type: flex
+                    props: { className: 'flex flex-wrap gap-x-6' }
+                    children:
+                      - type: link
+                        content: 'CGV / fiche signée ↗'
+                        visibility: { record: { field: signed_terms_url, isNotEmpty: true } }
+                        props:
+                          href: $record.signed_terms_url
+                          target: _blank
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Ouvrir la personne →'
+                        visibility: { record: { field: contact, isNotEmpty: true } }
+                        props:
+                          href: /administration/contacts/personnes/$record.contact
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                      - type: link
+                        content: 'Ouvrir la structure →'
+                        visibility: { record: { field: organization, isNotEmpty: true } }
+                        props:
+                          href: /administration/contacts/structures/$record.organization
+                          className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+              - type: card
                 props:
                   className: 'p-4 sm:p-6 space-y-4'
                 children:
@@ -131,7 +184,7 @@ components:
                   className: 'p-4 sm:p-6 space-y-4'
                 children:
                   - { type: text, element: h2, content: Facturation, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: text, element: p, content: "Ce que « Valider » enverra à Pennylane pour créer le client.", props: { className: 'text-sm text-text-muted' } }
+                  - { type: text, element: p, content: "Ce que « Valider » enverra à Pennylane pour créer le client.", visibility: { record: { field: source, neq: notion } }, props: { className: 'text-sm text-text-muted' } }
                   - type: container
                     element: div
                     props: { className: 'grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm' }
