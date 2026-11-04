@@ -1,4 +1,6 @@
-# Table: leads — contact form submissions, read by admins in /_admin.
+# Table: leads — contact form submissions. Each new row is mailed to the team
+# (lead-notify) and listed for admins on /administration/demandes, where
+# « Traité » sets `status`.
 id: 2
 name: leads
 # Read-only over MCP: Claude lists and reads, never writes. Row-level and
@@ -25,6 +27,14 @@ fields:
       - { value: autre, label: $t:contact.form.subject.autre }
   - { id: 5, name: message, label: Message, type: long-text, required: true }
   - { id: 6, name: created_at, type: created-at }
+  - id: 7
+    name: status
+    label: Suivi
+    type: single-select
+    default: new
+    options:
+      - { value: new, label: $t:admin.leads.status.new, color: '#f59e0b' }
+      - { value: done, label: $t:admin.leads.status.done, color: '#10b981' }
 
 # Anyone may submit; nobody but admins reads.
 permissions:

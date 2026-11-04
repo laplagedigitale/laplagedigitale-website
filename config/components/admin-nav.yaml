@@ -69,6 +69,7 @@ children:
             items:
               - { label: Tableau de bord, href: /administration, icon: layout-dashboard }
               - { label: Calendrier, href: /administration/calendrier, icon: calendar-clock, activeMatch: prefix }
+              - { label: Demandes, href: /administration/demandes, icon: inbox }
           - label: Membres
             items:
               - { label: Membres, href: /administration/membres, icon: users, activeMatch: prefix }

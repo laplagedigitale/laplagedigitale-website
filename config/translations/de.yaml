@@ -1004,3 +1004,7 @@ notFound.lead: "Vielleicht ist der Link veraltet oder die Adresse enthält einen
 notFound.member: "Du bist Coworker und kommst aus deinem Mitgliederbereich? Dein Konto ist wahrscheinlich noch nicht mit deinem Eintrag verknüpft: Schreib uns, wir kümmern uns darum."
 notFound.home: "Zur Startseite"
 notFound.contact: "Dem Team schreiben"
+
+# Administration › Demandes (leads.status)
+admin.leads.status.new: "Offen"
+admin.leads.status.done: "Erledigt"

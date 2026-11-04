@@ -465,6 +465,10 @@ that does not exist fails the build rather than deploying something unexpected.
 - **`TREASURER_EMAIL`** — optional, default `tresorerie@laplagedigitale.fr`:
   where the payment-matching, direct-debit and Flex invoicing summaries go
   (needs the `SMTP_*` variables).
+- **`LEADS_NOTIFY_EMAIL`** — optional, default `contact@laplagedigitale.fr`:
+  where `lead-notify` mails each contact-form submission, reply-to set to the
+  visitor (needs the `SMTP_*` variables). The requests are also listed on
+  `/administration/demandes`.
 - **`PENNYLANE_COMPANY_ID`** — optional, default `21901400`: builds the link
   that opens a transaction in Pennylane from the Transactions page.
 - **`TREASURY_SYNC_SINCE_DAYS`** — optional, default `120`: how far back

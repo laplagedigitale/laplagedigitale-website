@@ -1,0 +1,175 @@
+# Page: admin-demandes — « Demandes », the contact-form submissions (`leads`).
+# Each one is also mailed to the team inbox the moment it arrives
+# (lead-notify); this page is where an admin finds it again and marks it
+# handled. « Réserver une visite » is not a form (a mailto/tel to the team), so
+# what lands here is the general contact form only.
+#
+# Two tabs, one table each: « À traiter » (status new) and « Toutes ». Each
+# table has its own search channel (admin-demandes, admin-demandes-2). Export
+# takes one eq filter, so « À traiter » exports status=new.
+name: admin-demandes
+path: /administration/demandes
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Demandes — Administration"
+  description: "Les demandes envoyées depuis le formulaire de contact du site."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: container
+            children:
+              - { type: text, element: h1, content: Demandes, props: { className: 'text-3xl font-bold text-navy' } }
+              - { type: text, element: p, content: "Les messages envoyés depuis le formulaire de contact du site. Chacun arrive aussi par e-mail sur contact@laplagedigitale.fr : répondre à ce mail écrit directement à la personne. Une fois la demande traitée, cliquez sur « Traité » pour la sortir de la liste à traiter.", props: { className: 'text-text-muted mt-2 max-w-3xl' } }
+
+          - type: tabs
+            defaultTab: $query.onglet
+            panels:
+              - { id: a-traiter, label: À traiter }
+              - { id: toutes, label: Toutes }
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher…
+                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-demandes, param: q }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/leads/export?format=csv&filterField=status&filterValue=new', filename: demandes-a-traiter.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      id: leads-new
+                      aria-label: Demandes à traiter
+                    dataSource:
+                      bindTo: admin-demandes
+                      sharedFilter: {}
+                      table: leads
+                      filter:
+                        - { field: status, operator: eq, value: new }
+                      sort:
+                        - { field: created_at, direction: desc }
+                      pagination: { pageSize: 25, style: numbered }
+                    emptyMessage: "Aucune demande à traiter."
+                    columns:
+                      - { field: created_at, label: Reçue le, format: short-date }
+                      - { field: name, label: Nom }
+                      - { field: email, label: E-mail }
+                      - { field: phone, label: Téléphone }
+                      - field: subject
+                        label: Objet
+                        valueLabels:
+                          visite: $t:contact.form.subject.visite
+                          bureau-fixe: $t:contact.form.subject.bureauFixe
+                          nomade: $t:contact.form.subject.nomade
+                          flex: $t:contact.form.subject.flex
+                          salle-de-reunion: $t:contact.form.subject.salle
+                          domiciliation: $t:contact.form.subject.domiciliation
+                          evenement: $t:contact.form.subject.evenement
+                          autre: $t:contact.form.subject.autre
+                      - { field: message, label: Message, truncate: true }
+                      - field: status
+                        label: Suivi
+                        valueLabels:
+                          new: $t:admin.leads.status.new
+                          done: $t:admin.leads.status.done
+                      - type: actions
+                        actions:
+                          - label: Traité
+                            visibleWhen: { field: status, eq: new }
+                            action:
+                              type: fetch
+                              method: PATCH
+                              url: /api/tables/leads/records/$record.id
+                              body:
+                                fields: { status: done }
+                              onSuccess:
+                                type: toast
+                                variant: success
+                                message: Demande marquée comme traitée.
+                                refetch: leads-new
+                              onError:
+                                type: toast
+                                variant: error
+                                message: La demande n'a pas pu être mise à jour.
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher…
+                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        publishes: { bindTo: admin-demandes-2, param: q }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/leads/export?format=csv', filename: demandes.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      id: leads-all
+                      aria-label: Toutes les demandes
+                    dataSource:
+                      bindTo: admin-demandes-2
+                      sharedFilter: {}
+                      table: leads
+                      sort:
+                        - { field: created_at, direction: desc }
+                      pagination: { pageSize: 25, style: numbered }
+                    emptyMessage: "Aucune demande pour le moment."
+                    columns:
+                      - { field: created_at, label: Reçue le, format: short-date }
+                      - { field: name, label: Nom }
+                      - { field: email, label: E-mail }
+                      - { field: phone, label: Téléphone }
+                      - field: subject
+                        label: Objet
+                        valueLabels:
+                          visite: $t:contact.form.subject.visite
+                          bureau-fixe: $t:contact.form.subject.bureauFixe
+                          nomade: $t:contact.form.subject.nomade
+                          flex: $t:contact.form.subject.flex
+                          salle-de-reunion: $t:contact.form.subject.salle
+                          domiciliation: $t:contact.form.subject.domiciliation
+                          evenement: $t:contact.form.subject.evenement
+                          autre: $t:contact.form.subject.autre
+                      - { field: message, label: Message, truncate: true }
+                      - field: status
+                        label: Suivi
+                        valueLabels:
+                          new: $t:admin.leads.status.new
+                          done: $t:admin.leads.status.done
