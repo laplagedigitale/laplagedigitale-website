@@ -56,6 +56,16 @@ fields:
   # Who wrote the row, stamped by the engine from the session (never from the
   # request): the coworker, or the admin who added a day for them.
   - { id: 9, name: created_by, type: created-by }
+  # Where the day was recorded: the app's Présences page, or the Airtable
+  # « Suivi des occupations du flex » history (airtable-import-flex-checkins),
+  # imported already invoiced — billed by hand before the app.
+  - id: 10
+    name: source
+    type: single-select
+    default: app
+    options:
+      - { value: app, label: Application }
+      - { value: airtable, label: Airtable (historique) }
 permissions:
   read: [coworker, admin]
   create: [coworker, admin]
@@ -73,6 +83,7 @@ permissions:
     - { field: pennylane_invoice_id, read: [coworker, admin], write: [admin] }
     - { field: created_at, read: [coworker, admin] }
     - { field: created_by, read: [admin] }
+    - { field: source, read: [coworker, admin], write: [admin] }
 # Rows are scoped by member_email, the login email the form copies from the
 # session — like invoices: a rule through the relationship (member.email)
 # fails on list reads in Sovrium 0.30. The create rule stops a coworker from

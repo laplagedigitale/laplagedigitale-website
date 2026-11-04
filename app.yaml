@@ -392,6 +392,7 @@ automations:
   # `historique` rows (manual, dry run unless {"dryRun": "false"}; after the
   # Communauté import, whose contacts and structures it links)
   - $ref: ./config/automations/notion-import-flex.yaml
+  - $ref: ./config/automations/airtable-import-flex-checkins.yaml
   # Lieu: the import of the seven Notion databases (manual, dry run unless
   # {"dryRun": "false"}), and the morning occupancy refresh (05:00
   # Europe/Paris) of the desks and lockers.
