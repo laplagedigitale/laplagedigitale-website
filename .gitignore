@@ -12,3 +12,7 @@ logs
 
 # Finder (macOS) folder config
 .DS_Store
+
+# Claude Code: personal settings, and the Impeccable binary (downloaded on first run)
+.claude/settings.local.json
+.claude/skills/impeccable/scripts/bin/
