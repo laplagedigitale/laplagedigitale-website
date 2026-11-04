@@ -72,7 +72,7 @@ components:
                     props: { href: '/administration/lieu/bureaux?onglet=occupes', 'aria-label': 'Bureaux occupés : ouvrir la liste', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
                     children:
                       - type: kpi
-                        label: Bureaux occupés
+                        label: Bureaux occupés (%)
                         icon: armchair
                         dataSource: { table: desks }
                         kpiAggregate:
@@ -80,6 +80,7 @@ components:
                           numerator: { filter: [{ field: occupied, operator: eq, value: true }] }
                           denominator: { filter: [{ field: label, operator: isNotEmpty }] }
                           caption: '{numerator} sur {denominator} bureaux'
+                        kpiFormat: { type: number, options: { maximumFractionDigits: '0' } }
                   - type: link
                     props: { href: '/administration/lieu/bureaux?onglet=libres', 'aria-label': 'Bureaux libres : ouvrir la liste', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
                     children:
