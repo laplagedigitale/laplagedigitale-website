@@ -80,7 +80,7 @@ components:
                           - { type: record-field, format: short-date, props: { field: held_on, className: 'block text-2xl font-bold text-navy' } }
                           - { type: record-field, props: { field: title, className: 'block text-sm text-text-muted' } }
               - type: link
-                props: { href: '/administration/gouvernance/decisions', 'aria-label': 'Décisions des douze derniers mois : ouvrir les décisions', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                props: { href: '/administration/decisions', 'aria-label': 'Décisions des douze derniers mois : ouvrir les décisions', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
                 children:
                   - type: kpi
                     label: Décisions sur 12 mois

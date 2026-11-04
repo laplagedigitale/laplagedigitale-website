@@ -4,10 +4,10 @@
 #
 # An imported decision keeps its notion_page_id: the import never overwrites a
 # field filled here. Declared after admin-decision-new and before
-# admin-meeting in app.yaml, so /gouvernance/decisions/* is never read as a
+# admin-meeting in app.yaml, so /decisions/* is never read as a
 # sitting's :id.
 name: admin-decision
-path: /administration/gouvernance/decisions/:id
+path: /administration/decisions/:id
 sitemap: false
 access: { require: [admin], redirectTo: /connexion }
 meta:
@@ -29,7 +29,7 @@ components:
         props:
           className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
         children:
-          - { type: link, content: '← Décisions', props: { href: /administration/gouvernance/decisions, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+          - { type: link, content: '← Décisions', props: { href: /administration/decisions, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
 
           - type: container
             children:

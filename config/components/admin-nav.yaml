@@ -64,7 +64,7 @@ children:
         visibility: { roles: [admin] }
         drawer: { below: lg, label: Menu }
         props:
-          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200 lg:[&_[data-sidebar-group=Compte]]:hidden [&:has(a[aria-current=page][href*=decisions])_a[href*=gouvernance]:not([href*=decisions])]:font-normal lg:[&:has(a[aria-current=page][href*=decisions])_a[href*=gouvernance]:not([href*=decisions])]:bg-transparent lg:[&:has(a[aria-current=page][href*=decisions])_a[href*=gouvernance]:not([href*=decisions])]:text-navy-100'
+          className: 'max-lg:ml-auto lg:flex-none bg-transparent max-lg:[&_[data-slot=sidebar-trigger]]:rounded-full max-lg:[&_[data-slot=sidebar-trigger]]:border-white/40 max-lg:[&_[data-slot=sidebar-trigger]]:px-3.5 max-lg:[&_[data-slot=sidebar-trigger]]:text-white max-lg:[&_[data-slot=sidebar-trigger]:hover]:bg-navy-700 lg:text-white lg:[&_[data-slot=sidebar-group-label]]:text-navy-150 lg:[&_a]:text-navy-100 lg:[&_a:hover]:text-white lg:[&_a:hover]:bg-navy-700 lg:[&_a[aria-current=page]]:bg-navy-700 lg:[&_a[aria-current=page]]:text-white [&_a[aria-current=page]]:font-semibold lg:[&_svg]:text-navy-200 lg:[&_[data-sidebar-group=Compte]]:hidden [&:has(a[aria-current=page][href*=decisions])_a[href*=gouvernance]:not([href*=decisions])]:font-normal'
         groups:
           - label: Pilotage
             items:
@@ -88,14 +88,12 @@ children:
             items:
               - { label: Demandes de subvention, href: /administration/subventions, icon: hand-coins, activeMatch: prefix }
               - { label: Fiche association, href: /administration/association, icon: building-2 }
-          # Both entries match by prefix, and an authored entry has no
-          # « longest href wins »: on /gouvernance/decisions/* both carry
-          # aria-current. The sidebar's :has() classes above unmark
-          # « Instances » visually whenever « Décisions » is current.
+          # Two sibling prefixes (/administration/gouvernance, /administration/decisions):
+          # an authored entry has no « longest href wins », so they must not nest.
           - label: Gouvernance
             items:
               - { label: Instances, href: /administration/gouvernance, icon: landmark, activeMatch: prefix }
-              - { label: Décisions, href: /administration/gouvernance/decisions, icon: gavel, activeMatch: prefix }
+              - { label: Décisions, href: /administration/decisions, icon: gavel, activeMatch: prefix }
           - label: Contenu
             items:
               - { label: Blog, href: /administration/contenu, icon: newspaper }

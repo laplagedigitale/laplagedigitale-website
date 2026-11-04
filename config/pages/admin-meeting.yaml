@@ -120,7 +120,7 @@ components:
                           refreshMode: poll
                           pollIntervalMs: 5000
                         emptyMessage: "Aucune décision : « + Décision » enregistre une résolution votée à cette séance."
-                        onRowClick: { type: navigate, path: /administration/gouvernance/decisions/$record.id }
+                        onRowClick: { type: navigate, path: /administration/decisions/$record.id }
                         columns:
                           - { field: title, label: Décision, truncate: true }
                           - { field: outcome, label: Résultat }

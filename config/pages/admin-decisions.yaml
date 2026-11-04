@@ -9,7 +9,7 @@
 # A row opens the decision's page, where everything is edited. readOnly: the
 # orange pill creates.
 name: admin-decisions
-path: /administration/gouvernance/decisions
+path: /administration/decisions
 sitemap: false
 access: { require: [admin], redirectTo: /connexion }
 meta:
@@ -41,7 +41,7 @@ components:
               - type: link
                 content: '+ Nouvelle décision'
                 props:
-                  href: /administration/gouvernance/decisions/nouvelle
+                  href: /administration/decisions/nouvelle
                   className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
 
           - type: card
@@ -97,7 +97,7 @@ components:
                     - { field: title, direction: asc }
                   pagination: { pageSize: 50, style: numbered }
                 emptyMessage: "Aucune décision pour le moment : l'import Notion (notion-import-gouvernance) recopie l'historique, ou enregistre la première avec « Nouvelle décision »."
-                onRowClick: { type: navigate, path: /administration/gouvernance/decisions/$record.id }
+                onRowClick: { type: navigate, path: /administration/decisions/$record.id }
                 columns:
                   - { field: decided_on, label: Date, format: short-date }
                   - { field: title, label: Décision, truncate: true }
