@@ -1,0 +1,108 @@
+# Automation: airtable-import-flex-checkins — brings the Flex days recorded in
+# Airtable (base « Suivi des occupations du flex », table « Inscriptions
+# quotidiennes ») into `checkins`, as history already billed by hand.
+#
+# Airtable has no connection here: the rows come in the request body, as one
+# string `rows` of `email|YYYY-MM-DD|F|H` lines (F full day, H half day; the
+# day is the Europe/Paris day of Airtable's « Date »), read from the base by an
+# admin. Send it in several calls if it is long — the run is idempotent:
+#
+#   POST /api/automations/airtable-import-flex-checkins/trigger
+#        {"dryRun": "true", "rows": "a@b.fr|2026-01-02|F\nc@d.fr|2026-01-05|H"}
+#   then the same with {"dryRun": "false"}
+#
+# Rules:
+#   - one row per member per day, as flex-check-in keeps it: a full day wins
+#     over a half day of the same e-mail and day;
+#   - a day that already has a check-in in the app (any source) is skipped,
+#     never changed — so a re-run creates nothing;
+#   - each created row is `status: invoiced`, `source: airtable`, priced 14 € /
+#     7 € HT and linked to its members row by e-mail. flex-invoicing bills only
+#     `to_invoice` rows, so these are never billed again;
+#   - nothing goes to Pennylane, no mail is sent. flex-check-in still runs on
+#     each new row (it fires on create): with the day already set and no other
+#     row that day, it only re-stamps the same date, amount and member.
+# Dry run unless {"dryRun": "false"}.
+name: airtable-import-flex-checkins
+trigger:
+  type: manual
+  label: Importer l'historique Airtable
+  requiredRole: admin
+  inputSchema:
+    dryRun: { type: string }
+    rows: { type: string }
+timeout: 600000
+concurrency:
+  limit: 1
+tags: [airtable, flex, import]
+actions:
+  - name: import
+    type: code
+    operator: runTypescript
+    props:
+      inputData:
+        dryRun: '{{trigger.input.dryRun}}'
+        rows: '{{trigger.input.rows}}'
+      code: |
+        async function execute(context) {
+          const PRICE: Record<string, number> = { full: 14, half: 7 }
+          const dryRun = String(context.inputData.dryRun ?? '').trim().toLowerCase() !== 'false'
+          const st = { received: 0, invalid: 0, collapsed: 0, alreadyThere: 0, toCreate: 0, linked: 0, unlinked: 0, created: 0, failed: 0 }
+
+          // --- parse and collapse (one row per email + day, full wins)
+          const byKey = new Map<string, { email: string; date: string; duration: string }>()
+          for (const line of String(context.inputData.rows ?? '').split(/[\n;]+/)) {
+            const t = line.trim()
+            if (t === '') continue
+            st.received++
+            const [e, d, h] = t.split('|').map((x: string) => (x ?? '').trim())
+            const email = (e ?? '').toLowerCase()
+            if (!email.includes('@') || !/^\d{4}-\d{2}-\d{2}$/.test(d ?? '') || !['F', 'H'].includes((h ?? '').toUpperCase())) { st.invalid++; continue }
+            const duration = (h ?? '').toUpperCase() === 'F' ? 'full' : 'half'
+            const key = `${email}|${d}`
+            const prev = byKey.get(key)
+            if (prev) { st.collapsed++; if (duration === 'full') prev.duration = 'full'; continue }
+            byKey.set(key, { email, date: d as string, duration })
+          }
+
+          // --- what the app already holds
+          const list = async (table: string): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          const fieldsOf = (r: any): any => r?.fields ?? r ?? {}
+          const existing = new Set<string>()
+          for (const r of await list('checkins')) {
+            const f = fieldsOf(r)
+            existing.add(`${String(f.member_email ?? '').toLowerCase()}|${String(f.date ?? '').slice(0, 10)}`)
+          }
+          const memberId = new Map<string, string>()
+          for (const r of await list('members')) {
+            const f = fieldsOf(r)
+            const e = String(f.email ?? '').toLowerCase()
+            if (e) memberId.set(e, String(r.id ?? f.id))
+          }
+
+          // --- rows to create
+          const items: Record<string, unknown>[] = []
+          for (const [key, row] of byKey) {
+            if (existing.has(key)) { st.alreadyThere++; continue }
+            const item: Record<string, unknown> = { member_email: row.email, date: row.date, duration: row.duration, amount: PRICE[row.duration], status: 'invoiced', source: 'airtable' }
+            const m = memberId.get(row.email)
+            if (m) { item.member = m; st.linked++ } else st.unlinked++
+            items.push(item)
+          }
+          st.toCreate = items.length
+
+          if (!dryRun) {
+            for (let i = 0; i < items.length; i += 100) {
+              const res: any = await context.actions.record.batchCreate({ table: 'checkins', items: items.slice(i, i + 100), continueOnItemError: true })
+              const failed = Array.isArray(res?.errors) ? res.errors.length : Array.isArray(res?.failed) ? res.failed.length : Number(res?.failed ?? 0) || 0
+              st.failed += failed
+              st.created += Math.min(100, items.length - i) - failed
+              if (failed > 0) context.log.warn(`Échecs : ${JSON.stringify(res.errors ?? res.failed).slice(0, 2000)}`)
+            }
+          }
+          context.log.info(`${dryRun ? 'DRY RUN — ' : ''}${JSON.stringify(st)}`)
+          return { dryRun, checkins: st }
+        }
