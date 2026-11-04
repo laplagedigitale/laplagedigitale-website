@@ -13,6 +13,15 @@
 # split carry the whole address in billing_address and nothing in the new
 # fields; flex-signup-validate reads a « 67000 Strasbourg » tail out of it, and
 # an admin fills the two fields by hand when it cannot.
+#
+# The Flex history kept in Notion before the app (« Mise à dispositions FLEX »)
+# is copied here by notion-import-flex: source `notion`, status `historique`,
+# upserted on notion_page_id and linked to the Communauté contact and
+# structure. Notion often lacks a phone, an e-mail or an address, so e-mail,
+# phone, billing address and the CGV box are required by the public form
+# (config/forms/flex-signup.yaml, `required: true` on each field, checked again
+# by the server on submit) rather than by the table. Names and billing name
+# stay required here: the import always has them.
 id: 9
 name: flex_signups
 # Read-only over MCP: Claude lists and reads, never writes. Row-level and
@@ -23,12 +32,12 @@ aiAccess:
 fields:
   - { id: 1, name: first_name, label: Prénom, type: single-line-text, required: true }
   - { id: 2, name: last_name, label: Nom, type: single-line-text, required: true }
-  - { id: 3, name: email, label: E-mail, type: email, required: true }
-  - { id: 4, name: phone, label: Téléphone, type: single-line-text, required: true }
+  - { id: 3, name: email, label: E-mail, type: email }
+  - { id: 4, name: phone, label: Téléphone, type: single-line-text }
   - { id: 5, name: company, label: Entreprise, type: single-line-text }
   - { id: 6, name: billing_name, label: Nom de facturation, type: single-line-text, required: true }
   # The street part since the split; the whole address on older rows.
-  - { id: 7, name: billing_address, label: Adresse de facturation, type: long-text, required: true }
+  - { id: 7, name: billing_address, label: Adresse de facturation, type: long-text }
   # Not required at table level: older rows have none. The form requires them.
   - { id: 14, name: billing_postal_code, label: Code postal, type: single-line-text }
   - { id: 15, name: billing_city, label: Ville, type: single-line-text }
@@ -50,7 +59,7 @@ fields:
   - { id: 8, name: siret, label: SIRET, type: single-line-text }
   - { id: 9, name: vat_number, label: N° de TVA, type: single-line-text }
   - { id: 10, name: association, label: Adhésion à l'association, type: checkbox }
-  - { id: 11, name: accept_terms, label: CGU et CGV acceptées, type: checkbox, required: true }
+  - { id: 11, name: accept_terms, label: CGU et CGV acceptées, type: checkbox }
   - id: 12
     name: status
     label: Suivi
@@ -60,10 +69,32 @@ fields:
       - { value: new, label: $t:flex.signup.status.new, color: '#f59e0b' }
       - { value: invited, label: $t:flex.signup.status.invited, color: '#10b981' }
       - { value: declined, label: $t:flex.signup.status.declined, color: '#94a3b8' }
+      # Imported from Notion (notion-import-flex): never « À traiter », never
+      # validated, and not « accepted » for pennylane-sync, which derives the
+      # `flex` formule from `invited` sign-ups only.
+      - { value: historique, label: $t:flex.signup.status.historique, color: '#64748b' }
   - { id: 13, name: created_at, type: created-at }
   # Written by flex-signup-validate as soon as the customer exists, so a run
   # stopped halfway reuses it instead of creating a second one.
   - { id: 17, name: pennylane_customer_id, label: Client Pennylane, type: single-line-text }
+  # --- Notion history (notion-import-flex). A form sign-up keeps the default.
+  - id: 18
+    name: source
+    label: Source
+    type: single-select
+    default: formulaire
+    options:
+      - { value: formulaire, label: $t:flex.signup.source.formulaire, color: '#2563eb' }
+      - { value: notion, label: $t:flex.signup.source.notion, color: '#64748b' }
+  - { id: 19, name: first_signup_on, label: 1ère inscription, type: date }
+  - { id: 20, name: free_day_on, label: Journée offerte (cotisation), type: date }
+  - { id: 21, name: membership_2026, label: Cotisation 2026, type: checkbox }
+  - { id: 22, name: discovery, label: Découverte de La Plage, type: single-line-text }
+  # Drive links run past a url field's 255 characters: long-text, as on space_contracts.
+  - { id: 23, name: signed_terms_url, label: CGV / fiche signée, type: long-text }
+  - { id: 24, name: contact, label: Personne, type: relationship, relatedTable: contacts, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 25, name: organization, label: Structure, type: relationship, relatedTable: organizations, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 26, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
 
 # Anyone may submit; nobody but admins reads.
 permissions:

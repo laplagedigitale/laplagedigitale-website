@@ -11,16 +11,19 @@
 # toast; why it failed is the run's error in /_admin. « Refuser » sets the
 # sign-up to `declined` through the records API.
 #
-# Two tabs (?onglet=a-traiter|toutes): what is waiting first, then every
-# sign-up. The table keeps the seven columns needed to decide; the billing
-# details are on the sign-up's own page (/administration/inscriptions-flex/:id),
-# which carries the same two buttons. readOnly: a sign-up only comes from /flex.
+# Three tabs (?onglet=a-traiter|toutes|historique): what is waiting first,
+# then every sign-up (with its Source: the /flex form or Notion), then the
+# Flex history imported from Notion by notion-import-flex (status
+# `historique`, sorted on the first sign-up date Notion recorded). Each table
+# keeps seven columns; the billing details are on the sign-up's own page
+# (/administration/inscriptions-flex/:id), which carries the same two buttons.
+# readOnly: a sign-up only comes from /flex or the Notion import.
 name: admin-flex-signups
 path: /administration/inscriptions-flex
 query:
   onglet:
     default: a-traiter
-    enum: [a-traiter, toutes]
+    enum: [a-traiter, toutes, historique]
 access: { require: [admin], redirectTo: /connexion }
 meta:
   favicons:
@@ -50,6 +53,7 @@ components:
             panels:
               - { id: a-traiter, label: À traiter }
               - { id: toutes, label: Toutes }
+              - { id: historique, label: Historique }
             children:
               - type: card
                 props:
@@ -82,6 +86,7 @@ components:
                           new: $t:flex.signup.status.new
                           invited: $t:flex.signup.status.invited
                           declined: $t:flex.signup.status.declined
+                          historique: $t:flex.signup.status.historique
                       - type: actions
                         actions:
                           - label: $t:admin.flex.signups.validate
@@ -157,13 +162,18 @@ components:
                       - { field: last_name, label: $t:flex.signup.last_name }
                       - { field: email, label: $t:flex.signup.email }
                       - { field: company, label: $t:flex.signup.company }
-                      - { field: association, label: $t:admin.flex.signups.association, format: check-cross }
+                      - field: source
+                        label: Source
+                        valueLabels:
+                          formulaire: $t:flex.signup.source.formulaire
+                          notion: $t:flex.signup.source.notion
                       - field: status
                         label: $t:admin.flex.signups.status
                         valueLabels:
                           new: $t:flex.signup.status.new
                           invited: $t:flex.signup.status.invited
                           declined: $t:flex.signup.status.declined
+                          historique: $t:flex.signup.status.historique
                       - type: actions
                         actions:
                           - label: $t:admin.flex.signups.validate
@@ -204,3 +214,43 @@ components:
                                 type: toast
                                 variant: error
                                 message: $t:admin.flex.signups.decline.error
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - { type: text, element: p, content: "Les flexeurs notés dans Notion avant l’app (« Mise à dispositions FLEX »), importés par notion-import-flex. Rien à valider : ils ne reçoivent ni client Pennylane ni invitation.", props: { className: 'text-sm text-text-muted mb-4 max-w-2xl' } }
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un nom, un e-mail, une entreprise
+                        publishes: { bindTo: admin-flex-signups-2, param: q }
+                        props: { className: 'h-9 w-full sm:w-72', 'aria-label': Rechercher dans l’historique }
+                  - type: table
+                    readOnly: true
+                    props:
+                      id: flex-signups-history
+                      aria-label: Historique Flex
+                    dataSource:
+                      table: flex_signups
+                      bindTo: admin-flex-signups-2
+                      sharedFilter: {}
+                      filter:
+                        - { field: status, operator: eq, value: historique }
+                      sort:
+                        - { field: first_signup_on, direction: desc }
+                      pagination: { pageSize: 25, style: numbered }
+                    emptyMessage: "Aucun historique : lance notion-import-flex (après notion-import-communaute) pour reprendre les flexeurs de Notion."
+                    onRowClick: { type: navigate, path: '/administration/inscriptions-flex/$record.id' }
+                    columns:
+                      - { field: first_signup_on, label: 1ère inscription, format: short-date }
+                      - { field: first_name, label: $t:flex.signup.first_name }
+                      - { field: last_name, label: $t:flex.signup.last_name }
+                      - { field: email, label: $t:flex.signup.email }
+                      - { field: company, label: $t:flex.signup.company }
+                      - { field: membership_2026, label: Cotisation 2026, format: check-cross }
+                      - { field: discovery, label: Découverte }

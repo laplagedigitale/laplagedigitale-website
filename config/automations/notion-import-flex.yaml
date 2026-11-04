@@ -1,0 +1,262 @@
+# Automation: notion-import-flex — brings the Flex history kept in Notion
+# (« Mise à dispositions FLEX », one page per flexeur, before /flex existed)
+# into flex_signups, so /administration/inscriptions-flex lists every flexeur.
+#
+#   POST /api/automations/notion-import-flex/trigger {"dryRun": "true"}    first: counts, writes nothing
+#   POST /api/automations/notion-import-flex/trigger {"dryRun": "false"}   then for real
+#
+# Run notion-import-communaute first: « Entreprise à facturer » and « Personne
+# physique contractante » resolve through organizations.notion_page_id and
+# contacts.notion_page_id (a relation whose target is not in the app counts as
+# `unresolved`, the row is still written).
+#
+# Each imported row is `source: notion`, `status: historique`: it never shows
+# under « À traiter », never offers « Valider », and pennylane-sync (which
+# derives the `flex` formule from `invited` sign-ups only) ignores it. Nothing
+# else is touched: no Pennylane call, no invitation, no mail — and no record
+# automation watches flex_signups. When a members row carries the sign-up's
+# e-mail, its Pennylane customer id is copied onto the sign-up, for reading.
+#
+# Mapping: « Nom de l'occupant » (or, better, the linked Personne physique's
+# name) is split on its last word: first_name = the rest, last_name = the last
+# word; a one-word name gives « — » as first name. The e-mail is the first
+# address found in « Adresse mail de facturation », else the contact's. The
+# billing address is « Si personne physique, adresse de facturation » when it
+# reads as an address, else « Adresse de l'occupant », with a « 67000
+# Strasbourg » tail and a trailing country read into their own fields.
+# billing_name / company = the structure's name, else the person's name.
+# accept_terms is ticked when a signed CGV link exists. A blank Notion page
+# (« Nouveau » with nothing in it) is skipped.
+#
+# Same rules as the other Notion imports: upsert on notion_page_id; an existing
+# row only gets the fields still empty on it (an admin's edit is never
+# overwritten); empty values left out. The run returns notion / created /
+# updated / skipped / blank / unresolved / failed and the members matched.
+#
+# Production: the Notion integration behind NOTION_TOKEN must be shared with
+# « Mise à dispositions FLEX », or Notion answers 404 object_not_found.
+name: notion-import-flex
+label: Importer l'historique Flex depuis Notion
+description: >-
+  Recopie dans les inscriptions Flex les flexeurs notés dans Notion avant
+  l'app, reliés aux personnes et structures, sans jamais écraser un champ
+  déjà rempli ni rien envoyer à Pennylane.
+trigger:
+  type: manual
+  label: Importer depuis Notion
+  requiredRole: admin
+  inputSchema:
+    dryRun: { type: string }
+timeout: 600000
+concurrency:
+  limit: 1
+tags: [notion, flex, import]
+actions:
+  - name: import
+    label: Lire Notion et écrire les inscriptions Flex
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 300000
+      inputData:
+        dryRun: '{{trigger.input.dryRun}}'
+        flexDs: c2573944-1d34-4793-b0fc-a2bff88c0c92
+      code: |
+        async function execute(context) {
+          const inp = context.inputData
+          const NOTION = 'https://api.notion.com/v1'
+          const HEADERS = { 'Notion-Version': '2026-03-11' }
+          // Only an explicit "false" writes: a forgotten flag stays harmless.
+          const dryRun = String(inp.dryRun ?? '').trim().toLowerCase() !== 'false'
+
+          // --- Notion over the connection (as notion-import-communaute)
+          const notion = async (method: string, path: string, opts: { body?: unknown } = {}): Promise<any> => {
+            let res: any
+            try {
+              res = await context.actions.http[method]({
+                url: NOTION + path,
+                connection: 'notion',
+                headers: HEADERS,
+                timeout: 30000,
+                ...(opts.body !== undefined ? { body: opts.body } : {}),
+              })
+            } catch (e) {
+              throw new Error(`Notion ${method.toUpperCase()} ${path} a échoué : ${e?.message ?? String(e)}`)
+            }
+            // The answer is { body, … } or, past the 64 KiB cap, wrapped as { response: { body, truncated } }.
+            const r: any = res?.response && res?.body === undefined ? res.response : res
+            if (r?.truncated || res?.truncated) throw new Error(`TRUNCATED:${path}`)
+            let body: any = r?.body
+            if (typeof body === 'string') { try { body = JSON.parse(body) } catch { throw new Error(`TRUNCATED:${path}`) } }
+            if (!body || typeof body !== 'object') throw new Error(`Notion ${path} : réponse illisible (HTTP ${r?.status ?? '?'})`)
+            if (body.object === 'error') throw new Error(`Notion ${path} : ${body.code} ${body.message}`)
+            return body
+          }
+          const readAll = async (ds: string): Promise<any[]> => {
+            const pages: any[] = []
+            let cursor: string | undefined
+            let pageSize = 20
+            for (let guard = 0; guard < 500; guard++) {
+              let page: any
+              try {
+                page = await notion('post', `/data_sources/${ds}/query`, { body: { page_size: pageSize, ...(cursor ? { start_cursor: cursor } : {}) } })
+              } catch (e) {
+                if (String(e?.message).startsWith('TRUNCATED:') && pageSize > 2) { pageSize = Math.max(2, Math.floor(pageSize / 2)); context.log.warn('Réponse > 64 KiB, page_size →', pageSize); continue }
+                throw e
+              }
+              pages.push(...(page.results ?? []))
+              if (!page.has_more || !page.next_cursor) break
+              cursor = page.next_cursor
+            }
+            return pages.filter((p: any) => !p.in_trash && !p.archived && !p.is_archived)
+          }
+
+          // --- property readers
+          const plain = (rt: any): string => (rt ?? []).map((t: any) => t.plain_text ?? '').join('').trim()
+          const prop = (page: any, name: string): any => page.properties?.[name] ?? page.properties?.[name + ' '] ?? page.properties?.[name.trim()]
+          const title = (page: any): string => { const p = Object.values(page.properties ?? {}).find((x: any) => x?.type === 'title') as any; return plain(p?.title) }
+          const text = (page: any, name: string): string => plain(prop(page, name)?.rich_text)
+          const line = (s: string, max = 255): string => s.replace(/\s+/g, ' ').trim().slice(0, max)
+          const dateOf = (page: any, name: string): string => String(prop(page, name)?.date?.start ?? '').slice(0, 10)
+          const urlOf = (page: any, name: string): string => String(prop(page, name)?.url ?? '').trim()
+          const selectOf = (page: any, name: string): string => String(prop(page, name)?.select?.name ?? '').trim()
+          const checkOf = (page: any, name: string): boolean => prop(page, name)?.checkbox === true
+          const phoneOf = (page: any, name: string): string => line(String(prop(page, name)?.phone_number ?? ''))
+          const relOf = (page: any, name: string): string[] => (prop(page, name)?.relation ?? []).map((r: any) => String(r.id ?? '')).filter(Boolean)
+          const emailsIn = (s: string): string[] => (s.match(/[^\s@<>,;:/()"']+@[^\s@<>,;:/()"']+\.[a-z]{2,}/gi) ?? []).map((e: string) => e.toLowerCase())
+
+          // A trailing country, then a « 67000 Strasbourg » tail: street / postal code / city / country.
+          const COUNTRY: Record<string, string> = {
+            france: 'FR', allemagne: 'DE', germany: 'DE', deutschland: 'DE', belgique: 'BE', belgium: 'BE',
+            suisse: 'CH', switzerland: 'CH', luxembourg: 'LU', 'pays-bas': 'NL', netherlands: 'NL',
+            italie: 'IT', italy: 'IT', espagne: 'ES', spain: 'ES', 'royaume-uni': 'GB', uk: 'GB', 'united kingdom': 'GB',
+          }
+          const KNOWN_ABROAD = /\b(sweden|suède|norway|malta|usa|écosse)\b/i
+          const parseAddress = (raw: string): { street: string; postal: string; city: string; country: string } => {
+            let s = raw.replace(/\s*\n\s*/g, ', ').replace(/\s+/g, ' ').trim()
+            let country = ''
+            const last = s.split(',').pop()?.trim().toLowerCase() ?? ''
+            if (COUNTRY[last]) { country = COUNTRY[last]; s = s.split(',').slice(0, -1).join(',').trim() }
+            else { const m = s.match(/\s(belgique|pays-bas)$/i); if (m) { country = COUNTRY[m[1].toLowerCase()]; s = s.slice(0, -m[0].length).trim() } }
+            const m = s.match(/^(.*?)[,\s-]+(?:D-)?(\d{4,5})\s+([^,\d][^,]*)$/)
+            if (m && m[1].trim()) {
+              const postal = m[2]
+              if (!country && /\bD-\d{5}/.test(s)) country = 'DE'
+              if (!country && postal.length === 5 && !KNOWN_ABROAD.test(raw)) country = 'FR'
+              return { street: m[1].replace(/[,\s-]+$/, '').trim(), postal, city: line(m[3]), country }
+            }
+            return { street: s, postal: '', city: '', country: KNOWN_ABROAD.test(raw) ? '' : country }
+          }
+          const looksLikeAddress = (s: string): boolean => s.trim() !== '' && !s.includes('@')
+
+          // --- the app side
+          const list = async (table: string): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          const empty = (v: any): boolean => v === null || v === undefined || (typeof v === 'string' && v.trim() === '') || (Array.isArray(v) && v.length === 0)
+          const chunks = (items: any[], n = 100): any[][] => { const out: any[][] = []; for (let i = 0; i < items.length; i += n) out.push(items.slice(i, i + n)); return out }
+          const failuresOf = (res: any): number => {
+            if (!res || typeof res !== 'object') return 0
+            if (Array.isArray(res.errors)) return res.errors.length
+            if (typeof res.failed === 'number') return res.failed
+            if (Array.isArray(res.failed)) return res.failed.length
+            return 0
+          }
+          const st = { notion: 0, created: 0, updated: 0, skipped: 0, blank: 0, unresolved: 0, failed: 0, matched_members: 0, without_email: 0, several_emails: 0 }
+
+          const orgs = new Map<string, any>((await list('organizations')).filter((r: any) => !empty(r.notion_page_id)).map((r: any) => [String(r.notion_page_id), r]))
+          const contacts = new Map<string, any>((await list('contacts')).filter((r: any) => !empty(r.notion_page_id)).map((r: any) => [String(r.notion_page_id), r]))
+          const memberByEmail = new Map<string, any>()
+          for (const m of await list('members')) { const e = String(m.email ?? '').trim().toLowerCase(); if (e) memberByEmail.set(e, m) }
+
+          const pages = await readAll(String(inp.flexDs))
+          st.notion = pages.length
+          const rows: any[] = []
+          for (const p of pages) {
+            const occupant = line(title(p))
+            const orgRel = relOf(p, 'Entreprise à facturer')
+            const contactRel = relOf(p, 'Personne physique contractante')
+            const org = orgRel.length > 0 ? orgs.get(orgRel[0]) ?? null : null
+            const contact = contactRel.length > 0 ? contacts.get(contactRel[0]) ?? null : null
+            if (orgRel.length > 0 && !org) st.unresolved++
+            if (contactRel.length > 0 && !contact) st.unresolved++
+            const billingText = text(p, 'Adresse mail de facturation')
+            const found = emailsIn(billingText)
+            if (found.length > 1) st.several_emails++
+            const email = found[0] ?? (contact?.email ? String(contact.email).trim().toLowerCase() : '')
+            // A page left at Notion's « Nouveau » with nothing in it is not a flexeur.
+            if ((!occupant || /^nouveau$/i.test(occupant)) && !email && !contact && !org && !dateOf(p, '1ère inscription')) { st.blank++; continue }
+            if (!email) st.without_email++
+
+            // The contact's name when it names a person, else the occupant's.
+            const person = line(String(contact?.name ?? '')) || occupant || '(sans nom)'
+            const words = person.split(' ').filter(Boolean)
+            const last_name = words.length > 1 ? words[words.length - 1] : words[0]
+            const first_name = words.length > 1 ? words.slice(0, -1).join(' ') : '—'
+            const orgName = line(String(org?.name ?? ''))
+
+            const physical = text(p, 'Si personne physique, adresse de facturation')
+            const rawAddress = looksLikeAddress(physical) ? physical : (looksLikeAddress(text(p, "Adresse de l'occupant")) ? text(p, "Adresse de l'occupant") : '')
+            const addr = rawAddress ? parseAddress(rawAddress) : { street: '', postal: '', city: '', country: '' }
+            const terms = urlOf(p, 'Lien vers CGV/fiche signé')
+            const member = email ? memberByEmail.get(email) ?? null : null
+            if (member) st.matched_members++
+
+            rows.push({
+              notion_page_id: p.id,
+              source: 'notion',
+              status: 'historique',
+              first_name: line(first_name),
+              last_name: line(last_name),
+              email,
+              phone: phoneOf(p, 'Téléphone'),
+              company: orgName,
+              billing_name: orgName || person,
+              billing_address: addr.street,
+              billing_postal_code: addr.postal,
+              billing_city: addr.city,
+              billing_country: addr.country,
+              accept_terms: terms !== '',
+              first_signup_on: dateOf(p, '1ère inscription'),
+              free_day_on: dateOf(p, 'Si cotisation - journée offerte'),
+              membership_2026: checkOf(p, 'Cotisation 2026 ou non'),
+              discovery: selectOf(p, 'Découverte de la plage ?'),
+              signed_terms_url: terms,
+              pennylane_customer_id: String(member?.pennylane_customer_id ?? '').trim(),
+              ...(contact ? { contact: String(contact.id) } : {}),
+              ...(org ? { organization: String(org.id) } : {}),
+            })
+          }
+
+          // --- upsert on notion_page_id; an existing row only gets its empty fields
+          const existing = new Map<string, any>((await list('flex_signups')).filter((r: any) => !empty(r.notion_page_id)).map((r: any) => [String(r.notion_page_id), r]))
+          const creates: any[] = []
+          const updates: any[] = []
+          for (const row of rows) {
+            const cur = existing.get(String(row.notion_page_id))
+            // An empty value is left out: '' is no option of a single-select, and the row would fail.
+            if (!cur) { creates.push(Object.fromEntries(Object.entries(row).filter(([, v]) => !empty(v)))); continue }
+            const patch: Record<string, unknown> = {}
+            for (const [k, v] of Object.entries(row)) if (k !== 'notion_page_id' && !empty(v) && empty(cur[k])) patch[k] = v
+            if (Object.keys(patch).length === 0) { st.skipped++; continue }
+            updates.push({ notion_page_id: row.notion_page_id, ...patch })
+          }
+          st.created = creates.length
+          st.updated = updates.length
+          if (!dryRun) {
+            for (const items of chunks(creates)) {
+              const res: any = await context.actions.record.batchCreate({ table: 'flex_signups', items, continueOnItemError: true })
+              st.failed += failuresOf(res)
+              if (failuresOf(res) > 0) context.log.warn(`Échecs à la création : ${JSON.stringify(res.errors ?? res.failed).slice(0, 2000)}`)
+            }
+            for (const items of chunks(updates)) {
+              const res: any = await context.actions.record.batchUpsert({ table: 'flex_signups', items, matchField: 'notion_page_id', continueOnItemError: true })
+              st.failed += failuresOf(res)
+              if (failuresOf(res) > 0) context.log.warn(`Échecs à la mise à jour : ${JSON.stringify(res.errors ?? res.failed).slice(0, 2000)}`)
+            }
+          }
+
+          context.log.info(`${dryRun ? 'DRY RUN — ' : ''}${JSON.stringify(st)}`)
+          return { dryRun, flex_signups: st }
+        }
