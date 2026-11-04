@@ -1,0 +1,36 @@
+# Page: admin-lieu-contract-new — pattern C: the back link, then one card
+# holding the declared form space-contract-new, which creates the row and
+# opens it on its own page.
+#
+# Declared before the :id page in app.yaml, so this address is this page and
+# never read as an :id.
+name: admin-lieu-contract-new
+path: /administration/lieu/contrats/nouveau
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Nouveau contrat — Administration"
+  description: "Ajouter un contrat de bureau, de box, de casier ou de domiciliation."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - { type: link, content: '← Contrats', props: { href: '/administration/lieu/contrats', className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+          - type: card
+            props:
+              className: 'p-6 sm:p-8 max-w-2xl'
+            children:
+              - type: form
+                formRef: space-contract-new
+                props: { headingLevel: h1 }

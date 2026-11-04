@@ -1,0 +1,27 @@
+# Table: lockers — the « Casiers » rented to coworkers. Imported from Notion by
+# notion-import-lieu; `number` is the one in the label (CASIER-12 → 12).
+#
+# In Notion a locker carries its occupant itself; the import turns each
+# occupied locker into one space_contracts row of kind `casier`. `occupied`
+# and `current_occupant` are then written by lieu-occupancy-refresh from the
+# active contracts, as for the desks — never by hand. Admin only.
+id: 37
+name: lockers
+aiAccess:
+  description: "Lockers (casiers) rented at La Plage Digitale, with their number and, refreshed daily from the active contracts, whether they are occupied and by whom."
+  operations: [read, list]
+fields:
+  - { id: 1, name: label, label: Casier, type: single-line-text, required: true, indexed: true }
+  - { id: 2, name: number, label: Numéro, type: integer }
+  - { id: 3, name: room, label: Pièce, type: relationship, relatedTable: rooms, relationType: many-to-one, displayField: name, onDelete: set-null }
+  # Written by lieu-occupancy-refresh.
+  - { id: 4, name: occupied, label: Occupé, type: checkbox, default: false }
+  - { id: 5, name: current_occupant, label: Occupé par, type: single-line-text }
+  - { id: 6, name: notes, label: Notes, type: long-text }
+  - { id: 7, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 8, name: created_at, label: Créé le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

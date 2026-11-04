@@ -3,7 +3,8 @@
 #
 # - À faire — one tile per queue that needs a person (overdue deadlines, Flex
 #   sign-ups, contact requests, payment matches to check, accounting points,
-#   late invoices, members not linked to Pennylane). Each tile is a link to the
+#   late invoices, members not linked to Pennylane, space contracts ending
+#   within 60 days). Each tile is a link to the
 #   place where the queue is worked (the Lift Means Link rule: a tile that
 #   rises on hover opens something). 0 is green: nothing waiting.
 # - Échéances à venir — the Calendrier de gestion's next 60 days.
@@ -165,6 +166,20 @@ components:
                           table: members
                           filter:
                             - { field: match_status, operator: in, value: [pending, not_found] }
+                        kpiAggregate: { function: count }
+                        thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
+                  - type: link
+                    props: { href: '/administration/lieu/contrats?onglet=echeance', 'aria-label': 'Contrats à échéance dans les 60 jours : ouvrir les contrats', className: 'block rounded-panel transition duration-200 ease-out hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy [&>*]:h-full' }
+                    children:
+                      - type: kpi
+                        label: Contrats à échéance (60 j)
+                        description: Bureaux, box, casiers, domiciliations
+                        icon: calendar-clock
+                        dataSource:
+                          table: space_contracts
+                          filter:
+                            - { field: end_date, operator: gte, value: $today }
+                            - { field: end_date, operator: lte, value: $today+60d }
                         kpiAggregate: { function: count }
                         thresholds: [{ value: 0, color: green }, { value: 1, color: yellow }]
 

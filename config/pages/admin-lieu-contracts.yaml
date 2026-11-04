@@ -1,0 +1,331 @@
+# Page: admin-lieu-contracts — « Contrats », in the Administration's Lieu
+# section (pattern A): every contract for a part of the place, one table on
+# six tabs with an address (?onglet=…): « Actifs » first, then « À échéance
+# (60 j) », then one per kind (bureau, box, casier, domiciliation). Each tab
+# is its own shared-filter channel with its search and filters.
+#
+# « Actif » is never stored: active_from ≤ $today AND active_until ≥ $today
+# (the dates with the gaps filled by two formulas), resolved on every read.
+# The kind tabs export their rows; the two date tabs have no export (an
+# export takes one eq filter). A row opens the contract, where everything is
+# edited; the orange pill adds one.
+name: admin-lieu-contracts
+path: /administration/lieu/contrats
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+query:
+  onglet:
+    default: actifs
+    enum: [actifs, echeance, bureau, box, casier, domiciliation]
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Contrats — Administration"
+  description: "Les contrats de bureau, de box, de casier et de domiciliation de La Plage Digitale."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-end justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: Contrats, props: { className: 'text-3xl font-bold text-navy' } }
+                  - { type: text, element: p, content: "Les contrats de bureau, de box, de casier et de domiciliation. Un contrat est actif entre sa date de début et sa date de fin ; sans date de fin, il court toujours. Clique sur une ligne pour le voir et le modifier.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+              - type: link
+                content: '+ Nouveau contrat'
+                props:
+                  href: /administration/lieu/contrats/nouveau
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+
+          - type: tabs
+            defaultTab: $query.onglet
+            panels:
+              - { id: actifs, label: Actifs, description: En cours aujourd'hui }
+              - { id: echeance, label: À échéance, description: Fin dans les 60 jours }
+              - { id: bureau, label: Bureaux }
+              - { id: box, label: Box }
+              - { id: casier, label: Casiers }
+              - { id: domiciliation, label: Domiciliations }
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - { type: text, element: p, content: "Les contrats commencés (ou sans date de début) et pas encore terminés (ou sans date de fin), tous types confondus.", props: { className: 'text-sm text-text-muted mb-4' } }
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un contrat…
+                        props: { aria-label: Rechercher un contrat, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-contracts, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-contracts }
+                        fieldsFrom: { table: space_contracts }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Contrats actifs
+                    dataSource:
+                      bindTo: admin-lieu-contracts
+                      sharedFilter: {}
+                      table: space_contracts
+                      filter:
+                        - { field: active_from, operator: lte, value: $today }
+                        - { field: active_until, operator: gte, value: $today }
+                      sort:
+                        - { field: occupant_name, direction: asc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucun contrat en cours aujourd'hui."
+                    onRowClick: { type: navigate, path: /administration/lieu/contrats/$record.id }
+                    columns:
+                      - { field: occupant_name, label: Occupant }
+                      - { field: kind, label: Type }
+                      - { field: organization, label: Structure }
+                      - { field: desk, label: Bureau }
+                      - { field: locker, label: Casier }
+                      - { field: start_date, label: Début, format: short-date }
+                      - { field: end_date, label: Fin, format: short-date }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - { type: text, element: p, content: "Les contrats dont la date de fin tombe dans les 60 prochains jours : à renouveler, ou à clore avec l'occupant.", props: { className: 'text-sm text-text-muted mb-4' } }
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un contrat…
+                        props: { aria-label: Rechercher un contrat, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-contracts-2, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-contracts-2 }
+                        fieldsFrom: { table: space_contracts }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Contrats à échéance dans les 60 jours
+                    dataSource:
+                      bindTo: admin-lieu-contracts-2
+                      sharedFilter: {}
+                      table: space_contracts
+                      filter:
+                        - { field: end_date, operator: gte, value: $today }
+                        - { field: end_date, operator: lte, value: $today+60d }
+                      sort:
+                        - { field: end_date, direction: asc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucun contrat ne se termine dans les 60 prochains jours."
+                    onRowClick: { type: navigate, path: /administration/lieu/contrats/$record.id }
+                    columns:
+                      - { field: end_date, label: Fin, format: short-date }
+                      - { field: occupant_name, label: Occupant }
+                      - { field: kind, label: Type }
+                      - { field: organization, label: Structure }
+                      - { field: desk, label: Bureau }
+                      - { field: billing_email, label: E-mail de facturation }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un contrat…
+                        props: { aria-label: Rechercher un contrat, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-contracts-3, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-contracts-3 }
+                        fieldsFrom: { table: space_contracts }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/space_contracts/export?format=csv&filterField=kind&filterValue=bureau', filename: contrats.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Contrats de bureau
+                    dataSource:
+                      bindTo: admin-lieu-contracts-3
+                      sharedFilter: {}
+                      table: space_contracts
+                      filter:
+                        - { field: kind, operator: eq, value: bureau }
+                      sort:
+                        - { field: active_until, direction: desc }
+                        - { field: start_date, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucun contrat de bureau pour le moment : l'import Notion (notion-import-lieu) les recopie, ou ajoute le premier avec « Nouveau contrat »."
+                    onRowClick: { type: navigate, path: /administration/lieu/contrats/$record.id }
+                    columns:
+                      - { field: occupant_name, label: Occupant }
+                      - { field: organization, label: Structure }
+                      - { field: desk, label: Bureau }
+                      - { field: start_date, label: Début, format: short-date }
+                      - { field: end_date, label: Fin, format: short-date }
+                      - { field: billing_email, label: E-mail de facturation }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un contrat…
+                        props: { aria-label: Rechercher un contrat, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-contracts-4, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-contracts-4 }
+                        fieldsFrom: { table: space_contracts }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/space_contracts/export?format=csv&filterField=kind&filterValue=box', filename: contrats.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Contrats de box
+                    dataSource:
+                      bindTo: admin-lieu-contracts-4
+                      sharedFilter: {}
+                      table: space_contracts
+                      filter:
+                        - { field: kind, operator: eq, value: box }
+                      sort:
+                        - { field: active_until, direction: desc }
+                        - { field: start_date, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucun contrat de box pour le moment."
+                    onRowClick: { type: navigate, path: /administration/lieu/contrats/$record.id }
+                    columns:
+                      - { field: occupant_name, label: Occupant }
+                      - { field: organization, label: Structure }
+                      - { field: room, label: Box }
+                      - { field: start_date, label: Début, format: short-date }
+                      - { field: end_date, label: Fin, format: short-date }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un contrat…
+                        props: { aria-label: Rechercher un contrat, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-contracts-5, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-contracts-5 }
+                        fieldsFrom: { table: space_contracts }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/space_contracts/export?format=csv&filterField=kind&filterValue=casier', filename: contrats.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Contrats de casier
+                    dataSource:
+                      bindTo: admin-lieu-contracts-5
+                      sharedFilter: {}
+                      table: space_contracts
+                      filter:
+                        - { field: kind, operator: eq, value: casier }
+                      sort:
+                        - { field: occupant_name, direction: asc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucun contrat de casier pour le moment."
+                    onRowClick: { type: navigate, path: /administration/lieu/contrats/$record.id }
+                    columns:
+                      - { field: occupant_name, label: Occupant }
+                      - { field: organization, label: Structure }
+                      - { field: contact, label: Personne }
+                      - { field: locker, label: Casier }
+                      - { field: start_date, label: Début, format: short-date }
+                      - { field: end_date, label: Fin, format: short-date }
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6'
+                children:
+                  - type: container
+                    element: div
+                    props:
+                      role: toolbar
+                      aria-label: Outils du tableau
+                      className: 'mb-4 flex flex-wrap items-center gap-2'
+                    children:
+                      - type: search-input
+                        placeholder: Rechercher un contrat…
+                        props: { aria-label: Rechercher un contrat, className: 'h-9 w-full sm:w-72' }
+                        publishes: { bindTo: admin-lieu-contracts-6, param: q }
+                      - type: filter-bar
+                        publishes: { bindTo: admin-lieu-contracts-6 }
+                        fieldsFrom: { table: space_contracts }
+                      - type: button
+                        label: Exporter en CSV
+                        variant: outline
+                        size: sm
+                        props: { className: 'sm:ml-auto' }
+                        action: { type: fetch, mode: download, url: '/api/tables/space_contracts/export?format=csv&filterField=kind&filterValue=domiciliation', filename: contrats.csv }
+                  - type: table
+                    readOnly: true
+                    props:
+                      aria-label: Domiciliations
+                    dataSource:
+                      bindTo: admin-lieu-contracts-6
+                      sharedFilter: {}
+                      table: space_contracts
+                      filter:
+                        - { field: kind, operator: eq, value: domiciliation }
+                      sort:
+                        - { field: active_until, direction: desc }
+                        - { field: start_date, direction: desc }
+                      pagination: { pageSize: 50, style: numbered }
+                    emptyMessage: "Aucune domiciliation pour le moment."
+                    onRowClick: { type: navigate, path: /administration/lieu/contrats/$record.id }
+                    columns:
+                      - { field: occupant_name, label: Occupant }
+                      - { field: organization, label: Structure }
+                      - { field: start_date, label: Début, format: short-date }
+                      - { field: end_date, label: Fin, format: short-date }
+                      - { field: billing_email, label: E-mail de facturation }

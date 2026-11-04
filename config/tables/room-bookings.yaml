@@ -1,0 +1,69 @@
+# Table: room_bookings — the « mises à disposition » of the meeting rooms
+# (Narval, Baleine, Requin, Crevette, Tortue): who, when, which room, on what
+# terms (free, a contribution, full price) and whether it was invoiced.
+# Imported from Notion by notion-import-lieu, matched on notion_page_id.
+#
+# `hours` is a formula over the two instants (whole UTC days × 24 plus the
+# hour and minute difference), the same on SQLite and PostgreSQL; it is
+# computed when the row is saved, which is when its inputs change.
+# `door_code` is admin-only, field by field, should the table ever open to
+# another role. Admin only.
+id: 39
+name: room_bookings
+aiAccess:
+  description: "Meeting-room bookings (mises à disposition) at La Plage Digitale: title, start and end, room, structure, person, terms (free, contribution, full price), field of action, amount and invoicing."
+  operations: [read, list]
+fields:
+  - { id: 1, name: title, label: Intitulé, type: single-line-text, required: true, indexed: true }
+  - { id: 2, name: starts_at, label: Début, type: datetime, indexed: true }
+  - { id: 3, name: ends_at, label: Fin, type: datetime }
+  - { id: 4, name: room, label: Salle, type: relationship, relatedTable: rooms, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 5, name: organization, label: Structure, type: relationship, relatedTable: organizations, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 6, name: booked_by, label: Réservé par, type: relationship, relatedTable: contacts, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - id: 7
+    name: mad_type
+    label: Type de mise à disposition
+    type: single-select
+    options:
+      - { value: gratuite, label: Gratuite, color: '#10b981' }
+      - { value: participation, label: Participation, color: '#f59e0b' }
+      - { value: plein-tarif, label: Plein tarif, color: '#db2777' }
+  # The options of organizations.field_of_action.
+  - id: 8
+    name: field_of_action
+    label: Champ d'action
+    type: single-select
+    options:
+      - { value: institution, label: Institution & Collectivité, color: '#1e3a8a' }
+      - { value: economie, label: Activité économique, color: '#3b82f6' }
+      - { value: citoyennete, label: Éducation à la citoyenneté, color: '#8b5cf6' }
+      - { value: environnement, label: Environnement & Transitions, color: '#10b981' }
+      - { value: emploi, label: Emploi & Entrepreneuriat, color: '#14b8a6' }
+      - { value: solidarite, label: Solidarité & Action sociale, color: '#f59e0b' }
+      - { value: droits, label: Lutte contre les discriminations & droits humains, color: '#ef4444' }
+      - { value: culture, label: Culture & création artistique, color: '#ec4899' }
+      - { value: numerique, label: Numérique & Inclusion numérique, color: '#6366f1' }
+      - { value: tiers_lieu, label: Animation du Tiers-Lieu / La Plage Digitale, color: '#fb923c' }
+  - { id: 9, name: free, label: Gratuite, type: checkbox, default: false }
+  - { id: 10, name: billed, label: Facturée, type: checkbox, default: false }
+  - { id: 11, name: amount_ht, label: Montant facturé HT, type: currency, currency: EUR, precision: 2 }
+  - { id: 12, name: billing_email, label: E-mail de facturation, type: email }
+  - { id: 13, name: contract_url, label: Contrat, type: long-text }
+  - { id: 14, name: safety_sheet_url, label: Fiche sécurité, type: long-text }
+  - { id: 15, name: door_code, label: Code de la porte, type: single-line-text }
+  - { id: 16, name: communication_wanted, label: Communication souhaitée, type: checkbox, default: false }
+  - id: 17
+    name: hours
+    label: Heures
+    type: formula
+    formula: 'days_between(ends_at, starts_at) * 24 + (HOUR(ends_at) - HOUR(starts_at)) + (MINUTE(ends_at) - MINUTE(starts_at)) / 60.0'
+    resultType: decimal
+  - { id: 18, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 19, name: created_at, label: Créée le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]
+  fields:
+    - { field: door_code, read: [admin], write: [admin] }

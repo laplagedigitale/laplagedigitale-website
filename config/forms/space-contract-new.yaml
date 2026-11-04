@@ -1,0 +1,31 @@
+# Form: space-contract-new — a new contract for a part of the place, placed
+# on /administration/lieu/contrats/nouveau. A declared form because a page
+# form never creates a row; the redirect opens the new contract's page, where
+# every field stays editable. The desk or locker it names is marked occupied
+# at the next morning's lieu-occupancy-refresh. Admin only, like the table.
+id: 19
+name: space-contract-new
+title: Nouveau contrat
+description: "Un bureau, un box, un casier ou une domiciliation. Sans date de fin, le contrat court jusqu'à ce qu'on en mette une."
+display:
+  submitLabel: Ajouter le contrat
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: space_contracts
+fields:
+  - { kind: table-field, column: kind, required: true }
+  - { kind: table-field, column: occupant_name, placeholder: "Prénom N. ou nom de la structure", required: true }
+  - { kind: table-field, column: organization, helpText: "La structure qui signe, s'il y en a une." }
+  - { kind: table-field, column: contact, helpText: "La personne qui signe ou occupe." }
+  - { kind: table-field, column: desk, helpText: "Pour un contrat de bureau." }
+  - { kind: table-field, column: locker, helpText: "Pour un contrat de casier." }
+  - { kind: table-field, column: room, helpText: "Pour un contrat de box : la pièce louée." }
+  - { kind: table-field, column: start_date }
+  - { kind: table-field, column: end_date, helpText: "Vide tant que le contrat court." }
+  - { kind: table-field, column: contract_url, placeholder: "https://drive.google.com/…" }
+  - { kind: table-field, column: billing_email }
+  - { kind: table-field, column: notes }
+onSuccess:
+  type: redirect
+  url: /administration/lieu/contrats/$record.id
+  delaySeconds: 0

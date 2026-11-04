@@ -1,0 +1,29 @@
+# Form: room-booking-new — a new meeting-room booking, placed on
+# /administration/lieu/salles/nouvelle. A declared form because a page form
+# never creates a row; the redirect opens the booking's page, where every
+# field stays editable. Admin only, like the table.
+id: 20
+name: room-booking-new
+title: Nouvelle réservation
+description: "Une mise à disposition de Narval, Baleine, Requin, Crevette ou Tortue."
+display:
+  submitLabel: Ajouter la réservation
+access: { require: [admin], redirectTo: /connexion }
+submitTo:
+  table: room_bookings
+fields:
+  - { kind: table-field, column: title, placeholder: "Nom de la structure ou de l'événement", required: true }
+  - { kind: table-field, column: room, required: true }
+  - { kind: table-field, column: starts_at, required: true }
+  - { kind: table-field, column: ends_at, required: true }
+  - { kind: table-field, column: organization }
+  - { kind: table-field, column: booked_by }
+  - { kind: table-field, column: mad_type }
+  - { kind: table-field, column: field_of_action }
+  - { kind: table-field, column: amount_ht, helpText: "Hors taxes, s'il y a une participation ou un plein tarif." }
+  - { kind: table-field, column: billing_email, helpText: "Si la facture part ailleurs que chez la structure." }
+  - { kind: table-field, column: door_code }
+onSuccess:
+  type: redirect
+  url: /administration/lieu/salles/$record.id
+  delaySeconds: 0

@@ -1,0 +1,60 @@
+# Table: space_contracts — every contract for a part of the place, one table
+# for the four kinds: a desk (« Contrats bureaux » in Notion), a box, a locker
+# (in Notion a relation on the locker itself) and a domiciliation.
+# Imported from Notion by notion-import-lieu, matched on notion_page_id (a
+# locker's contract on `casier:<locker page id>`).
+#
+# « Actif » is never stored: a contract is active when start_date is empty or
+# ≤ today AND end_date is empty or ≥ today. A component filter cannot say
+# « or » (and a view's filter does not resolve $today), so two formulas fill
+# the empty dates and every « actif » list or KPI filters them against $today;
+# lieu-occupancy-refresh applies the same rule to the desks and lockers.
+#
+# The occupant's name is the Notion title (required); the structure and the
+# person are links to the Communauté tables when Notion names them. Links to
+# Drive documents are long-text: they run past a url field's 255 characters
+# on PostgreSQL. Admin only.
+id: 38
+name: space_contracts
+aiAccess:
+  description: "Contracts for La Plage Digitale's spaces: desk, box, locker and domiciliation contracts, with occupant, structure, contact, dates and document links. Active = started (or no start) and not ended (or no end)."
+  operations: [read, list]
+fields:
+  - id: 1
+    name: kind
+    label: Type
+    type: single-select
+    required: true
+    options:
+      - { value: bureau, label: Bureau, color: '#1e3a8a' }
+      - { value: box, label: Box, color: '#3b82f6' }
+      - { value: casier, label: Casier, color: '#f59e0b' }
+      - { value: domiciliation, label: Domiciliation, color: '#8b5cf6' }
+  - { id: 2, name: occupant_name, label: Occupant, type: single-line-text, required: true, indexed: true }
+  - { id: 3, name: organization, label: Structure, type: relationship, relatedTable: organizations, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 4, name: contact, label: Personne, type: relationship, relatedTable: contacts, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 5, name: desk, label: Bureau, type: relationship, relatedTable: desks, relationType: many-to-one, displayField: label, onDelete: set-null }
+  - { id: 6, name: locker, label: Casier, type: relationship, relatedTable: lockers, relationType: many-to-one, displayField: label, onDelete: set-null }
+  - { id: 7, name: room, label: Box, type: relationship, relatedTable: rooms, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - { id: 8, name: start_date, label: Début, type: date, indexed: true }
+  - { id: 9, name: end_date, label: Fin, type: date, indexed: true }
+  - { id: 10, name: contract_url, label: Contrat, type: long-text }
+  - { id: 11, name: termination_url, label: Résiliation, type: long-text }
+  - { id: 12, name: info_sheet_url, label: Fiche de renseignements, type: long-text }
+  - { id: 13, name: keys_handover_url, label: Remise des clés, type: long-text }
+  - { id: 14, name: billing_email, label: E-mail de facturation, type: email }
+  - { id: 15, name: domiciliation_holder_address, label: Adresse du porteur, type: long-text }
+  - { id: 16, name: notes, label: Notes, type: long-text }
+  - { id: 17, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 18, name: created_at, label: Créé le, type: created-at }
+  # The two dates with the gaps filled (no start = always started, no end =
+  # never ends), so « actif » is two plain conditions a component filter can
+  # hold: active_from ≤ $today AND active_until ≥ $today. They read no clock,
+  # so they never go stale; $today is resolved on every read.
+  - { id: 19, name: active_from, label: Actif depuis, type: formula, formula: "COALESCE(start_date, '1900-01-01')", resultType: date }
+  - { id: 20, name: active_until, label: Actif jusqu'au, type: formula, formula: "COALESCE(end_date, '9999-12-31')", resultType: date }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

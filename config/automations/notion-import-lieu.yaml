@@ -1,0 +1,462 @@
+# Automation: notion-import-lieu — brings the place out of Notion: « Pièces »
+# → rooms, « Bureaux » → desks, « Casiers » → lockers, « Contrats bureaux »,
+# « Box », « Domiciliations » and each occupied locker → space_contracts,
+# « Salles » (mises à disposition) → room_bookings.
+#
+#   POST /api/automations/notion-import-lieu/trigger {"dryRun": "true"}    first: counts, writes nothing
+#   POST /api/automations/notion-import-lieu/trigger {"dryRun": "false"}   then for real
+#   … add "only": "rooms" | "desks" | "lockers" | "contracts" | "bookings" to run one table
+#
+# Same rules as notion-import-communaute: a body without `dryRun: "false"` is
+# a dry run; the seven data sources are read through the `notion` connection
+# (cursor pagination, page size halved whenever an answer passes the 64 KiB
+# cap); rows are upserted on notion_page_id in the order rooms → desks →
+# lockers → contracts → bookings, so each relation resolves through a row
+# already written; the structures and people resolve through the
+# notion_page_id of organizations and contacts (notion-import-communaute runs
+# first). An existing row only gets the fields still empty on it, so an
+# admin's edit is never overwritten; an empty single-select is left out.
+#
+# Notion mapping worth knowing:
+# - a locker's occupant (« Occupé par (Entreprise) » / « Occupe par (Personne
+#   Physique) ») becomes ONE contract of kind casier, notion_page_id
+#   `casier:<locker page id>`, with no start date (Notion has none);
+# - a desk contract naming several desks keeps the first, the others go to
+#   its notes; several occupants likewise;
+# - a booking's « Durée de la réservation » range gives starts_at / ends_at.
+#
+# A real run ends with the occupancy refresh (lieu-occupancy-compute), so the
+# desks and lockers say who is in them at once. The run returns, per table,
+# created / updated / skipped / unresolved (a Notion relation whose target is
+# not in the app) and failed.
+#
+# Production: the Notion integration behind NOTION_TOKEN must be shared with
+# the seven databases, or Notion answers 404 object_not_found.
+name: notion-import-lieu
+label: Importer le lieu depuis Notion
+description: >-
+  Recopie dans l'app les pièces, bureaux, casiers, contrats (bureaux, box,
+  casiers, domiciliations) et mises à disposition de salles de Notion, sans
+  jamais écraser un champ déjà rempli.
+trigger:
+  type: manual
+  label: Importer depuis Notion
+  requiredRole: admin
+  inputSchema:
+    dryRun: { type: string }
+    only: { type: string }
+timeout: 600000
+concurrency:
+  limit: 1
+tags: [notion, lieu, import]
+actions:
+  - name: import
+    label: Lire Notion et écrire les cinq tables
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 300000
+      inputData:
+        dryRun: '{{trigger.input.dryRun}}'
+        only: '{{trigger.input.only}}'
+        roomsDs: 3299c741-b369-4c74-827e-8833cb8e34c7
+        desksDs: 0ebf8de0-52a6-4dd2-b8b3-a7a552523753
+        lockersDs: 2d3a7e91-0edc-40eb-81ac-7ff841467ee5
+        deskContractsDs: 275f6143-495b-4c75-bda6-6faa0b50f11c
+        boxContractsDs: a15f2c53-df79-4188-994e-2e478e6ae2a9
+        domiciliationsDs: afc83403-870e-4176-8912-4bac5330169e
+        bookingsDs: 0bd8e84e-cab4-4abb-b57d-f849f4998e01
+      code: |
+        async function execute(context) {
+          const inp = context.inputData
+          const NOTION = 'https://api.notion.com/v1'
+          const HEADERS = { 'Notion-Version': '2026-03-11' }
+          // Only an explicit "false" writes: a forgotten flag stays harmless.
+          const dryRun = String(inp.dryRun ?? '').trim().toLowerCase() !== 'false'
+          const only = String(inp.only ?? '').trim().toLowerCase()
+          const TABLES = ['rooms', 'desks', 'lockers', 'contracts', 'bookings']
+          if (only && !TABLES.includes(only)) throw new Error(`only inconnu : ${only} (${TABLES.join(', ')})`)
+          const runs = (t: string) => !only || only === t
+
+          // --- Notion over the connection (as notion-import-communaute)
+          const notion = async (method: string, path: string, opts: { body?: unknown } = {}): Promise<any> => {
+            let res: any
+            try {
+              res = await context.actions.http[method]({
+                url: NOTION + path,
+                connection: 'notion',
+                headers: HEADERS,
+                timeout: 30000,
+                ...(opts.body !== undefined ? { body: opts.body } : {}),
+              })
+            } catch (e) {
+              throw new Error(`Notion ${method.toUpperCase()} ${path} a échoué : ${e?.message ?? String(e)}`)
+            }
+            if (res?.truncated) throw new Error(`TRUNCATED:${path}`)
+            const body = typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+            if (!body || typeof body !== 'object') throw new Error(`Notion ${path} : réponse illisible`)
+            if (body.object === 'error') throw new Error(`Notion ${path} : ${body.code} ${body.message}`)
+            return body
+          }
+          const readAll = async (ds: string): Promise<any[]> => {
+            const pages: any[] = []
+            let cursor: string | undefined
+            let pageSize = 20
+            for (let guard = 0; guard < 1000; guard++) {
+              let page: any
+              try {
+                page = await notion('post', `/data_sources/${ds}/query`, { body: { page_size: pageSize, ...(cursor ? { start_cursor: cursor } : {}) } })
+              } catch (e) {
+                // An answer over the cap comes back flagged, or cut and unreadable: retry smaller.
+                const m = String(e?.message)
+                if ((m.startsWith('TRUNCATED:') || m.endsWith('réponse illisible')) && pageSize > 2) { pageSize = Math.max(2, Math.floor(pageSize / 2)); context.log.warn('Réponse > 64 KiB, page_size →', pageSize); continue }
+                throw e
+              }
+              pages.push(...(page.results ?? []))
+              if (!page.has_more || !page.next_cursor) break
+              cursor = page.next_cursor
+            }
+            return pages.filter((p: any) => !p.in_trash && !p.archived && !p.is_archived)
+          }
+
+          // --- property readers
+          const plain = (rt: any): string => (rt ?? []).map((t: any) => t.plain_text ?? '').join('').trim()
+          const prop = (page: any, name: string): any => page.properties?.[name] ?? page.properties?.[name + ' '] ?? page.properties?.[name.trim()]
+          const title = (page: any): string => { const p = Object.values(page.properties ?? {}).find((x: any) => x?.type === 'title') as any; return plain(p?.title) }
+          const text = (page: any, name: string): string => plain(prop(page, name)?.rich_text)
+          const line = (s: string, max = 255): string => s.replace(/\s+/g, ' ').trim().slice(0, max)
+          const emailOf = (page: any, name: string): string => {
+            const v = String(prop(page, name)?.email ?? '').trim().toLowerCase()
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? v : ''
+          }
+          const urlOf = (page: any, name: string): string => String(prop(page, name)?.url ?? '').trim()
+          // A link typed in a text property: its href, else the text when it reads as a URL.
+          const linkIn = (page: any, name: string): string => {
+            const rt = prop(page, name)?.rich_text ?? []
+            const href = rt.map((t: any) => t.href ?? t.text?.link?.url ?? '').find((h: string) => !!h)
+            if (href) return String(href).trim()
+            const s = plain(rt)
+            return /^https?:\/\/\S+$/.test(s) ? s : ''
+          }
+          const selectOf = (page: any, name: string): string => String(prop(page, name)?.select?.name ?? '').trim()
+          const numberOf = (page: any, name: string): number | null => { const n = prop(page, name)?.number; return typeof n === 'number' && Number.isFinite(n) ? n : null }
+          const checkOf = (page: any, name: string): boolean => prop(page, name)?.checkbox === true
+          const dateOf = (page: any, name: string): { start: string; end: string } => {
+            const d = prop(page, name)?.date
+            return { start: String(d?.start ?? ''), end: String(d?.end ?? '') }
+          }
+          const relOf = (page: any, name: string): string[] => (prop(page, name)?.relation ?? []).map((r: any) => String(r.id ?? '')).filter(Boolean)
+          const iso = (s: string): string => { if (!s) return ''; const d = new Date(s); return Number.isNaN(d.getTime()) ? '' : d.toISOString() }
+
+          // --- the app side
+          const list = async (table: string): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          const empty = (v: any): boolean => v === null || v === undefined || (typeof v === 'string' && v.trim() === '') || (Array.isArray(v) && v.length === 0)
+          const chunks = (items: any[], n = 100): any[][] => { const out: any[][] = []; for (let i = 0; i < items.length; i += n) out.push(items.slice(i, i + n)); return out }
+          type Stats = { notion: number; created: number; updated: number; skipped: number; unresolved: number; failed: number }
+          const stats: Record<string, any> = {}
+          const newStats = (): Stats => ({ notion: 0, created: 0, updated: 0, skipped: 0, unresolved: 0, failed: 0 })
+          const failuresOf = (res: any): number => {
+            if (!res || typeof res !== 'object') return 0
+            if (Array.isArray(res.errors)) return res.errors.length
+            if (typeof res.failed === 'number') return res.failed
+            if (Array.isArray(res.failed)) return res.failed.length
+            return 0
+          }
+          // Creates the new rows; on an existing row writes only the fields still empty there.
+          const upsert = async (table: string, rows: any[], st: Stats): Promise<void> => {
+            const keyField = 'notion_page_id'
+            const existing = new Map<string, any>((await list(table)).filter((r: any) => !empty(r[keyField])).map((r: any) => [String(r[keyField]), r]))
+            const creates: any[] = []
+            const updates: any[] = []
+            for (const row of rows) {
+              const cur = existing.get(String(row[keyField]))
+              // An empty value is left out: '' is no option of a single-select, and the row would fail.
+              if (!cur) { creates.push(Object.fromEntries(Object.entries(row).filter(([, v]) => !empty(v)))); continue }
+              const patch: Record<string, unknown> = {}
+              for (const [k, v] of Object.entries(row)) if (k !== keyField && !empty(v) && empty(cur[k])) patch[k] = v
+              if (Object.keys(patch).length === 0) { st.skipped++; continue }
+              updates.push({ [keyField]: row[keyField], ...patch })
+            }
+            st.created += creates.length
+            st.updated += updates.length
+            if (dryRun) return
+            for (const items of chunks(creates)) {
+              const res: any = await context.actions.record.batchCreate({ table, items, continueOnItemError: true })
+              st.failed += failuresOf(res)
+            }
+            for (const items of chunks(updates)) {
+              const res: any = await context.actions.record.batchUpsert({ table, items, matchField: keyField, continueOnItemError: true })
+              st.failed += failuresOf(res)
+            }
+          }
+          // notion page id → { id, name } of the rows already in a table.
+          const byNotion = async (table: string, nameField = 'name'): Promise<Map<string, { id: string; name: string }>> =>
+            new Map((await list(table)).filter((r: any) => !empty(r.notion_page_id)).map((r: any) => [String(r.notion_page_id), { id: String(r.id), name: String(r[nameField] ?? '') }]))
+          // A dry run has not written the earlier tables: a `notion:<id>` stand-in counts the link it would make (never written).
+          const resolver = (m: Map<string, { id: string }>, seen: Set<string>) => (nid: string | undefined, st: Stats): string | null => {
+            if (!nid) return null
+            const hit = m.get(nid)?.id ?? (dryRun && seen.has(nid) ? `notion:${nid}` : null)
+            if (!hit) st.unresolved++
+            return hit
+          }
+
+          const orgs = await byNotion('organizations')
+          const contacts = await byNotion('contacts')
+          const none = new Set<string>()
+          const orgOf = resolver(orgs, none)
+          const contactOf = resolver(contacts, none)
+
+          // --- 1. rooms
+          const MEETING = ['narval', 'baleine', 'requin', 'crevette', 'tortue']
+          const roomKind = (name: string): string => {
+            const n = name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+            if (MEETING.some((m) => n.startsWith(m))) return 'salle-reunion'
+            if (/\bbox\b/.test(n)) return 'box'
+            if (n.startsWith('casier')) return 'casiers'
+            if (/^(kraken|corail|sardines)/.test(n)) return 'bureau-partage'
+            if (/\bwc\b|cuisine|salle d.eau|accueil|babyfoot/.test(n)) return 'commun'
+            if (/impression|scan|\bcave\b/.test(n)) return 'technique'
+            return 'autre'
+          }
+          const seenRooms = new Set<string>()
+          if (runs('rooms')) {
+            const st = (stats.rooms = newStats())
+            const pages = await readAll(String(inp.roomsDs))
+            st.notion = pages.length
+            const rows = pages.map((p: any) => {
+              seenRooms.add(p.id)
+              const name = line(title(p)) || '(sans nom)'
+              const cap = numberOf(p, 'Capacité personnes max')
+              const surface = numberOf(p, 'Surface (m2)')
+              return {
+                notion_page_id: p.id,
+                name,
+                kind: roomKind(name),
+                capacity: cap === null ? null : Math.round(cap),
+                notes: surface !== null ? `Surface : ${surface} m²` : '',
+              }
+            })
+            await upsert('rooms', rows, st)
+          }
+          const rooms = await byNotion('rooms')
+          const roomOf = resolver(rooms, seenRooms)
+
+          // --- 2. desks
+          const seenDesks = new Set<string>()
+          if (runs('desks')) {
+            const st = (stats.desks = newStats())
+            const pages = await readAll(String(inp.desksDs))
+            st.notion = pages.length
+            const rows = pages.map((p: any) => {
+              seenDesks.add(p.id)
+              const label = line(title(p)) || '(sans identifiant)'
+              const room = roomOf(relOf(p, '🛖 Pièces')[0], st)
+              return {
+                notion_page_id: p.id,
+                label,
+                kind: /flex/i.test(label) ? 'flex' : 'fixe',
+                ...(room ? { room } : {}),
+              }
+            })
+            await upsert('desks', rows, st)
+          }
+          const desks = await byNotion('desks', 'label')
+          const deskOf = resolver(desks, seenDesks)
+
+          // --- 3. lockers (and, below, one contract per occupied locker)
+          const seenLockers = new Set<string>()
+          const lockerPages = runs('lockers') || runs('contracts') ? await readAll(String(inp.lockersDs)) : []
+          if (runs('lockers')) {
+            const st = (stats.lockers = newStats())
+            st.notion = lockerPages.length
+            const rows = lockerPages.map((p: any) => {
+              seenLockers.add(p.id)
+              const label = line(title(p)) || '(sans identifiant)'
+              const num = label.match(/(\d+)\s*$/)
+              const room = roomOf(relOf(p, '🛖 Pièces')[0], st)
+              return {
+                notion_page_id: p.id,
+                label,
+                number: num ? Number(num[1]) : null,
+                ...(room ? { room } : {}),
+              }
+            })
+            await upsert('lockers', rows, st)
+          }
+          const lockers = await byNotion('lockers', 'label')
+          const lockerOf = resolver(lockers, seenLockers)
+
+          // --- 4. contracts
+          if (runs('contracts')) {
+            const st = (stats.contracts = newStats())
+            const per: Record<string, number> = {}
+            const rows: any[] = []
+            const nameOf = (m: Map<string, { name: string }>, nid?: string): string => (nid ? m.get(nid)?.name ?? '' : '')
+            const note = (parts: string[]): string => parts.filter(Boolean).join('\n')
+
+            // Desks (« Contrats bureaux »)
+            for (const p of await readAll(String(inp.deskContractsDs))) {
+              per.bureau = (per.bureau ?? 0) + 1
+              const people = [...new Set([...relOf(p, 'Personne physique contractante'), ...relOf(p, 'Occupant(es)')])]
+              const orgRel = relOf(p, 'Entreprise contractante')
+              const deskRel = relOf(p, 'Identifiant du bureau')
+              const contact = contactOf(people[0], st)
+              const organization = orgOf(orgRel[0], st)
+              const desk = deskOf(deskRel[0], st)
+              const d0 = dateOf(p, 'Début de contrat').start.slice(0, 10)
+              const d1 = dateOf(p, 'Fin de contrat').start.slice(0, 10)
+              const occupant = line(title(p)) || nameOf(contacts, people[0]) || nameOf(orgs, orgRel[0]) || '(sans nom)'
+              rows.push({
+                notion_page_id: p.id,
+                kind: 'bureau',
+                occupant_name: occupant,
+                start_date: d0,
+                end_date: d1,
+                contract_url: urlOf(p, 'Lien vers le contrat'),
+                termination_url: urlOf(p, 'Lien Résiliation'),
+                billing_email: emailOf(p, 'E-mail de facturation'),
+                notes: note([
+                  deskRel.length > 1 ? `Autres bureaux (Notion) : ${deskRel.slice(1).map((d: string) => nameOf(desks, d) || d).join(', ')}` : '',
+                  people.length > 1 ? `Occupant(e)s (Notion) : ${people.map((c: string) => nameOf(contacts, c) || c).join(', ')}` : '',
+                ]),
+                ...(contact ? { contact } : {}),
+                ...(organization ? { organization } : {}),
+                ...(desk ? { desk } : {}),
+              })
+            }
+
+            // Boxes
+            for (const p of await readAll(String(inp.boxContractsDs))) {
+              per.box = (per.box ?? 0) + 1
+              const people = [...new Set([...relOf(p, 'Personne physique contractante'), ...relOf(p, 'Occupant(e)s')])]
+              const orgRel = relOf(p, 'Contractant')
+              const contact = contactOf(people[0], st)
+              const organization = orgOf(orgRel[0], st)
+              const room = roomOf(relOf(p, '🛖 Pièces')[0], st)
+              rows.push({
+                notion_page_id: p.id,
+                kind: 'box',
+                occupant_name: line(title(p)) || nameOf(orgs, orgRel[0]) || nameOf(contacts, people[0]) || '(sans nom)',
+                start_date: dateOf(p, 'Début de contrat').start.slice(0, 10),
+                end_date: dateOf(p, 'Fin de contrat').start.slice(0, 10),
+                contract_url: urlOf(p, 'Lien vers le contrat'),
+                keys_handover_url: urlOf(p, 'Attestation Remise de clés'),
+                notes: people.length > 1 ? `Occupant(e)s (Notion) : ${people.map((c: string) => nameOf(contacts, c) || c).join(', ')}` : '',
+                ...(contact ? { contact } : {}),
+                ...(organization ? { organization } : {}),
+                ...(room ? { room } : {}),
+              })
+            }
+
+            // Domiciliations
+            for (const p of await readAll(String(inp.domiciliationsDs))) {
+              per.domiciliation = (per.domiciliation ?? 0) + 1
+              const orgRel = relOf(p, 'Entreprise')
+              const organization = orgOf(orgRel[0], st)
+              const contactEmail = emailOf(p, 'Email de contact')
+              const member = selectOf(p, 'Adhérent')
+              const rents = selectOf(p, "Loue un bureau dans l'espace ?")
+              const liquidation = urlOf(p, 'Lien dossier liquidation')
+              rows.push({
+                notion_page_id: p.id,
+                kind: 'domiciliation',
+                occupant_name: line(title(p)) || nameOf(orgs, orgRel[0]) || '(sans nom)',
+                start_date: dateOf(p, 'Date signature contrat').start.slice(0, 10),
+                end_date: dateOf(p, 'Date fin de contrat').start.slice(0, 10),
+                contract_url: linkIn(p, 'Contrat de domiciliation'),
+                info_sheet_url: urlOf(p, 'Lien fiche de renseignements'),
+                billing_email: emailOf(p, 'E-mail de facturation') || emailOf(p, 'E-mail de facturation (1)'),
+                domiciliation_holder_address: text(p, 'Adresse du porteur'),
+                notes: note([
+                  contactEmail ? `E-mail de contact : ${contactEmail}` : '',
+                  member ? `Adhérent : ${member}` : '',
+                  rents ? `Loue un bureau : ${rents}` : '',
+                  liquidation ? `Dossier de liquidation : ${liquidation}` : '',
+                ]),
+                ...(organization ? { organization } : {}),
+              })
+            }
+
+            // Lockers: one contract per occupied locker, keyed on the locker's page.
+            for (const p of lockerPages) {
+              const orgRel = relOf(p, 'Occupé par (Entreprise)')
+              const people = relOf(p, 'Occupe par (Personne Physique)')
+              if (orgRel.length === 0 && people.length === 0) continue
+              per.casier = (per.casier ?? 0) + 1
+              const organization = orgOf(orgRel[0], st)
+              const contact = contactOf(people[0], st)
+              const locker = lockerOf(p.id, st)
+              rows.push({
+                notion_page_id: `casier:${p.id}`,
+                kind: 'casier',
+                occupant_name: nameOf(orgs, orgRel[0]) || nameOf(contacts, people[0]) || line(title(p)) || '(sans nom)',
+                contract_url: urlOf(p, 'Contrat signé'),
+                ...(organization ? { organization } : {}),
+                ...(contact ? { contact } : {}),
+                ...(locker ? { locker } : {}),
+              })
+            }
+            st.notion = rows.length
+            ;(st as any).by_kind = per
+            await upsert('space_contracts', rows, st)
+          }
+
+          // --- 5. bookings
+          if (runs('bookings')) {
+            const st = (stats.bookings = newStats())
+            const pages = await readAll(String(inp.bookingsDs))
+            st.notion = pages.length
+            const MAD: Record<string, string> = { 'Gratuite': 'gratuite', 'Participation': 'participation', 'Plein tarif': 'plein-tarif' }
+            const fold = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+            const FOA: [string, string][] = [
+              ['institution', 'institution'], ['activite economique', 'economie'], ['education', 'citoyennete'],
+              ['environnement', 'environnement'], ['emploi', 'emploi'], ['solidarite', 'solidarite'],
+              ['lutte contre les discriminations', 'droits'], ['culture', 'culture'], ['numerique', 'numerique'],
+              ['animation du tiers-lieu', 'tiers_lieu'],
+            ]
+            const foaOf = (s: string): string => { if (!s) return ''; const f = fold(s); const hit = FOA.find(([k]) => f.startsWith(k)); if (!hit) context.log.warn(`Champ d'action inconnu, ignoré : ${s}`); return hit?.[1] ?? '' }
+            let undated = 0
+            const rows = pages.map((p: any) => {
+              const range = dateOf(p, 'Durée de la réservation')
+              if (!range.start) undated++
+              const amount = numberOf(p, 'Montant facturé (€ HT)')
+              const room = roomOf(relOf(p, '🛖 Salle')[0], st)
+              const organization = orgOf(relOf(p, 'Entreprise/Structure')[0], st)
+              const bookedBy = contactOf(relOf(p, 'Personne qui a réservé')[0], st)
+              return {
+                notion_page_id: p.id,
+                title: line(title(p)) || '(sans titre)',
+                starts_at: iso(range.start),
+                ends_at: iso(range.end),
+                mad_type: MAD[selectOf(p, 'Type de MAD')] ?? '',
+                field_of_action: foaOf(selectOf(p, "Champ d'action")),
+                free: checkOf(p, 'Gratuite ?'),
+                billed: checkOf(p, 'Facturé ?'),
+                communication_wanted: checkOf(p, 'Communication souhaitée ?'),
+                amount_ht: amount,
+                billing_email: emailOf(p, 'Envoi facture (si différent)'),
+                contract_url: urlOf(p, 'Lien vers le contrat (1)'),
+                safety_sheet_url: urlOf(p, 'Lien vers fiche sécurité'),
+                door_code: line(text(p, "Code d'accès porte")),
+                ...(room ? { room } : {}),
+                ...(organization ? { organization } : {}),
+                ...(bookedBy ? { booked_by: bookedBy } : {}),
+              }
+            })
+            ;(st as any).undated = undated
+            await upsert('room_bookings', rows, st)
+          }
+
+          context.log.info(`${dryRun ? 'DRY RUN — ' : ''}${JSON.stringify(stats)}`)
+          // The occupancy step after this one counts only on a dry run.
+          return { dryRun, refreshDryRun: dryRun ? 'true' : 'false', ...stats }
+        }
+
+  # Desks and lockers say who is in them as soon as the contracts are in.
+  - name: occupancy
+    $ref: lieu-occupancy-compute
+    $vars:
+      dryRun: '{{steps.import.refreshDryRun}}'

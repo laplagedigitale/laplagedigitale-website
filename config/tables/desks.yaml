@@ -1,0 +1,34 @@
+# Table: desks — the « Bureaux »: every desk of the open spaces, fixed or
+# Flex, in its room. Imported from Notion by notion-import-lieu.
+#
+# `occupied` and `current_occupant` are written by lieu-occupancy-refresh
+# (every morning, and after an import) from the desk's active contracts in
+# space_contracts — never by hand: the next refresh would undo it. A contract
+# is active when it has started (or has no start date) and has not ended (or
+# has no end date). Admin only.
+id: 36
+name: desks
+aiAccess:
+  description: "Desks (bureaux) of La Plage Digitale's open spaces, fixed or Flex, with their room and, refreshed daily from the active contracts, whether they are occupied and by whom."
+  operations: [read, list]
+fields:
+  - { id: 1, name: label, label: Bureau, type: single-line-text, required: true, indexed: true }
+  - { id: 2, name: room, label: Pièce, type: relationship, relatedTable: rooms, relationType: many-to-one, displayField: name, onDelete: set-null }
+  - id: 3
+    name: kind
+    label: Type
+    type: single-select
+    options:
+      - { value: fixe, label: Fixe, color: '#1e3a8a' }
+      - { value: flex, label: Flex, color: '#fb923c' }
+  # Written by lieu-occupancy-refresh.
+  - { id: 4, name: occupied, label: Occupé, type: checkbox, default: false }
+  - { id: 5, name: current_occupant, label: Occupé par, type: single-line-text }
+  - { id: 6, name: notes, label: Notes, type: long-text }
+  - { id: 7, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 8, name: created_at, label: Créé le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]
