@@ -1004,3 +1004,7 @@ notFound.lead: "The link may be old, or the address may have a typo."
 notFound.member: "Are you a coworker coming from your Member Space? Your account is probably not linked to your member record yet: write to us and we’ll sort it out."
 notFound.home: "Back to the home page"
 notFound.contact: "Write to the team"
+
+# Administration › Demandes (leads.status)
+admin.leads.status.new: "To handle"
+admin.leads.status.done: "Handled"

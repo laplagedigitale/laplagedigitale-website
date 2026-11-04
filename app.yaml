@@ -64,6 +64,11 @@ env:
     required: false
     default: tresorerie@laplagedigitale.fr
     secret: false
+  - key: LEADS_NOTIFY_EMAIL
+    description: Recipient of lead-notify, one mail per contact-form submission (the team inbox Mathieu reads)
+    required: false
+    default: contact@laplagedigitale.fr
+    secret: false
   # Weekly Notion → Slack digest (notion-hebdo)
   - key: NOTION_TOKEN
     description: Notion internal integration token used to read the task database
@@ -197,6 +202,7 @@ pages:
   - $ref: ./config/pages/admin-members.yaml
   - $ref: ./config/pages/admin-member.yaml
   - $ref: ./config/pages/admin-flex-signups.yaml
+  - $ref: ./config/pages/admin-demandes.yaml
   - $ref: ./config/pages/admin-finances.yaml
   - $ref: ./config/pages/admin-finances-invoices.yaml
   - $ref: ./config/pages/admin-finances-flex.yaml
@@ -251,6 +257,8 @@ actions:
 
 automations:
   - $ref: ./config/automations/member-sign-up.yaml
+  # Each contact-form submission, mailed to the team inbox
+  - $ref: ./config/automations/lead-notify.yaml
   - $ref: ./config/automations/pennylane-auto-match.yaml
   - $ref: ./config/automations/pennylane-sync.yaml
   - $ref: ./config/automations/request-mandate.yaml

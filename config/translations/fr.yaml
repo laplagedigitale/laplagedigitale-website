@@ -1005,3 +1005,7 @@ notFound.lead: "Le lien est peut-être ancien, ou l’adresse contient une faute
 notFound.member: "Tu es coworker et tu arrives ici depuis ton Espace Membre ? Ton compte n’est sans doute pas encore relié à ta fiche : écris-nous, on s’en occupe."
 notFound.home: "Retour à l’accueil"
 notFound.contact: "Écrire à l’équipe"
+
+# Administration › Demandes (leads.status)
+admin.leads.status.new: "À traiter"
+admin.leads.status.done: "Traitée"

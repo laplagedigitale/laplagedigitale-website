@@ -221,7 +221,11 @@ components:
                 props: { className: 'flex items-center justify-between gap-4' }
                 children:
                   - { type: text, element: h2, content: Contenu du site, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Gérer le blog →', props: { href: /administration/contenu, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - type: flex
+                    props: { className: 'flex flex-wrap items-center gap-x-5 gap-y-2' }
+                    children:
+                      - { type: link, content: 'Voir les demandes →', props: { href: /administration/demandes, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                      - { type: link, content: 'Gérer le blog →', props: { href: /administration/contenu, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: grid
                 props:
                   className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
@@ -243,7 +247,14 @@ components:
                         - { field: status, operator: eq, value: draft }
                     kpiAggregate: { function: count }
                   - type: kpi
-                    label: Demandes de contact
+                    label: Demandes à traiter
+                    description: Messages du formulaire de contact pas encore marqués « Traité »
                     icon: mail
-                    dataSource: { table: leads }
+                    dataSource:
+                      table: leads
+                      filter:
+                        - { field: status, operator: eq, value: new }
                     kpiAggregate: { function: count }
+                    thresholds:
+                      - { value: 0, color: green }
+                      - { value: 1, color: yellow }
