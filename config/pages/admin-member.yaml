@@ -50,6 +50,9 @@ components:
               - { type: text, element: h2, content: $t:admin.member.formules, props: { className: 'text-xl font-semibold text-navy' } }
               - { type: text, element: p, content: $t:admin.member.formules.help, props: { className: 'text-sm text-text-muted' } }
               - type: form
+                dataSource: { table: members, mode: single, param: id }
+                showHeader: false
+                autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
                 action: { type: crud, operation: update, table: members }
                 fields:
                   - { field: formules, label: $t:admin.members.formules }
@@ -179,7 +182,7 @@ components:
                               - { type: text, element: p, content: $t:portal.mandate.since, props: { className: 'text-xs uppercase tracking-wide text-text-muted' } }
                               - { type: record-field, format: short-date, props: { field: signed_at, className: 'mt-1 text-navy' } }
 
-          # Flex days, read-only here — corrections are made in /administration/finances/flex.
+          # Flex days, read-only here — corrections are made in /administration/finances/facturation/flex.
           - type: card
             props:
               className: 'p-4 sm:p-6 space-y-4'

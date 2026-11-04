@@ -1,0 +1,152 @@
+# Page: admin-flex-signup — one Flex sign-up: who it is, the billing details
+# Pennylane will receive, and the two decisions (« Valider », « Refuser »).
+# The list (/administration/inscriptions-flex) keeps the seven columns needed
+# to decide; everything else is read here.
+#
+# The two buttons sit in a list bound to this one row: a button fills
+# `$record.id` from a list item, not from the page binding (0.37), and both
+# runs need the row's id. Each is drawn only while the sign-up is still `new`.
+# Neither can reload the page (an automation button drops onSuccess.navigate),
+# so the toast says to come back to the list, where « Suivi » has changed.
+name: admin-flex-signup
+path: /administration/inscriptions-flex/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Inscription Flex — Administration"
+  description: "Une inscription Flex."
+  noindex: true
+dataSource: { table: flex_signups, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Inscriptions Flex', props: { href: /administration/inscriptions-flex, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: flex
+            props:
+              className: 'flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'
+            children:
+              - type: container
+                children:
+                  - { type: text, element: h1, content: '$record.first_name $record.last_name', props: { className: 'text-3xl font-bold text-navy' } }
+                  - type: flex
+                    props:
+                      className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                    children:
+                      - { type: text, element: span, content: 'Reçue le' }
+                      - { type: record-field, format: long-date, props: { field: created_at, className: 'font-semibold text-navy' } }
+                      - { type: record-field, props: { field: status, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+              - type: list
+                dataSource:
+                  table: flex_signups
+                  filter:
+                    - { field: id, operator: eq, value: $param.id }
+                    - { field: status, operator: eq, value: new }
+                  limit: 1
+                listDisplay:
+                  hideWhenEmpty: true
+                children:
+                  - type: flex
+                    props: { className: 'flex flex-wrap gap-3' }
+                    children:
+                      - type: button
+                        content: $t:admin.flex.signups.validate
+                        props:
+                          className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white hover:text-white bg-navy hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+                        confirm:
+                          title: $t:admin.flex.signups.validate.title
+                          message: $t:admin.flex.signups.validate.message
+                          confirmLabel: $t:admin.flex.signups.validate
+                        action:
+                          type: automation
+                          name: flex-signup-validate
+                          await: true
+                          inputData:
+                            signupId: $record.id
+                          onSuccess:
+                            toast: { variant: success, message: "Inscription validée : client Pennylane relié et invitation envoyée. Retourne à la liste pour la suite." }
+                          onError:
+                            toast: { variant: error, message: $t:admin.flex.signups.validate.error }
+                      - type: button
+                        content: $t:admin.flex.signups.decline
+                        props:
+                          className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
+                        confirm:
+                          title: $t:admin.flex.signups.decline.title
+                          message: $t:admin.flex.signups.decline.message
+                          confirmLabel: $t:admin.flex.signups.decline
+                        action:
+                          type: fetch
+                          method: PATCH
+                          url: /api/tables/flex_signups/records/$record.id
+                          body:
+                            fields: { status: declined }
+                          onSuccess:
+                            type: toast
+                            variant: success
+                            message: $t:admin.flex.signups.decline.done
+                            reload: true
+                          onError:
+                            type: toast
+                            variant: error
+                            message: $t:admin.flex.signups.decline.error
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-2 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: Contact, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: container
+                    element: div
+                    props: { className: 'grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm' }
+                    children:
+                      - { type: text, element: span, content: E-mail, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: email, className: 'text-navy break-all' } }
+                      - { type: text, element: span, content: Téléphone, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: phone, className: 'text-navy' } }
+                      - { type: text, element: span, content: Entreprise, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: company, className: 'text-navy' } }
+                      - { type: text, element: span, content: Adhésion à l'association, props: { className: 'text-text-muted' } }
+                      - { type: record-field, format: check-cross, props: { field: association, className: 'text-navy' } }
+                      - { type: text, element: span, content: Client Pennylane, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: pennylane_customer_id, className: 'text-navy' } }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: Facturation, props: { className: 'text-xl font-semibold text-navy' } }
+                  - { type: text, element: p, content: "Ce que « Valider » enverra à Pennylane pour créer le client.", props: { className: 'text-sm text-text-muted' } }
+                  - type: container
+                    element: div
+                    props: { className: 'grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm' }
+                    children:
+                      - { type: text, element: span, content: Nom de facturation, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: billing_name, className: 'text-navy' } }
+                      - { type: text, element: span, content: Adresse, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: billing_address, className: 'text-navy whitespace-pre-line' } }
+                      - { type: text, element: span, content: Code postal, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: billing_postal_code, className: 'text-navy' } }
+                      - { type: text, element: span, content: Ville, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: billing_city, className: 'text-navy' } }
+                      - { type: text, element: span, content: Pays, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: billing_country, className: 'text-navy' } }
+                      - { type: text, element: span, content: SIRET, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: siret, className: 'text-navy' } }
+                      - { type: text, element: span, content: N° de TVA, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: vat_number, className: 'text-navy' } }

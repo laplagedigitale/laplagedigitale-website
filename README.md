@@ -183,7 +183,7 @@ invoices, what is left to pay, their mandate and their Flex check-ins. No
 session is swapped and nothing can be sent on the member's behalf. The members
 table also carries the « Adhérent » box (`association_member`).
 `/administration/inscriptions-flex` lists the Flex sign-ups, and
-`/administration/finances/flex` every Flex check-in (editable).
+`/administration/finances/facturation/flex` every Flex check-in (editable).
 
 Pennylane's invoice PDF link (`public_file_url`) expires 30 minutes after it is
 issued; the 15-minute sync rewrites it, so the link on screen still opens.
@@ -307,7 +307,7 @@ Digitale » spreadsheet and the script that filled it:
   one row per poste, one column per month (réalisé for a closed month, prévu
   after), a total per group and per section, then the soldes — exportable as
   CSV.
-- **Transactions** (`/administration/finances/transactions`) — the mirrored
+- **Transactions** (`/administration/finances/operations`) — the mirrored
   bank transactions, one tab per accountant question; a row opens the
   transaction in Pennylane, where it is corrected.
 

@@ -9,7 +9,7 @@
 # Pennylane, which a row click opens in a new tab. The mapping to a budget
 # line is the sync's (category-mappings), re-applied on every run.
 name: admin-finances-transactions
-path: /administration/finances/transactions
+path: /administration/finances/operations
 sitemap: false
 access: { require: [admin], redirectTo: /connexion }
 query:
@@ -39,6 +39,17 @@ components:
               - { type: text, element: h1, content: Transactions, props: { className: 'text-3xl font-bold text-navy' } }
               - { type: text, element: p, content: "Les opérations bancaires telles que Pennylane les voit, mises à jour toutes les heures, et la ligne du prévisionnel où chacune est rangée. Un clic ouvre l'opération dans Pennylane : c'est là qu'on joint la facture, choisit la catégorie ou lettre l'encaissement.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
 
+
+          # Sub-navigation of Opérations: the sidebar marks « Opérations », these pills say which page.
+          - type: container
+            element: nav
+            props:
+              aria-label: Opérations
+              className: 'flex flex-wrap gap-2 -mt-4'
+            children:
+              - { type: link, content: Transactions, props: { href: /administration/finances/operations, 'aria-current': page, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-white hover:text-white bg-navy' } }
+              - { type: link, content: Rapprochements, props: { href: /administration/finances/operations/rapprochements, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+
           - type: tabs
             defaultTab: $query.onglet
             panels:
@@ -61,7 +72,7 @@ components:
                     children:
                       - type: search-input
                         placeholder: Rechercher…
-                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        props: { aria-label: Rechercher, className: 'h-9 w-full sm:w-72' }
                         publishes: { bindTo: admin-finances-transactions, param: q }
                       - type: filter-bar
                         publishes: { bindTo: admin-finances-transactions }
@@ -110,7 +121,7 @@ components:
                     children:
                       - type: search-input
                         placeholder: Rechercher…
-                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        props: { aria-label: Rechercher, className: 'h-9 w-full sm:w-72' }
                         publishes: { bindTo: admin-finances-transactions-2, param: q }
                       - type: button
                         label: Exporter en CSV
@@ -158,8 +169,9 @@ components:
                     children:
                       - type: search-input
                         placeholder: Rechercher…
-                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        props: { aria-label: Rechercher, className: 'h-9 w-full sm:w-72' }
                         publishes: { bindTo: admin-finances-transactions-3, param: q }
+                      - { type: text, element: span, content: "Pas d'export sur cet onglet : il réunit deux motifs, et l'export ne prend qu'un filtre.", props: { className: 'text-sm text-text-muted sm:ml-auto' } }
                   - type: table
                     readOnly: true
                     props:
@@ -200,7 +212,7 @@ components:
                     children:
                       - type: search-input
                         placeholder: Rechercher…
-                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        props: { aria-label: Rechercher, className: 'h-9 w-full sm:w-72' }
                         publishes: { bindTo: admin-finances-transactions-4, param: q }
                       - type: button
                         label: Exporter en CSV
@@ -247,7 +259,7 @@ components:
                     children:
                       - type: search-input
                         placeholder: Rechercher…
-                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        props: { aria-label: Rechercher, className: 'h-9 w-full sm:w-72' }
                         publishes: { bindTo: admin-finances-transactions-5, param: q }
                       - type: button
                         label: Exporter en CSV

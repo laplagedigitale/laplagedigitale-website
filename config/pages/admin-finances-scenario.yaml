@@ -70,7 +70,7 @@ components:
                   - type: button
                     content: Recalculer le prévisionnel
                     props:
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white hover:text-white bg-navy hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
                     action:
                       type: automation
                       name: treasury-forecast
@@ -85,14 +85,14 @@ components:
                     content: Ajouter un ajustement
                     visibility: { record: { field: is_baseline, eq: false } }
                     props:
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
                       interactions:
                         click:
                           modal: new-adjustment
                   - type: button
                     content: Ajouter un élément daté
                     props:
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy bg-white border border-border hover:bg-background transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
                       interactions:
                         click:
                           modal: new-planned-item
@@ -549,7 +549,7 @@ components:
                     children:
                       - type: search-input
                         placeholder: Rechercher…
-                        props: { aria-label: Rechercher, className: 'h-8 w-full sm:w-64' }
+                        props: { aria-label: Rechercher, className: 'h-9 w-full sm:w-72' }
                         publishes: { bindTo: admin-finances-scenario-2, param: q }
                       - type: filter-bar
                         publishes: { bindTo: admin-finances-scenario-2 }

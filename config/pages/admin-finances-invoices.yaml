@@ -6,7 +6,7 @@
 # admin bypasses row-level rules, so the grid lists every member's invoices
 # without a filter.
 name: admin-finances-invoices
-path: /administration/finances/factures
+path: /administration/finances/facturation
 sitemap: false
 access: { require: [admin], redirectTo: /connexion }
 meta:
@@ -31,6 +31,18 @@ components:
             children:
               - { type: text, element: h1, content: Factures, props: { className: 'text-3xl font-bold text-navy' } }
               - { type: text, element: p, content: "Toutes les factures des membres, recopiées de Pennylane toutes les 15 minutes. Cliquez sur une facture pour ouvrir son PDF.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+
+          # Sub-navigation of Facturation: the sidebar marks « Facturation », these pills say which page.
+          - type: container
+            element: nav
+            props:
+              aria-label: Facturation
+              className: 'flex flex-wrap gap-2 -mt-4'
+            children:
+              - { type: link, content: Factures, props: { href: /administration/finances/facturation, 'aria-current': page, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-white hover:text-white bg-navy' } }
+              - { type: link, content: Facturation Flex, props: { href: /administration/finances/facturation/flex, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+              - { type: link, content: Prélèvements, props: { href: /administration/finances/facturation/prelevements, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
 
           - type: grid
             props:
@@ -69,12 +81,26 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
-              - type: search-input
-                placeholder: Rechercher une facture, un membre…
+              - type: container
+                element: div
                 props:
-                  aria-label: Rechercher une facture, un membre…
-                  className: 'mb-4 h-9 w-full sm:w-72'
-                publishes: { bindTo: admin-finances-invoices, param: q }
+                  role: toolbar
+                  aria-label: Outils du tableau
+                  className: 'mb-4 flex flex-wrap items-center gap-2'
+                children:
+                  - type: search-input
+                    placeholder: Rechercher une facture, un membre…
+                    props: { aria-label: 'Rechercher une facture, un membre…', className: 'h-9 w-full sm:w-72' }
+                    publishes: { bindTo: admin-finances-invoices, param: q }
+                  - type: filter-bar
+                    publishes: { bindTo: admin-finances-invoices }
+                    fieldsFrom: { table: invoices }
+                  - type: button
+                    label: Exporter en CSV
+                    variant: outline
+                    size: sm
+                    props: { className: 'sm:ml-auto' }
+                    action: { type: fetch, mode: download, url: '/api/tables/invoices/export?format=csv', filename: factures.csv }
               - type: table
                 readOnly: true
                 props:

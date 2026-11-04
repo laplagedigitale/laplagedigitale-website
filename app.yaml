@@ -202,6 +202,7 @@ pages:
   - $ref: ./config/pages/admin-members.yaml
   - $ref: ./config/pages/admin-member.yaml
   - $ref: ./config/pages/admin-flex-signups.yaml
+  - $ref: ./config/pages/admin-flex-signup.yaml
   - $ref: ./config/pages/admin-demandes.yaml
   - $ref: ./config/pages/admin-finances.yaml
   - $ref: ./config/pages/admin-finances-invoices.yaml

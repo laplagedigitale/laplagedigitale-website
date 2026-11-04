@@ -7,7 +7,7 @@
 # run updates its row. The table is admin only (it names clients, amounts and
 # bank labels).
 name: admin-finances-reconciliation
-path: /administration/finances/rapprochements
+path: /administration/finances/operations/rapprochements
 sitemap: false
 access: { require: [admin], redirectTo: /connexion }
 meta:
@@ -32,6 +32,17 @@ components:
             children:
               - { type: text, element: h1, content: Rapprochements, props: { className: 'text-3xl font-bold text-navy' } }
               - { type: text, element: p, content: "Chaque matin, les factures clients et fournisseurs sont rapprochées des opérations bancaires dans Pennylane. Les paires « À vérifier » sont à rapprocher à la main dans Pennylane ; une paire « Échec » n'a pas pu être enregistrée.", props: { className: 'text-text-muted mt-2 max-w-2xl' } }
+
+
+          # Sub-navigation of Opérations: the sidebar marks « Opérations », these pills say which page.
+          - type: container
+            element: nav
+            props:
+              aria-label: Opérations
+              className: 'flex flex-wrap gap-2 -mt-4'
+            children:
+              - { type: link, content: Transactions, props: { href: /administration/finances/operations, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100' } }
+              - { type: link, content: Rapprochements, props: { href: /administration/finances/operations/rapprochements, 'aria-current': page, className: 'inline-flex items-center min-h-10 px-4 rounded-full text-sm font-semibold transition-colors text-white hover:text-white bg-navy' } }
 
           - type: grid
             props:
@@ -71,12 +82,26 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
-              - type: search-input
-                placeholder: Rechercher un tiers, une facture, un libellé…
+              - type: container
+                element: div
                 props:
-                  aria-label: Rechercher un tiers, une facture, un libellé…
-                  className: 'mb-4 h-9 w-full sm:w-72'
-                publishes: { bindTo: admin-finances-reconciliation, param: q }
+                  role: toolbar
+                  aria-label: Outils du tableau
+                  className: 'mb-4 flex flex-wrap items-center gap-2'
+                children:
+                  - type: search-input
+                    placeholder: Rechercher un tiers, une facture, un libellé…
+                    props: { aria-label: 'Rechercher un tiers, une facture, un libellé…', className: 'h-9 w-full sm:w-72' }
+                    publishes: { bindTo: admin-finances-reconciliation, param: q }
+                  - type: filter-bar
+                    publishes: { bindTo: admin-finances-reconciliation }
+                    fieldsFrom: { table: payment_matches }
+                  - type: button
+                    label: Exporter en CSV
+                    variant: outline
+                    size: sm
+                    props: { className: 'sm:ml-auto' }
+                    action: { type: fetch, mode: download, url: '/api/tables/payment_matches/export?format=csv', filename: rapprochements.csv }
               - type: table
                 readOnly: true
                 props:

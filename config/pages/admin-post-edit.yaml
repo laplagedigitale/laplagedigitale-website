@@ -52,7 +52,7 @@ components:
                 props:
                   href: '/blog/$record.slug'
                   target: _blank
-                  className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy border border-navy-200 hover:bg-navy-100 transition-colors'
+                  className: 'inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
 
           # Draft: saves itself.
           - type: form

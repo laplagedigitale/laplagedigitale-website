@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-04T09:46:47.123921+00:00",
+  "generatedAt": "2026-11-04T13:24:38.818979+00:00",
   "title": "Design System: La Plage Digitale",
   "extensions": {
     "colorMeta": {
@@ -338,9 +338,16 @@
       "name": "Administration Sidebar",
       "kind": "nav",
       "refersTo": "admin-sidebar",
-      "description": "Navy app-shell column with orange overline and navy-deep active entry.",
-      "html": "<aside class=\"ds-admin\"><span class=\"ds-admin-mark\">Administration</span><span class=\"ds-admin-group\">Finances</span><a href=\"#\" aria-current=\"page\">Trésorerie</a><a href=\"#\">Transactions</a></aside>",
-      "css": ".ds-admin{font-family:SUSE,system-ui,sans-serif;display:flex;flex-direction:column;gap:4px;width:256px;padding:24px 12px;background:#273a61;border-radius:1rem;}.ds-admin-mark{color:#f6a66b;font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:0 12px 16px;}.ds-admin-group{color:#929caf;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;}.ds-admin a{color:#e4e6eb;text-decoration:none;padding:8px 12px;border-radius:.5rem;}.ds-admin a:hover,.ds-admin a[aria-current=page]{background:#1c2b4a;color:#fff;}.ds-admin a[aria-current=page]{font-weight:600;}.ds-admin a:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+      "description": "Navy app-shell column: orange overline, navy-150 group labels, navy-deep active entry.",
+      "html": "<aside class=\"ds-admin\"><span class=\"ds-admin-mark\">Administration</span><span class=\"ds-admin-group\">Finances</span><a href=\"#\" aria-current=\"page\">Trésorerie</a><a href=\"#\">Opérations</a></aside>",
+      "css": ".ds-admin{font-family:SUSE,system-ui,sans-serif;display:flex;flex-direction:column;gap:4px;width:256px;padding:24px 12px;background:#273a61;border-radius:1rem;}.ds-admin-mark{color:#f6a66b;font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:0 12px 16px;}.ds-admin-group{color:#bfcde6;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;}.ds-admin a{color:#e4e6eb;text-decoration:none;padding:8px 12px;border-radius:.5rem;}.ds-admin a:hover,.ds-admin a[aria-current=page]{background:#1c2b4a;color:#fff;}.ds-admin a[aria-current=page]{font-weight:600;}.ds-admin a:focus-visible{outline:2px solid #6290bc;outline-offset:2px;}"
+    },
+    {
+      "name": "Administration Action Pills",
+      "kind": "button",
+      "description": "The Three Pills Rule: orange creates, navy acts on the record, outline navigates. Each sets its hover text colour explicitly.",
+      "html": "<div class=\"ds-adm-pills\"><a href=\"#\" class=\"ds-adm-pill ds-adm-create\">+ Nouvelle échéance</a><button class=\"ds-adm-pill ds-adm-act\">Marquer comme fait</button><a href=\"#\" class=\"ds-adm-pill ds-adm-nav\">Voir le prévisionnel →</a></div>",
+      "css": ".ds-adm-pills{display:flex;flex-wrap:wrap;gap:12px;font-family:SUSE,system-ui,sans-serif;}.ds-adm-pill{display:inline-flex;align-items:center;padding:10px 20px;border-radius:9999px;font-size:.875rem;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background-color .15s;}.ds-adm-pill:focus-visible{outline:2px solid #273a61;outline-offset:2px;}.ds-adm-create{font-weight:700;color:#1c2b4a;background:#f08137;}.ds-adm-create:hover{color:#1c2b4a;background:#f6a66b;}.ds-adm-act{font-weight:700;color:#fff;background:#273a61;}.ds-adm-act:hover{color:#fff;background:#1c2b4a;}.ds-adm-nav{font-weight:600;color:#273a61;background:#fff;border-color:#929caf;}.ds-adm-nav:hover{color:#273a61;background:#e4e6eb;}"
     }
   ],
   "narrative": {
@@ -389,6 +396,21 @@
         "name": "The Lift Means Link Rule",
         "body": "A card that lifts on hover is clickable as a whole. A static card keeps its md shadow.",
         "section": "elevation"
+      },
+      {
+        "name": "The Three Pills Rule",
+        "body": "In the Administration a pill's colour says what it does: orange (`text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300`) creates or is the page's one primary action, navy (`text-white hover:text-white bg-navy hover:bg-navy-700`) acts on this record, outline (`text-navy hover:text-navy bg-white border-navy-200 hover:bg-navy-100`) navigates or is the secondary choice.",
+        "section": "administration"
+      },
+      {
+        "name": "The Explicit Hover Text Rule",
+        "body": "Every pill sets its hover text colour explicitly; without it, the engine's link hover colour lands on the label at 2.4:1.",
+        "section": "administration"
+      },
+      {
+        "name": "The No Red Zero Rule",
+        "body": "Show a figure an automation computes through a list bound to its computed row (`computed_at isNotEmpty`), whose emptyMessage says what to run. A KPI over no row reads 0 in red.",
+        "section": "administration"
       }
     ],
     "dos": [
@@ -401,7 +423,7 @@
     ],
     "donts": [
       "**Don't** set orange or amber text on white or paper (the charte's rule).",
-      "**Don't** use seaside blue as text on white: it is 3.4:1. The small semibold `text-blue` links (partner and venue names, links in the Administration's calendar, content and finance pages) do it today and fail AA; they should move to navy or magenta. The header's « Espace membre » link turning orange on hover breaks the orange rule the same way.",
+      "**Don't** use seaside blue as text on white: it is 3.4:1. The small semibold `text-blue` links (partner and venue names on the public pages) do it today and fail AA; they should move to navy or magenta. The header's « Espace membre » link turning orange on hover breaks the orange rule the same way.",
       "**Don't** add more navy-on-orange at body size: it is 4.24:1, just under AA. The orange pills use it today with 16px bold labels, and so does the orange 13px eyebrow on navy; both need orange-300 (5.7:1 with navy) or a larger label to pass.",
       "**Don't** rely on the ink-navy-200 field border alone to show a field: it is 2.8:1 against white, under the 3:1 non-text minimum.",
       "**Don't** use grey or black shadows, square corners on cards, or a pure white page ground.",

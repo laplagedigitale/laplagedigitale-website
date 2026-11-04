@@ -66,7 +66,7 @@ components:
                     content: Marquer comme fait
                     visibility: { record: { field: active, eq: true } }
                     props:
-                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                      className: 'inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white hover:text-white bg-navy hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
                     action:
                       type: automation
                       name: management-deadline-done

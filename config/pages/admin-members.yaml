@@ -45,7 +45,7 @@ components:
                 content: $t:admin.members.invite
                 visibility: { capability: administer-accounts }
                 props:
-                  className: 'self-start sm:self-auto w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
+                  className: 'self-start sm:self-auto w-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
                   interactions:
                     click:
                       modal: invite-member
@@ -54,13 +54,28 @@ components:
             props:
               className: 'p-4 sm:p-6'
             children:
-              - type: search-input
-                placeholder: $t:admin.members.search
+              - type: container
+                element: div
                 props:
-                  aria-label: $t:admin.members.search
-                  className: 'mb-4 h-9 w-full sm:w-72'
-                publishes: { bindTo: admin-members, param: q }
+                  role: toolbar
+                  aria-label: Outils du tableau
+                  className: 'mb-4 flex flex-wrap items-center gap-2'
+                children:
+                  - type: search-input
+                    placeholder: $t:admin.members.search
+                    props: { aria-label: $t:admin.members.search, className: 'h-9 w-full sm:w-72' }
+                    publishes: { bindTo: admin-members, param: q }
+                  - type: filter-bar
+                    publishes: { bindTo: admin-members }
+                    fieldsFrom: { table: members }
+                  - type: button
+                    label: Exporter en CSV
+                    variant: outline
+                    size: sm
+                    props: { className: 'sm:ml-auto' }
+                    action: { type: fetch, mode: download, url: '/api/tables/members/export?format=csv', filename: membres.csv }
               - type: table
+                readOnly: true
                 dataSource:
                   bindTo: admin-members
                   sharedFilter: {}
@@ -90,9 +105,8 @@ components:
                       flex: $t:formule.flex
                       box: $t:formule.box
                       domiciliation: $t:formule.domiciliation
-                  - { field: pennylane_customer_id, label: $t:admin.members.customer }
                   # Ticked by an admin: one Flex full day offered per year.
-                  - { field: association_member, label: $t:admin.members.association }
+                  - { field: association_member, label: $t:admin.members.association, format: check-cross }
 
           - type: container
             element: section

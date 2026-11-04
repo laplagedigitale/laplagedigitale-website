@@ -43,7 +43,7 @@ components:
                 content: 'Voir le prévisionnel →'
                 props:
                   href: /administration/finances/previsionnel
-                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 bg-orange hover:bg-orange-300 transition-colors'
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-navy hover:text-navy bg-white border border-navy-200 hover:bg-navy-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
 
           # The position: what counts as cash, what sits on the current
           # accounts, and the month so far (internal transfers left out).
@@ -131,9 +131,9 @@ components:
                         children:
                           - { type: text, element: span, content: Solde au }
                           - { type: record-field, format: short-date, props: { field: balance_date } }
-                      - { type: text, element: p, content: "Solde saisi à la main depuis le relevé : à mettre à jour dans la console Sovrium (table bank_accounts).", visibility: { record: { field: source, eq: manual } }, props: { className: 'text-xs text-navy p-2 rounded-panel bg-orange-100' } }
-                      - { type: text, element: p, content: "Hors trésorerie : ce compte n'entre pas dans le total.", visibility: { record: { field: include_in_cash, eq: false } }, props: { className: 'text-xs text-text-muted' } }
-                      - { type: record-field, props: { field: notes, className: 'text-xs text-text-muted whitespace-pre-line' } }
+                      - { type: text, element: p, content: "Solde saisi à la main depuis le relevé : à mettre à jour dans la console Sovrium (table bank_accounts).", visibility: { record: { field: source, eq: manual } }, props: { className: 'text-sm text-navy p-2 rounded-panel bg-orange-100' } }
+                      - { type: text, element: p, content: "Hors trésorerie : ce compte n'entre pas dans le total.", visibility: { record: { field: include_in_cash, eq: false } }, props: { className: 'text-sm text-text-muted' } }
+                      - { type: record-field, props: { field: notes, className: 'text-sm text-text-muted whitespace-pre-line' } }
 
           # The baseline's balance, month by month.
           - type: container
@@ -178,7 +178,7 @@ components:
                 props: { className: 'flex items-center justify-between gap-4' }
                 children:
                   - { type: text, element: h2, content: Points comptables, props: { className: 'text-xl font-semibold text-navy' } }
-                  - { type: link, content: 'Toutes les transactions →', props: { href: /administration/finances/transactions, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: 'Toutes les transactions →', props: { href: /administration/finances/operations, className: 'text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - { type: text, element: p, content: "Ce que le cabinet comptable demande chaque mois : une facture pour chaque débit, une catégorie pour chaque opération, et un lettrage pour chaque encaissement. Tout se corrige dans Pennylane.", props: { className: 'text-sm text-text-muted max-w-2xl' } }
               - type: grid
                 props:
@@ -220,9 +220,9 @@ components:
               - type: flex
                 props: { className: 'flex flex-wrap gap-x-6 gap-y-2 text-sm' }
                 children:
-                  - { type: link, content: 'Débits sans justificatif →', props: { href: '/administration/finances/transactions?onglet=justificatifs', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
-                  - { type: link, content: 'Sans catégorie →', props: { href: '/administration/finances/transactions?onglet=categories', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
-                  - { type: link, content: 'Encaissements non lettrés →', props: { href: '/administration/finances/transactions?onglet=lettrage', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: 'Débits sans justificatif →', props: { href: '/administration/finances/operations?onglet=justificatifs', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: 'Sans catégorie →', props: { href: '/administration/finances/operations?onglet=categories', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
+                  - { type: link, content: 'Encaissements non lettrés →', props: { href: '/administration/finances/operations?onglet=lettrage', className: 'font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy' } }
               - type: card
                 props:
                   className: 'p-4 sm:p-6 space-y-3'

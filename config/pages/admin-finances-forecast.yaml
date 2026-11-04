@@ -44,7 +44,7 @@ components:
                 content: '+ Nouveau scénario'
                 props:
                   href: /administration/finances/previsionnel/nouveau
-                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-magenta hover:bg-magenta-300 transition-colors'
+                  className: 'self-start sm:self-auto inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold text-navy-700 hover:text-navy-700 bg-orange hover:bg-orange-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy transition-colors'
 
           # The baseline's headline figures.
           - type: container
@@ -52,57 +52,61 @@ components:
             props: { className: 'space-y-3' }
             children:
               - { type: text, element: h2, content: Scénario de référence, props: { className: 'text-xl font-semibold text-navy' } }
-              - type: grid
-                props:
-                  className: 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4'
+              # The baseline's figures, once treasury-forecast has computed it.
+              # Before that, a KPI over an empty row read 0 in red.
+              - type: list
+                dataSource:
+                  table: scenarios
+                  filter:
+                    - { field: is_baseline, operator: eq, value: true }
+                    - { field: computed_at, operator: isNotEmpty }
+                  limit: 1
+                listDisplay:
+                  emptyMessage: "Le scénario de référence n'est pas encore calculé : ouvre-le ci-dessous et lance « Recalculer le prévisionnel »."
                 children:
-                  - type: kpi
-                    label: Trésorerie fin d'année
-                    icon: flag
-                    dataSource:
-                      table: scenarios
-                      filter:
-                        - { field: is_baseline, operator: eq, value: true }
-                    kpiAggregate: { function: sum, field: year_end_cash }
-                    kpiFormat: { type: currency, options: { currency: EUR } }
-                    thresholds:
-                      - { value: -100000000, color: red }
-                      - { value: 0, color: yellow }
-                      - { value: 10000, color: green }
-                  - type: kpi
-                    label: Point bas de l'année
-                    icon: trending-down
-                    dataSource:
-                      table: scenarios
-                      filter:
-                        - { field: is_baseline, operator: eq, value: true }
-                    kpiAggregate: { function: min, field: lowest_balance }
-                    kpiFormat: { type: currency, options: { currency: EUR } }
-                    thresholds:
-                      - { value: -100000000, color: red }
-                      - { value: 0, color: yellow }
-                      - { value: 10000, color: green }
-                  - type: kpi
-                    label: Autonomie (mois)
-                    icon: hourglass
-                    dataSource:
-                      table: scenarios
-                      filter:
-                        - { field: is_baseline, operator: eq, value: true }
-                    kpiAggregate: { function: min, field: runway_months }
-                    kpiFormat: { type: number, options: { maximumFractionDigits: '1' } }
-                    thresholds:
-                      - { value: 0, color: red }
-                      - { value: 3, color: yellow }
-                      - { value: 6, color: green }
-                  - type: kpi
-                    label: Scénarios actifs
-                    icon: git-branch
-                    dataSource:
-                      table: scenarios
-                      filter:
-                        - { field: status, operator: eq, value: active }
-                    kpiAggregate: { function: count }
+                  - type: grid
+                    props:
+                      className: 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+                    children:
+                      - type: kpi
+                        label: Trésorerie fin d'année
+                        icon: flag
+                        dataSource:
+                          table: scenarios
+                          filter:
+                            - { field: is_baseline, operator: eq, value: true }
+                        kpiAggregate: { function: sum, field: year_end_cash }
+                        kpiFormat: { type: currency, options: { currency: EUR } }
+                        thresholds:
+                          - { value: -100000000, color: red }
+                          - { value: 0, color: yellow }
+                          - { value: 10000, color: green }
+                      - type: kpi
+                        label: Point bas de l'année
+                        icon: trending-down
+                        dataSource:
+                          table: scenarios
+                          filter:
+                            - { field: is_baseline, operator: eq, value: true }
+                        kpiAggregate: { function: min, field: lowest_balance }
+                        kpiFormat: { type: currency, options: { currency: EUR } }
+                        thresholds:
+                          - { value: -100000000, color: red }
+                          - { value: 0, color: yellow }
+                          - { value: 10000, color: green }
+                      - type: kpi
+                        label: Autonomie (mois)
+                        icon: hourglass
+                        dataSource:
+                          table: scenarios
+                          filter:
+                            - { field: is_baseline, operator: eq, value: true }
+                        kpiAggregate: { function: min, field: runway_months }
+                        kpiFormat: { type: number, options: { maximumFractionDigits: '1' } }
+                        thresholds:
+                          - { value: 0, color: red }
+                          - { value: 3, color: yellow }
+                          - { value: 6, color: green }
 
           # Every scenario, the baseline first. A row opens it.
           - type: container
