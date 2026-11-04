@@ -1,5 +1,5 @@
 # Reusable component template: site-header.
-# Sticky white bar: logo · the four pages · language switcher · Espace Membre ·
+# Sticky white bar: logo · the four pages · language switcher · Espace Membre (/app, which forwards each role to its own space) ·
 # the one main action « Réserver une visite » (a mailto to the team, visible at
 # every width). Below lg the navigation folds into the « Menu » dropdown; below
 # sm the language switcher moves to the footer. « Adhérer » lives in the footer
@@ -55,7 +55,7 @@ children:
               - type: link
                 content: $t:nav.portal
                 props:
-                  href: $t:href.portal
+                  href: /app  # routes by role: coworker → Espace Membre, admin → Administration, signed out → /connexion
                   className: "hidden md:inline-flex items-center min-h-11 px-1 text-sm font-medium text-navy hover:text-orange-700 transition-colors"
               - type: link
                 content: $t:cta.visit
@@ -87,4 +87,4 @@ children:
                   - label: $t:nav.portal
                     action:
                       type: navigate
-                      path: $t:href.portal
+                      path: /app

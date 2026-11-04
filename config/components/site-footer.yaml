@@ -110,7 +110,7 @@ children:
                       - type: link
                         content: $t:nav.portal
                         props:
-                          href: $t:href.portal
+                          href: /app
                           className: "text-navy-100 hover:text-white underline-offset-4 hover:underline"
                       - type: link
                         content: $t:footer.support
