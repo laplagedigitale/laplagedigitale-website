@@ -6,10 +6,8 @@
 name: la-plage-digitale
 version: 2.0.0
 description: La Plage Digitale — Tiers-lieu et coworking à Strasbourg
-# The « Built with Sovrium » pill floated over content (on a phone it covered
-# the contact cards and the forms' submit row): a line after the footer instead.
-badge:
-  placement: footer
+# No « Built with Sovrium » badge on the site.
+badge: false
 
 # Secrets the config reads. A required variable missing at boot stops the
 # server, so set it on Scalingo (env-set) before deploying.
