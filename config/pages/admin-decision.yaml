@@ -1,0 +1,97 @@
+# Page: admin-decision — one résolution (pattern B, edit in place): the form
+# saves field by field, and the right column sums up the vote and links to the
+# sitting it was put to.
+#
+# An imported decision keeps its notion_page_id: the import never overwrites a
+# field filled here. Declared after admin-decision-new and before
+# admin-meeting in app.yaml, so /decisions/* is never read as a
+# sitting's :id.
+name: admin-decision
+path: /administration/decisions/:id
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Décision — Administration"
+  description: "Une décision du conseil d'administration ou de l'assemblée générale."
+  noindex: true
+dataSource: { table: decisions, mode: single, param: id }
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-8'
+        children:
+          - { type: link, content: '← Décisions', props: { href: /administration/decisions, className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+
+          - type: container
+            children:
+              - { type: text, element: h1, content: $record.title, props: { className: 'text-3xl font-bold text-navy' } }
+              - type: flex
+                props:
+                  className: 'flex flex-wrap items-center gap-3 mt-2 text-text-muted'
+                children:
+                  - { type: record-field, format: short-date, props: { field: decided_on, className: 'font-semibold text-navy' } }
+                  - { type: record-field, props: { field: body } }
+                  - { type: record-field, props: { field: outcome, className: 'inline-flex px-3 py-1 rounded-full text-sm font-semibold text-navy bg-blue-100' } }
+              - { type: text, element: p, content: "Pas encore votée : renseigne les voix et le résultat après la séance.", visibility: { record: { field: outcome, isEmpty: true } }, props: { className: 'text-sm text-navy mt-4 p-3 rounded-panel bg-blue-100 max-w-2xl' } }
+
+          - type: grid
+            props:
+              className: 'grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'
+            children:
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-3 xl:col-span-2'
+                children:
+                  - { type: text, element: h2, content: Résolution, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: form
+                    dataSource: { table: decisions, mode: single, param: id }
+                    showHeader: false
+                    autoSave: { saveMode: auto, autoSaveDebounceMs: 800, showSaveIndicator: true, saveIndicatorPosition: inline }
+                    action:
+                      type: crud
+                      operation: update
+                      table: decisions
+                    fields:
+                      - { field: title }
+                      - { field: meeting, description: "La séance où elle a été votée." }
+                      - { field: body }
+                      - { field: decided_on }
+                      - { field: wording, control: textarea }
+                      - { field: votes_for }
+                      - { field: votes_against }
+                      - { field: abstentions }
+                      - { field: outcome }
+
+              - type: card
+                props:
+                  className: 'p-4 sm:p-6 space-y-4'
+                children:
+                  - { type: text, element: h2, content: Vote, props: { className: 'text-xl font-semibold text-navy' } }
+                  - type: container
+                    element: div
+                    props: { className: 'grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-x-4 gap-y-3 text-sm' }
+                    children:
+                      - { type: text, element: span, content: Séance, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: meeting, className: 'text-navy' } }
+                      - { type: text, element: span, content: Pour, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: votes_for, className: 'text-navy' } }
+                      - { type: text, element: span, content: Contre, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: votes_against, className: 'text-navy' } }
+                      - { type: text, element: span, content: Abstentions, props: { className: 'text-text-muted' } }
+                      - { type: record-field, props: { field: abstentions, className: 'text-navy' } }
+                  - type: link
+                    content: 'Ouvrir la séance →'
+                    visibility: { record: { field: meeting, isNotEmpty: true } }
+                    props:
+                      href: /administration/gouvernance/$record.meeting
+                      className: 'inline-flex items-center min-h-11 text-sm font-semibold text-navy underline decoration-blue underline-offset-4 hover:decoration-navy'
+                  - { type: text, element: p, content: "Aucune séance reliée : choisis-la dans le formulaire si elle existe.", visibility: { record: { field: meeting, isEmpty: true } }, props: { className: 'text-sm text-text-muted' } }

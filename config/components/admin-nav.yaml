@@ -10,7 +10,7 @@
 # Two audiences, one shell. A sidebar group cannot be gated on its own, so the
 # navigation is declared twice, each sidebar gated on a role (and left out of
 # the HTML for the other):
-# - admin — Pilotage, Communauté, Finances, Subventions, Contenu, and Compte, which below lg
+# - admin — Pilotage, Communauté, Finances, Subventions, Gouvernance, Contenu, and Compte, which below lg
 #   sits in the drawer and from lg up in the pinned footer (always in view);
 # - editor — Contenu and Compte only (the pages behind the other groups refuse
 #   them anyway: access is admin only).
@@ -88,6 +88,12 @@ children:
             items:
               - { label: Demandes de subvention, href: /administration/subventions, icon: hand-coins, activeMatch: prefix }
               - { label: Fiche association, href: /administration/association, icon: building-2 }
+          # Two sibling prefixes (/administration/gouvernance, /administration/decisions):
+          # an authored entry has no « longest href wins », so they must not nest.
+          - label: Gouvernance
+            items:
+              - { label: Instances, href: /administration/gouvernance, icon: landmark, activeMatch: prefix }
+              - { label: Décisions, href: /administration/decisions, icon: gavel, activeMatch: prefix }
           - label: Contenu
             items:
               - { label: Blog, href: /administration/contenu, icon: newspaper }

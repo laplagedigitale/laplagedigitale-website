@@ -1,0 +1,414 @@
+# Automation: notion-import-gouvernance — brings the association's CA / AG
+# records out of Notion (V2, « Association & gouvernance »): the two « Ordres
+# du jour » databases → meetings, the two « Décisions soumises aux votes » →
+# decisions, « Présences (ou représentés) » and « Présences AGs » →
+# attendances.
+#
+#   POST /api/automations/notion-import-gouvernance/trigger {"dryRun": "true"}    first: counts, writes nothing
+#   POST /api/automations/notion-import-gouvernance/trigger {"dryRun": "false"}   then for real
+#   … add "only": "meetings" | "decisions" | "attendances" to run one table
+#
+# Same rules as notion-import-communaute: a body without `dryRun: "false"` is a
+# dry run; the data sources are read through the `notion` connection (cursor
+# pagination, page size halved whenever an answer passes the 64 KiB cap); rows
+# are upserted on notion_page_id (attendances on attendance_key) in the order
+# meetings → decisions → attendances, so each relation resolves through a row
+# already written; an existing row only gets the fields still empty on it, so
+# an admin's edit is never overwritten; an empty single-select is left out.
+#
+# Two kinds of duplicates, both kept ONCE:
+# - sittings: the CA database also holds copies of the four AG sittings (same
+#   name, « Propriétés d'origine — Type : AGO » in the body). The AG row is
+#   the one kept; a relation to the CA copy resolves to it.
+# - decisions: most CA decisions were copied into the AG database, without
+#   their sitting. Two rows are the same decision when their titles match
+#   (case, spacing, quotes and punctuation ignored) and their dates match or
+#   one has none (a decision's date is its sitting's). The richer row is kept
+#   (sitting resolved, then wording, votes, outcome; the CA one on a tie) and
+#   its empty fields are filled from the other. The run reports how many
+#   copies it merged (`decisions.merged`).
+#
+# A sitting's page body becomes its agenda and minutes: everything before the
+# first « Compte-rendu » heading is the agenda, the rest the minutes (no such
+# heading: all of it is the agenda). Notion's « Bloc non copié » and
+# « Propriétés d'origine » callouts are dropped. The first Google Drive / Docs
+# link found is minutes_url. Status: minutes with text → cr-redige, else a
+# past sitting → tenue, else prevue. Notion's « Etat » maps Approuvé →
+# adoptee, Rejeté → rejetee, Ajourné → reportee, À l'étude → a-l-etude; « Nombre
+# de POUR » empty falls back to the number of people in the CA side's « Pour ».
+# An attendee is matched to org_people on the full name (lower-cased, accents
+# ignored); person_name always keeps the name as written. A Notion name like
+# « Absente, procuration à Kevin » makes a « représenté·e » row with proxy_to.
+# Decisions without a resolvable sitting stay unlinked; attendances without
+# one are skipped (`unresolved`).
+#
+# Production: the Notion integration behind NOTION_TOKEN must be shared with
+# these databases (and with « Membres actifs » and « Nos adhérents/bénévoles »,
+# which name the attendees and the proxies), or Notion answers 404.
+name: notion-import-gouvernance
+label: Importer les instances, décisions et présences depuis Notion
+description: >-
+  Recopie dans l'app les CA et AG de Notion (ordre du jour, compte-rendu),
+  les décisions votées et les présences, sans jamais écraser un champ déjà
+  rempli ni dédoubler une décision copiée d'une base à l'autre.
+trigger:
+  type: manual
+  label: Importer depuis Notion
+  requiredRole: admin
+  inputSchema:
+    dryRun: { type: string }
+    only: { type: string }
+timeout: 600000
+concurrency:
+  limit: 1
+tags: [notion, gouvernance, import]
+actions:
+  - name: import
+    label: Lire Notion et écrire les trois tables
+    type: code
+    operator: runTypescript
+    props:
+      timeout: 300000
+      inputData:
+        dryRun: '{{trigger.input.dryRun}}'
+        only: '{{trigger.input.only}}'
+        caMeetingsDs: e746cf00-50a3-4765-9237-f5c779b1bd39
+        agMeetingsDs: 3e0a52ae-5e6c-4abf-b4ae-c87020b595cc
+        caDecisionsDs: a462ee4a-312f-40df-840d-17650c5102dd
+        agDecisionsDs: 76b5cf0f-21be-454f-aa02-4e7c8fea8886
+        caAttendancesDs: 381142e1-dc7b-4193-964a-ac471c070114
+        agAttendancesDs: 95e1ccc1-d38b-4e10-98d9-5ba4ab5f8ae9
+        peopleDs: 3190ba1b-8a80-4d50-a7fa-898c42e9be94
+        adherentsDs: 1dc54295-2320-424e-840d-3480342c261a
+      code: |
+        async function execute(context) {
+          const inp = context.inputData
+          const NOTION = 'https://api.notion.com/v1'
+          const HEADERS = { 'Notion-Version': '2026-03-11' }
+          // Only an explicit "false" writes: a forgotten flag stays harmless.
+          const dryRun = String(inp.dryRun ?? '').trim().toLowerCase() !== 'false'
+          const only = String(inp.only ?? '').trim().toLowerCase()
+          if (only && !['meetings', 'decisions', 'attendances'].includes(only)) throw new Error(`only inconnu : ${only} (meetings, decisions ou attendances)`)
+          const runs = (t: string) => !only || only === t
+          const today = new Date().toISOString().slice(0, 10)
+
+          // --- Notion over the connection (as notion-import-communaute)
+          const notion = async (method: string, path: string, opts: { body?: unknown } = {}): Promise<any> => {
+            let res: any
+            try {
+              res = await context.actions.http[method]({
+                url: NOTION + path,
+                connection: 'notion',
+                headers: HEADERS,
+                timeout: 30000,
+                ...(opts.body !== undefined ? { body: opts.body } : {}),
+              })
+            } catch (e) {
+              throw new Error(`Notion ${method.toUpperCase()} ${path} a échoué : ${e?.message ?? String(e)}`)
+            }
+            if (res?.truncated) throw new Error(`TRUNCATED:${path}`)
+            const body = typeof res?.body === 'string' ? JSON.parse(res.body) : res?.body
+            if (!body || typeof body !== 'object') throw new Error(`Notion ${path} : réponse illisible`)
+            if (body.object === 'error') throw new Error(`Notion ${path} : ${body.code} ${body.message}`)
+            return body
+          }
+          const readAll = async (ds: string): Promise<any[]> => {
+            const pages: any[] = []
+            let cursor: string | undefined
+            let pageSize = 20
+            for (let guard = 0; guard < 500; guard++) {
+              let page: any
+              try {
+                page = await notion('post', `/data_sources/${ds}/query`, { body: { page_size: pageSize, ...(cursor ? { start_cursor: cursor } : {}) } })
+              } catch (e) {
+                if (String(e?.message).startsWith('TRUNCATED:') && pageSize > 2) { pageSize = Math.max(2, Math.floor(pageSize / 2)); context.log.warn('Réponse > 64 KiB, page_size →', pageSize); continue }
+                throw e
+              }
+              pages.push(...(page.results ?? []))
+              if (!page.has_more || !page.next_cursor) break
+              cursor = page.next_cursor
+            }
+            return pages.filter((p: any) => !p.in_trash && !p.archived && !p.is_archived)
+          }
+          // The children of a block, every page of them (page size halved over the cap).
+          const children = async (id: string): Promise<any[]> => {
+            const out: any[] = []
+            let cursor: string | undefined
+            let pageSize = 50
+            for (let guard = 0; guard < 200; guard++) {
+              let page: any
+              try {
+                page = await notion('get', `/blocks/${id}/children?page_size=${pageSize}${cursor ? `&start_cursor=${cursor}` : ''}`)
+              } catch (e) {
+                if (String(e?.message).startsWith('TRUNCATED:') && pageSize > 2) { pageSize = Math.max(2, Math.floor(pageSize / 2)); continue }
+                throw e
+              }
+              out.push(...(page.results ?? []))
+              if (!page.has_more || !page.next_cursor) break
+              cursor = page.next_cursor
+            }
+            return out
+          }
+
+          // --- property readers
+          const plain = (rt: any): string => (rt ?? []).map((t: any) => t.plain_text ?? '').join('').trim()
+          const prop = (page: any, name: string): any => page.properties?.[name] ?? page.properties?.[name + ' '] ?? page.properties?.[name.trim()]
+          const title = (page: any): string => { const p = Object.values(page.properties ?? {}).find((x: any) => x?.type === 'title') as any; return plain(p?.title) }
+          const text = (page: any, name: string): string => plain(prop(page, name)?.rich_text)
+          const line = (s: string, max = 255): string => s.replace(/\s+/g, ' ').trim().slice(0, max)
+          const selectOf = (page: any, name: string): string => String(prop(page, name)?.select?.name ?? '').trim()
+          const numberOf = (page: any, name: string): number | null => { const n = prop(page, name)?.number; return typeof n === 'number' && Number.isFinite(n) ? Math.round(n) : null }
+          const dateOf = (page: any, name: string): string => String(prop(page, name)?.date?.start ?? '').slice(0, 10)
+          const relOf = (page: any, name: string): string[] => (prop(page, name)?.relation ?? []).map((r: any) => String(r.id ?? '')).filter(Boolean)
+          // « 16/05/2025 - 18h » → 2025-05-16
+          const dateFromTitle = (s: string): string => { const m = /(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : '' }
+          // Case, accents, quotes, punctuation and spacing ignored.
+          const norm = (s: string): string => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’'"“”«»]/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim()
+
+          // --- the app side
+          const list = async (table: string): Promise<any[]> => {
+            const res: any = await context.actions.record.list({ table, limit: 10000 })
+            return (res?.records ?? []) as any[]
+          }
+          const empty = (v: any): boolean => v === null || v === undefined || (typeof v === 'string' && v.trim() === '') || (Array.isArray(v) && v.length === 0)
+          const chunks = (items: any[], n = 100): any[][] => { const out: any[][] = []; for (let i = 0; i < items.length; i += n) out.push(items.slice(i, i + n)); return out }
+          type Stats = { notion: number; created: number; updated: number; skipped: number; unresolved: number; failed: number }
+          const stats: Record<string, any> = {}
+          const newStats = (): Stats => ({ notion: 0, created: 0, updated: 0, skipped: 0, unresolved: 0, failed: 0 })
+          const failuresOf = (res: any): number => {
+            if (!res || typeof res !== 'object') return 0
+            if (Array.isArray(res.errors)) return res.errors.length
+            if (typeof res.failed === 'number') return res.failed
+            if (Array.isArray(res.failed)) return res.failed.length
+            return 0
+          }
+          // Creates the new rows; on an existing row writes only the fields still empty there.
+          const upsert = async (table: string, keyField: string, rows: any[], st: Stats): Promise<void> => {
+            const existing = new Map<string, any>((await list(table)).filter((r: any) => !empty(r[keyField])).map((r: any) => [String(r[keyField]), r]))
+            const creates: any[] = []
+            const updates: any[] = []
+            for (const row of rows) {
+              const cur = existing.get(String(row[keyField]))
+              if (!cur) { creates.push(Object.fromEntries(Object.entries(row).filter(([, v]) => !empty(v)))); continue }
+              const patch: Record<string, unknown> = {}
+              for (const [k, v] of Object.entries(row)) if (k !== keyField && !empty(v) && empty(cur[k])) patch[k] = v
+              if (Object.keys(patch).length === 0) { st.skipped++; continue }
+              updates.push({ [keyField]: row[keyField], ...patch })
+            }
+            st.created += creates.length
+            st.updated += updates.length
+            if (dryRun) return
+            for (const items of chunks(creates)) {
+              const res: any = await context.actions.record.batchCreate({ table, items, continueOnItemError: true })
+              st.failed += failuresOf(res)
+            }
+            for (const items of chunks(updates)) {
+              const res: any = await context.actions.record.batchUpsert({ table, items, matchField: keyField, continueOnItemError: true })
+              st.failed += failuresOf(res)
+            }
+          }
+          const idsByNotion = async (table: string): Promise<Map<string, string>> =>
+            new Map<string, string>((await list(table)).filter((r: any) => !empty(r.notion_page_id)).map((r: any) => [String(r.notion_page_id), String(r.id)]))
+
+          // --- a page body as text, split into agenda and minutes
+          const DRIVE = /https?:\/\/(?:drive|docs)\.google\.com\/[^\s)"'>]+/
+          const pageText = async (pageId: string): Promise<{ agenda: string; minutes: string; url: string }> => {
+            const lines: string[] = []
+            let url = ''
+            let minutesAt = -1
+            const seeUrl = (s: string) => { if (!url) { const m = DRIVE.exec(s ?? ''); if (m) url = m[0] } }
+            const walk = async (id: string, depth: number): Promise<void> => {
+              for (const b of await children(id)) {
+                const t = String(b.type)
+                const v = b[t] ?? {}
+                const rt = v.rich_text ?? []
+                for (const r of rt) { seeUrl(r?.href ?? ''); seeUrl(r?.text?.link?.url ?? '') }
+                const txt = plain(rt)
+                const pad = '  '.repeat(depth)
+                let descend = !!b.has_children
+                if (t === 'child_page' || t === 'child_database') { descend = false }
+                else if (t === 'heading_1' || t === 'heading_2' || t === 'heading_3') {
+                  if (minutesAt < 0 && /compte[\s-]*rendu/i.test(txt)) { minutesAt = lines.length; lines.push(''); continue }
+                  if (txt) lines.push('', `${'#'.repeat(Number(t.slice(-1)) + 1)} ${txt}`)
+                }
+                else if (t === 'bulleted_list_item' || t === 'toggle') { if (txt) lines.push(`${pad}- ${txt}`) }
+                else if (t === 'numbered_list_item') { if (txt) lines.push(`${pad}1. ${txt}`) }
+                else if (t === 'to_do') { if (txt) lines.push(`${pad}- [${v.checked ? 'x' : ' '}] ${txt}`) }
+                else if (t === 'quote') { if (txt) lines.push(`${pad}> ${txt}`) }
+                else if (t === 'callout') {
+                  if (/^(Propriétés d'origine|Bloc non copié)/i.test(txt)) { descend = false }
+                  else if (txt) lines.push(`${pad}${txt}`)
+                }
+                else if (t === 'bookmark' || t === 'embed' || t === 'link_preview' || t === 'file' || t === 'pdf') {
+                  const u = String(v.url ?? v.external?.url ?? '')
+                  seeUrl(u)
+                  if (u && !v.file) lines.push(`${pad}${u}`)
+                }
+                else if (txt) lines.push(`${pad}${txt}`)
+                if (descend) await walk(b.id, t === 'column_list' || t === 'column' ? depth : depth + 1)
+              }
+            }
+            await walk(pageId, 0)
+            const tidy = (ls: string[]): string => ls.join('\n').replace(/\n{3,}/g, '\n\n').trim()
+            if (minutesAt < 0) return { agenda: tidy(lines), minutes: '', url }
+            return { agenda: tidy(lines.slice(0, minutesAt)), minutes: tidy(lines.slice(minutesAt + 1)), url }
+          }
+
+          // --- 1. meetings: always read (the other tables resolve through them)
+          const caMeetings = await readAll(String(inp.caMeetingsDs))
+          const agMeetings = await readAll(String(inp.agMeetingsDs))
+          type Meeting = { nid: string; copies: string[]; title: string; body: string; held_on: string }
+          const meetings: Meeting[] = []
+          const agByName = new Map<string, Meeting>()
+          for (const p of agMeetings) {
+            const name = line(title(p))
+            const kind = selectOf(p, 'Type') || 'AG'
+            const m: Meeting = { nid: p.id, copies: [], title: `${kind} — ${name}`, body: 'ag', held_on: dateFromTitle(name) }
+            meetings.push(m)
+            agByName.set(norm(name), m)
+          }
+          let meetingCopies = 0
+          for (const p of caMeetings) {
+            const name = line(title(p))
+            const ag = agByName.get(norm(name))
+            if (ag) { ag.copies.push(p.id); if (!ag.held_on) ag.held_on = dateOf(p, 'Date'); meetingCopies++; continue }
+            meetings.push({ nid: p.id, copies: [], title: `CA — ${name}`, body: 'ca', held_on: dateOf(p, 'Date') || dateFromTitle(name) })
+          }
+          // Any Notion id (a copy included) → the kept sitting.
+          const canonical = new Map<string, Meeting>()
+          for (const m of meetings) { canonical.set(m.nid, m); for (const c of m.copies) canonical.set(c, m) }
+
+          if (runs('meetings')) {
+            const st: any = (stats.meetings = newStats())
+            st.notion = caMeetings.length + agMeetings.length
+            st.merged_copies = meetingCopies
+            const rows: any[] = []
+            for (const m of meetings) {
+              if (!m.held_on) { context.log.warn(`Séance sans date, ignorée : ${m.title}`); st.unresolved++; continue }
+              let body = await pageText(m.nid)
+              for (const c of m.copies) { if (body.agenda || body.minutes) break; body = await pageText(c) }
+              const substantive = body.minutes.split('\n').some((l: string) => l.trim() && !l.trim().startsWith('#'))
+              rows.push({
+                notion_page_id: m.nid,
+                title: m.title,
+                body: m.body,
+                held_on: m.held_on,
+                status: substantive ? 'cr-redige' : m.held_on < today ? 'tenue' : 'prevue',
+                agenda: body.agenda,
+                minutes: body.minutes,
+                minutes_url: body.url,
+              })
+            }
+            await upsert('meetings', 'notion_page_id', rows, st)
+          }
+
+          let meetingIds = await idsByNotion('meetings')
+          // A dry run has not written the sittings yet: a `notion:<id>` stand-in counts the link it would make (never written).
+          const meetingOf = (nid: string): { id: string; m: Meeting } | null => {
+            const m = canonical.get(nid)
+            if (!m || !m.held_on) return null
+            const id = meetingIds.get(m.nid) ?? (dryRun ? `notion:${m.nid}` : null)
+            return id ? { id, m } : null
+          }
+
+          // --- 2. decisions: both databases, one row per decision
+          if (runs('decisions')) {
+            const st: any = (stats.decisions = newStats())
+            const ca = await readAll(String(inp.caDecisionsDs))
+            const ag = await readAll(String(inp.agDecisionsDs))
+            st.notion = ca.length + ag.length
+            st.notion_ca = ca.length
+            st.notion_ag = ag.length
+            const OUTCOME: Record<string, string> = { 'Approuvé': 'adoptee', 'Rejeté': 'rejetee', 'Ajourné': 'reportee', "À l'étude": 'a-l-etude' }
+            type Cand = { src: string; row: Record<string, any>; key: string; score: number }
+            const cands: Cand[] = []
+            const build = (p: any, src: string, meetingProp: string): Cand => {
+              const rel = relOf(p, meetingProp)
+              // Several sittings: the latest one is where it was decided.
+              const resolved = rel.map(meetingOf).filter((x: any) => x) as { id: string; m: Meeting }[]
+              resolved.sort((a, b) => b.m.held_on.localeCompare(a.m.held_on))
+              const mt = resolved[0] ?? null
+              if (rel.length > 0 && !mt) st.unresolved++
+              const etat = selectOf(p, 'Etat')
+              if (etat && !OUTCOME[etat]) context.log.warn(`État inconnu, ignoré : ${etat}`)
+              const pourPeople = relOf(p, 'Pour').length
+              const row: Record<string, any> = {
+                notion_page_id: p.id,
+                title: line(title(p)) || '(sans titre)',
+                meeting: mt?.id ?? '',
+                body: mt ? (mt.m.body === 'ag' ? 'ag' : 'ca') : src,
+                decided_on: mt?.m.held_on ?? '',
+                wording: text(p, 'Contexte'),
+                votes_for: numberOf(p, 'Nombre de POUR') ?? (pourPeople > 0 ? pourPeople : null),
+                votes_against: numberOf(p, 'Nombre de CONTRE'),
+                abstentions: numberOf(p, "Nombre d'ABSTENTION"),
+                outcome: OUTCOME[etat] ?? '',
+              }
+              const score = (mt ? 8 : 0) + (row.wording ? 4 : 0) + (row.votes_for !== null || row.votes_against !== null ? 2 : 0) + (row.outcome ? 1 : 0) + (src === 'ca' ? 0.5 : 0)
+              return { src, row, key: norm(row.title), score }
+            }
+            for (const p of ca) cands.push(build(p, 'ca', '📒 Quel CA ?'))
+            for (const p of ag) cands.push(build(p, 'ag', '📒 AG'))
+            // Richest first, so the row kept is the richest of its group.
+            cands.sort((a, b) => b.score - a.score || a.src.localeCompare(b.src) || a.row.notion_page_id.localeCompare(b.row.notion_page_id))
+            const kept: Cand[] = []
+            let merged = 0
+            for (const c of cands) {
+              const twin = kept.find((k: Cand) => k.key === c.key && (!k.row.decided_on || !c.row.decided_on || k.row.decided_on === c.row.decided_on))
+              if (!twin) { kept.push(c); continue }
+              merged++
+              for (const [f, v] of Object.entries(c.row)) if (f !== 'notion_page_id' && !empty(v) && empty(twin.row[f])) twin.row[f] = v
+            }
+            st.merged = merged
+            st.rows = kept.length
+            st.unlinked = kept.filter((k: Cand) => !k.row.meeting).length
+            context.log.info(`Décisions : ${cands.length} lues, ${merged} copies fusionnées, ${kept.length} gardées (${st.unlinked} sans séance)`)
+            await upsert('decisions', 'notion_page_id', kept.map((k: Cand) => k.row), st)
+          }
+
+          // --- 3. attendances
+          if (runs('attendances')) {
+            const st: any = (stats.attendances = newStats())
+            meetingIds = await idsByNotion('meetings')
+            const ca = await readAll(String(inp.caAttendancesDs))
+            const ag = await readAll(String(inp.agAttendancesDs))
+            st.notion = ca.length + ag.length
+            const nameById = new Map<string, string>()
+            for (const p of await readAll(String(inp.peopleDs))) nameById.set(p.id, line(title(p)))
+            for (const p of await readAll(String(inp.adherentsDs))) nameById.set(p.id, line(title(p)))
+            const personByName = new Map<string, string>()
+            for (const r of await list('org_people')) { const n = norm(String(r.full_name ?? '')); if (n) personByName.set(n, String(r.id)) }
+            const namesOf = (ids: string[]): string => line(ids.map((i: string) => nameById.get(i) ?? '').filter(Boolean).join(', '))
+            const rows: any[] = []
+            const seen = new Set<string>()
+            let matched = 0
+            const add = (p: any, meetingNids: string[], name: string, note: string, proxiesHeld: string) => {
+              if (!name) { st.unresolved++; context.log.warn(`Présence sans nom, ignorée : ${p.id}`); return }
+              const mt = meetingNids.map(meetingOf).find((x: any) => x) as { id: string; m: Meeting } | undefined
+              if (!mt) { st.unresolved++; context.log.warn(`Présence sans séance, ignorée : ${name}`); return }
+              const key = `${mt.m.nid}:${norm(name)}`
+              if (seen.has(key)) { st.skipped++; return }
+              seen.add(key)
+              let status = 'present'
+              let proxy_to = ''
+              const proxy = /procuration\s+(?:à|a|donnée\s+à)\s+(.+)$/i.exec(note)
+              if (/absent|procuration\s+(?:à|a|donnée)/i.test(note)) { status = proxy ? 'represente' : 'absent'; proxy_to = proxy ? line(proxy[1]) : '' }
+              else if (/excus/i.test(note)) status = 'excuse'
+              const person = personByName.get(norm(name)) ?? ''
+              if (person) matched++
+              rows.push({ notion_page_id: p.id, attendance_key: key, meeting: mt.id, person, person_name: name, status, proxy_to, proxies_held: proxiesHeld })
+            }
+            for (const p of ca) {
+              const note = line(title(p))
+              const name = nameById.get(relOf(p, '🚌 Personne du CA')[0] ?? '') || (/absent|excus|procuration/i.test(note) ? '' : note)
+              add(p, relOf(p, 'Réunion'), name, note, namesOf(relOf(p, '🫂 Procuration')))
+            }
+            for (const p of ag) add(p, relOf(p, 'Assemblé Générale'), line(title(p)), '', namesOf(relOf(p, '🫂 Procuration adhérents')))
+            st.rows = rows.length
+            st.matched_org_people = matched
+            await upsert('attendances', 'notion_page_id', rows, st)
+          }
+
+          context.log.info(`${dryRun ? 'DRY RUN — ' : ''}${JSON.stringify(stats)}`)
+          return { dryRun, ...stats }
+        }

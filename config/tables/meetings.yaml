@@ -1,0 +1,52 @@
+# Table: meetings — the association's instances: conseils d'administration,
+# assemblées générales (ordinaires and extraordinaires), bureaux. One row per
+# sitting, with its ordre du jour and its compte-rendu.
+#
+# Brought out of Notion by notion-import-gouvernance from the two « Ordres du
+# jour » databases (CA and AG). The CA database also holds copies of the AG
+# sittings: the import keeps one row per sitting, the AG one. The page body is
+# split at its « Compte-rendu » heading: what comes before is the agenda, the
+# rest the minutes. The import only fills empty fields, so an admin's edit
+# survives a re-run; a sitting created here has no notion_page_id.
+#
+# `document` is the signed PV when it was filed in the pièces of the Fiche
+# association (org_documents). Admin only.
+id: 40
+name: meetings
+aiAccess:
+  description: "Sittings of La Plage Digitale's governing bodies (conseil d'administration, assemblée générale, bureau): date, agenda, minutes and status. Imported from Notion."
+  operations: [read, list]
+fields:
+  - { id: 1, name: title, label: Titre, type: single-line-text, required: true }
+  - id: 2
+    name: body
+    label: Organe
+    type: single-select
+    required: true
+    options:
+      - { value: ca, label: Conseil d'administration, color: '#1e3a8a' }
+      - { value: ag, label: Assemblée générale, color: '#ec4899' }
+      - { value: bureau, label: Bureau, color: '#3b82f6' }
+  - { id: 3, name: held_on, label: Date, type: date, required: true, indexed: true }
+  - id: 4
+    name: status
+    label: Statut
+    type: single-select
+    required: true
+    default: prevue
+    options:
+      - { value: prevue, label: Prévue, color: '#3b82f6' }
+      - { value: tenue, label: 'Tenue, CR à rédiger', color: '#f59e0b' }
+      - { value: cr-redige, label: CR rédigé, color: '#10b981' }
+  - { id: 5, name: agenda, label: Ordre du jour, type: long-text }
+  - { id: 6, name: minutes, label: Compte-rendu, type: long-text }
+  # A Drive link can run past the 255 characters of a url field on PostgreSQL.
+  - { id: 7, name: minutes_url, label: Compte-rendu (Drive), type: long-text }
+  - { id: 8, name: document, label: PV signé, type: relationship, relatedTable: org_documents, relationType: many-to-one, displayField: title, onDelete: set-null }
+  - { id: 9, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 10, name: created_at, label: Créée le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

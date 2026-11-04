@@ -1,0 +1,39 @@
+# Table: attendances — who sat at a CA or an AG: present, represented (proxy
+# given to someone), excused or absent, and the proxies they carried.
+#
+# Brought out of Notion by notion-import-gouvernance from « Présences (ou
+# représentés) » (CA) and « Présences AGs ». `person` is the org_people row
+# whose name is the attendee's (lower-cased, accents ignored); person_name
+# always keeps the name as written, so a person outside org_people still
+# reads. attendance_key (`<sitting>:<name>`) is unique, so a person appears
+# once per sitting; a row added here leaves it empty. Admin only.
+id: 42
+name: attendances
+aiAccess:
+  description: "Attendance of La Plage Digitale's CA and AG sittings: person, present / represented / excused / absent, proxies. Imported from Notion."
+  operations: [read, list]
+fields:
+  - { id: 1, name: meeting, label: Instance, type: relationship, relatedTable: meetings, relationType: many-to-one, displayField: title, onDelete: cascade, required: true }
+  - { id: 2, name: person, label: Membre du CA, type: relationship, relatedTable: org_people, relationType: many-to-one, displayField: full_name, onDelete: set-null }
+  - { id: 3, name: person_name, label: Nom, type: single-line-text, required: true }
+  - id: 4
+    name: status
+    label: Présence
+    type: single-select
+    required: true
+    default: present
+    options:
+      - { value: present, label: Présent·e, color: '#10b981' }
+      - { value: represente, label: Représenté·e, color: '#3b82f6' }
+      - { value: excuse, label: Excusé·e, color: '#f59e0b' }
+      - { value: absent, label: Absent·e, color: '#94a3b8' }
+  - { id: 5, name: proxy_to, label: Procuration donnée à, type: single-line-text }
+  - { id: 6, name: proxies_held, label: Procurations reçues, type: single-line-text }
+  - { id: 7, name: attendance_key, label: Clé d'import, type: single-line-text, unique: true }
+  - { id: 8, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 9, name: created_at, label: Créée le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]

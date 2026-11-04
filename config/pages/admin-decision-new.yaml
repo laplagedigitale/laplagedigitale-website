@@ -1,0 +1,35 @@
+# Page: admin-decision-new — pattern C: the back link, then one card holding the declared
+# form decision-new, which creates the decision and opens it on its own page.
+#
+# Declared in app.yaml before every :id page under /administration/gouvernance,
+# so this address is this page and never read as an :id.
+name: admin-decision-new
+path: /administration/decisions/nouvelle
+sitemap: false
+access: { require: [admin], redirectTo: /connexion }
+meta:
+  favicons:
+    $ref: ../favicons.yaml
+  title: "Nouvelle décision — Administration"
+  description: "Enregistrer une résolution soumise au vote."
+  noindex: true
+components:
+  - type: flex
+    props:
+      className: 'min-h-screen flex flex-col lg:flex-row bg-background'
+    children:
+      - component: admin-nav
+
+      - type: container
+        element: section
+        props:
+          className: 'flex-1 min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-10 space-y-6'
+        children:
+          - { type: link, content: '← Décisions', props: { href: '/administration/decisions', className: 'inline-flex items-center min-h-11 text-sm text-text-muted hover:text-navy' } }
+          - type: card
+            props:
+              className: 'p-6 sm:p-8 max-w-2xl'
+            children:
+              - type: form
+                formRef: decision-new
+                props: { headingLevel: h1 }

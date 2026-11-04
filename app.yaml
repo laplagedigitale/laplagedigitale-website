@@ -165,6 +165,12 @@ tables:
   - $ref: ./config/tables/organizations.yaml
   - $ref: ./config/tables/contacts.yaml
   - $ref: ./config/tables/memberships.yaml
+  # Gouvernance: the CA / AG / bureau sittings, the decisions put to the vote
+  # and who attended, imported from Notion by notion-import-gouvernance. The
+  # people are org_people, the signed PV an org_documents row. Admin only.
+  - $ref: ./config/tables/meetings.yaml
+  - $ref: ./config/tables/decisions.yaml
+  - $ref: ./config/tables/attendances.yaml
 
 buckets:
   $ref: ./config/buckets.yaml
@@ -201,6 +207,11 @@ forms:
   - $ref: ./config/forms/contact-new.yaml
   - $ref: ./config/forms/organization-new.yaml
   - $ref: ./config/forms/membership-new.yaml
+  # Gouvernance: a new sitting, a new decision (its page and the sitting's
+  # dialog), a new attendance (the sitting's dialog).
+  - $ref: ./config/forms/meeting-new.yaml
+  - $ref: ./config/forms/decision-new.yaml
+  - $ref: ./config/forms/attendance-new.yaml
 
 pages:
   - $ref: ./config/pages/home.yaml
@@ -258,6 +269,15 @@ pages:
   - $ref: ./config/pages/admin-grant.yaml
   - $ref: ./config/pages/admin-grant-portal.yaml
   - $ref: ./config/pages/admin-association.yaml
+  # Gouvernance: the sittings, then every fixed address under
+  # /administration/gouvernance (a new sitting, the decisions, a new decision,
+  # one decision) before the sitting's :id page, which would read them as ids.
+  - $ref: ./config/pages/admin-governance.yaml
+  - $ref: ./config/pages/admin-governance-new.yaml
+  - $ref: ./config/pages/admin-decisions.yaml
+  - $ref: ./config/pages/admin-decision-new.yaml
+  - $ref: ./config/pages/admin-decision.yaml
+  - $ref: ./config/pages/admin-meeting.yaml
   - $ref: ./config/pages/admin-content.yaml
   - $ref: ./config/pages/admin-posts.yaml
   - $ref: ./config/pages/admin-posts-drafts.yaml
@@ -340,6 +360,9 @@ automations:
   # Contacts & adhésions: the import of the three Notion databases (manual,
   # dry run unless {"dryRun": "false"})
   - $ref: ./config/automations/notion-import-communaute.yaml
+  # Gouvernance: the import of the CA / AG sittings, decisions and attendance
+  # (manual, dry run unless {"dryRun": "false"})
+  - $ref: ./config/automations/notion-import-gouvernance.yaml
   # Calendrier de gestion: the morning Slack reminders (09:00 Europe/Paris),
   # and « Marquer comme fait », which moves a deadline to its next occurrence
   - $ref: ./config/automations/management-reminders.yaml

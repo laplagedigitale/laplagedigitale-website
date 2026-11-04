@@ -1,0 +1,50 @@
+# Table: decisions — the résolutions put to the vote of a CA or an AG: the
+# wording, the votes and the outcome, linked to the sitting when it is known.
+#
+# Brought out of Notion by notion-import-gouvernance from the two « Décisions
+# soumises aux votes » databases (CA side and AG side). Most CA decisions were
+# copied into the AG database too: the import keeps ONE row per decision
+# (same title, after spacing, case and quotes are ignored, and the same date
+# or no date on one side), the richer one (linked sitting, wording, votes),
+# and fills its empty fields from the other. A decision whose sitting cannot
+# be resolved stays unlinked but keeps its body and date. decided_on is the
+# date of its sitting; `year` derives from it so the list can filter on it.
+# Admin only.
+id: 41
+name: decisions
+aiAccess:
+  description: "Resolutions voted by La Plage Digitale's conseil d'administration or assemblée générale: wording, votes for / against / abstentions, outcome, sitting. Imported from Notion."
+  operations: [read, list]
+fields:
+  - { id: 1, name: title, label: Décision, type: single-line-text, required: true }
+  - { id: 2, name: meeting, label: Instance, type: relationship, relatedTable: meetings, relationType: many-to-one, displayField: title, onDelete: set-null }
+  - id: 3
+    name: body
+    label: Votée par
+    type: single-select
+    options:
+      - { value: ca, label: Conseil d'administration, color: '#1e3a8a' }
+      - { value: ag, label: Assemblée générale, color: '#ec4899' }
+  - { id: 4, name: decided_on, label: Date, type: date, indexed: true }
+  - { id: 5, name: wording, label: Texte de la résolution, type: long-text }
+  - { id: 6, name: votes_for, label: Pour, type: integer }
+  - { id: 7, name: votes_against, label: Contre, type: integer }
+  - { id: 8, name: abstentions, label: Abstentions, type: integer }
+  # Notion's « À l'étude » is kept: a decision proposed and not voted yet.
+  - id: 9
+    name: outcome
+    label: Résultat
+    type: single-select
+    options:
+      - { value: adoptee, label: Adoptée, color: '#10b981' }
+      - { value: rejetee, label: Rejetée, color: '#ef4444' }
+      - { value: reportee, label: Reportée, color: '#f59e0b' }
+      - { value: a-l-etude, label: À l'étude, color: '#94a3b8' }
+  - { id: 10, name: year, label: Année, type: formula, formula: "date_part_utc('year', decided_on)", resultType: integer }
+  - { id: 11, name: notion_page_id, label: Page Notion, type: single-line-text, unique: true }
+  - { id: 12, name: created_at, label: Créée le, type: created-at }
+permissions:
+  read: [admin]
+  create: [admin]
+  update: [admin]
+  delete: [admin]
